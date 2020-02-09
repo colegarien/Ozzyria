@@ -2,10 +2,10 @@
 {
     class Program
     {
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             var connectionListener = new Networking.ConnectionListener();
-            connectionListener.Run();
+            await connectionListener.Start();
         }
     }
 }
