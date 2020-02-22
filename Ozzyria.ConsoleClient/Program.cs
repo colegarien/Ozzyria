@@ -12,8 +12,8 @@ namespace Ozzyria.ConsoleClient
     {
         static void Main(string[] args)
         {
-            var connection = new Networking.Connection();
-            connection.Start();
+            var client = new Networking.Client();
+            client.Start();
         }
     }
 }

@@ -4,8 +4,8 @@
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
-            var connectionListener = new Networking.ConnectionListener();
-            await connectionListener.Start();
+            var server = new Networking.Server();
+            await server.StartListening();
         }
     }
 }
