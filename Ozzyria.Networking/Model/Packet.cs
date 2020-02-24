@@ -5,6 +5,7 @@ namespace Ozzyria.Networking.Model
     public enum MessageType
     {
         NONE,
+        HAS_SLOT, // server can accept client
         CLIENT_JOIN, // client ask to join server
         SERVER_JOIN, // server confirms client join
         CLIENT_LEAVE, // client is disconnecting

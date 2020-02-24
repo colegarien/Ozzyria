@@ -5,47 +5,85 @@ namespace Ozzyria.Networking
 {
     public class Client
     {
+
         public void Start()
         {
-            var input = "";
             using (var client = new TcpClient("localhost", 13000))
             {
                 using (var serverStream = client.GetStream())
                 {
-                    PacketFactory.WritePacket(serverStream, new Model.Packet
-                    {
-                        MessageType = Model.MessageType.CLIENT_JOIN,
-                        Data = "username:password"
-                    });
+                    var clientId = AuthenticateToServer(serverStream);
 
-                    var packet = PacketFactory.ReadPacket(serverStream);
-                    if(packet.MessageType != Model.MessageType.SERVER_JOIN)
+                    var running = clientId != -1;
+                    while (running)
                     {
-                        Console.WriteLine(packet.Data);
-                        return;
-                    }
-
-                    var clientId = packet.Data; // TODO do something with this
-                    while (!input.Contains("quit"))
-                    {
-                        packet = PacketFactory.ReadPacket(serverStream);
+                        var packet = PacketFactory.ReadPacket(serverStream);
                         if (packet.MessageType == Model.MessageType.CHAT && packet.Data.Length > 0)
                         {
                             Console.WriteLine(packet.Data);
                         }
 
-                        input = "";
+                        var input = "";
                         while (input.Length <= 0)
                         {
                             input = Console.ReadLine().Trim();
                         }
+                        running = !input.Contains("quit");
                         PacketFactory.WritePacket(serverStream, new Model.Packet { 
-                            MessageType = input.Contains("quit") ? Model.MessageType.CLIENT_LEAVE : Model.MessageType.CHAT,
-                            Data = input
+                            MessageType = !running ? Model.MessageType.CLIENT_LEAVE : Model.MessageType.CHAT,
+                            Data = !running ? "Quit" : input
                         });
                     }
                 }
             }
+        }
+
+        private int AuthenticateToServer(NetworkStream serverStream)
+        {
+            var packet = PacketFactory.ReadPacket(serverStream);
+            if(packet.MessageType != Model.MessageType.HAS_SLOT)
+            {
+                Console.WriteLine(packet.Data);
+                return -1;
+            }
+
+            Console.WriteLine("What is your username:");
+            var input = "";
+            while (input.Length <= 0)
+            {
+                input = Console.ReadLine().Trim();
+            }
+            var username = input;
+
+            Console.WriteLine("What is your password:");
+            input = "";
+            while (input.Length <= 0)
+            {
+                input = Console.ReadLine().Trim();
+            }
+            var password = input;
+
+            PacketFactory.WritePacket(serverStream, new Model.Packet
+            {
+                MessageType = Model.MessageType.CLIENT_JOIN,
+                Data = username + ":" + password
+            });
+
+            packet = PacketFactory.ReadPacket(serverStream);
+            if (packet.MessageType != Model.MessageType.SERVER_JOIN)
+            {
+                Console.WriteLine(packet.Data);
+                return -1;
+            }
+
+            int id;
+            if(!int.TryParse(packet.Data.Substring(packet.Data.IndexOf(":") + 1), out id))
+            {
+                id = -1;
+            }
+
+            return id;
+
         }
     }
 }
