@@ -7,6 +7,7 @@ namespace Ozzyria.Networking.Model
         NONE,
         HAS_SLOT, // server can accept client
         CLIENT_JOIN, // client ask to join server
+        JOIN_FAILED, // client join attempt failed, retry necessary
         SERVER_JOIN, // server confirms client join
         CLIENT_LEAVE, // client is disconnecting
         SERVER_LEAVE, // server is disconnecting (shutting down probably)

@@ -47,34 +47,42 @@ namespace Ozzyria.Networking
                 return -1;
             }
 
-            Console.WriteLine("What is your username:");
-            var input = "";
-            while (input.Length <= 0)
+            do
             {
-                input = Console.ReadLine().Trim();
-            }
-            var username = input;
+                Console.WriteLine("What is your username:");
+                var input = "";
+                while (input.Length <= 0)
+                {
+                    input = Console.ReadLine().Trim();
+                }
+                var username = input;
 
-            Console.WriteLine("What is your password:");
-            input = "";
-            while (input.Length <= 0)
-            {
-                input = Console.ReadLine().Trim();
-            }
-            var password = input;
+                Console.WriteLine("What is your password:");
+                input = "";
+                while (input.Length <= 0)
+                {
+                    input = Console.ReadLine().Trim();
+                }
+                var password = input;
 
-            PacketFactory.WritePacket(serverStream, new Model.Packet
-            {
-                MessageType = Model.MessageType.CLIENT_JOIN,
-                Data = username + ":" + password
-            });
+                PacketFactory.WritePacket(serverStream, new Model.Packet
+                {
+                    MessageType = Model.MessageType.CLIENT_JOIN,
+                    Data = username + ":" + password
+                });
 
-            packet = PacketFactory.ReadPacket(serverStream);
-            if (packet.MessageType != Model.MessageType.SERVER_JOIN)
-            {
-                Console.WriteLine(packet.Data);
-                return -1;
-            }
+                packet = PacketFactory.ReadPacket(serverStream);
+                if (packet.MessageType == Model.MessageType.SERVER_REJECT)
+                {
+                    Console.WriteLine(packet.Data);
+                    return -1;
+                }
+                else if(packet.MessageType == Model.MessageType.JOIN_FAILED)
+                {
+                    Console.WriteLine(packet.Data);
+
+                }
+            } while (packet.MessageType != Model.MessageType.SERVER_JOIN);
 
             int id;
             if(!int.TryParse(packet.Data.Substring(packet.Data.IndexOf(":") + 1), out id))

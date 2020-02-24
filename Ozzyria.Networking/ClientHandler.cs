@@ -37,7 +37,7 @@ namespace Ozzyria.Networking
                         var packet = PacketFactory.ReadPacket(clientStream);
 
                         running = packet.MessageType != MessageType.CLIENT_LEAVE;
-                        Console.WriteLine(packet.Data);
+                        Console.WriteLine($"{_id}  |> {packet.Data}");
                     }
                 }
             }
@@ -56,25 +56,41 @@ namespace Ozzyria.Networking
 
         private bool AuthenticateClient(NetworkStream clientStream)
         {
-            PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = MessageType.HAS_SLOT, Data = "Slot Available" });
-            var packet = PacketFactory.ReadPacket(clientStream);
-            if (packet.MessageType != MessageType.CLIENT_JOIN)
-            {
-                Console.WriteLine($"{_id} Rejected");
-                PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = MessageType.SERVER_REJECT, Data = "Bad Request" });
-                return false;
-            }
+            PacketFactory.WritePacket(clientStream, new Packet { MessageType = MessageType.HAS_SLOT, Data = "Slot Available" });
 
-            var userData = packet.Data;
-            var username = userData.Substring(0, userData.IndexOf(":"));
-            var password = userData.Substring(userData.IndexOf(":") + 1);
-            if (username != "username" || password != "password")
-            {
-                Console.WriteLine($"{_id} Rejected");
-                PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = MessageType.SERVER_REJECT, Data = "Bad Credentials" });
-                return false;
-            }
-            PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = MessageType.SERVER_JOIN, Data = "id:" + _id });
+            var maxFails = 3;
+            var fails = 0;
+            var validCredentials = false;
+            do {
+                var packet = PacketFactory.ReadPacket(clientStream);
+                if (packet.MessageType != MessageType.CLIENT_JOIN)
+                {
+                    Console.WriteLine($"{_id} Rejected");
+                    PacketFactory.WritePacket(clientStream, new Packet { MessageType = MessageType.SERVER_REJECT, Data = "Bad Request" });
+                    return false;
+                }
+
+                var userData = packet.Data;
+                var username = userData.Substring(0, userData.IndexOf(":"));
+                var password = userData.Substring(userData.IndexOf(":") + 1);
+
+                validCredentials = username == "username" && password == "password";
+                if (!validCredentials)
+                {
+                    fails++;
+
+                    if (fails >= maxFails)
+                    {
+                        Console.WriteLine($"{_id} Rejected");
+                        PacketFactory.WritePacket(clientStream, new Packet { MessageType = MessageType.SERVER_REJECT, Data = "Bad Credentials" });
+                        return false;
+                    }
+
+                    Console.WriteLine($"{_id} Failed Auth " + fails + "/" + maxFails);
+                    PacketFactory.WritePacket(clientStream, new Packet { MessageType = MessageType.JOIN_FAILED, Data = "Bad Credentials" });
+                }
+            } while (!validCredentials);
+            PacketFactory.WritePacket(clientStream, new Packet { MessageType = MessageType.SERVER_JOIN, Data = "id:" + _id });
 
             Console.WriteLine($"{_id} Authorized");
             return true;
