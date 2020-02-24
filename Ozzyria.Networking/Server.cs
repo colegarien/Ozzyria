@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -36,25 +37,45 @@ namespace Ozzyria.Networking
             });
         }
 
-        protected static void HandleClient(object obj)
+        protected void HandleClient(object obj)
         {
             var client = (TcpClient)obj;
             try
             {
-                string message = "";
                 using (var clientStream = client.GetStream())
                 {
-                    while (message != null && !message.StartsWith("quit"))
+                    var packet = PacketFactory.ReadPacket(clientStream);
+                    if(packet.MessageType != Model.MessageType.CLIENT_JOIN)
                     {
-                        PacketBuilder.WritePacket(clientStream, "Send next data: [enter 'quit' to terminate]");
-                        message = PacketBuilder.ReadPacket(clientStream);
-                        Console.WriteLine(message);
+                        PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = Model.MessageType.SERVER_REJECT, Data = "Bad Request" });
+                        return;
+                    }
+
+                    var userData = packet.Data;
+                    var username = packet.Data.Substring(0, packet.Data.IndexOf(":"));
+                    var password = packet.Data.Substring(packet.Data.IndexOf(":")+1);
+                    if(username != "username" || password != "password")
+                    {
+                        PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = Model.MessageType.SERVER_REJECT, Data = "Bad Credentials" });
+                        return;
+                    }
+                    PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = Model.MessageType.SERVER_JOIN, Data = "client stream id here" }); // TODO implement client stream number
+
+                    var done = false;
+                    while (!done)
+                    {
+                        PacketFactory.WritePacket(clientStream, new Model.Packet { MessageType = Model.MessageType.CHAT, Data = "Send next data: [enter 'quit' to terminate]" });
+                        packet = PacketFactory.ReadPacket(clientStream);
+
+                        done = packet.MessageType == Model.MessageType.CLIENT_LEAVE;
+                        Console.WriteLine(packet.Data);
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                // Something went wrong LOL
+                // TODO : add logger
+                Console.WriteLine(e);
             }
             finally
             {
