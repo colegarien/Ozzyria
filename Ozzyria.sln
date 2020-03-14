@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.ConsoleClient", "Oz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Networking", "Ozzyria.Networking\Ozzyria.Networking.csproj", "{7873A90D-3461-45CC-9C69-B45DAD547D74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozzyria.Client", "Ozzyria.Client\Ozzyria.Client.csproj", "{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Client", "Ozzyria.Client\Ozzyria.Client.csproj", "{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

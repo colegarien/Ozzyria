@@ -5,7 +5,6 @@ namespace Ozzyria.Networking
 {
     public class Client
     {
-
         public void Start()
         {
             using (var client = new TcpClient("localhost", 13000))
