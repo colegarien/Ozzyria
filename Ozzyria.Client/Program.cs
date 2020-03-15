@@ -2,11 +2,6 @@
 using SFML.Graphics;
 using SFML.Window;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 
 namespace Ozzyria.Client
 {
@@ -17,30 +12,19 @@ namespace Ozzyria.Client
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             window.Closed += (sender, e) => { ((Window)sender).Close(); };
 
-            UdpClient udpClient = new UdpClient();
-            udpClient.Connect(IPAddress.Parse("127.0.0.1"), 13000);
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
-            var joinPacket = Encoding.ASCII.GetBytes($"{(int)ClientMessage.Join}>-1#");
-            udpClient.Send(joinPacket, joinPacket.Length);
-            var packet = Encoding.ASCII.GetString(udpClient.Receive(ref remoteIPEndPoint));
-            var messageType = Enum.Parse<ServerMessage>(packet.Substring(0, packet.IndexOf('>')));
-            if(messageType != ServerMessage.JoinResult)
+            var client = new Networking.Client("127.0.0.1", 13000);
+            if (!client.Connect())
             {
                 Console.WriteLine("Join Failed");
                 window.Close();
-                udpClient.Close();
                 return;
             }
-
-            var clientId = int.Parse(packet.Substring(packet.IndexOf('>') + 1));
-            Console.WriteLine($"Joined as client #{clientId}");
+            Console.WriteLine($"Join as Client #{client.Id}");
 
             var playerShapes = new PlayerShape[2]{
-                new PlayerShape(clientId == 0),
-                new PlayerShape(clientId == 1)
+                new PlayerShape(client.Id == 0),
+                new PlayerShape(client.Id == 1)
             };
-
             while (window.IsOpen)
             {
                 ///
@@ -56,27 +40,14 @@ namespace Ozzyria.Client
                     Quit = Keyboard.IsKeyPressed(Keyboard.Key.Escape),
                 };
 
-                var serializedInput = Encoding.ASCII.GetBytes($"{(int)ClientMessage.InputUpdate}>{clientId}#").Concat(input.Serialize()).ToArray();
-                udpClient.Send(serializedInput, serializedInput.Length);
-
-                packet = Encoding.ASCII.GetString(udpClient.Receive(ref remoteIPEndPoint));
-                messageType = Enum.Parse<ServerMessage>(packet.Substring(0, packet.IndexOf('>')));
-                if (messageType == ServerMessage.StateUpdate)
+                ///
+                /// Do Updates
+                ///
+                client.SendInput(input);
+                var states = client.GetStates();
+                foreach (var state in states)
                 {
-                    var serializedStates = packet.Substring(packet.IndexOf('>') + 1).Split('@');
-                    foreach (var serializedState in serializedStates)
-                    {
-                        if (serializedState.Trim().Length == 0)
-                        {
-                            continue;
-                        }
-                        var state = PlayerState.Deserialize(Encoding.ASCII.GetBytes(serializedState));
-
-                        ///
-                        /// UPDATE LOGIC HERE
-                        ///
-                        playerShapes[state.Id].Update(state.X, state.Y, state.Direction);
-                    }
+                    playerShapes[state.Id].Update(state.X, state.Y, state.Direction);
                 }
 
                 ///
@@ -91,11 +62,8 @@ namespace Ozzyria.Client
 
                 if (input.Quit)
                 {
-                    var leavePacket = Encoding.ASCII.GetBytes($"{(int)ClientMessage.Leave}>{clientId}#");
-                    udpClient.Send(leavePacket, leavePacket.Length);
-
+                    client.Disconnect();
                     window.Close();
-                    udpClient.Close();
                 }
             }
         }
@@ -109,7 +77,9 @@ namespace Ozzyria.Client
             {
                 body = new CircleShape(10f);
                 body.FillColor = isLocalPlayer ? Color.Green : Color.Cyan;
+
                 nose = new RectangleShape(new SFML.System.Vector2f(2, 15));
+                nose.Position = new SFML.System.Vector2f(body.Position.X + 10, body.Position.Y + 10);
                 nose.Origin = new SFML.System.Vector2f(1, 0);
                 nose.FillColor = isLocalPlayer ? Color.Red : Color.Magenta;
             }
