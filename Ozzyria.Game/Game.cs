@@ -119,7 +119,6 @@ namespace Ozzyria.Game
                 ///
                 player.X += player.Speed * deltaTime * (float)Math.Sin(player.LookDirection + player.MoveDirection);
                 player.Y += player.Speed * deltaTime * (float)Math.Cos(player.LookDirection + player.MoveDirection);
-
             }
         }
 

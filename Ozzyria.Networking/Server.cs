@@ -14,7 +14,7 @@ namespace Ozzyria.Networking
 
         const float SECONDS_PER_TICK = 0.016f;
         const int TIMEOUT_MINUTES = 5;
-        const int MAX_CLIENTS = 2;
+        const int MAX_CLIENTS = 8;
 
         private readonly IPEndPoint[] clients;
         private readonly DateTime[] clientLastHeardFrom;

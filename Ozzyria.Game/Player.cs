@@ -11,7 +11,6 @@ namespace Ozzyria.Game
         public float MoveDirection { get; set; } = 0f;
         public float LookDirection { get; set; } = 0f;
 
-
         public byte[] Serialize()
         {
             return Encoding.ASCII.GetBytes($"{Id}|{X}|{Y}|{Speed}|{MoveDirection}|{LookDirection}");

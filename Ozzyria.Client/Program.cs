@@ -2,6 +2,8 @@
 using SFML.Graphics;
 using SFML.Window;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ozzyria.Client
 {
@@ -21,10 +23,9 @@ namespace Ozzyria.Client
             }
             Console.WriteLine($"Join as Client #{client.Id}");
 
-            var playerShapes = new PlayerShape[2]{
-                new PlayerShape(client.Id == 0),
-                new PlayerShape(client.Id == 1)
-            };
+            var playerShapes = new Dictionary<int, PlayerShape>();
+            playerShapes[client.Id] = new PlayerShape();
+
             while (window.IsOpen)
             {
                 ///
@@ -49,6 +50,12 @@ namespace Ozzyria.Client
                 var players = client.GetPlayers();
                 foreach (var player in players)
                 {
+                    if (!playerShapes.ContainsKey(player.Id))
+                    {
+                        playerShapes[player.Id] = new PlayerShape();
+                    }
+                    playerShapes[player.Id].Visible = true;
+                    playerShapes[player.Id].IsLocalPlayer = player.Id == client.Id;
                     playerShapes[player.Id].Update(player.X, player.Y, player.LookDirection);
                 }
 
@@ -56,9 +63,10 @@ namespace Ozzyria.Client
                 /// DRAWING HERE
                 ///
                 window.Clear();
-                foreach (var playerShape in playerShapes)
+                foreach (var playerShape in playerShapes.Values.Reverse())
                 {
                     playerShape.Draw(window);
+                    playerShape.Visible = false;
                 }
                 window.Display();
 
@@ -72,18 +80,19 @@ namespace Ozzyria.Client
 
         class PlayerShape
         {
+            public bool Visible { get; set; }
+            public bool IsLocalPlayer { get; set; }
+
             private CircleShape body;
             private RectangleShape nose;
 
-            public PlayerShape(bool isLocalPlayer)
+            public PlayerShape()
             {
                 body = new CircleShape(10f);
-                body.FillColor = isLocalPlayer ? Color.Green : Color.Cyan;
 
                 nose = new RectangleShape(new SFML.System.Vector2f(2, 15));
                 nose.Position = new SFML.System.Vector2f(body.Position.X + 10, body.Position.Y + 10);
                 nose.Origin = new SFML.System.Vector2f(1, 0);
-                nose.FillColor = isLocalPlayer ? Color.Red : Color.Magenta;
             }
 
             public void Update(float x, float y, float angle)
@@ -95,6 +104,20 @@ namespace Ozzyria.Client
 
             public void Draw(RenderWindow window)
             {
+                if (!Visible)
+                    return;
+
+                if (IsLocalPlayer)
+                {
+                    body.FillColor = Color.Green;
+                    nose.FillColor = Color.Red;
+                }
+                else
+                {
+                    body.FillColor = Color.Cyan;
+                    nose.FillColor = Color.Magenta;
+                }
+
                 window.Draw(body);
                 window.Draw(nose);
             }
