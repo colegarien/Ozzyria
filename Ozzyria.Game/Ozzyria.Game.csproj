@@ -4,8 +4,4 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Ozzyria.Game\Ozzyria.Game.csproj" />
-  </ItemGroup>
-
 </Project>

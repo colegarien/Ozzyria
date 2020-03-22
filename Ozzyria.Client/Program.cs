@@ -1,4 +1,4 @@
-﻿using Ozzyria.Networking.Model;
+﻿using Ozzyria.Game;
 using SFML.Graphics;
 using SFML.Window;
 using System;
@@ -31,23 +31,25 @@ namespace Ozzyria.Client
                 /// EVENT HANDLING HERE
                 ///
                 window.DispatchEvents();
-                var input = new PlayerInput
+                var quit = Keyboard.IsKeyPressed(Keyboard.Key.Escape);
+                var input = new Input
                 {
-                    Up = Keyboard.IsKeyPressed(Keyboard.Key.W),
-                    Down = Keyboard.IsKeyPressed(Keyboard.Key.S),
-                    Left = Keyboard.IsKeyPressed(Keyboard.Key.A),
-                    Right = Keyboard.IsKeyPressed(Keyboard.Key.D),
-                    Quit = Keyboard.IsKeyPressed(Keyboard.Key.Escape),
+                    MoveUp = Keyboard.IsKeyPressed(Keyboard.Key.W),
+                    MoveDown = Keyboard.IsKeyPressed(Keyboard.Key.S),
+                    MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.A),
+                    MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.D),
+                    TurnLeft = Keyboard.IsKeyPressed(Keyboard.Key.Q),
+                    TurnRight = Keyboard.IsKeyPressed(Keyboard.Key.E)
                 };
 
                 ///
                 /// Do Updates
                 ///
                 client.SendInput(input);
-                var states = client.GetStates();
-                foreach (var state in states)
+                var players = client.GetPlayers();
+                foreach (var player in players)
                 {
-                    playerShapes[state.Id].Update(state.X, state.Y, state.Direction);
+                    playerShapes[player.Id].Update(player.X, player.Y, player.LookDirection);
                 }
 
                 ///
@@ -60,7 +62,7 @@ namespace Ozzyria.Client
                 }
                 window.Display();
 
-                if (input.Quit)
+                if (quit)
                 {
                     client.Disconnect();
                     window.Close();

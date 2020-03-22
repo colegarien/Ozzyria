@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -40,7 +41,7 @@ namespace Ozzyria.Networking.Model
             return Encoding.ASCII.GetBytes($"{(int)ClientMessage.Leave}>{clientId}#");
         }
 
-        public static byte[] PlayerInput(int clientId, PlayerInput input)
+        public static byte[] InputUpdate(int clientId, Input input)
         {
             return Encoding.ASCII.GetBytes($"{(int)ClientMessage.InputUpdate}>{clientId}#").Concat(input.Serialize()).ToArray();
         }

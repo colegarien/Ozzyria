@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,10 +35,10 @@ namespace Ozzyria.Networking.Model
         }
 
 
-        public static byte[] PlayerState(PlayerState[] states)
+        public static byte[] PlayerUpdates(Player[] players)
         {
             var serializedPlayerState = Encoding.ASCII.GetBytes($"{(int)ServerMessage.StateUpdate}>").ToList();
-            foreach (var state in states)
+            foreach (var state in players)
             {
                 if (state == null)
                 {
@@ -50,9 +51,9 @@ namespace Ozzyria.Networking.Model
             return serializedPlayerState.ToArray();
         }
 
-        public static PlayerState[] ParsePlayerState(byte[] packet)
+        public static Player[] ParsePlayerState(byte[] packet)
         {
-            var states = new List<PlayerState>();
+            var players = new List<Player>();
 
             var packetString = Encoding.ASCII.GetString(packet);
             var messageType = Enum.Parse<ServerMessage>(packetString.Substring(0, packetString.IndexOf('>')));
@@ -66,11 +67,11 @@ namespace Ozzyria.Networking.Model
                         continue;
                     }
 
-                    states.Add(Model.PlayerState.Deserialize(Encoding.ASCII.GetBytes(serializedState)));
+                    players.Add(Player.Deserialize(Encoding.ASCII.GetBytes(serializedState)));
                 }
             }
 
-            return states.ToArray();
+            return players.ToArray();
         }
 
     }

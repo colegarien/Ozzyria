@@ -1,4 +1,5 @@
-﻿using Ozzyria.Networking.Model;
+﻿using Ozzyria.Game;
+using Ozzyria.Networking.Model;
 using System.Net;
 using System.Net.Sockets;
 
@@ -16,7 +17,12 @@ namespace Ozzyria.Networking
             connected = false;
 
             udpClient = new UdpClient();
-            udpClient.Connect(IPAddress.Parse(hostname), port);
+            IPAddress ip;
+            if (!IPAddress.TryParse(hostname, out ip))
+            {
+                ip = Dns.GetHostEntry(hostname).AddressList[0];
+            }
+            udpClient.Connect(ip, port);
         }
 
         public bool Connect()
@@ -41,22 +47,22 @@ namespace Ozzyria.Networking
             return true;
         }
 
-        public void SendInput(PlayerInput input)
+        public void SendInput(Input input)
         {
             if (!connected)
             {
                 return; 
             }
 
-            var inputPacket = ClientPacketFactory.PlayerInput(Id, input);
+            var inputPacket = ClientPacketFactory.InputUpdate(Id, input);
             udpClient.Send(inputPacket, inputPacket.Length);
         }
 
-        public PlayerState[] GetStates()
+        public Player[] GetPlayers()
         {
             if (!connected)
             {
-                return new PlayerState[] { };
+                return new Player[] { };
             }
 
             IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
