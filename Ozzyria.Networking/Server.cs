@@ -2,6 +2,7 @@
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace Ozzyria.Networking
             clients = new IPEndPoint[MAX_CLIENTS];
             clientLastHeardFrom = new DateTime[MAX_CLIENTS];
 
-            game = new Game.Game(MAX_CLIENTS);
+            game = new Game.Game();
             server = new UdpClient(SERVER_PORT);
         }
 
@@ -83,7 +84,7 @@ namespace Ozzyria.Networking
                     case ClientMessage.InputUpdate:
                         if (IsValidEndPoint(messageClient, clientEndPoint))
                         {
-                            game.OnPlayerInput(messageClient, Input.Deserialize(messageData));
+                            game.OnPlayerInput(messageClient, ClientPacketFactory.ParseInputData(messageData));
                             clientLastHeardFrom[messageClient] = DateTime.Now;
                         }
                         break;
@@ -112,15 +113,20 @@ namespace Ozzyria.Networking
 
         private void SendState()
         {
-            var statePacket = ServerPacketFactory.PlayerUpdates(game.players);
+            var statePacket = ServerPacketFactory.PlayerUpdates(game.players.Values.ToArray());
+            SendToAll(statePacket);
+        }
+
+        private void SendToAll(byte[] packet, int exclude = -1)
+        {
             for (var i = 0; i < MAX_CLIENTS; i++)
             {
-                if (!IsConnected(i))
+                if (!IsConnected(i) || exclude == i)
                 {
                     continue;
                 }
 
-                server.Send(statePacket, statePacket.Length, clients[i]);
+                server.Send(packet, packet.Length, clients[i]);
             }
         }
 
@@ -135,6 +141,7 @@ namespace Ozzyria.Networking
                 // Haven't heard from client in a while
                 clients[clientId] = null;
                 game.OnPlayerLeave(clientId);
+                Console.WriteLine($"Client #{clientId} timed out");
 
                 return false;
             }

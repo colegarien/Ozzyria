@@ -1,8 +1,5 @@
 ﻿using Ozzyria.Game;
-using System;
-using System.Linq;
-using System.Text;
-
+using System.IO;
 namespace Ozzyria.Networking.Model
 {
     public enum ClientMessage
@@ -23,27 +20,78 @@ namespace Ozzyria.Networking.Model
     {
         public static ClientPacket Parse(byte[] packet)
         {
-            var packetString = Encoding.ASCII.GetString(packet);
-            return new ClientPacket
+            using (MemoryStream m = new MemoryStream(packet))
             {
-                Type = Enum.Parse<ClientMessage>(packetString.Substring(0, packetString.IndexOf('>'))),
-                ClientId = int.Parse(packetString.Substring(packetString.IndexOf('>') + 1, packetString.IndexOf('#') - (packetString.IndexOf('>') + 1))),
-                Data = Encoding.ASCII.GetBytes(packetString.Substring(packetString.IndexOf('#') + 1))
-            };
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new ClientPacket {
+                        Type = (ClientMessage)reader.ReadInt32(),
+                        ClientId = reader.ReadInt32(),
+                        Data = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position))
+                    };
+                }
+            }
         }
 
         public static byte[] Join()
         {
-            return Encoding.ASCII.GetBytes($"{(int)ClientMessage.Join}>-1#");
+            return Pack(ClientMessage.Join, -1, new byte[] { });
         }
         public static byte[] Leave(int clientId)
         {
-            return Encoding.ASCII.GetBytes($"{(int)ClientMessage.Leave}>{clientId}#");
+            return Pack(ClientMessage.Leave, clientId, new byte[] { });
         }
 
         public static byte[] InputUpdate(int clientId, Input input)
         {
-            return Encoding.ASCII.GetBytes($"{(int)ClientMessage.InputUpdate}>{clientId}#").Concat(input.Serialize()).ToArray();
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ClientMessage.InputUpdate);
+                    writer.Write(clientId);
+                    writer.Write(input.MoveUp);
+                    writer.Write(input.MoveDown);
+                    writer.Write(input.MoveLeft);
+                    writer.Write(input.MoveRight);
+                    writer.Write(input.TurnLeft);
+                    writer.Write(input.TurnRight);
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static Input ParseInputData(byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new Input()
+                    {
+                        MoveUp = reader.ReadBoolean(),
+                        MoveDown = reader.ReadBoolean(),
+                        MoveLeft = reader.ReadBoolean(),
+                        MoveRight = reader.ReadBoolean(),
+                        TurnLeft = reader.ReadBoolean(),
+                        TurnRight = reader.ReadBoolean(),
+                    };
+                }
+            }
+        }
+
+        private static byte[] Pack(ClientMessage type, int clientId, byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)type);
+                    writer.Write(clientId);
+                    writer.Write(data);
+                }
+                return m.ToArray();
+            }
         }
     }
 }

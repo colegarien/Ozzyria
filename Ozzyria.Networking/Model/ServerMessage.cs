@@ -1,8 +1,6 @@
 ﻿using Ozzyria.Game;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 
 namespace Ozzyria.Networking.Model
 {
@@ -10,64 +8,85 @@ namespace Ozzyria.Networking.Model
     {
         JoinResult = 0,
         JoinReject = 1,
-        StateUpdate = 2,
+        PlayerStateUpdate = 2,
     }
 
     class ServerPacketFactory
     {
         public static byte[] Join(int clientId)
         {
-            return clientId <= -1
-                ? Encoding.ASCII.GetBytes($"{(int)ServerMessage.JoinReject}>")
-                : Encoding.ASCII.GetBytes($"{(int)ServerMessage.JoinResult}>{clientId}");
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    var messageType = clientId <= -1 ? ServerMessage.JoinReject : ServerMessage.JoinResult;
+                    writer.Write((int)messageType);
+                    writer.Write(clientId);
+                }
+                return m.ToArray();
+            }
         }
 
         public static int ParseJoin(byte[] packet)
         {
-            var packetString = Encoding.ASCII.GetString(packet);
-            var messageType = Enum.Parse<ServerMessage>(packetString.Substring(0, packetString.IndexOf('>')));
-            if (messageType != ServerMessage.JoinResult)
+            using (MemoryStream m = new MemoryStream(packet))
             {
-                return -1;
-            }
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    var messageType = (ServerMessage)reader.ReadInt32();
+                    if (messageType != ServerMessage.JoinResult)
+                    {
+                        return -1;
+                    }
 
-            return int.Parse(packetString.Substring(packetString.IndexOf('>') + 1));
+                    return reader.ReadInt32();
+                }
+            }
         }
 
 
         public static byte[] PlayerUpdates(Player[] players)
         {
-            var serializedPlayerState = Encoding.ASCII.GetBytes($"{(int)ServerMessage.StateUpdate}>").ToList();
-            foreach (var state in players)
+            using (MemoryStream m = new MemoryStream())
             {
-                if (state == null)
+                using (BinaryWriter writer = new BinaryWriter(m))
                 {
-                    continue;
+                    writer.Write((int)ServerMessage.PlayerStateUpdate);
+                    foreach(var player in players)
+                    {
+                        writer.Write(player.Id);
+                        writer.Write(player.X);
+                        writer.Write(player.Y);
+                        writer.Write(player.Speed);
+                        writer.Write(player.MoveDirection);
+                        writer.Write(player.LookDirection);
+                    }
                 }
-
-                serializedPlayerState = serializedPlayerState.Concat(state.Serialize()).Concat(Encoding.ASCII.GetBytes("@")).ToList();
+                return m.ToArray();
             }
-
-            return serializedPlayerState.ToArray();
         }
 
         public static Player[] ParsePlayerState(byte[] packet)
         {
             var players = new List<Player>();
 
-            var packetString = Encoding.ASCII.GetString(packet);
-            var messageType = Enum.Parse<ServerMessage>(packetString.Substring(0, packetString.IndexOf('>')));
-            if (messageType == ServerMessage.StateUpdate)
+            using (MemoryStream m = new MemoryStream(packet))
             {
-                var serializedStates = packetString.Substring(packetString.IndexOf('>') + 1).Split('@');
-                foreach (var serializedState in serializedStates)
+                using (BinaryReader reader = new BinaryReader(m))
                 {
-                    if (serializedState.Trim().Length == 0)
+                    var packetType = (ClientMessage)reader.ReadInt32();
+                    while(reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        continue;
+                        players.Add(new Player
+                        {
+                            Id = reader.ReadInt32(),
+                            X = reader.ReadSingle(),
+                            Y = reader.ReadSingle(),
+                            Speed = reader.ReadSingle(),
+                            MoveDirection = reader.ReadSingle(),
+                            LookDirection = reader.ReadSingle(),
+                        });
                     }
-
-                    players.Add(Player.Deserialize(Encoding.ASCII.GetBytes(serializedState)));
                 }
             }
 
