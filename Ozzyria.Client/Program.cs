@@ -14,6 +14,9 @@ namespace Ozzyria.Client
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             window.Closed += (sender, e) => { ((Window)sender).Close(); };
 
+            var cameraX = 0f;
+            var cameraY = 0f;
+
             var client = new Networking.Client("127.0.0.1", 13000);
             if (!client.Connect())
             {
@@ -57,16 +60,45 @@ namespace Ozzyria.Client
                     playerShapes[player.Id].Visible = true;
                     playerShapes[player.Id].IsLocalPlayer = player.Id == client.Id;
                     playerShapes[player.Id].Update(player.X, player.Y, player.LookDirection);
+
+                    // center camera on player
+                    /*if(player.Id == client.Id)
+                    {
+                        cameraX = player.X - (window.Size.X / 2f);
+                        cameraY = player.Y - (window.Size.Y / 2f);
+                    }*/
+                }
+
+                var orbs = client.GetExperienceOrbs();
+                var orbShapes = new List<OrbShape>();
+                foreach(var orb in orbs)
+                {
+                    orbShapes.Add(new OrbShape(orb.X, orb.Y));
                 }
 
                 ///
                 /// DRAWING HERE
                 ///
                 window.Clear();
+                foreach(var shape in orbShapes)
+                {
+                    shape.Draw(window, cameraX, cameraY);
+                }
                 foreach (var playerShape in playerShapes.Values.Reverse())
                 {
-                    playerShape.Draw(window);
+                    playerShape.Draw(window, cameraX, cameraY);
                     playerShape.Visible = false;
+                }
+
+                for (var i = 0; i<10;  i++) {
+                    var player = players.Where(p => p.Id == client.Id).FirstOrDefault();
+                    var active = (float)(player?.Experience ?? 0f) / (float)(player?.MaxExperience ?? 1f);
+                    window.Draw(new RectangleShape()
+                    {
+                        Position = new SFML.System.Vector2f(22*i, 590),
+                        Size = new SFML.System.Vector2f(20, 10),
+                        FillColor = i < Math.Round(active*10) ? Color.Yellow : Color.Magenta
+                    });
                 }
                 window.Display();
 
@@ -76,6 +108,26 @@ namespace Ozzyria.Client
                     window.Close();
                 }
             }
+        }
+
+        class OrbShape
+        {
+            private CircleShape body;
+
+            public OrbShape(float x, float y)
+            {
+                body = new CircleShape(3f);
+                body.FillColor = Color.Yellow;
+                body.Position = new SFML.System.Vector2f(x - body.Radius, y - body.Radius);
+            }
+
+            public void Draw(RenderWindow window, float cameraX, float cameraY)
+            {
+                body.Position = new SFML.System.Vector2f(body.Position.X - cameraX, body.Position.Y - cameraY);
+                window.Draw(body);
+                body.Position = new SFML.System.Vector2f(body.Position.X + cameraX, body.Position.Y + cameraY);
+            }
+
         }
 
         class PlayerShape
@@ -97,12 +149,13 @@ namespace Ozzyria.Client
 
             public void Update(float x, float y, float angle)
             {
-                body.Position = new SFML.System.Vector2f(x, y);
-                nose.Position = new SFML.System.Vector2f(x + 10, y + 10);
+                // Draw body centered on x and y
+                body.Position = new SFML.System.Vector2f(x-body.Radius, y-body.Radius);
+                nose.Position = new SFML.System.Vector2f(body.Position.X + 10, body.Position.Y + 10);
                 nose.Rotation = -(180f / (float)Math.PI) * angle;
             }
 
-            public void Draw(RenderWindow window)
+            public void Draw(RenderWindow window, float cameraX, float cameraY)
             {
                 if (!Visible)
                     return;
@@ -118,8 +171,13 @@ namespace Ozzyria.Client
                     nose.FillColor = Color.Magenta;
                 }
 
+
+                body.Position = new SFML.System.Vector2f(body.Position.X - cameraX, body.Position.Y - cameraY);
+                nose.Position = new SFML.System.Vector2f(body.Position.X + 10, body.Position.Y + 10);
                 window.Draw(body);
                 window.Draw(nose);
+                body.Position = new SFML.System.Vector2f(body.Position.X + cameraX, body.Position.Y + cameraY);
+                nose.Position = new SFML.System.Vector2f(body.Position.X + 10, body.Position.Y + 10);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace Ozzyria.Networking
         {
             try
             {
-                Console.WriteLine($"Serer Started - Listening on port {SERVER_PORT}");
+                Console.WriteLine($"Server Started - Listening on port {SERVER_PORT}");
                 Stopwatch stopWatch = new Stopwatch();
                 var isRunning = true;
                 while (isRunning)
@@ -115,6 +115,9 @@ namespace Ozzyria.Networking
         {
             var statePacket = ServerPacketFactory.PlayerUpdates(game.players.Values.ToArray());
             SendToAll(statePacket);
+
+            var orbPacket = ServerPacketFactory.ExperienceOrbUpdates(game.orbs.ToArray());
+            SendToAll(orbPacket);
         }
 
         private void SendToAll(byte[] packet, int exclude = -1)

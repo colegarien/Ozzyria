@@ -69,6 +69,17 @@ namespace Ozzyria.Networking
             return ServerPacketFactory.ParsePlayerState(udpClient.Receive(ref remoteIPEndPoint));
         }
 
+        public ExperienceOrb[] GetExperienceOrbs()
+        {
+            if (!connected)
+            {
+                return new ExperienceOrb[] { };
+            }
+
+            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            return ServerPacketFactory.ParseExperenceOrbs(udpClient.Receive(ref remoteIPEndPoint));
+        }
+
         public void Disconnect()
         {
             if (!connected)

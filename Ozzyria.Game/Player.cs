@@ -9,15 +9,52 @@ namespace Ozzyria.Game
         const float TURN_SPEED = 5f;
 
         public int Id { get; set; } = -1;
+        #region movement
         public float X { get; set; } = 0f;
         public float Y { get; set; } = 0f;
         public float Speed { get; set; } = 0f;
         public float MoveDirection { get; set; } = 0f;
         public float LookDirection { get; set; } = 0f;
+        #endregion
+        #region stats
+        public int Experience { get; set; } = 0;
+        public int MaxExperience { get; set; } = 100;
+        #endregion
 
         public void Update(float deltaTime, Input input)
         {
+            HandleInput(deltaTime, input);
 
+            X += Speed * deltaTime * (float)Math.Sin(LookDirection + MoveDirection);
+            Y += Speed * deltaTime * (float)Math.Cos(LookDirection + MoveDirection);
+        }
+
+        public void AddExperience(int experience)
+        {
+            Experience += experience;
+            if (Experience >= MaxExperience)
+            {
+                LevelUp();
+            }
+        }
+
+        private void LevelUp()
+        {
+            Experience -= MaxExperience;
+            MaxExperience += (int)Math.Sqrt(MaxExperience);
+
+            if(Experience < 0)
+            {
+                Experience = 0;
+            }
+            else if(Experience >= MaxExperience)
+            {
+                LevelUp();
+            }
+        }
+
+        private void HandleInput(float deltaTime, Input input)
+        {
             if (input.TurnLeft)
             {
                 LookDirection += TURN_SPEED * deltaTime;
@@ -86,12 +123,6 @@ namespace Ozzyria.Game
                 else if (input.MoveLeft)
                     MoveDirection = backwardFortyFive;
             }
-
-            ///
-            /// UPDATE LOGIC HERE
-            ///
-            X += Speed * deltaTime * (float)Math.Sin(LookDirection + MoveDirection);
-            Y += Speed * deltaTime * (float)Math.Cos(LookDirection + MoveDirection);
         }
     }
 }
