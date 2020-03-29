@@ -8,5 +8,6 @@
         public bool MoveRight { get; set; } = false;
         public bool TurnLeft { get; set; } = false;
         public bool TurnRight { get; set; } = false;
+        public bool Attack { get; set; } = false;
     }
 }

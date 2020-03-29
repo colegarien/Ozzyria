@@ -63,6 +63,11 @@ namespace Ozzyria.Networking.Model
                         writer.Write(player.LookDirection);
                         writer.Write(player.Experience);
                         writer.Write(player.MaxExperience);
+                        writer.Write(player.Health);
+                        writer.Write(player.MaxHealth);
+                        writer.Write(player.AttackDelay);
+                        writer.Write(player.AttackTimer);
+                        writer.Write(player.Attacking);
                     }
                 }
                 return m.ToArray();
@@ -89,8 +94,13 @@ namespace Ozzyria.Networking.Model
                             MoveDirection = reader.ReadSingle(),
                             LookDirection = reader.ReadSingle(),
                             Experience = reader.ReadInt32(),
-                            MaxExperience = reader.ReadInt32()
-                    });
+                            MaxExperience = reader.ReadInt32(),
+                            Health = reader.ReadInt32(),
+                            MaxHealth = reader.ReadInt32(),
+                            AttackDelay = reader.ReadSingle(),
+                            AttackTimer = reader.ReadSingle(),
+                            Attacking = reader.ReadBoolean()
+                        });
                     }
                 }
             }

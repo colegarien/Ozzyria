@@ -19,6 +19,13 @@ namespace Ozzyria.Game
         #region stats
         public int Experience { get; set; } = 0;
         public int MaxExperience { get; set; } = 100;
+        public int Health { get; set; } = 100;
+        public int MaxHealth { get; set; } = 100;
+        #endregion
+        #region combat
+        public float AttackDelay { get; set; } = 0.5f;
+        public float AttackTimer { get; set; } = 0f;
+        public bool Attacking { get; set; } = false;
         #endregion
 
         public void Update(float deltaTime, Input input)
@@ -122,6 +129,29 @@ namespace Ozzyria.Game
                     MoveDirection = -backwardFortyFive;
                 else if (input.MoveLeft)
                     MoveDirection = backwardFortyFive;
+            }
+
+            HandleAttackTimer(deltaTime, input);
+        }
+
+        private void HandleAttackTimer(float deltaTime, Input input)
+        {
+            if (AttackTimer < AttackDelay)
+            {
+                // rechard attack timer
+                AttackTimer += deltaTime;
+            }
+
+            if (AttackTimer >= AttackDelay && input.Attack)
+            {
+                // has been long enough since last attack
+                AttackTimer -= AttackDelay;
+                Attacking = true;
+            }
+            else
+            {
+                // waiting to attack again, or not currently attacking
+                Attacking = false;
             }
         }
     }
