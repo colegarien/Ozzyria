@@ -35,15 +35,15 @@ namespace Ozzyria.Client
                 /// EVENT HANDLING HERE
                 ///
                 window.DispatchEvents();
-                var quit = Keyboard.IsKeyPressed(Keyboard.Key.Escape);
+                var quit = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.Escape);
                 var input = new Input
                 {
-                    MoveUp = Keyboard.IsKeyPressed(Keyboard.Key.W),
-                    MoveDown = Keyboard.IsKeyPressed(Keyboard.Key.S),
-                    MoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.A),
-                    MoveRight = Keyboard.IsKeyPressed(Keyboard.Key.D),
-                    TurnLeft = Keyboard.IsKeyPressed(Keyboard.Key.Q),
-                    TurnRight = Keyboard.IsKeyPressed(Keyboard.Key.E)
+                    MoveUp = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.W),
+                    MoveDown = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.S),
+                    MoveLeft = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.A),
+                    MoveRight = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.D),
+                    TurnLeft = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.Q),
+                    TurnRight = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.E)
                 };
 
                 ///
