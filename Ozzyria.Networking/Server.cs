@@ -29,6 +29,7 @@ namespace Ozzyria.Networking
             clientLastHeardFrom = new DateTime[MAX_CLIENTS];
 
             game = new Game.Game();
+
             server = new UdpClient(SERVER_PORT);
         }
 

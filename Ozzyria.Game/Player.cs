@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game.Utility;
+using System;
 
 namespace Ozzyria.Game
 {
@@ -26,6 +27,9 @@ namespace Ozzyria.Game
         public float AttackDelay { get; set; } = 0.5f;
         public float AttackTimer { get; set; } = 0f;
         public bool Attacking { get; set; } = false;
+        public float AttackAngle { get; set; } = 0.78f; // forty-five degrees-ish
+        public float AttackRange { get; set; } = 20f;
+        public int AttackDamage { get; set; } = 5;
         #endregion
 
         public void Update(float deltaTime, Input input)
@@ -42,6 +46,15 @@ namespace Ozzyria.Game
             if (Experience >= MaxExperience)
             {
                 LevelUp();
+            }
+        }
+
+        public void Damage(int damage)
+        {
+            Health -= damage;
+            if(Health < 0)
+            {
+                Health = 0;
             }
         }
 
@@ -64,12 +77,13 @@ namespace Ozzyria.Game
         {
             if (input.TurnLeft)
             {
-                LookDirection += TURN_SPEED * deltaTime;
+                LookDirection = AngleHelper.Clamp(LookDirection + (TURN_SPEED * deltaTime));
             }
             if (input.TurnRight)
             {
-                LookDirection -= TURN_SPEED * deltaTime;
+                LookDirection = AngleHelper.Clamp(LookDirection - (TURN_SPEED * deltaTime));
             }
+
             if (input.MoveUp || input.MoveDown || input.MoveLeft || input.MoveRight)
             {
                 Speed += ACCELERATION * deltaTime;
@@ -104,11 +118,11 @@ namespace Ozzyria.Game
             }
             else if (input.MoveDown && !input.MoveLeft && !input.MoveRight && !input.MoveUp)
             {
-                MoveDirection = (float)(Math.PI);
+                MoveDirection = AngleHelper.Pi;
             }
             else if (!input.MoveUp && !input.MoveDown)
             {
-                var sideways = (float)(Math.PI / 2f);
+                var sideways = AngleHelper.PiOverTwo;
                 if (input.MoveRight)
                     MoveDirection = -sideways;
                 else if (input.MoveLeft)
@@ -116,7 +130,7 @@ namespace Ozzyria.Game
             }
             else if (input.MoveUp && !input.MoveDown)
             {
-                var forwardFortyFive = (float)(Math.PI / 4f);
+                var forwardFortyFive = AngleHelper.PiOverFour;
                 if (input.MoveRight)
                     MoveDirection = -forwardFortyFive;
                 else if (input.MoveLeft)
@@ -124,7 +138,7 @@ namespace Ozzyria.Game
             }
             else if (input.MoveDown && !input.MoveUp)
             {
-                var backwardFortyFive = (float)((3f * Math.PI) / 4f);
+                var backwardFortyFive = AngleHelper.ThreePiOverFour;
                 if (input.MoveRight)
                     MoveDirection = -backwardFortyFive;
                 else if (input.MoveLeft)
@@ -138,7 +152,7 @@ namespace Ozzyria.Game
         {
             if (AttackTimer < AttackDelay)
             {
-                // rechard attack timer
+                // recharge attack timer
                 AttackTimer += deltaTime;
             }
 

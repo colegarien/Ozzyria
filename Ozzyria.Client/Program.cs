@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Utility;
 using SFML.Graphics;
 using SFML.Window;
 using System;
@@ -184,8 +185,7 @@ namespace Ozzyria.Client
             {
                 // Draw body centered on x and y
                 MoveBody(x - body.Radius, y - body.Radius);
-                // radians to degrees
-                nose.Rotation = -(180f / (float)Math.PI) * angle;
+                nose.Rotation = AngleHelper.RadiansToDegrees(angle);
 
                 if (LastAttack > 0) {
                     LastAttack -= deltaTime;

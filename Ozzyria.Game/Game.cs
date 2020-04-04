@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,6 +54,18 @@ namespace Ozzyria.Game
                 var player = idPlayerPair.Value;
 
                 player.Update(deltaTime, input);
+                if (player.Attacking)
+                {
+                    var playersInRange = players.Values.Where(p => p.Id != player.Id && Math.Sqrt(Math.Pow(p.X - player.X, 2) + Math.Pow(p.Y - player.Y, 2)) <= player.AttackRange);
+                    foreach(var target in playersInRange)
+                    {
+                        var angleToTarget = (float)Math.Atan2(target.X - player.X, target.Y - player.Y);
+                        if (AngleHelper.IsInArc(angleToTarget, player.LookDirection, player.AttackAngle))
+                        {
+                            target.Damage(player.AttackDamage);
+                        }
+                    }
+                }
             }
 
             foreach(var orb in orbs)
