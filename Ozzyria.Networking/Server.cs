@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Event;
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Threading;
 
 namespace Ozzyria.Networking
 {
-    public class Server
+    public class Server : IEventHandler
     {
         const int SERVER_PORT = 13000;
 
@@ -29,6 +30,7 @@ namespace Ozzyria.Networking
             clientLastHeardFrom = new DateTime[MAX_CLIENTS];
 
             game = new Game.Game();
+            game.AttachEventHandler(this);
 
             server = new UdpClient(SERVER_PORT);
         }
@@ -158,5 +160,16 @@ namespace Ozzyria.Networking
             return clients[clientId] != null && clients[clientId].Equals(endPoint);
         }
 
+        public bool CanHandle(IEvent gameEvent)
+        {
+            return gameEvent is PlayerDead;
+        }
+
+        public void Handle(IEvent gameEvent)
+        {
+            // just re-join game on death
+            var playerId = ((PlayerDead)gameEvent).PlayerId;
+            game.OnPlayerJoin(playerId);
+        }
     }
 }

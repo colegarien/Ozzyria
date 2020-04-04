@@ -52,10 +52,16 @@ namespace Ozzyria.Game
         public void Damage(int damage)
         {
             Health -= damage;
-            if(Health < 0)
+
+            if (IsDead())
             {
                 Health = 0;
             }
+        }
+
+        public bool IsDead()
+        {
+            return Health <= 0;
         }
 
         private void LevelUp()
