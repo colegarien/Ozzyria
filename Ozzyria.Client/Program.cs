@@ -19,8 +19,8 @@ namespace Ozzyria.Client
             var cameraX = 0f;
             var cameraY = 0f;
 
-            var client = new Networking.Client("127.0.0.1", 13000);
-            if (!client.Connect())
+            var client = new Networking.Client();
+            if (!client.Connect("127.0.0.1", 13000))
             {
                 Console.WriteLine("Join Failed");
                 window.Close();

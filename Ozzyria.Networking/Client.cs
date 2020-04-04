@@ -11,40 +11,49 @@ namespace Ozzyria.Networking
         private bool connected;
         private UdpClient udpClient;
 
-        public Client(string hostname, int port)
+        public Client()
         {
             Id = -1;
             connected = false;
 
             udpClient = new UdpClient();
-            IPAddress ip;
-            if (!IPAddress.TryParse(hostname, out ip))
-            {
-                ip = Dns.GetHostEntry(hostname).AddressList[0];
-            }
-            udpClient.Connect(ip, port);
         }
 
-        public bool Connect()
+        public bool Connect(string hostname, int port)
         {
             if (connected)
             {
                 return true;
             }
 
-            var joinPacket = ClientPacketFactory.Join();
-            udpClient.Send(joinPacket, joinPacket.Length);
-
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            Id = ServerPacketFactory.ParseJoin(udpClient.Receive(ref remoteIPEndPoint));
-            if (Id == -1)
+            try
             {
-                udpClient.Close();
+                IPAddress ip;
+                if (!IPAddress.TryParse(hostname, out ip))
+                {
+                    ip = Dns.GetHostEntry(hostname).AddressList[0];
+                }
+                udpClient.Connect(ip, port);
+
+                var joinPacket = ClientPacketFactory.Join();
+                udpClient.Send(joinPacket, joinPacket.Length);
+
+                IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                Id = ServerPacketFactory.ParseJoin(udpClient.Receive(ref remoteIPEndPoint));
+                if (Id == -1)
+                {
+                    udpClient.Close();
+                    return false;
+                }
+
+                connected = true;
+                return true;
+            }
+            catch(System.Exception)
+            {
+                connected = false;
                 return false;
             }
-
-            connected = true;
-            return true;
         }
 
         public void SendInput(Input input)
@@ -87,11 +96,18 @@ namespace Ozzyria.Networking
                 return;
             }
 
-            var leavePacket = ClientPacketFactory.Leave(Id);
-            udpClient.Send(leavePacket, leavePacket.Length);
+            try
+            {
+                var leavePacket = ClientPacketFactory.Leave(Id);
+                udpClient.Send(leavePacket, leavePacket.Length);
 
-            udpClient.Close();
-            connected = false;
+                udpClient.Close();
+                connected = false;
+            }
+            catch (System.Exception)
+            {
+                connected = false;
+            }
         }
     }
 }
