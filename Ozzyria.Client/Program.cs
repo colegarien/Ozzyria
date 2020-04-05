@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.Client
 {
@@ -90,11 +91,33 @@ namespace Ozzyria.Client
                     orbShapes.Add(new OrbShape(orb.X, orb.Y));
                 }
 
+
+                var slimes = client.GetSlimes();
+                var slimeShapes = new List<PlayerShape>();
+                foreach (var slime in slimes)
+                {
+                    var shape = new PlayerShape();
+                    shape.Visible = true;
+                    shape.IsLocalPlayer = null;
+                    shape.SetHealth(slime.Health, slime.MaxHealth);
+                    shape.Update(deltaTime, slime.X, slime.Y, slime.LookDirection);
+                    if (slime.Attacking)
+                    {
+                        // show slime as attacking for a brief period
+                        shape.LastAttack = slime.AttackDelay / 3f;
+                    }
+                    slimeShapes.Add(shape);
+                }
+
                 ///
                 /// DRAWING HERE
                 ///
                 window.Clear();
                 foreach(var shape in orbShapes)
+                {
+                    shape.Draw(window, cameraX, cameraY);
+                }
+                foreach (var shape in slimeShapes)
                 {
                     shape.Draw(window, cameraX, cameraY);
                 }
@@ -154,7 +177,7 @@ namespace Ozzyria.Client
         class PlayerShape
         {
             public bool Visible { get; set; }
-            public bool IsLocalPlayer { get; set; }
+            public bool? IsLocalPlayer { get; set; }
             public float LastAttack { get; set; }
 
             private CircleShape body;
@@ -202,21 +225,27 @@ namespace Ozzyria.Client
                     body.FillColor = Color.Red;
                     nose.FillColor = Color.Red;
                 }
-                else if (IsLocalPlayer)
+                else if (IsLocalPlayer == true)
                 {
                     body.FillColor = Color.Blue;
                     nose.FillColor = Color.Red;
                 }
-                else
+                else if (IsLocalPlayer == false)
                 {
                     body.FillColor = Color.Cyan;
                     nose.FillColor = Color.Magenta;
                 }
+                else
+                {
+                    body.FillColor = Color.Green;
+                    nose.FillColor = Color.Green;
+                }
+
 
                 MoveBody(body.Position.X - cameraX, body.Position.Y - cameraY);
                 window.Draw(body);
                 window.Draw(nose);
-                if (!IsLocalPlayer)
+                if (IsLocalPlayer != true)
                 {
                     window.Draw(healthUnderBar);
                     window.Draw(healthOverBar);

@@ -89,6 +89,17 @@ namespace Ozzyria.Networking
             return ServerPacketFactory.ParseExperenceOrbs(udpClient.Receive(ref remoteIPEndPoint));
         }
 
+        public Slime[] GetSlimes()
+        {
+            if (!connected)
+            {
+                return new Slime[] { };
+            }
+
+            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            return ServerPacketFactory.ParseSlimeState(udpClient.Receive(ref remoteIPEndPoint));
+        }
+
         public void Disconnect()
         {
             if (!connected)

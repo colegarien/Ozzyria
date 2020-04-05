@@ -121,6 +121,9 @@ namespace Ozzyria.Networking
 
             var orbPacket = ServerPacketFactory.ExperienceOrbUpdates(game.orbs.ToArray());
             SendToAll(orbPacket);
+
+            var slimePacket = ServerPacketFactory.SlimeUpdates(game.slimes.ToArray());
+            SendToAll(slimePacket);
         }
 
         private void SendToAll(byte[] packet, int exclude = -1)

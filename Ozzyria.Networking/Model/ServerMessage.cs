@@ -10,6 +10,7 @@ namespace Ozzyria.Networking.Model
         JoinReject = 1,
         PlayerStateUpdate = 2,
         ExperienceOrbsUpdate = 3,
+        SlimeUpdate = 4,
     }
 
     class ServerPacketFactory
@@ -152,6 +153,62 @@ namespace Ozzyria.Networking.Model
             }
 
             return orbs.ToArray();
+        }
+
+        public static byte[] SlimeUpdates(Slime[] slimes)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ServerMessage.SlimeUpdate);
+                    foreach (var slime in slimes)
+                    {
+                        writer.Write(slime.X);
+                        writer.Write(slime.Y);
+                        writer.Write(slime.Speed);
+                        writer.Write(slime.MoveDirection);
+                        writer.Write(slime.LookDirection);
+                        writer.Write(slime.Health);
+                        writer.Write(slime.MaxHealth);
+                        writer.Write(slime.AttackDelay);
+                        writer.Write(slime.AttackTimer);
+                        writer.Write(slime.Attacking);
+                    }
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static Slime[] ParseSlimeState(byte[] packet)
+        {
+            var slimes = new List<Slime>();
+
+            using (MemoryStream m = new MemoryStream(packet))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    var packetType = (ClientMessage)reader.ReadInt32();
+                    while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    {
+                        slimes.Add(new Slime
+                        {
+                            X = reader.ReadSingle(),
+                            Y = reader.ReadSingle(),
+                            Speed = reader.ReadSingle(),
+                            MoveDirection = reader.ReadSingle(),
+                            LookDirection = reader.ReadSingle(),
+                            Health = reader.ReadInt32(),
+                            MaxHealth = reader.ReadInt32(),
+                            AttackDelay = reader.ReadSingle(),
+                            AttackTimer = reader.ReadSingle(),
+                            Attacking = reader.ReadBoolean()
+                        });
+                    }
+                }
+            }
+
+            return slimes.ToArray();
         }
 
     }

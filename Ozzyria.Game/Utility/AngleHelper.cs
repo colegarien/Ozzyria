@@ -22,6 +22,11 @@ namespace Ozzyria.Game.Utility
             return angle;
         }
 
+        public static float AngleTo(float originX, float originY, float targetX, float targetY)
+        {
+            return (float)Math.Atan2(targetX - originX, targetY - originY);
+        }
+
         public static bool IsInArc(float angle, float baseAngle, float thresholdAngle)
         {
             var min = Clamp(baseAngle - thresholdAngle);

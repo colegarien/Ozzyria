@@ -3,7 +3,6 @@ using Ozzyria.Game.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.Game
 {
@@ -13,6 +12,7 @@ namespace Ozzyria.Game
         public Dictionary<int, Player> players;
 
         public List<ExperienceOrb> orbs;
+        public List<Slime> slimes;
         private float eventTimer = 0;
 
         public List<IEventHandler> eventHandlers;
@@ -25,6 +25,9 @@ namespace Ozzyria.Game
 
             orbs = new List<ExperienceOrb>();
             orbs.Add(new ExperienceOrb { X = 400, Y = 300 });
+
+            slimes = new List<Slime>();
+            slimes.Add(new Slime { X = 500, Y = 400 });
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -74,16 +77,16 @@ namespace Ozzyria.Game
                 player.Update(deltaTime, input);
                 if (player.Attacking)
                 {
-                    var playersInRange = players.Values.Where(p => p.Id != player.Id && Math.Sqrt(Math.Pow(p.X - player.X, 2) + Math.Pow(p.Y - player.Y, 2)) <= player.AttackRange);
-                    foreach(var target in playersInRange)
+                    var slimesInRange = slimes.Where(s => Math.Sqrt(Math.Pow(s.X - player.X, 2) + Math.Pow(s.Y - player.Y, 2)) <= player.AttackRange);
+                    foreach(var target in slimesInRange)
                     {
-                        var angleToTarget = (float)Math.Atan2(target.X - player.X, target.Y - player.Y);
+                        var angleToTarget = AngleHelper.AngleTo(player.X, player.Y, target.X, target.Y);
                         if (AngleHelper.IsInArc(angleToTarget, player.LookDirection, player.AttackAngle))
                         {
                             target.Damage(player.AttackDamage);
                             if (target.IsDead())
                             {
-                                events.Add(new PlayerDead { PlayerId = target.Id });
+                                events.Add(new SlimeDead { Slime = target });
                             }
                         }
                     }
@@ -95,9 +98,37 @@ namespace Ozzyria.Game
                 orb.Update(deltaTime, players.Values.ToArray());
             }
             // remove any orbs that have been absorbed
-            orbs = orbs.Where(o => !o.HasBeenAbsorbed).ToList(); 
+            orbs = orbs.Where(o => !o.HasBeenAbsorbed).ToList();
 
-            if(eventTimer > 5)
+            foreach (var slime in slimes)
+            {
+                if (slime.IsDead())
+                {
+                    continue;
+                }
+
+                slime.Update(deltaTime, players.Values.ToArray());
+                if (slime.Attacking)
+                {
+                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.X - slime.X, 2) + Math.Pow(p.Y - slime.Y, 2)) <= slime.AttackRange);
+                    foreach (var target in playersInRange)
+                    {
+                        var angleToTarget = AngleHelper.AngleTo(slime.X, slime.Y, target.X, target.Y);
+                        if (AngleHelper.IsInArc(angleToTarget, slime.LookDirection, slime.AttackAngle))
+                        {
+                            target.Damage(slime.AttackDamage);
+                            if (target.IsDead())
+                            {
+                                events.Add(new PlayerDead { PlayerId = target.Id });
+                            }
+                        }
+                    }
+                }
+            }
+            // remove any dead slimes
+            slimes = slimes.Where(s => !s.IsDead()).ToList();
+
+            if (eventTimer > 5)
             {
                 eventTimer = 0;
                 orbs.Add(new ExperienceOrb { X = 400, Y = 300 });
@@ -117,6 +148,12 @@ namespace Ozzyria.Game
                     var playerId = ((PlayerDead)gameEvent).PlayerId;
                     // kick player out
                     OnPlayerLeave(playerId);
+                }
+                else if(gameEvent is SlimeDead)
+                {
+                    var slime = ((SlimeDead)gameEvent).Slime;
+                    orbs.Add(new ExperienceOrb { X = slime.X, Y = slime.Y, Experience = 10 });
+                    slimes.Remove(slime);
                 }
 
                 foreach(var eventHandler in eventHandlers)
