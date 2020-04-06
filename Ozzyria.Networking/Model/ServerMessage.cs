@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
 using System.Collections.Generic;
 using System.IO;
 
@@ -46,6 +47,26 @@ namespace Ozzyria.Networking.Model
             }
         }
 
+        private static void WriteMovement(BinaryWriter writer, Movement movement)
+        {
+            writer.Write(movement.X);
+            writer.Write(movement.Y);
+            writer.Write(movement.Speed);
+            writer.Write(movement.MoveDirection);
+            writer.Write(movement.LookDirection);
+        }
+
+        private static Movement ReadMovement(BinaryReader reader)
+        {
+            return new Movement
+            {
+                X = reader.ReadSingle(),
+                Y = reader.ReadSingle(),
+                Speed = reader.ReadSingle(),
+                MoveDirection = reader.ReadSingle(),
+                LookDirection = reader.ReadSingle(),
+            };
+        }
 
         public static byte[] PlayerUpdates(Player[] players)
         {
@@ -57,11 +78,7 @@ namespace Ozzyria.Networking.Model
                     foreach(var player in players)
                     {
                         writer.Write(player.Id);
-                        writer.Write(player.X);
-                        writer.Write(player.Y);
-                        writer.Write(player.Speed);
-                        writer.Write(player.MoveDirection);
-                        writer.Write(player.LookDirection);
+                        WriteMovement(writer, player.Movement);
                         writer.Write(player.Experience);
                         writer.Write(player.MaxExperience);
                         writer.Write(player.Health);
@@ -89,11 +106,7 @@ namespace Ozzyria.Networking.Model
                         players.Add(new Player
                         {
                             Id = reader.ReadInt32(),
-                            X = reader.ReadSingle(),
-                            Y = reader.ReadSingle(),
-                            Speed = reader.ReadSingle(),
-                            MoveDirection = reader.ReadSingle(),
-                            LookDirection = reader.ReadSingle(),
+                            Movement = ReadMovement(reader),
                             Experience = reader.ReadInt32(),
                             MaxExperience = reader.ReadInt32(),
                             Health = reader.ReadInt32(),
@@ -116,13 +129,11 @@ namespace Ozzyria.Networking.Model
                 using (BinaryWriter writer = new BinaryWriter(m))
                 {
                     writer.Write((int)ServerMessage.ExperienceOrbsUpdate);
-                    foreach (var player in orbs)
+                    foreach (var orb in orbs)
                     {
-                        writer.Write(player.X);
-                        writer.Write(player.Y);
-                        writer.Write(player.Speed);
-                        writer.Write(player.Experience);
-                        writer.Write(player.HasBeenAbsorbed);
+                        WriteMovement(writer, orb.Movement);
+                        writer.Write(orb.Experience);
+                        writer.Write(orb.HasBeenAbsorbed);
                     }
                 }
                 return m.ToArray();
@@ -142,9 +153,7 @@ namespace Ozzyria.Networking.Model
                     {
                         orbs.Add(new ExperienceOrb
                         {
-                            X = reader.ReadSingle(),
-                            Y = reader.ReadSingle(),
-                            Speed = reader.ReadSingle(),
+                            Movement = ReadMovement(reader),
                             Experience = reader.ReadInt32(),
                             HasBeenAbsorbed = reader.ReadBoolean()
                         });
@@ -164,11 +173,7 @@ namespace Ozzyria.Networking.Model
                     writer.Write((int)ServerMessage.SlimeUpdate);
                     foreach (var slime in slimes)
                     {
-                        writer.Write(slime.X);
-                        writer.Write(slime.Y);
-                        writer.Write(slime.Speed);
-                        writer.Write(slime.MoveDirection);
-                        writer.Write(slime.LookDirection);
+                        WriteMovement(writer, slime.Movement);
                         writer.Write(slime.Health);
                         writer.Write(slime.MaxHealth);
                         writer.Write(slime.AttackDelay);
@@ -193,11 +198,7 @@ namespace Ozzyria.Networking.Model
                     {
                         slimes.Add(new Slime
                         {
-                            X = reader.ReadSingle(),
-                            Y = reader.ReadSingle(),
-                            Speed = reader.ReadSingle(),
-                            MoveDirection = reader.ReadSingle(),
-                            LookDirection = reader.ReadSingle(),
+                            Movement = ReadMovement(reader),
                             Health = reader.ReadInt32(),
                             MaxHealth = reader.ReadInt32(),
                             AttackDelay = reader.ReadSingle(),

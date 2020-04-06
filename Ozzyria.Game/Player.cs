@@ -1,22 +1,13 @@
-﻿using Ozzyria.Game.Utility;
+﻿using Ozzyria.Game.Component;
 using System;
 
 namespace Ozzyria.Game
 {
     public class Player
     {
-        const float ACCELERATION = 200f;
-        const float MAX_SPEED = 100f;
-        const float TURN_SPEED = 5f;
-
         public int Id { get; set; } = -1;
-        #region movement
-        public float X { get; set; } = 0f;
-        public float Y { get; set; } = 0f;
-        public float Speed { get; set; } = 0f;
-        public float MoveDirection { get; set; } = 0f;
-        public float LookDirection { get; set; } = 0f;
-        #endregion
+        public Movement Movement { get; set; } = new Movement();
+
         #region stats
         public int Experience { get; set; } = 0;
         public int MaxExperience { get; set; } = 100;
@@ -35,9 +26,7 @@ namespace Ozzyria.Game
         public void Update(float deltaTime, Input input)
         {
             HandleInput(deltaTime, input);
-
-            X += Speed * deltaTime * (float)Math.Sin(LookDirection + MoveDirection);
-            Y += Speed * deltaTime * (float)Math.Cos(LookDirection + MoveDirection);
+            Movement.Update(deltaTime);
         }
 
         public void AddExperience(int experience)
@@ -83,72 +72,50 @@ namespace Ozzyria.Game
         {
             if (input.TurnLeft)
             {
-                LookDirection = AngleHelper.Clamp(LookDirection + (TURN_SPEED * deltaTime));
+                Movement.TurnLeft(deltaTime);
             }
             if (input.TurnRight)
             {
-                LookDirection = AngleHelper.Clamp(LookDirection - (TURN_SPEED * deltaTime));
+                Movement.TurnRight(deltaTime);
             }
 
             if (input.MoveUp || input.MoveDown || input.MoveLeft || input.MoveRight)
             {
-                Speed += ACCELERATION * deltaTime;
-                if (Speed > MAX_SPEED)
-                {
-                    Speed = MAX_SPEED;
-                }
+                Movement.SpeedUp(deltaTime);
             }
             if (!input.MoveDown && !input.MoveUp && !input.MoveRight && !input.MoveLeft)
             {
-                if (Speed > 0)
-                {
-                    Speed -= ACCELERATION * deltaTime;
-                    if (Speed < 0.0f)
-                    {
-                        Speed = 0.0f;
-                    }
-                }
-                else if (Speed < 0)
-                {
-                    Speed += ACCELERATION * deltaTime;
-                    if (Speed > 0.0f)
-                    {
-                        Speed = 0.0f;
-                    }
-                }
+                Movement.SlowDown(deltaTime);
             }
 
             if (input.MoveUp && !input.MoveLeft && !input.MoveRight && !input.MoveDown)
             {
-                MoveDirection = 0;
+                Movement.MoveForward(deltaTime);
             }
             else if (input.MoveDown && !input.MoveLeft && !input.MoveRight && !input.MoveUp)
             {
-                MoveDirection = AngleHelper.Pi;
+                Movement.MoveBackward(deltaTime);
             }
             else if (!input.MoveUp && !input.MoveDown)
             {
-                var sideways = AngleHelper.PiOverTwo;
                 if (input.MoveRight)
-                    MoveDirection = -sideways;
+                    Movement.MoveRight(deltaTime);
                 else if (input.MoveLeft)
-                    MoveDirection = sideways;
+                    Movement.MoveLeft(deltaTime);
             }
             else if (input.MoveUp && !input.MoveDown)
             {
-                var forwardFortyFive = AngleHelper.PiOverFour;
                 if (input.MoveRight)
-                    MoveDirection = -forwardFortyFive;
+                    Movement.MoveForwardRight(deltaTime);
                 else if (input.MoveLeft)
-                    MoveDirection = forwardFortyFive;
+                    Movement.MoveForwardLeft(deltaTime);
             }
             else if (input.MoveDown && !input.MoveUp)
             {
-                var backwardFortyFive = AngleHelper.ThreePiOverFour;
                 if (input.MoveRight)
-                    MoveDirection = -backwardFortyFive;
+                    Movement.MoveBackwardRight(deltaTime);
                 else if (input.MoveLeft)
-                    MoveDirection = backwardFortyFive;
+                    Movement.MoveBackwardLeft(deltaTime);
             }
 
             HandleAttackTimer(deltaTime, input);

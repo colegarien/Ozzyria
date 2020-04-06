@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Event;
+﻿using Ozzyria.Game.Component;
+using Ozzyria.Game.Event;
 using Ozzyria.Game.Utility;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,10 @@ namespace Ozzyria.Game
             players = new Dictionary<int, Player>();
 
             orbs = new List<ExperienceOrb>();
-            orbs.Add(new ExperienceOrb { X = 400, Y = 300 });
+            orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 } });
 
             slimes = new List<Slime>();
-            slimes.Add(new Slime { X = 500, Y = 400 });
+            slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 } });
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -77,11 +78,11 @@ namespace Ozzyria.Game
                 player.Update(deltaTime, input);
                 if (player.Attacking)
                 {
-                    var slimesInRange = slimes.Where(s => Math.Sqrt(Math.Pow(s.X - player.X, 2) + Math.Pow(s.Y - player.Y, 2)) <= player.AttackRange);
+                    var slimesInRange = slimes.Where(s => Math.Sqrt(Math.Pow(s.Movement.X - player.Movement.X, 2) + Math.Pow(s.Movement.Y - player.Movement.Y, 2)) <= player.AttackRange);
                     foreach(var target in slimesInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(player.X, player.Y, target.X, target.Y);
-                        if (AngleHelper.IsInArc(angleToTarget, player.LookDirection, player.AttackAngle))
+                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, target.Movement.X, target.Movement.Y);
+                        if (AngleHelper.IsInArc(angleToTarget, player.Movement.LookDirection, player.AttackAngle))
                         {
                             target.Damage(player.AttackDamage);
                             if (target.IsDead())
@@ -110,11 +111,11 @@ namespace Ozzyria.Game
                 slime.Update(deltaTime, players.Values.ToArray());
                 if (slime.Attacking)
                 {
-                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.X - slime.X, 2) + Math.Pow(p.Y - slime.Y, 2)) <= slime.AttackRange);
+                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.Movement.X - slime.Movement.X, 2) + Math.Pow(p.Movement.Y - slime.Movement.Y, 2)) <= slime.AttackRange);
                     foreach (var target in playersInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(slime.X, slime.Y, target.X, target.Y);
-                        if (AngleHelper.IsInArc(angleToTarget, slime.LookDirection, slime.AttackAngle))
+                        var angleToTarget = AngleHelper.AngleTo(slime.Movement.X, slime.Movement.Y, target.Movement.X, target.Movement.Y);
+                        if (AngleHelper.IsInArc(angleToTarget, slime.Movement.LookDirection, slime.AttackAngle))
                         {
                             target.Damage(slime.AttackDamage);
                             if (target.IsDead())
@@ -131,7 +132,10 @@ namespace Ozzyria.Game
             if (eventTimer > 5)
             {
                 eventTimer = 0;
-                orbs.Add(new ExperienceOrb { X = 400, Y = 300 });
+                if (slimes.Count < 3)
+                {
+                    slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 } });
+                }
             }
 
             ProcessEvents();
@@ -152,7 +156,7 @@ namespace Ozzyria.Game
                 else if(gameEvent is SlimeDead)
                 {
                     var slime = ((SlimeDead)gameEvent).Slime;
-                    orbs.Add(new ExperienceOrb { X = slime.X, Y = slime.Y, Experience = 10 });
+                    orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = slime.Movement.X, Y = slime.Movement.Y }, Experience = 10 });
                     slimes.Remove(slime);
                 }
 

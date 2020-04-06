@@ -29,8 +29,8 @@ namespace Ozzyria.Client
             }
             Console.WriteLine($"Join as Client #{client.Id}");
 
-            var playerShapes = new Dictionary<int, PlayerShape>();
-            playerShapes[client.Id] = new PlayerShape();
+            var playerShapes = new Dictionary<int, EntityShape>();
+            playerShapes[client.Id] = new EntityShape();
 
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
@@ -64,17 +64,18 @@ namespace Ozzyria.Client
                 {
                     if (!playerShapes.ContainsKey(player.Id))
                     {
-                        playerShapes[player.Id] = new PlayerShape();
+                        playerShapes[player.Id] = new EntityShape();
                     }
                     playerShapes[player.Id].Visible = true;
-                    playerShapes[player.Id].IsLocalPlayer = player.Id == client.Id;
+                    playerShapes[player.Id].ShowHealth = player.Id != client.Id;
+                    playerShapes[player.Id].Color = player.Id != client.Id ? Color.Cyan : Color.Blue;
                     playerShapes[player.Id].SetHealth(player.Health, player.MaxHealth);
                     if (player.Attacking)
                     {
                         // show player as attacking for a brief period
                         playerShapes[player.Id].LastAttack = player.AttackDelay / 3f;
                     }
-                    playerShapes[player.Id].Update(deltaTime, player.X, player.Y, player.LookDirection);
+                    playerShapes[player.Id].Update(deltaTime, player.Movement.X, player.Movement.Y, player.Movement.LookDirection);
 
                     // center camera on player
                     /*if(player.Id == client.Id)
@@ -85,22 +86,23 @@ namespace Ozzyria.Client
                 }
 
                 var orbs = client.GetExperienceOrbs();
-                var orbShapes = new List<OrbShape>();
+                var orbShapes = new List<ProjectileShape>();
                 foreach(var orb in orbs)
                 {
-                    orbShapes.Add(new OrbShape(orb.X, orb.Y));
+                    orbShapes.Add(new ProjectileShape(orb.Movement.X, orb.Movement.Y));
                 }
 
 
                 var slimes = client.GetSlimes();
-                var slimeShapes = new List<PlayerShape>();
+                var slimeShapes = new List<EntityShape>();
                 foreach (var slime in slimes)
                 {
-                    var shape = new PlayerShape();
+                    var shape = new EntityShape();
                     shape.Visible = true;
-                    shape.IsLocalPlayer = null;
+                    shape.ShowHealth = true;
+                    shape.Color = Color.Green;
                     shape.SetHealth(slime.Health, slime.MaxHealth);
-                    shape.Update(deltaTime, slime.X, slime.Y, slime.LookDirection);
+                    shape.Update(deltaTime, slime.Movement.X, slime.Movement.Y, slime.Movement.LookDirection);
                     if (slime.Attacking)
                     {
                         // show slime as attacking for a brief period
@@ -154,11 +156,11 @@ namespace Ozzyria.Client
             }
         }
 
-        class OrbShape
+        class ProjectileShape
         {
             private CircleShape body;
 
-            public OrbShape(float x, float y)
+            public ProjectileShape(float x, float y)
             {
                 body = new CircleShape(3f);
                 body.FillColor = Color.Yellow;
@@ -174,10 +176,12 @@ namespace Ozzyria.Client
 
         }
 
-        class PlayerShape
+        class EntityShape
         {
             public bool Visible { get; set; }
-            public bool? IsLocalPlayer { get; set; }
+            public Color Color { get; set; }
+            public bool ShowHealth { get; set; } = true;
+
             public float LastAttack { get; set; }
 
             private CircleShape body;
@@ -187,7 +191,7 @@ namespace Ozzyria.Client
             private RectangleShape healthOverBar;
 
 
-            public PlayerShape()
+            public EntityShape()
             {
                 body = new CircleShape(10f);
 
@@ -220,32 +224,18 @@ namespace Ozzyria.Client
                 if (!Visible)
                     return;
 
+                body.FillColor = Color;
+                nose.FillColor = Color.Red;
                 if (LastAttack > 0f)
                 {
                     body.FillColor = Color.Red;
-                    nose.FillColor = Color.Red;
-                }
-                else if (IsLocalPlayer == true)
-                {
-                    body.FillColor = Color.Blue;
-                    nose.FillColor = Color.Red;
-                }
-                else if (IsLocalPlayer == false)
-                {
-                    body.FillColor = Color.Cyan;
-                    nose.FillColor = Color.Magenta;
-                }
-                else
-                {
-                    body.FillColor = Color.Green;
-                    nose.FillColor = Color.Green;
                 }
 
 
                 MoveBody(body.Position.X - cameraX, body.Position.Y - cameraY);
                 window.Draw(body);
                 window.Draw(nose);
-                if (IsLocalPlayer != true)
+                if (ShowHealth)
                 {
                     window.Draw(healthUnderBar);
                     window.Draw(healthOverBar);
