@@ -59,7 +59,9 @@ namespace Ozzyria.Client
                 /// Do Updates
                 ///
                 client.SendInput(input);
-                var players = client.GetPlayers();
+                client.HandleIncomingMessages();
+
+                var players = client.Players;
                 foreach (var player in players)
                 {
                     if (!playerShapes.ContainsKey(player.Id))
@@ -85,7 +87,7 @@ namespace Ozzyria.Client
                     }*/
                 }
 
-                var orbs = client.GetExperienceOrbs();
+                var orbs = client.Orbs;
                 var orbShapes = new List<ProjectileShape>();
                 foreach(var orb in orbs)
                 {
@@ -93,7 +95,7 @@ namespace Ozzyria.Client
                 }
 
 
-                var slimes = client.GetSlimes();
+                var slimes = client.Slimes;
                 var slimeShapes = new List<EntityShape>();
                 foreach (var slime in slimes)
                 {

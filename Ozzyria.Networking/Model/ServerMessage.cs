@@ -14,8 +14,30 @@ namespace Ozzyria.Networking.Model
         SlimeUpdate = 4,
     }
 
+    class ServerPacket
+    {
+        public ServerMessage Type { get; set; }
+        public byte[] Data { get; set; }
+    }
+
     class ServerPacketFactory
     {
+        public static ServerPacket Parse(byte[] packet)
+        {
+            using (MemoryStream m = new MemoryStream(packet))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new ServerPacket
+                    {
+                        Type = (ServerMessage)reader.ReadInt32(),
+                        Data = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position))
+                    };
+                }
+            }
+        }
+
+
         public static byte[] Join(int clientId)
         {
             using (MemoryStream m = new MemoryStream())
@@ -100,7 +122,6 @@ namespace Ozzyria.Networking.Model
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    var packetType = (ClientMessage)reader.ReadInt32();
                     while(reader.BaseStream.Position < reader.BaseStream.Length)
                     {
                         players.Add(new Player
@@ -148,7 +169,6 @@ namespace Ozzyria.Networking.Model
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    var packetType = (ClientMessage)reader.ReadInt32();
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
                         orbs.Add(new ExperienceOrb
@@ -193,7 +213,6 @@ namespace Ozzyria.Networking.Model
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    var packetType = (ClientMessage)reader.ReadInt32();
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
                         slimes.Add(new Slime

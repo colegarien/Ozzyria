@@ -11,6 +11,10 @@ namespace Ozzyria.Networking
         private bool connected;
         private UdpClient udpClient;
 
+        public Player[] Players { get; set; }
+        public ExperienceOrb[] Orbs { get; set; }
+        public Slime[] Slimes { get; set; }
+
         public Client()
         {
             Id = -1;
@@ -67,37 +71,33 @@ namespace Ozzyria.Networking
             udpClient.Send(inputPacket, inputPacket.Length);
         }
 
-        public Player[] GetPlayers()
+        public void HandleIncomingMessages()
         {
             if (!connected)
             {
-                return new Player[] { };
+                return;
             }
 
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            return ServerPacketFactory.ParsePlayerState(udpClient.Receive(ref remoteIPEndPoint));
-        }
-
-        public ExperienceOrb[] GetExperienceOrbs()
-        {
-            if (!connected)
+            while (udpClient.Available > 0)
             {
-                return new ExperienceOrb[] { };
+                var clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                var packet = ServerPacketFactory.Parse(udpClient.Receive(ref clientEndPoint));
+                var messageType = packet.Type;
+                var messageData = packet.Data;
+
+                switch (messageType)
+                {
+                    case ServerMessage.PlayerStateUpdate:
+                        Players = ServerPacketFactory.ParsePlayerState(messageData);
+                        break;
+                    case ServerMessage.ExperienceOrbsUpdate:
+                        Orbs = ServerPacketFactory.ParseExperenceOrbs(messageData);
+                        break;
+                    case ServerMessage.SlimeUpdate:
+                        Slimes = ServerPacketFactory.ParseSlimeState(messageData);
+                        break;
+                }
             }
-
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            return ServerPacketFactory.ParseExperenceOrbs(udpClient.Receive(ref remoteIPEndPoint));
-        }
-
-        public Slime[] GetSlimes()
-        {
-            if (!connected)
-            {
-                return new Slime[] { };
-            }
-
-            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            return ServerPacketFactory.ParseSlimeState(udpClient.Receive(ref remoteIPEndPoint));
         }
 
         public void Disconnect()
