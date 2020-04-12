@@ -10,6 +10,11 @@ namespace Ozzyria.Game
         const float MAX_FOLLOW_DISTANCE = 200;
 
         public Movement Movement { get; set; } = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f };
+        #region ai
+        public float ThinkDelay { get; set; } = 0.5f;
+        public float ThinkTimer { get; set; } = 0f;
+        public int ThinkAction { get; set; } = 0;
+        #endregion
         #region stats
         public int Health { get; set; } = 30;
         public int MaxHealth { get; set; } = 30;
@@ -28,16 +33,18 @@ namespace Ozzyria.Game
             var closestPlayer = players.OrderBy(p => Math.Pow(p.Movement.X - Movement.X, 2) + Math.Pow(p.Movement.Y - Movement.Y, 2)).FirstOrDefault();
             if (closestPlayer == null)
             {
-                Movement.SlowDown(deltaTime);
+                Think(deltaTime);
                 HandleAttackTimer(deltaTime, false);
+                Movement.Update(deltaTime);
                 return;
             }
 
             var distance = Math.Sqrt(Math.Pow(closestPlayer.Movement.X - Movement.X, 2) + Math.Pow(closestPlayer.Movement.Y - Movement.Y, 2));
             if (distance > MAX_FOLLOW_DISTANCE)
             {
-                Movement.SlowDown(deltaTime);
+                Think(deltaTime);
                 HandleAttackTimer(deltaTime, false);
+                Movement.Update(deltaTime);
                 return;
             }
 
@@ -93,5 +100,40 @@ namespace Ozzyria.Game
             return Health <= 0;
         }
 
+        private void Think(float deltaTime)
+        {
+            if (ThinkTimer < ThinkDelay)
+            {
+                // recharge attack timer
+                ThinkTimer += deltaTime;
+            }
+
+            if (ThinkTimer >= ThinkDelay)
+            {
+                ThinkTimer -= ThinkDelay;
+                ThinkDelay = RandomHelper.Random(0f, 1.5f);
+
+                ThinkAction = RandomHelper.Random(0, 5);
+            }
+
+            switch (ThinkAction)
+            {
+                case 0:
+                    Movement.SlowDown(deltaTime);
+                    break;
+                case 1:
+                    Movement.TurnLeft(deltaTime);
+                    break;
+                case 2:
+                    Movement.TurnRight(deltaTime);
+                    break;
+                case 3:
+                    Movement.SpeedUp(deltaTime);
+                    break;
+                default:
+                    Movement.SlowDown(deltaTime);
+                    break;
+            }
+        }
     }
 }
