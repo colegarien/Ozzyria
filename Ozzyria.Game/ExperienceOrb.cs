@@ -10,13 +10,11 @@ namespace Ozzyria.Game
         const float ABSORBTION_DISTANCE = 4;
 
         public Movement Movement { get; set; } = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f };
-
-        public int Experience { get; set; } = 10;
-        public bool HasBeenAbsorbed { get; set; } = false;
+        public ExperienceBoost Boost { get; set; } = new ExperienceBoost(); 
 
         public void Update(float deltaTime, Player[] players)
         {
-            if (HasBeenAbsorbed)
+            if (Boost.HasBeenAbsorbed)
             {
                 return;
             }
@@ -39,8 +37,7 @@ namespace Ozzyria.Game
 
             if (distance <= ABSORBTION_DISTANCE)
             {
-                closestPlayer.AddExperience(Experience);
-                HasBeenAbsorbed = true;
+                Boost.AbsorbInto(closestPlayer);
                 return;
             }
 

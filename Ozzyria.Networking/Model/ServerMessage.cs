@@ -2,6 +2,8 @@
 using Ozzyria.Game.Component;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Ozzyria.Networking.Model
 {
@@ -90,6 +92,56 @@ namespace Ozzyria.Networking.Model
             };
         }
 
+        private static void WriteStats(BinaryWriter writer, Stats stats)
+        {
+            writer.Write(stats.Health);
+            writer.Write(stats.MaxHealth);
+            writer.Write(stats.Experience);
+            writer.Write(stats.MaxExperience);
+        }
+
+        private static Stats ReadStats(BinaryReader reader)
+        {
+            return new Stats
+            {
+                Health = reader.ReadInt32(),
+                MaxHealth = reader.ReadInt32(),
+                Experience = reader.ReadInt32(),
+                MaxExperience = reader.ReadInt32()
+            };
+        }
+
+        private static void WriteExperienceBoost(BinaryWriter writer, ExperienceBoost exp)
+        {
+            writer.Write(exp.Experience);
+            writer.Write(exp.HasBeenAbsorbed);
+        }
+
+        private static ExperienceBoost ReadExperienceBoost(BinaryReader reader)
+        {
+            return new ExperienceBoost
+            {
+                Experience = reader.ReadInt32(),
+                HasBeenAbsorbed = reader.ReadBoolean()
+            };
+        }
+
+        private static void WriteCombat(BinaryWriter writer, Combat combat)
+        {
+            writer.Write(combat.Delay.DelayInSeconds);
+            writer.Write(combat.Delay.Timer);
+            writer.Write(combat.Attacking);
+        }
+
+        private static Combat ReadCombat(BinaryReader reader)
+        {
+            return new Combat
+            {
+                Delay = new Delay { DelayInSeconds = reader.ReadSingle(), Timer = reader.ReadSingle() },
+                Attacking = reader.ReadBoolean()
+            };
+        }
+
         public static byte[] PlayerUpdates(Player[] players)
         {
             using (MemoryStream m = new MemoryStream())
@@ -101,13 +153,8 @@ namespace Ozzyria.Networking.Model
                     {
                         writer.Write(player.Id);
                         WriteMovement(writer, player.Movement);
-                        writer.Write(player.Experience);
-                        writer.Write(player.MaxExperience);
-                        writer.Write(player.Health);
-                        writer.Write(player.MaxHealth);
-                        writer.Write(player.AttackDelay);
-                        writer.Write(player.AttackTimer);
-                        writer.Write(player.Attacking);
+                        WriteStats(writer, player.Stats);
+                        WriteCombat(writer, player.Combat);
                     }
                 }
                 return m.ToArray();
@@ -128,13 +175,8 @@ namespace Ozzyria.Networking.Model
                         {
                             Id = reader.ReadInt32(),
                             Movement = ReadMovement(reader),
-                            Experience = reader.ReadInt32(),
-                            MaxExperience = reader.ReadInt32(),
-                            Health = reader.ReadInt32(),
-                            MaxHealth = reader.ReadInt32(),
-                            AttackDelay = reader.ReadSingle(),
-                            AttackTimer = reader.ReadSingle(),
-                            Attacking = reader.ReadBoolean()
+                            Stats = ReadStats(reader),
+                            Combat = ReadCombat(reader)
                         });
                     }
                 }
@@ -153,8 +195,7 @@ namespace Ozzyria.Networking.Model
                     foreach (var orb in orbs)
                     {
                         WriteMovement(writer, orb.Movement);
-                        writer.Write(orb.Experience);
-                        writer.Write(orb.HasBeenAbsorbed);
+                        WriteExperienceBoost(writer, orb.Boost);
                     }
                 }
                 return m.ToArray();
@@ -174,8 +215,7 @@ namespace Ozzyria.Networking.Model
                         orbs.Add(new ExperienceOrb
                         {
                             Movement = ReadMovement(reader),
-                            Experience = reader.ReadInt32(),
-                            HasBeenAbsorbed = reader.ReadBoolean()
+                            Boost = ReadExperienceBoost(reader)
                         });
                     }
                 }
@@ -194,11 +234,8 @@ namespace Ozzyria.Networking.Model
                     foreach (var slime in slimes)
                     {
                         WriteMovement(writer, slime.Movement);
-                        writer.Write(slime.Health);
-                        writer.Write(slime.MaxHealth);
-                        writer.Write(slime.AttackDelay);
-                        writer.Write(slime.AttackTimer);
-                        writer.Write(slime.Attacking);
+                        WriteStats(writer, slime.Stats);
+                        WriteCombat(writer, slime.Combat);
                     }
                 }
                 return m.ToArray();
@@ -218,11 +255,8 @@ namespace Ozzyria.Networking.Model
                         slimes.Add(new Slime
                         {
                             Movement = ReadMovement(reader),
-                            Health = reader.ReadInt32(),
-                            MaxHealth = reader.ReadInt32(),
-                            AttackDelay = reader.ReadSingle(),
-                            AttackTimer = reader.ReadSingle(),
-                            Attacking = reader.ReadBoolean()
+                            Stats = ReadStats(reader),
+                            Combat = ReadCombat(reader)
                         });
                     }
                 }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.Client
 {
@@ -71,11 +70,11 @@ namespace Ozzyria.Client
                     playerShapes[player.Id].Visible = true;
                     playerShapes[player.Id].ShowHealth = player.Id != client.Id;
                     playerShapes[player.Id].Color = player.Id != client.Id ? Color.Cyan : Color.Blue;
-                    playerShapes[player.Id].SetHealth(player.Health, player.MaxHealth);
-                    if (player.Attacking)
+                    playerShapes[player.Id].SetHealth(player.Stats.Health, player.Stats.MaxHealth);
+                    if (player.Combat.Attacking)
                     {
                         // show player as attacking for a brief period
-                        playerShapes[player.Id].LastAttack = player.AttackDelay / 3f;
+                        playerShapes[player.Id].LastAttack = player.Combat.Delay.DelayInSeconds / 3f;
                     }
                     playerShapes[player.Id].Update(deltaTime, player.Movement.X, player.Movement.Y, player.Movement.LookDirection);
 
@@ -103,12 +102,12 @@ namespace Ozzyria.Client
                     shape.Visible = true;
                     shape.ShowHealth = true;
                     shape.Color = Color.Green;
-                    shape.SetHealth(slime.Health, slime.MaxHealth);
+                    shape.SetHealth(slime.Stats.Health, slime.Stats.MaxHealth);
                     shape.Update(deltaTime, slime.Movement.X, slime.Movement.Y, slime.Movement.LookDirection);
-                    if (slime.Attacking)
+                    if (slime.Combat.Attacking)
                     {
                         // show slime as attacking for a brief period
-                        shape.LastAttack = slime.AttackDelay / 3f;
+                        shape.LastAttack = slime.Combat.Delay.DelayInSeconds / 3f;
                     }
                     slimeShapes.Add(shape);
                 }
@@ -133,14 +132,14 @@ namespace Ozzyria.Client
 
                 for (var i = 0; i<10;  i++) {
                     var player = players.Where(p => p.Id == client.Id).FirstOrDefault();
-                    var fillHpBar = i < Math.Round((float)(player?.Health ?? 0f) / (float)(player?.MaxHealth ?? 1f) * 10);
+                    var fillHpBar = i < Math.Round((float)(player?.Stats?.Health ?? 0f) / (float)(player?.Stats?.MaxHealth ?? 1f) * 10);
                     window.Draw(new RectangleShape()
                     {
                         Position = new SFML.System.Vector2f(22 * i, 578),
                         Size = new SFML.System.Vector2f(20, 10),
                         FillColor = fillHpBar ? Color.Green : Color.Magenta
                     });
-                    var fillExpBar = i < Math.Round((float)(player?.Experience ?? 0f) / (float)(player?.MaxExperience ?? 1f) * 10);
+                    var fillExpBar = i < Math.Round((float)(player?.Stats?.Experience ?? 0f) / (float)(player?.Stats?.MaxExperience ?? 1f) * 10);
                     window.Draw(new RectangleShape()
                     {
                         Position = new SFML.System.Vector2f(22*i, 590),
