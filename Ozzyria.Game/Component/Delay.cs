@@ -1,6 +1,6 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public class Delay
+    public class Delay : IComponent
     {
         public float DelayInSeconds { get; set; } = 0.5f;
         public float Timer { get; set; } = 0f;

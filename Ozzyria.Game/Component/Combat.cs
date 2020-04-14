@@ -1,6 +1,6 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public class Combat
+    public class Combat : IComponent
     {
         public Delay Delay { get; set; } = new Delay { DelayInSeconds = 0.5f };
         public bool Attacking { get; set; } = false;

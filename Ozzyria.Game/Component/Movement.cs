@@ -3,7 +3,7 @@ using System;
 
 namespace Ozzyria.Game.Component
 {
-    public class Movement
+    public class Movement : IComponent
     {
         public float ACCELERATION = 200f;
         public float MAX_SPEED = 100f;

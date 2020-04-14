@@ -12,6 +12,7 @@ namespace Ozzyria.Game
         public Dictionary<int, Input> inputs;
         public Dictionary<int, Player> players;
 
+        public List<Entity> entities;
         public List<ExperienceOrb> orbs;
         public List<Slime> slimes;
         private float eventTimer = 0;
@@ -24,11 +25,13 @@ namespace Ozzyria.Game
             inputs = new Dictionary<int, Input>();
             players = new Dictionary<int, Player>();
 
-            orbs = new List<ExperienceOrb>();
-            orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 } });
+            entities = new List<Entity>();
 
+            orbs = new List<ExperienceOrb>();
+            CreateOrb(400, 300, 30);
+            
             slimes = new List<Slime>();
-            slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 } });
+            CreateSlime(500, 400);
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -60,6 +63,16 @@ namespace Ozzyria.Game
             {
                 inputs.Remove(id);
             }
+        }
+
+        protected void CreateSlime(float x, float y)
+        {
+            slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y } });
+        }
+
+        protected void CreateOrb(float x, float y, int value)
+        {
+            orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y }, Boost = new ExperienceBoost { Experience = value } });
         }
 
         public void Update(float deltaTime)
@@ -134,7 +147,7 @@ namespace Ozzyria.Game
                 eventTimer = 0;
                 if (slimes.Count < 3)
                 {
-                    slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 } });
+                    CreateSlime(500, 400);
                 }
             }
 
@@ -156,7 +169,7 @@ namespace Ozzyria.Game
                 else if(gameEvent is SlimeDead)
                 {
                     var slime = ((SlimeDead)gameEvent).Slime;
-                    orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = slime.Movement.X, Y = slime.Movement.Y }, Boost = new ExperienceBoost { Experience = 10 } });
+                    CreateOrb(slime.Movement.X, slime.Movement.Y, 10);
                     slimes.Remove(slime);
                 }
 

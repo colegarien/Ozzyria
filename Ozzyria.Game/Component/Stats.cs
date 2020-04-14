@@ -1,6 +1,6 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public class Stats
+    public class Stats : IComponent
     {
         public int Experience { get; set; } = 0;
         public int MaxExperience { get; set; } = 100;

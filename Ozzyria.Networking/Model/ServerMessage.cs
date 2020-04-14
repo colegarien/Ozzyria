@@ -2,6 +2,7 @@
 using Ozzyria.Game.Component;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -142,6 +143,66 @@ namespace Ozzyria.Networking.Model
             };
         }
 
+        private static void WriteEntity(BinaryWriter writer, Entity entity)
+        {
+            writer.Write(entity.Id);
+            foreach(var component in entity.Components.Values)
+            {
+                writer.Write(component.GetType().Name);
+                if (component.GetType() == typeof(Movement))
+                {
+                    WriteMovement(writer, (Movement)component);
+                }
+                else if (component.GetType() == typeof(Combat))
+                {
+                    WriteCombat(writer, (Combat)component);
+                }
+                else if (component.GetType() == typeof(Stats))
+                {
+                    WriteStats(writer, (Stats)component);
+                }
+                else if (component.GetType() == typeof(ExperienceBoost))
+                {
+                    WriteExperienceBoost(writer, (ExperienceBoost)component);
+                }
+            }
+            writer.Write("DONE");
+        }
+
+        private static Entity ReadEntity(BinaryReader reader)
+        {
+            var entity = new Entity
+            {
+                Id = reader.ReadInt32(),
+            };
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                var componentName = reader.ReadString();
+                if (componentName == typeof(Movement).Name)
+                {
+                    entity.AttachComponent(ReadMovement(reader));
+                }
+                else if (componentName == typeof(Combat).Name)
+                {
+                    entity.AttachComponent(ReadCombat(reader));
+                }
+                else if (componentName == typeof(Stats).Name)
+                {
+                    entity.AttachComponent(ReadStats(reader));
+                }
+                else if (componentName == typeof(ExperienceBoost).Name)
+                {
+                    entity.AttachComponent(ReadExperienceBoost(reader));
+                }
+                else if(componentName == "DONE")
+                {
+                    break;
+                }
+            }
+
+            return entity;
+        }
+
         public static byte[] PlayerUpdates(Player[] players)
         {
             using (MemoryStream m = new MemoryStream())
@@ -194,8 +255,15 @@ namespace Ozzyria.Networking.Model
                     writer.Write((int)ServerMessage.ExperienceOrbsUpdate);
                     foreach (var orb in orbs)
                     {
-                        WriteMovement(writer, orb.Movement);
-                        WriteExperienceBoost(writer, orb.Boost);
+                        WriteEntity(writer, new Entity
+                        {
+                            Id = 1,
+                            Components = new Dictionary<System.Type, IComponent>
+                            {
+                                { typeof(Movement), orb.Movement },
+                                { typeof(ExperienceBoost), orb.Boost },
+                            }
+                        });
                     }
                 }
                 return m.ToArray();
@@ -212,10 +280,11 @@ namespace Ozzyria.Networking.Model
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
+                        var entity = ReadEntity(reader);
                         orbs.Add(new ExperienceOrb
                         {
-                            Movement = ReadMovement(reader),
-                            Boost = ReadExperienceBoost(reader)
+                            Movement = (Movement)entity.Components[typeof(Movement)],
+                            Boost = (ExperienceBoost)entity.Components[typeof(ExperienceBoost)],
                         });
                     }
                 }
@@ -233,9 +302,16 @@ namespace Ozzyria.Networking.Model
                     writer.Write((int)ServerMessage.SlimeUpdate);
                     foreach (var slime in slimes)
                     {
-                        WriteMovement(writer, slime.Movement);
-                        WriteStats(writer, slime.Stats);
-                        WriteCombat(writer, slime.Combat);
+                        WriteEntity(writer, new Entity
+                        {
+                            Id = 1,
+                            Components = new Dictionary<System.Type, IComponent>
+                            {
+                                { typeof(Movement), slime.Movement },
+                                { typeof(Stats), slime.Stats },
+                                { typeof(Combat), slime.Combat },
+                            }
+                        });
                     }
                 }
                 return m.ToArray();
@@ -252,11 +328,12 @@ namespace Ozzyria.Networking.Model
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
+                        var entity = ReadEntity(reader);
                         slimes.Add(new Slime
                         {
-                            Movement = ReadMovement(reader),
-                            Stats = ReadStats(reader),
-                            Combat = ReadCombat(reader)
+                            Movement = (Movement)entity.Components[typeof(Movement)],
+                            Stats = (Stats)entity.Components[typeof(Stats)],
+                            Combat = (Combat)entity.Components[typeof(Combat)],
                         });
                     }
                 }

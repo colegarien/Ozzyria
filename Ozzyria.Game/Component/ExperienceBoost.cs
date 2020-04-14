@@ -1,6 +1,6 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public class ExperienceBoost
+    public class ExperienceBoost : IComponent
     {
         public int Experience { get; set; } = 10;
         public bool HasBeenAbsorbed { get; set; } = false;
