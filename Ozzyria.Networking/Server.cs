@@ -116,14 +116,11 @@ namespace Ozzyria.Networking
 
         private void SendState()
         {
-            var statePacket = ServerPacketFactory.PlayerUpdates(game.players.Values.ToArray());
-            SendToAll(statePacket);
+            var playerPacket = ServerPacketFactory.PlayerUpdates(game.players.Values.ToArray());
+            SendToAll(playerPacket);
 
-            var orbPacket = ServerPacketFactory.ExperienceOrbUpdates(game.orbs.ToArray());
-            SendToAll(orbPacket);
-
-            var slimePacket = ServerPacketFactory.SlimeUpdates(game.slimes.ToArray());
-            SendToAll(slimePacket);
+            var entityPacket = ServerPacketFactory.EntityUpdates(game.entities.Values.ToArray());
+            SendToAll(entityPacket);
         }
 
         private void SendToAll(byte[] packet, int exclude = -1)

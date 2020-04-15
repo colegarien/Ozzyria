@@ -12,9 +12,8 @@ namespace Ozzyria.Game
         public Dictionary<int, Input> inputs;
         public Dictionary<int, Player> players;
 
-        public List<Entity> entities;
-        public List<ExperienceOrb> orbs;
-        public List<Slime> slimes;
+        public int maxEntityId = 1;
+        public Dictionary<int, Entity> entities;
         private float eventTimer = 0;
 
         public List<IEventHandler> eventHandlers;
@@ -25,13 +24,11 @@ namespace Ozzyria.Game
             inputs = new Dictionary<int, Input>();
             players = new Dictionary<int, Player>();
 
-            entities = new List<Entity>();
-
-            orbs = new List<ExperienceOrb>();
-            CreateOrb(400, 300, 30);
-            
-            slimes = new List<Slime>();
-            CreateSlime(500, 400);
+            entities = new Dictionary<int, Entity>();
+            var id = maxEntityId++;
+            entities[id] = CreateOrb(id, 400, 300, 30);
+            id = maxEntityId++;
+            entities[id] = CreateSlime(id, 500, 400);
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -65,14 +62,27 @@ namespace Ozzyria.Game
             }
         }
 
-        protected void CreateSlime(float x, float y)
+        protected Entity CreateSlime(int id, float x, float y)
         {
-            slimes.Add(new Slime { Movement = new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y } });
+            var slime = new Entity { Id = id };
+            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
+            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
+            slime.AttachComponent(new Combat());
+
+            slime.AttachComponent(new SlimeThought());
+
+            return slime;
         }
 
-        protected void CreateOrb(float x, float y, int value)
+        protected Entity CreateOrb(int id, float x, float y, int value)
         {
-            orbs.Add(new ExperienceOrb { Movement = new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y }, Boost = new ExperienceBoost { Experience = value } });
+            var orb = new Entity { Id = id };
+            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
+            orb.AttachComponent(new ExperienceBoost { Experience = value });
+
+            orb.AttachComponent(new ExperienceOrbThought());
+
+            return orb;
         }
 
         public void Update(float deltaTime)
@@ -91,46 +101,57 @@ namespace Ozzyria.Game
                 player.Update(deltaTime, input);
                 if (player.Combat.Attacking)
                 {
-                    var slimesInRange = slimes.Where(s => Math.Sqrt(Math.Pow(s.Movement.X - player.Movement.X, 2) + Math.Pow(s.Movement.Y - player.Movement.Y, 2)) <= player.Combat.AttackRange);
-                    foreach(var target in slimesInRange)
+                    var combatableEntitiesInRange = entities.Values.Where(e => e.HasComponent(typeof(Movement)) && e.HasComponent(typeof(Combat)) && e.HasComponent(typeof(Stats)) && Math.Sqrt(Math.Pow(((Movement)e.Components[typeof(Movement)]).X - player.Movement.X, 2) + Math.Pow(((Movement)e.Components[typeof(Movement)]).Y - player.Movement.Y, 2)) <= player.Combat.AttackRange);
+                    foreach(var target in combatableEntitiesInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, target.Movement.X, target.Movement.Y);
+                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, ((Movement)target.Components[typeof(Movement)]).X, ((Movement)target.Components[typeof(Movement)]).Y);
                         if (AngleHelper.IsInArc(angleToTarget, player.Movement.LookDirection, player.Combat.AttackAngle))
                         {
-                            target.Stats.Damage(player.Combat.AttackDamage);
-                            if (target.Stats.IsDead())
+                            ((Stats)target.Components[typeof(Stats)]).Damage(player.Combat.AttackDamage);
+                            if (((Stats)target.Components[typeof(Stats)]).IsDead())
                             {
-                                events.Add(new SlimeDead { Slime = target });
+                                events.Add(new EntityDead { Id = target.Id });
                             }
                         }
                     }
                 }
             }
 
-            foreach(var orb in orbs)
+            foreach (var entity in entities.Values)
             {
-                orb.Update(deltaTime, players.Values.ToArray());
-            }
-            // remove any orbs that have been absorbed
-            orbs = orbs.Where(o => !o.Boost.HasBeenAbsorbed).ToList();
-
-            foreach (var slime in slimes)
-            {
-                if (slime.Stats.IsDead())
+                // Death Check
+                if (entity.HasComponent(typeof(Stats)) && ((Stats)entity.Components[typeof(Stats)]).IsDead())
                 {
                     continue;
                 }
 
-                slime.Update(deltaTime, players.Values.ToArray());
-                if (slime.Combat.Attacking)
+                // TODO oh shit.. this just got complicated!
+                if (entity.HasComponent(typeof(SlimeThought)))
                 {
-                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.Movement.X - slime.Movement.X, 2) + Math.Pow(p.Movement.Y - slime.Movement.Y, 2)) <= slime.Combat.AttackRange);
+                    ((SlimeThought)entity.Components[typeof(SlimeThought)]).Update(deltaTime, players.Values.ToArray(), entities);
+                }
+                if (entity.HasComponent(typeof(ExperienceOrbThought)))
+                {
+                    ((ExperienceOrbThought)entity.Components[typeof(ExperienceOrbThought)]).Update(deltaTime, players.Values.ToArray(), entities);
+                    if (((ExperienceBoost)entity.Components[typeof(ExperienceBoost)]).HasBeenAbsorbed)
+                    {
+                        entities.Remove(entity.Id);
+                    }
+                }
+
+                // Handle Combat
+                if (entity.HasComponent(typeof(Combat)) && ((Combat)entity.Components[typeof(Combat)]).Attacking)
+                {
+                    var movement = (Movement)entity.Components[typeof(Movement)];
+                    var combat = (Combat)entity.Components[typeof(Combat)];
+
+                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.Movement.X - movement.X, 2) + Math.Pow(p.Movement.Y - movement.Y, 2)) <= combat.AttackRange);
                     foreach (var target in playersInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(slime.Movement.X, slime.Movement.Y, target.Movement.X, target.Movement.Y);
-                        if (AngleHelper.IsInArc(angleToTarget, slime.Movement.LookDirection, slime.Combat.AttackAngle))
+                        var angleToTarget = AngleHelper.AngleTo(movement.X, movement.Y, target.Movement.X, target.Movement.Y);
+                        if (AngleHelper.IsInArc(angleToTarget, movement.LookDirection, combat.AttackAngle))
                         {
-                            target.Stats.Damage(slime.Combat.AttackDamage);
+                            target.Stats.Damage(combat.AttackDamage);
                             if (target.Stats.IsDead())
                             {
                                 events.Add(new PlayerDead { PlayerId = target.Id });
@@ -139,15 +160,14 @@ namespace Ozzyria.Game
                     }
                 }
             }
-            // remove any dead slimes
-            slimes = slimes.Where(s => !s.Stats.IsDead()).ToList();
 
             if (eventTimer > 5)
             {
                 eventTimer = 0;
-                if (slimes.Count < 3)
+                if (entities.Values.Count(e => e.HasComponent(typeof(SlimeThought))) < 3)
                 {
-                    CreateSlime(500, 400);
+                    var id = maxEntityId++;
+                    entities[id] = CreateSlime(id, 500, 400);
                 }
             }
 
@@ -166,11 +186,14 @@ namespace Ozzyria.Game
                     // kick player out
                     OnPlayerLeave(playerId);
                 }
-                else if(gameEvent is SlimeDead)
+                else if(gameEvent is EntityDead)
                 {
-                    var slime = ((SlimeDead)gameEvent).Slime;
-                    CreateOrb(slime.Movement.X, slime.Movement.Y, 10);
-                    slimes.Remove(slime);
+                    var entityId = ((EntityDead)gameEvent).Id;
+                    var movement = (Movement)entities[entityId].Components[typeof(Movement)];
+
+                    var id = maxEntityId++;
+                    entities[id] = CreateOrb(id, movement.X, movement.Y, 10);
+                    entities.Remove(entityId);
                 }
 
                 foreach(var eventHandler in eventHandlers)

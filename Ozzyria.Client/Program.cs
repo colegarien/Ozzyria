@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;
 using SFML.Window;
@@ -86,30 +87,37 @@ namespace Ozzyria.Client
                     }*/
                 }
 
-                var orbs = client.Orbs;
+
+                var entities = client.Entities;
                 var orbShapes = new List<ProjectileShape>();
-                foreach(var orb in orbs)
-                {
-                    orbShapes.Add(new ProjectileShape(orb.Movement.X, orb.Movement.Y));
-                }
-
-
-                var slimes = client.Slimes;
                 var slimeShapes = new List<EntityShape>();
-                foreach (var slime in slimes)
+                foreach (var entity in entities)
                 {
-                    var shape = new EntityShape();
-                    shape.Visible = true;
-                    shape.ShowHealth = true;
-                    shape.Color = Color.Green;
-                    shape.SetHealth(slime.Stats.Health, slime.Stats.MaxHealth);
-                    shape.Update(deltaTime, slime.Movement.X, slime.Movement.Y, slime.Movement.LookDirection);
-                    if (slime.Combat.Attacking)
+                    var movement = (Movement)entity.Components[typeof(Movement)];
+                    if (entity.HasComponent(typeof(ExperienceBoost)))
                     {
-                        // show slime as attacking for a brief period
-                        shape.LastAttack = slime.Combat.Delay.DelayInSeconds / 3f;
+                        // Orb stuff
+                        orbShapes.Add(new ProjectileShape(movement.X, movement.Y));
                     }
-                    slimeShapes.Add(shape);
+                    else
+                    {
+                        var stats = (Stats)entity.Components[typeof(Stats)];
+                        var combat = (Combat)entity.Components[typeof(Combat)];
+
+                        // Slime stuff
+                        var shape = new EntityShape();
+                        shape.Visible = true;
+                        shape.ShowHealth = true;
+                        shape.Color = Color.Green;
+                        shape.SetHealth(stats.Health, stats.MaxHealth);
+                        shape.Update(deltaTime, movement.X, movement.Y, movement.LookDirection);
+                        if (combat.Attacking)
+                        {
+                            // show slime as attacking for a brief period
+                            shape.LastAttack = combat.Delay.DelayInSeconds / 3f;
+                        }
+                        slimeShapes.Add(shape);
+                    }
                 }
 
                 ///

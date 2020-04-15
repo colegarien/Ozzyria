@@ -1,6 +1,7 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public interface IComponent
+    public abstract class IComponent
     {
+        public Entity Owner { get; set; }
     }
 }

@@ -12,8 +12,7 @@ namespace Ozzyria.Networking
         private UdpClient udpClient;
 
         public Player[] Players { get; set; }
-        public ExperienceOrb[] Orbs { get; set; }
-        public Slime[] Slimes { get; set; }
+        public Entity[] Entities { get; set; }
 
         public Client()
         {
@@ -90,11 +89,8 @@ namespace Ozzyria.Networking
                     case ServerMessage.PlayerStateUpdate:
                         Players = ServerPacketFactory.ParsePlayerState(messageData);
                         break;
-                    case ServerMessage.ExperienceOrbsUpdate:
-                        Orbs = ServerPacketFactory.ParseExperenceOrbs(messageData);
-                        break;
-                    case ServerMessage.SlimeUpdate:
-                        Slimes = ServerPacketFactory.ParseSlimeState(messageData);
+                    case ServerMessage.EntityUpdate:
+                        Entities = ServerPacketFactory.ParseEntityUpdates(messageData);
                         break;
                 }
             }

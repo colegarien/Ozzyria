@@ -2,9 +2,6 @@
 using Ozzyria.Game.Component;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace Ozzyria.Networking.Model
 {
@@ -13,8 +10,7 @@ namespace Ozzyria.Networking.Model
         JoinResult = 0,
         JoinReject = 1,
         PlayerStateUpdate = 2,
-        ExperienceOrbsUpdate = 3,
-        SlimeUpdate = 4,
+        EntityUpdate = 3,
     }
 
     class ServerPacket
@@ -246,100 +242,38 @@ namespace Ozzyria.Networking.Model
             return players.ToArray();
         }
 
-        public static byte[] ExperienceOrbUpdates(ExperienceOrb[] orbs)
+        public static byte[] EntityUpdates(Entity[] entities)
         {
             using (MemoryStream m = new MemoryStream())
             {
                 using (BinaryWriter writer = new BinaryWriter(m))
                 {
-                    writer.Write((int)ServerMessage.ExperienceOrbsUpdate);
-                    foreach (var orb in orbs)
+                    writer.Write((int)ServerMessage.EntityUpdate);
+                    foreach (var entity in entities)
                     {
-                        WriteEntity(writer, new Entity
-                        {
-                            Id = 1,
-                            Components = new Dictionary<System.Type, IComponent>
-                            {
-                                { typeof(Movement), orb.Movement },
-                                { typeof(ExperienceBoost), orb.Boost },
-                            }
-                        });
+                        WriteEntity(writer, entity);
                     }
                 }
+
                 return m.ToArray();
             }
         }
 
-        public static ExperienceOrb[] ParseExperenceOrbs(byte[] packet)
+        public static Entity[] ParseEntityUpdates(byte[] packet)
         {
-            var orbs = new List<ExperienceOrb>();
-
+            var entities = new List<Entity>();
             using (MemoryStream m = new MemoryStream(packet))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        var entity = ReadEntity(reader);
-                        orbs.Add(new ExperienceOrb
-                        {
-                            Movement = (Movement)entity.Components[typeof(Movement)],
-                            Boost = (ExperienceBoost)entity.Components[typeof(ExperienceBoost)],
-                        });
+                        entities.Add(ReadEntity(reader));
                     }
                 }
             }
 
-            return orbs.ToArray();
-        }
-
-        public static byte[] SlimeUpdates(Slime[] slimes)
-        {
-            using (MemoryStream m = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(m))
-                {
-                    writer.Write((int)ServerMessage.SlimeUpdate);
-                    foreach (var slime in slimes)
-                    {
-                        WriteEntity(writer, new Entity
-                        {
-                            Id = 1,
-                            Components = new Dictionary<System.Type, IComponent>
-                            {
-                                { typeof(Movement), slime.Movement },
-                                { typeof(Stats), slime.Stats },
-                                { typeof(Combat), slime.Combat },
-                            }
-                        });
-                    }
-                }
-                return m.ToArray();
-            }
-        }
-
-        public static Slime[] ParseSlimeState(byte[] packet)
-        {
-            var slimes = new List<Slime>();
-
-            using (MemoryStream m = new MemoryStream(packet))
-            {
-                using (BinaryReader reader = new BinaryReader(m))
-                {
-                    while (reader.BaseStream.Position < reader.BaseStream.Length)
-                    {
-                        var entity = ReadEntity(reader);
-                        slimes.Add(new Slime
-                        {
-                            Movement = (Movement)entity.Components[typeof(Movement)],
-                            Stats = (Stats)entity.Components[typeof(Stats)],
-                            Combat = (Combat)entity.Components[typeof(Combat)],
-                        });
-                    }
-                }
-            }
-
-            return slimes.ToArray();
+            return entities.ToArray();
         }
 
     }
