@@ -93,16 +93,16 @@ namespace Ozzyria.Client
                 var slimeShapes = new List<EntityShape>();
                 foreach (var entity in entities)
                 {
-                    var movement = (Movement)entity.Components[typeof(Movement)];
-                    if (entity.HasComponent(typeof(ExperienceBoost)))
+                    var movement = (Movement)entity.Components[ComponentType.Movement];
+                    if (entity.HasComponent(ComponentType.ExperienceBoost))
                     {
                         // Orb stuff
                         orbShapes.Add(new ProjectileShape(movement.X, movement.Y));
                     }
                     else
                     {
-                        var stats = (Stats)entity.Components[typeof(Stats)];
-                        var combat = (Combat)entity.Components[typeof(Combat)];
+                        var stats = (Stats)entity.Components[ComponentType.Stats];
+                        var combat = (Combat)entity.Components[ComponentType.Combat];
 
                         // Slime stuff
                         var shape = new EntityShape();

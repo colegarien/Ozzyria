@@ -14,8 +14,8 @@ namespace Ozzyria.Game.Component
 
         public override void Update(float deltaTime, Player[] players, Dictionary<int, Entity> entities)
         {
-            var movement = (Movement)Owner.Components[typeof(Movement)];
-            var combat = (Combat)Owner.Components[typeof(Combat)];
+            var movement = (Movement)Owner.Components[ComponentType.Movement];
+            var combat = (Combat)Owner.Components[ComponentType.Combat];
 
             var closestPlayer = players.OrderBy(p => Math.Pow(p.Movement.X - movement.X, 2) + Math.Pow(p.Movement.Y - movement.Y, 2)).FirstOrDefault();
             if (closestPlayer == null)

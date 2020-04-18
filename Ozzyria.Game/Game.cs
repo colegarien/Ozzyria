@@ -101,14 +101,14 @@ namespace Ozzyria.Game
                 player.Update(deltaTime, input);
                 if (player.Combat.Attacking)
                 {
-                    var combatableEntitiesInRange = entities.Values.Where(e => e.HasComponent(typeof(Movement)) && e.HasComponent(typeof(Combat)) && e.HasComponent(typeof(Stats)) && Math.Sqrt(Math.Pow(((Movement)e.Components[typeof(Movement)]).X - player.Movement.X, 2) + Math.Pow(((Movement)e.Components[typeof(Movement)]).Y - player.Movement.Y, 2)) <= player.Combat.AttackRange);
+                    var combatableEntitiesInRange = entities.Values.Where(e => e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Combat) && e.HasComponent(ComponentType.Stats) && Math.Sqrt(Math.Pow(((Movement)e.Components[ComponentType.Movement]).X - player.Movement.X, 2) + Math.Pow(((Movement)e.Components[ComponentType.Movement]).Y - player.Movement.Y, 2)) <= player.Combat.AttackRange);
                     foreach(var target in combatableEntitiesInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, ((Movement)target.Components[typeof(Movement)]).X, ((Movement)target.Components[typeof(Movement)]).Y);
+                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, ((Movement)target.Components[ComponentType.Movement]).X, ((Movement)target.Components[ComponentType.Movement]).Y);
                         if (AngleHelper.IsInArc(angleToTarget, player.Movement.LookDirection, player.Combat.AttackAngle))
                         {
-                            ((Stats)target.Components[typeof(Stats)]).Damage(player.Combat.AttackDamage);
-                            if (((Stats)target.Components[typeof(Stats)]).IsDead())
+                            ((Stats)target.Components[ComponentType.Stats]).Damage(player.Combat.AttackDamage);
+                            if (((Stats)target.Components[ComponentType.Stats]).IsDead())
                             {
                                 events.Add(new EntityDead { Id = target.Id });
                             }
@@ -120,30 +120,25 @@ namespace Ozzyria.Game
             foreach (var entity in entities.Values)
             {
                 // Death Check
-                if (entity.HasComponent(typeof(Stats)) && ((Stats)entity.Components[typeof(Stats)]).IsDead())
+                if (entity.HasComponent(ComponentType.Stats) && ((Stats)entity.Components[ComponentType.Stats]).IsDead())
                 {
                     continue;
                 }
 
-                // TODO oh shit.. this just got complicated!
-                if (entity.HasComponent(typeof(SlimeThought)))
-                {
-                    ((SlimeThought)entity.Components[typeof(SlimeThought)]).Update(deltaTime, players.Values.ToArray(), entities);
-                }
-                if (entity.HasComponent(typeof(ExperienceOrbThought)))
-                {
-                    ((ExperienceOrbThought)entity.Components[typeof(ExperienceOrbThought)]).Update(deltaTime, players.Values.ToArray(), entities);
-                    if (((ExperienceBoost)entity.Components[typeof(ExperienceBoost)]).HasBeenAbsorbed)
+                // Handle thoughts
+                if (entity.HasComponent(ComponentType.Thought)) {
+                    ((IThought)entity.Components[ComponentType.Thought]).Update(deltaTime, players.Values.ToArray(), entities);
+                    if (entity.HasComponent(ComponentType.ExperienceBoost) && ((ExperienceBoost)entity.Components[ComponentType.ExperienceBoost]).HasBeenAbsorbed)
                     {
                         entities.Remove(entity.Id);
                     }
                 }
 
                 // Handle Combat
-                if (entity.HasComponent(typeof(Combat)) && ((Combat)entity.Components[typeof(Combat)]).Attacking)
+                if (entity.HasComponent(ComponentType.Combat) && ((Combat)entity.Components[ComponentType.Combat]).Attacking)
                 {
-                    var movement = (Movement)entity.Components[typeof(Movement)];
-                    var combat = (Combat)entity.Components[typeof(Combat)];
+                    var movement = (Movement)entity.Components[ComponentType.Movement];
+                    var combat = (Combat)entity.Components[ComponentType.Combat];
 
                     var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.Movement.X - movement.X, 2) + Math.Pow(p.Movement.Y - movement.Y, 2)) <= combat.AttackRange);
                     foreach (var target in playersInRange)
@@ -164,7 +159,7 @@ namespace Ozzyria.Game
             if (eventTimer > 5)
             {
                 eventTimer = 0;
-                if (entities.Values.Count(e => e.HasComponent(typeof(SlimeThought))) < 3)
+                if (entities.Values.Count(e => e.HasComponent(ComponentType.Thought) && e.Components[ComponentType.Thought] is SlimeThought) < 3)
                 {
                     var id = maxEntityId++;
                     entities[id] = CreateSlime(id, 500, 400);
@@ -189,7 +184,7 @@ namespace Ozzyria.Game
                 else if(gameEvent is EntityDead)
                 {
                     var entityId = ((EntityDead)gameEvent).Id;
-                    var movement = (Movement)entities[entityId].Components[typeof(Movement)];
+                    var movement = (Movement)entities[entityId].Components[ComponentType.Movement];
 
                     var id = maxEntityId++;
                     entities[id] = CreateOrb(id, movement.X, movement.Y, 10);

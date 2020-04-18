@@ -8,15 +8,15 @@ namespace Ozzyria.Game
     public class Entity
     {
         public int Id { get; set; } = -1;
-        public Dictionary<Type, IComponent> Components { get; set; } = new Dictionary<Type, IComponent>();
+        public Dictionary<ComponentType, Component.Component> Components { get; set; } = new Dictionary<ComponentType, Component.Component>();
 
-        public void AttachComponent(IComponent component)
+        public void AttachComponent(Component.Component component)
         {
             component.Owner = this;
-            Components[component.GetType()] = component;
+            Components[component.Type()] = component;
         }
 
-        public bool HasComponent(Type type)
+        public bool HasComponent(ComponentType type)
         {
             return Components.ContainsKey(type);
         }

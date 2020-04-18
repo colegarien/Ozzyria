@@ -11,8 +11,8 @@ namespace Ozzyria.Game.Component
 
         public override void Update(float deltaTime, Player[] players, Dictionary<int, Entity> entities)
         {
-            var movement = (Movement)Owner.Components[typeof(Movement)];
-            var boost = (ExperienceBoost)Owner.Components[typeof(ExperienceBoost)];
+            var movement = (Movement)Owner.Components[ComponentType.Movement];
+            var boost = (ExperienceBoost)Owner.Components[ComponentType.ExperienceBoost];
 
             if (boost.HasBeenAbsorbed)
             {

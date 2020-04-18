@@ -1,7 +1,8 @@
 ﻿namespace Ozzyria.Game.Component
 {
-    public class Stats : IComponent
+    public class Stats : Component
     {
+        public override ComponentType Type() => ComponentType.Stats;
         public int Experience { get; set; } = 0;
         public int MaxExperience { get; set; } = 100;
         public int Health { get; set; } = 100;

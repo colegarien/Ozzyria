@@ -144,25 +144,25 @@ namespace Ozzyria.Networking.Model
             writer.Write(entity.Id);
             foreach(var component in entity.Components.Values)
             {
-                writer.Write(component.GetType().Name);
-                if (component.GetType() == typeof(Movement))
+                writer.Write((int)component.Type());
+                if (component.Type() == ComponentType.Movement)
                 {
                     WriteMovement(writer, (Movement)component);
                 }
-                else if (component.GetType() == typeof(Combat))
+                else if (component.Type() == ComponentType.Combat)
                 {
                     WriteCombat(writer, (Combat)component);
                 }
-                else if (component.GetType() == typeof(Stats))
+                else if (component.Type() == ComponentType.Stats)
                 {
                     WriteStats(writer, (Stats)component);
                 }
-                else if (component.GetType() == typeof(ExperienceBoost))
+                else if (component.Type() == ComponentType.ExperienceBoost)
                 {
                     WriteExperienceBoost(writer, (ExperienceBoost)component);
                 }
             }
-            writer.Write("DONE");
+            writer.Write((int)ComponentType.None); // signal end-of-entity with empty component
         }
 
         private static Entity ReadEntity(BinaryReader reader)
@@ -173,26 +173,26 @@ namespace Ozzyria.Networking.Model
             };
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                var componentName = reader.ReadString();
-                if (componentName == typeof(Movement).Name)
+                var componentType = (ComponentType)reader.ReadInt32();
+                if (componentType == ComponentType.Movement)
                 {
                     entity.AttachComponent(ReadMovement(reader));
                 }
-                else if (componentName == typeof(Combat).Name)
+                else if (componentType == ComponentType.Combat)
                 {
                     entity.AttachComponent(ReadCombat(reader));
                 }
-                else if (componentName == typeof(Stats).Name)
+                else if (componentType == ComponentType.Stats)
                 {
                     entity.AttachComponent(ReadStats(reader));
                 }
-                else if (componentName == typeof(ExperienceBoost).Name)
+                else if (componentType == ComponentType.ExperienceBoost)
                 {
                     entity.AttachComponent(ReadExperienceBoost(reader));
                 }
-                else if(componentName == "DONE")
+                else if(componentType == ComponentType.None)
                 {
-                    break;
+                    break; // None type signals end of entity
                 }
             }
 
