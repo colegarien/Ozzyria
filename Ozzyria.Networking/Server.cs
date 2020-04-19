@@ -62,34 +62,42 @@ namespace Ozzyria.Networking
         {
             while (server.Available > 0)
             {
-                var clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                var packet = ClientPacketFactory.Parse(server.Receive(ref clientEndPoint));
-                var messageType = packet.Type;
-                var messageClient = packet.ClientId;
-                var messageData = packet.Data;
-
-                switch (messageType)
+                try
                 {
-                    case ClientMessage.Join:
-                        var clientId = PrepareClientSlot(clientEndPoint);
-                        var joinPacket = ServerPacketFactory.Join(clientId);
-                        server.Send(joinPacket, joinPacket.Length, clientEndPoint);
-                        break;
-                    case ClientMessage.Leave:
-                        if (IsValidEndPoint(messageClient, clientEndPoint))
-                        {
-                            clients[messageClient] = null;
-                            game.OnPlayerLeave(messageClient);
-                            Console.WriteLine($"Client #{messageClient} Left");
-                        }
-                        break;
-                    case ClientMessage.InputUpdate:
-                        if (IsValidEndPoint(messageClient, clientEndPoint))
-                        {
-                            game.OnPlayerInput(messageClient, ClientPacketFactory.ParseInputData(messageData));
-                            clientLastHeardFrom[messageClient] = DateTime.Now;
-                        }
-                        break;
+                    var clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                    var packet = ClientPacketFactory.Parse(server.Receive(ref clientEndPoint));
+                    var messageType = packet.Type;
+                    var messageClient = packet.ClientId;
+                    var messageData = packet.Data;
+                
+
+                    switch (messageType)
+                    {
+                        case ClientMessage.Join:
+                            var clientId = PrepareClientSlot(clientEndPoint);
+                            var joinPacket = ServerPacketFactory.Join(clientId);
+                            server.Send(joinPacket, joinPacket.Length, clientEndPoint);
+                            break;
+                        case ClientMessage.Leave:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                clients[messageClient] = null;
+                                game.OnPlayerLeave(messageClient);
+                                Console.WriteLine($"Client #{messageClient} Left");
+                            }
+                            break;
+                        case ClientMessage.InputUpdate:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                game.OnPlayerInput(messageClient, ClientPacketFactory.ParseInputData(messageData));
+                                clientLastHeardFrom[messageClient] = DateTime.Now;
+                            }
+                            break;
+                    }
+                }
+                catch (SocketException)
+                {
+                    // Likely a client connection was reset (will get cleaned up by clientLastHeardFrom)
                 }
             }
         }

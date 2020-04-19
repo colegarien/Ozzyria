@@ -14,13 +14,16 @@ namespace Ozzyria.Client
     {
         static void Main(string[] args)
         {
+            var client = new Networking.Client();
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            window.Closed += (sender, e) => { ((Window)sender).Close(); };
+            window.Closed += (sender, e) => {
+                client.Disconnect();
+                ((Window)sender).Close();
+            };
 
             var cameraX = 0f;
             var cameraY = 0f;
 
-            var client = new Networking.Client();
             if (!client.Connect("127.0.0.1", 13000))
             {
                 Console.WriteLine("Join Failed");
@@ -33,7 +36,7 @@ namespace Ozzyria.Client
             
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
-            while (window.IsOpen)
+            while (window.IsOpen && client.IsConnected())
             {
                 deltaTime = stopWatch.ElapsedMilliseconds / 1000f;
                 stopWatch.Restart();
@@ -81,19 +84,15 @@ namespace Ozzyria.Client
                             entityShapes[entity.Id] = new EntityShape();
                         }
 
-                        // Slime stuff
                         entityShapes[entity.Id].Visible = true;
-                        entityShapes[entity.Id].ShowHealth = true;
+                        entityShapes[entity.Id].ShowHealth = entity.Id != client.Id; // don't show health bar for local player
                         entityShapes[entity.Id].Color = entity.Id < 1000 
                             ? (entity.Id != client.Id ? Color.Cyan : Color.Blue) // is a player
                             : Color.Green; // is not a player
                         entityShapes[entity.Id].SetHealth(stats.Health, stats.MaxHealth);
-                        entityShapes[entity.Id].Update(deltaTime, movement.X, movement.Y, movement.LookDirection);
-                        if (combat.Attacking)
-                        {
-                            // show slime as attacking for a brief period
-                            entityShapes[entity.Id].LastAttack = combat.Delay.DelayInSeconds / 3f;
-                        }
+                        // show as attacking for a brief period
+                        entityShapes[entity.Id].LastAttack = combat.Delay.Timer / combat.Delay.DelayInSeconds;
+                        entityShapes[entity.Id].Update(movement.X, movement.Y, movement.LookDirection);
 
                         // center camera on entity
                         /*if(entity.Id == client.Id)
@@ -138,7 +137,7 @@ namespace Ozzyria.Client
                 }
                 window.Display();
 
-                if (quit)
+                if (quit || !client.IsConnected())
                 {
                     client.Disconnect();
                     window.Close();
@@ -198,15 +197,11 @@ namespace Ozzyria.Client
                 MoveBody(0, 0);
             }
 
-            public void Update(float deltaTime, float x, float y, float angle)
+            public void Update(float x, float y, float angle)
             {
                 // Draw body centered on x and y
                 MoveBody(x - body.Radius, y - body.Radius);
                 nose.Rotation = AngleHelper.RadiansToDegrees(angle);
-
-                if (LastAttack > 0) {
-                    LastAttack -= deltaTime;
-                }
             }
 
             public void Draw(RenderWindow window, float cameraX, float cameraY)
@@ -216,8 +211,9 @@ namespace Ozzyria.Client
 
                 body.FillColor = Color;
                 nose.FillColor = Color.Red;
-                if (LastAttack > 0f)
+                if (LastAttack < 0.25f)
                 {
+                    // only show red for 25% of the time between attacks
                     body.FillColor = Color.Red;
                 }
 

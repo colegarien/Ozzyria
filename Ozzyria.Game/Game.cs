@@ -102,7 +102,7 @@ namespace Ozzyria.Game
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
                     var combat = entity.GetComponent<Combat>(ComponentType.Combat);
 
-                    var entitiesInRange = entityManager.GetEntities().Where(e => e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Combat) && e.HasComponent(ComponentType.Stats) && e.GetComponent<Movement>(ComponentType.Movement).DistanceTo(movement) <= combat.AttackRange);
+                    var entitiesInRange = entityManager.GetEntities().Where(e => entity.Id != e.Id && e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Combat) && e.HasComponent(ComponentType.Stats) && e.GetComponent<Movement>(ComponentType.Movement).DistanceTo(movement) <= combat.AttackRange);
                     foreach (var target in entitiesInRange)
                     {
                         var targetMovement = target.GetComponent<Movement>(ComponentType.Movement);

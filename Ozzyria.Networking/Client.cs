@@ -22,6 +22,11 @@ namespace Ozzyria.Networking
             udpClient = new UdpClient();
         }
 
+        public bool IsConnected()
+        {
+            return connected;
+        }
+
         public bool Connect(string hostname, int port)
         {
             if (connected)
@@ -52,7 +57,7 @@ namespace Ozzyria.Networking
                 connected = true;
                 return true;
             }
-            catch(System.Exception)
+            catch(SocketException)
             {
                 connected = false;
                 return false;
@@ -66,8 +71,15 @@ namespace Ozzyria.Networking
                 return; 
             }
 
-            var inputPacket = ClientPacketFactory.InputUpdate(Id, input);
-            udpClient.Send(inputPacket, inputPacket.Length);
+            try
+            {
+                var inputPacket = ClientPacketFactory.InputUpdate(Id, input);
+                udpClient.Send(inputPacket, inputPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
         }
 
         public void HandleIncomingMessages()
@@ -77,19 +89,26 @@ namespace Ozzyria.Networking
                 return;
             }
 
-            while (udpClient.Available > 0)
+            try
             {
-                var clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                var packet = ServerPacketFactory.Parse(udpClient.Receive(ref clientEndPoint));
-                var messageType = packet.Type;
-                var messageData = packet.Data;
-
-                switch (messageType)
+                while (udpClient.Available > 0)
                 {
-                    case ServerMessage.EntityUpdate:
-                        Entities = ServerPacketFactory.ParseEntityUpdates(messageData);
-                        break;
+                    var clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                    var packet = ServerPacketFactory.Parse(udpClient.Receive(ref clientEndPoint));
+                    var messageType = packet.Type;
+                    var messageData = packet.Data;
+
+                    switch (messageType)
+                    {
+                        case ServerMessage.EntityUpdate:
+                            Entities = ServerPacketFactory.ParseEntityUpdates(messageData);
+                            break;
+                    }
                 }
+            }
+            catch (SocketException)
+            {
+                Disconnect();
             }
         }
 

@@ -26,7 +26,7 @@
             }
 
             // Reset Delay
-            Timer -= DelayInSeconds;
+            Timer = 0;
             Ready = false;
 
             return true;
