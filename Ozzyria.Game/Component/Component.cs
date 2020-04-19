@@ -9,6 +9,7 @@
         Combat = 4,
         Thought = 5,
         ExperienceBoost = 6,
+        Input = 7,
     }
 
     public abstract class Component

@@ -6,14 +6,14 @@
         public int Experience { get; set; } = 10;
         public bool HasBeenAbsorbed { get; set; } = false;
 
-        public void AbsorbInto(Player player)
+        public void AbsorbInto(Stats stats)
         {
             if (HasBeenAbsorbed)
             {
                 return;
             }
 
-            player.Stats.AddExperience(Experience);
+            stats.AddExperience(Experience);
             HasBeenAbsorbed = true;
         }
     }

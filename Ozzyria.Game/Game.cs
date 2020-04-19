@@ -1,7 +1,6 @@
 ﻿using Ozzyria.Game.Component;
 using Ozzyria.Game.Event;
 using Ozzyria.Game.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,11 +8,7 @@ namespace Ozzyria.Game
 {
     public class Game
     {
-        public Dictionary<int, Input> inputs;
-        public Dictionary<int, Player> players;
-
-        public int maxEntityId = 1;
-        public Dictionary<int, Entity> entities;
+        public EntityManager entityManager;
         private float eventTimer = 0;
 
         public List<IEventHandler> eventHandlers;
@@ -21,14 +16,9 @@ namespace Ozzyria.Game
 
         public Game()
         {
-            inputs = new Dictionary<int, Input>();
-            players = new Dictionary<int, Player>();
-
-            entities = new Dictionary<int, Entity>();
-            var id = maxEntityId++;
-            entities[id] = CreateOrb(id, 400, 300, 30);
-            id = maxEntityId++;
-            entities[id] = CreateSlime(id, 500, 400);
+            entityManager = new EntityManager();
+            entityManager.Register(CreateOrb(400, 300, 30));
+            entityManager.Register(CreateSlime(500, 400));
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -39,48 +29,47 @@ namespace Ozzyria.Game
             eventHandlers.Add(handler);
         }
 
-        public void OnPlayerJoin(int id)
+        public int OnPlayerJoin(int id)
         {
-            players[id] = new Player() { Id = id };
-            inputs[id] = new Input();
+            var player = new Entity { Id = id };
+            player.AttachComponent(new PlayerThought());
+            player.AttachComponent(new Movement());
+            player.AttachComponent(new Stats());
+            player.AttachComponent(new Combat());
+            player.AttachComponent(new Input());
+
+            return entityManager.Register(player);
         }
 
         public void OnPlayerInput(int id, Input input)
         {
-            inputs[id] = input;
+            // TODO this is a little weird
+            entityManager.GetEntity(id).AttachComponent(input);
         }
 
         public void OnPlayerLeave(int id)
         {
-            if (players.ContainsKey(id))
-            {
-                players.Remove(id);
-            }
-            if (inputs.ContainsKey(id))
-            {
-                inputs.Remove(id);
-            }
+            // Do something special for players
+            entityManager.DeRegister(id);
         }
 
-        protected Entity CreateSlime(int id, float x, float y)
+        protected Entity CreateSlime(float x, float y)
         {
-            var slime = new Entity { Id = id };
+            var slime = new Entity();
+            slime.AttachComponent(new SlimeThought());
             slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
             slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
             slime.AttachComponent(new Combat());
 
-            slime.AttachComponent(new SlimeThought());
-
             return slime;
         }
 
-        protected Entity CreateOrb(int id, float x, float y, int value)
+        protected Entity CreateOrb(float x, float y, int value)
         {
-            var orb = new Entity { Id = id };
+            var orb = new Entity();
+            orb.AttachComponent(new ExperienceOrbThought());
             orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
             orb.AttachComponent(new ExperienceBoost { Experience = value });
-
-            orb.AttachComponent(new ExperienceOrbThought());
 
             return orb;
         }
@@ -88,68 +77,44 @@ namespace Ozzyria.Game
         public void Update(float deltaTime)
         {
             eventTimer += deltaTime;
-            foreach(var idPlayerPair in players)
-            {
-                var input = inputs.GetValueOrDefault(idPlayerPair.Key) ?? new Input();
-                var player = idPlayerPair.Value;
-
-                if (player.Stats.IsDead())
-                {
-                    continue;
-                }
-
-                player.Update(deltaTime, input);
-                if (player.Combat.Attacking)
-                {
-                    var combatableEntitiesInRange = entities.Values.Where(e => e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Combat) && e.HasComponent(ComponentType.Stats) && Math.Sqrt(Math.Pow(((Movement)e.Components[ComponentType.Movement]).X - player.Movement.X, 2) + Math.Pow(((Movement)e.Components[ComponentType.Movement]).Y - player.Movement.Y, 2)) <= player.Combat.AttackRange);
-                    foreach(var target in combatableEntitiesInRange)
-                    {
-                        var angleToTarget = AngleHelper.AngleTo(player.Movement.X, player.Movement.Y, ((Movement)target.Components[ComponentType.Movement]).X, ((Movement)target.Components[ComponentType.Movement]).Y);
-                        if (AngleHelper.IsInArc(angleToTarget, player.Movement.LookDirection, player.Combat.AttackAngle))
-                        {
-                            ((Stats)target.Components[ComponentType.Stats]).Damage(player.Combat.AttackDamage);
-                            if (((Stats)target.Components[ComponentType.Stats]).IsDead())
-                            {
-                                events.Add(new EntityDead { Id = target.Id });
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (var entity in entities.Values)
+            foreach (var entity in entityManager.GetEntities())
             {
                 // Death Check
-                if (entity.HasComponent(ComponentType.Stats) && ((Stats)entity.Components[ComponentType.Stats]).IsDead())
+                if (entity.HasComponent(ComponentType.Stats) && entity.GetComponent<Stats>(ComponentType.Stats).IsDead())
                 {
                     continue;
                 }
 
                 // Handle thoughts
                 if (entity.HasComponent(ComponentType.Thought)) {
-                    ((IThought)entity.Components[ComponentType.Thought]).Update(deltaTime, players.Values.ToArray(), entities);
-                    if (entity.HasComponent(ComponentType.ExperienceBoost) && ((ExperienceBoost)entity.Components[ComponentType.ExperienceBoost]).HasBeenAbsorbed)
+                    entity.GetComponent<Thought>(ComponentType.Thought).Update(deltaTime, entityManager);
+
+                    // TODO likey move this to collision thang (when it exists)
+                    if (entity.HasComponent(ComponentType.ExperienceBoost) && entity.GetComponent<ExperienceBoost>(ComponentType.ExperienceBoost).HasBeenAbsorbed)
                     {
-                        entities.Remove(entity.Id);
+                        entityManager.DeRegister(entity.Id);
                     }
                 }
 
                 // Handle Combat
-                if (entity.HasComponent(ComponentType.Combat) && ((Combat)entity.Components[ComponentType.Combat]).Attacking)
+                if (entity.HasComponent(ComponentType.Combat) && entity.GetComponent<Combat>(ComponentType.Combat).Attacking)
                 {
-                    var movement = (Movement)entity.Components[ComponentType.Movement];
-                    var combat = (Combat)entity.Components[ComponentType.Combat];
+                    var movement = entity.GetComponent<Movement>(ComponentType.Movement);
+                    var combat = entity.GetComponent<Combat>(ComponentType.Combat);
 
-                    var playersInRange = players.Values.Where(p => Math.Sqrt(Math.Pow(p.Movement.X - movement.X, 2) + Math.Pow(p.Movement.Y - movement.Y, 2)) <= combat.AttackRange);
-                    foreach (var target in playersInRange)
+                    var entitiesInRange = entityManager.GetEntities().Where(e => e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Combat) && e.HasComponent(ComponentType.Stats) && e.GetComponent<Movement>(ComponentType.Movement).DistanceTo(movement) <= combat.AttackRange);
+                    foreach (var target in entitiesInRange)
                     {
-                        var angleToTarget = AngleHelper.AngleTo(movement.X, movement.Y, target.Movement.X, target.Movement.Y);
+                        var targetMovement = target.GetComponent<Movement>(ComponentType.Movement);
+                        var targetStats = target.GetComponent<Stats>(ComponentType.Stats);
+
+                        var angleToTarget = AngleHelper.AngleTo(movement.X, movement.Y, targetMovement.X, targetMovement.Y);
                         if (AngleHelper.IsInArc(angleToTarget, movement.LookDirection, combat.AttackAngle))
                         {
-                            target.Stats.Damage(combat.AttackDamage);
-                            if (target.Stats.IsDead())
+                            targetStats.Damage(combat.AttackDamage);
+                            if (targetStats.IsDead())
                             {
-                                events.Add(new PlayerDead { PlayerId = target.Id });
+                                events.Add(new EntityDead { Id = target.Id });
                             }
                         }
                     }
@@ -159,10 +124,9 @@ namespace Ozzyria.Game
             if (eventTimer > 5)
             {
                 eventTimer = 0;
-                if (entities.Values.Count(e => e.HasComponent(ComponentType.Thought) && e.Components[ComponentType.Thought] is SlimeThought) < 3)
+                if (entityManager.GetEntities().Count(e => e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is SlimeThought) < 3)
                 {
-                    var id = maxEntityId++;
-                    entities[id] = CreateSlime(id, 500, 400);
+                    entityManager.Register(CreateSlime(500, 400));
                 }
             }
 
@@ -175,20 +139,19 @@ namespace Ozzyria.Game
             {
                 var gameEvent = events[0];
 
-                if(gameEvent is PlayerDead)
+                if(gameEvent is EntityDead)
                 {
-                    var playerId = ((PlayerDead)gameEvent).PlayerId;
-                    // kick player out
-                    OnPlayerLeave(playerId);
-                }
-                else if(gameEvent is EntityDead)
-                {
-                    var entityId = ((EntityDead)gameEvent).Id;
-                    var movement = (Movement)entities[entityId].Components[ComponentType.Movement];
+                    var entity = entityManager.GetEntity(((EntityDead)gameEvent).Id);
+                    var movement = entity.GetComponent<Movement>(ComponentType.Movement);
 
-                    var id = maxEntityId++;
-                    entities[id] = CreateOrb(id, movement.X, movement.Y, 10);
-                    entities.Remove(entityId);
+                    entityManager.Register(CreateOrb(movement.X, movement.Y, 10));
+                    entityManager.DeRegister(entity.Id);
+
+                    if (entity.HasComponent(ComponentType.Thought) && entity.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
+                    {
+                        // kick player out
+                        OnPlayerLeave(entity.Id);
+                    }
                 }
 
                 foreach(var eventHandler in eventHandlers)

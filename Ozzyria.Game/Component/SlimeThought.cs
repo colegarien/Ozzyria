@@ -1,23 +1,25 @@
 ﻿using Ozzyria.Game.Utility;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Ozzyria.Game.Component
 {
-    public class SlimeThought : IThought
+    public class SlimeThought : Thought
     {
         const float MAX_FOLLOW_DISTANCE = 200;
 
         public Delay ThinkDelay { get; set; } = new Delay();
         public int ThinkAction { get; set; } = 0;
 
-        public override void Update(float deltaTime, Player[] players, Dictionary<int, Entity> entities)
+        public override void Update(float deltaTime, EntityManager entityManager)
         {
-            var movement = (Movement)Owner.Components[ComponentType.Movement];
-            var combat = (Combat)Owner.Components[ComponentType.Combat];
+            var movement = Owner.GetComponent<Movement>(ComponentType.Movement);
+            var combat = Owner.GetComponent<Combat>(ComponentType.Combat);
 
-            var closestPlayer = players.OrderBy(p => Math.Pow(p.Movement.X - movement.X, 2) + Math.Pow(p.Movement.Y - movement.Y, 2)).FirstOrDefault();
+            var closestPlayer = entityManager.GetEntities()
+                .Where(e => e.Id != Owner.Id && e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Stats) && e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
+                .OrderBy(p => movement.DistanceTo(p.GetComponent<Movement>(ComponentType.Movement)))
+                .FirstOrDefault();
             if (closestPlayer == null)
             {
                 Think(deltaTime, movement);
@@ -26,7 +28,9 @@ namespace Ozzyria.Game.Component
                 return;
             }
 
-            var distance = Math.Sqrt(Math.Pow(closestPlayer.Movement.X - movement.X, 2) + Math.Pow(closestPlayer.Movement.Y - movement.Y, 2));
+            var playerMovement = closestPlayer.GetComponent<Movement>(ComponentType.Movement);
+
+            var distance = movement.DistanceTo(playerMovement);
             if (distance > MAX_FOLLOW_DISTANCE)
             {
                 Think(deltaTime, movement);
@@ -45,7 +49,7 @@ namespace Ozzyria.Game.Component
             {
                 movement.SpeedUp(deltaTime);
             }
-            movement.TurnToward(deltaTime, closestPlayer.Movement.X, closestPlayer.Movement.Y);
+            movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
 
             combat.Update(deltaTime, attack);
             movement.Update(deltaTime);

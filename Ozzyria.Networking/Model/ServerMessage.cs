@@ -9,8 +9,7 @@ namespace Ozzyria.Networking.Model
     {
         JoinResult = 0,
         JoinReject = 1,
-        PlayerStateUpdate = 2,
-        EntityUpdate = 3,
+        EntityUpdate = 2,
     }
 
     class ServerPacket
@@ -70,6 +69,8 @@ namespace Ozzyria.Networking.Model
 
         private static void WriteMovement(BinaryWriter writer, Movement movement)
         {
+            writer.Write(movement.PreviousX);
+            writer.Write(movement.PreviousY);
             writer.Write(movement.X);
             writer.Write(movement.Y);
             writer.Write(movement.Speed);
@@ -81,6 +82,8 @@ namespace Ozzyria.Networking.Model
         {
             return new Movement
             {
+                PreviousX = reader.ReadSingle(),
+                PreviousY = reader.ReadSingle(),
                 X = reader.ReadSingle(),
                 Y = reader.ReadSingle(),
                 Speed = reader.ReadSingle(),
@@ -142,24 +145,22 @@ namespace Ozzyria.Networking.Model
         private static void WriteEntity(BinaryWriter writer, Entity entity)
         {
             writer.Write(entity.Id);
-            foreach(var component in entity.Components.Values)
+            foreach (var component in entity.GetAllComponents())
             {
                 writer.Write((int)component.Type());
-                if (component.Type() == ComponentType.Movement)
-                {
-                    WriteMovement(writer, (Movement)component);
-                }
-                else if (component.Type() == ComponentType.Combat)
-                {
-                    WriteCombat(writer, (Combat)component);
-                }
-                else if (component.Type() == ComponentType.Stats)
-                {
-                    WriteStats(writer, (Stats)component);
-                }
-                else if (component.Type() == ComponentType.ExperienceBoost)
-                {
-                    WriteExperienceBoost(writer, (ExperienceBoost)component);
+                switch (component.Type()) {
+                    case ComponentType.Movement:
+                        WriteMovement(writer, (Movement)component);
+                        break;
+                    case ComponentType.Combat:
+                        WriteCombat(writer, (Combat)component);
+                        break;
+                    case ComponentType.Stats:
+                        WriteStats(writer, (Stats)component);
+                        break;
+                    case ComponentType.ExperienceBoost:
+                        WriteExperienceBoost(writer, (ExperienceBoost)component);
+                        break;
                 }
             }
             writer.Write((int)ComponentType.None); // signal end-of-entity with empty component
@@ -174,72 +175,26 @@ namespace Ozzyria.Networking.Model
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 var componentType = (ComponentType)reader.ReadInt32();
-                if (componentType == ComponentType.Movement)
-                {
-                    entity.AttachComponent(ReadMovement(reader));
+                switch (componentType) {
+                    case ComponentType.Movement:
+                        entity.AttachComponent(ReadMovement(reader));
+                        break;
+                    case ComponentType.Combat:
+                        entity.AttachComponent(ReadCombat(reader));
+                        break;
+                    case ComponentType.Stats:
+                        entity.AttachComponent(ReadStats(reader));
+                        break;
+                    case ComponentType.ExperienceBoost:
+                        entity.AttachComponent(ReadExperienceBoost(reader));
+                        break;
                 }
-                else if (componentType == ComponentType.Combat)
-                {
-                    entity.AttachComponent(ReadCombat(reader));
-                }
-                else if (componentType == ComponentType.Stats)
-                {
-                    entity.AttachComponent(ReadStats(reader));
-                }
-                else if (componentType == ComponentType.ExperienceBoost)
-                {
-                    entity.AttachComponent(ReadExperienceBoost(reader));
-                }
-                else if(componentType == ComponentType.None)
-                {
+
+                if (componentType == ComponentType.None)
                     break; // None type signals end of entity
-                }
             }
 
             return entity;
-        }
-
-        public static byte[] PlayerUpdates(Player[] players)
-        {
-            using (MemoryStream m = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(m))
-                {
-                    writer.Write((int)ServerMessage.PlayerStateUpdate);
-                    foreach(var player in players)
-                    {
-                        writer.Write(player.Id);
-                        WriteMovement(writer, player.Movement);
-                        WriteStats(writer, player.Stats);
-                        WriteCombat(writer, player.Combat);
-                    }
-                }
-                return m.ToArray();
-            }
-        }
-
-        public static Player[] ParsePlayerState(byte[] packet)
-        {
-            var players = new List<Player>();
-
-            using (MemoryStream m = new MemoryStream(packet))
-            {
-                using (BinaryReader reader = new BinaryReader(m))
-                {
-                    while(reader.BaseStream.Position < reader.BaseStream.Length)
-                    {
-                        players.Add(new Player
-                        {
-                            Id = reader.ReadInt32(),
-                            Movement = ReadMovement(reader),
-                            Stats = ReadStats(reader),
-                            Combat = ReadCombat(reader)
-                        });
-                    }
-                }
-            }
-
-            return players.ToArray();
         }
 
         public static byte[] EntityUpdates(Entity[] entities)

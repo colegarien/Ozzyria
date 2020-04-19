@@ -29,9 +29,8 @@ namespace Ozzyria.Client
             }
             Console.WriteLine($"Join as Client #{client.Id}");
 
-            var playerShapes = new Dictionary<int, EntityShape>();
-            playerShapes[client.Id] = new EntityShape();
-
+            var entityShapes = new Dictionary<int, EntityShape>();
+            
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
             while (window.IsOpen)
@@ -61,62 +60,47 @@ namespace Ozzyria.Client
                 client.SendInput(input);
                 client.HandleIncomingMessages();
 
-                var players = client.Players;
-                foreach (var player in players)
-                {
-                    if (!playerShapes.ContainsKey(player.Id))
-                    {
-                        playerShapes[player.Id] = new EntityShape();
-                    }
-                    playerShapes[player.Id].Visible = true;
-                    playerShapes[player.Id].ShowHealth = player.Id != client.Id;
-                    playerShapes[player.Id].Color = player.Id != client.Id ? Color.Cyan : Color.Blue;
-                    playerShapes[player.Id].SetHealth(player.Stats.Health, player.Stats.MaxHealth);
-                    if (player.Combat.Attacking)
-                    {
-                        // show player as attacking for a brief period
-                        playerShapes[player.Id].LastAttack = player.Combat.Delay.DelayInSeconds / 3f;
-                    }
-                    playerShapes[player.Id].Update(deltaTime, player.Movement.X, player.Movement.Y, player.Movement.LookDirection);
-
-                    // center camera on player
-                    /*if(player.Id == client.Id)
-                    {
-                        cameraX = player.X - (window.Size.X / 2f);
-                        cameraY = player.Y - (window.Size.Y / 2f);
-                    }*/
-                }
-
-
                 var entities = client.Entities;
                 var orbShapes = new List<ProjectileShape>();
                 var slimeShapes = new List<EntityShape>();
                 foreach (var entity in entities)
                 {
-                    var movement = (Movement)entity.Components[ComponentType.Movement];
+                    var movement = entity.GetComponent<Movement>(ComponentType.Movement);
                     if (entity.HasComponent(ComponentType.ExperienceBoost))
                     {
                         // Orb stuff
                         orbShapes.Add(new ProjectileShape(movement.X, movement.Y));
                     }
-                    else
+                    else if (entity.HasComponent(ComponentType.Stats) && entity.HasComponent(ComponentType.Combat))
                     {
-                        var stats = (Stats)entity.Components[ComponentType.Stats];
-                        var combat = (Combat)entity.Components[ComponentType.Combat];
+                        var stats = entity.GetComponent<Stats>(ComponentType.Stats);
+                        var combat = entity.GetComponent<Combat>(ComponentType.Combat);
+
+                        if (!entityShapes.ContainsKey(entity.Id))
+                        {
+                            entityShapes[entity.Id] = new EntityShape();
+                        }
 
                         // Slime stuff
-                        var shape = new EntityShape();
-                        shape.Visible = true;
-                        shape.ShowHealth = true;
-                        shape.Color = Color.Green;
-                        shape.SetHealth(stats.Health, stats.MaxHealth);
-                        shape.Update(deltaTime, movement.X, movement.Y, movement.LookDirection);
+                        entityShapes[entity.Id].Visible = true;
+                        entityShapes[entity.Id].ShowHealth = true;
+                        entityShapes[entity.Id].Color = entity.Id < 1000 
+                            ? (entity.Id != client.Id ? Color.Cyan : Color.Blue) // is a player
+                            : Color.Green; // is not a player
+                        entityShapes[entity.Id].SetHealth(stats.Health, stats.MaxHealth);
+                        entityShapes[entity.Id].Update(deltaTime, movement.X, movement.Y, movement.LookDirection);
                         if (combat.Attacking)
                         {
                             // show slime as attacking for a brief period
-                            shape.LastAttack = combat.Delay.DelayInSeconds / 3f;
+                            entityShapes[entity.Id].LastAttack = combat.Delay.DelayInSeconds / 3f;
                         }
-                        slimeShapes.Add(shape);
+
+                        // center camera on entity
+                        /*if(entity.Id == client.Id)
+                        {
+                            cameraX = player.X - (window.Size.X / 2f);
+                            cameraY = player.Y - (window.Size.Y / 2f);
+                        }*/
                     }
                 }
 
@@ -128,26 +112,23 @@ namespace Ozzyria.Client
                 {
                     shape.Draw(window, cameraX, cameraY);
                 }
-                foreach (var shape in slimeShapes)
+                foreach (var entityShape in entityShapes.Values.Reverse())
                 {
-                    shape.Draw(window, cameraX, cameraY);
-                }
-                foreach (var playerShape in playerShapes.Values.Reverse())
-                {
-                    playerShape.Draw(window, cameraX, cameraY);
-                    playerShape.Visible = false;
+                    entityShape.Draw(window, cameraX, cameraY);
+                    entityShape.Visible = false;
                 }
 
                 for (var i = 0; i<10;  i++) {
-                    var player = players.Where(p => p.Id == client.Id).FirstOrDefault();
-                    var fillHpBar = i < Math.Round((float)(player?.Stats?.Health ?? 0f) / (float)(player?.Stats?.MaxHealth ?? 1f) * 10);
+                    var player = entities.Where(e => e.Id == client.Id).FirstOrDefault();
+                    var stats = player?.GetComponent<Stats>(ComponentType.Stats);
+                    var fillHpBar = i < Math.Round((float)(stats?.Health ?? 0f) / (float)(stats?.MaxHealth ?? 1f) * 10);
                     window.Draw(new RectangleShape()
                     {
                         Position = new SFML.System.Vector2f(22 * i, 578),
                         Size = new SFML.System.Vector2f(20, 10),
                         FillColor = fillHpBar ? Color.Green : Color.Magenta
                     });
-                    var fillExpBar = i < Math.Round((float)(player?.Stats?.Experience ?? 0f) / (float)(player?.Stats?.MaxExperience ?? 1f) * 10);
+                    var fillExpBar = i < Math.Round((float)(stats?.Experience ?? 0f) / (float)(stats?.MaxExperience ?? 1f) * 10);
                     window.Draw(new RectangleShape()
                     {
                         Position = new SFML.System.Vector2f(22*i, 590),

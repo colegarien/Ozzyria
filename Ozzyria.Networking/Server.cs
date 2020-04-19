@@ -3,7 +3,6 @@ using Ozzyria.Game.Event;
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -20,8 +19,8 @@ namespace Ozzyria.Networking
 
         private readonly IPEndPoint[] clients;
         private readonly DateTime[] clientLastHeardFrom;
-        private readonly UdpClient server;
 
+        private readonly UdpClient server;
         private readonly Game.Game game;
 
         public Server()
@@ -105,7 +104,7 @@ namespace Ozzyria.Networking
                     clientId = i;
                     clients[i] = clientEndPoint;
                     clientLastHeardFrom[i] = DateTime.Now;
-                    game.OnPlayerJoin(i);
+                    game.OnPlayerJoin(clientId);
                     Console.WriteLine($"Client #{i} Joined");
                     break;
                 }
@@ -116,10 +115,7 @@ namespace Ozzyria.Networking
 
         private void SendState()
         {
-            var playerPacket = ServerPacketFactory.PlayerUpdates(game.players.Values.ToArray());
-            SendToAll(playerPacket);
-
-            var entityPacket = ServerPacketFactory.EntityUpdates(game.entities.Values.ToArray());
+            var entityPacket = ServerPacketFactory.EntityUpdates(game.entityManager.GetEntities());
             SendToAll(entityPacket);
         }
 
@@ -162,13 +158,14 @@ namespace Ozzyria.Networking
 
         public bool CanHandle(IEvent gameEvent)
         {
-            return gameEvent is PlayerDead;
+            // handle player deaths only
+            return gameEvent is EntityDead && ((EntityDead)gameEvent).Id >= 0 && ((EntityDead)gameEvent).Id < MAX_CLIENTS;
         }
 
         public void Handle(IEvent gameEvent)
         {
+            var playerId = ((EntityDead)gameEvent).Id;
             // just re-join game on death
-            var playerId = ((PlayerDead)gameEvent).PlayerId;
             game.OnPlayerJoin(playerId);
         }
     }

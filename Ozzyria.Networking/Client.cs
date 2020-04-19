@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
 using Ozzyria.Networking.Model;
 using System.Net;
 using System.Net.Sockets;
@@ -11,7 +12,6 @@ namespace Ozzyria.Networking
         private bool connected;
         private UdpClient udpClient;
 
-        public Player[] Players { get; set; }
         public Entity[] Entities { get; set; }
 
         public Client()
@@ -86,9 +86,6 @@ namespace Ozzyria.Networking
 
                 switch (messageType)
                 {
-                    case ServerMessage.PlayerStateUpdate:
-                        Players = ServerPacketFactory.ParsePlayerState(messageData);
-                        break;
                     case ServerMessage.EntityUpdate:
                         Entities = ServerPacketFactory.ParseEntityUpdates(messageData);
                         break;

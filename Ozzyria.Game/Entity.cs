@@ -1,14 +1,13 @@
 ﻿using Ozzyria.Game.Component;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Ozzyria.Game
 {
     public class Entity
     {
         public int Id { get; set; } = -1;
-        public Dictionary<ComponentType, Component.Component> Components { get; set; } = new Dictionary<ComponentType, Component.Component>();
+        private Dictionary<ComponentType, Component.Component> Components { get; set; } = new Dictionary<ComponentType, Component.Component>();
 
         public void AttachComponent(Component.Component component)
         {
@@ -19,6 +18,21 @@ namespace Ozzyria.Game
         public bool HasComponent(ComponentType type)
         {
             return Components.ContainsKey(type);
+        }
+
+        public T GetComponent<T>(ComponentType type) where T : Component.Component
+        {
+            if (HasComponent(type))
+            {
+                return (T)Components[type];
+            }
+
+            return null;
+        }
+
+        public Component.Component[] GetAllComponents()
+        {
+            return Components.Values.ToArray();
         }
     }
 }

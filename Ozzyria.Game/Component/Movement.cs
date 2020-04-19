@@ -11,12 +11,21 @@ namespace Ozzyria.Game.Component
         public float MAX_SPEED = 100f;
         public float TURN_SPEED = 5f;
 
+        public float PreviousX { get; set; } = 0f;
+        public float PreviousY { get; set; } = 0f;
         public float X { get; set; } = 0f;
         public float Y { get; set; } = 0f;
         public float Speed { get; set; } = 0f;
         public float MoveDirection { get; set; } = 0f;
         public float LookDirection { get; set; } = 0f;
         
+
+        public float DistanceTo(Movement target)
+        {
+            return (float)Math.Sqrt(Math.Pow(target.X - X, 2) + Math.Pow(target.Y - Y, 2));
+        }
+
+
         public void TurnToward(float deltaTime, float targetX, float targetY)
         {
             LookDirection = AngleHelper.AngleTo(X, Y, targetX, targetY);
@@ -102,6 +111,8 @@ namespace Ozzyria.Game.Component
 
         public void Update(float deltaTime)
         {
+            PreviousX = X;
+            PreviousY = Y;
             X += Speed * deltaTime * (float)Math.Sin(LookDirection + MoveDirection);
             Y += Speed * deltaTime * (float)Math.Cos(LookDirection + MoveDirection);
         }

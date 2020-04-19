@@ -1,7 +1,9 @@
-﻿namespace Ozzyria.Game
+﻿namespace Ozzyria.Game.Component
 {
-    public class Input
+    public class Input : Component
     {
+        public override ComponentType Type() => ComponentType.Input;
+
         public bool MoveUp { get; set; } = false;
         public bool MoveDown { get; set; } = false;
         public bool MoveLeft { get; set; } = false;
