@@ -37,6 +37,7 @@ namespace Ozzyria.Game
             player.AttachComponent(new Stats());
             player.AttachComponent(new Combat());
             player.AttachComponent(new Input());
+            player.AttachComponent(new BoundingCircle { Radius = 10 }); 
 
             return entityManager.Register(player);
         }
@@ -60,6 +61,7 @@ namespace Ozzyria.Game
             slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
             slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
             slime.AttachComponent(new Combat());
+            slime.AttachComponent(new BoundingBox() { Width=20, Height=20 });
 
             return slime;
         }
@@ -93,6 +95,42 @@ namespace Ozzyria.Game
                     if (entity.HasComponent(ComponentType.ExperienceBoost) && entity.GetComponent<ExperienceBoost>(ComponentType.ExperienceBoost).HasBeenAbsorbed)
                     {
                         entityManager.DeRegister(entity.Id);
+                    }
+                }
+
+                // Handle Collisions
+                if (entity.HasComponent(ComponentType.Collision))
+                {
+                    var possibleCollisions = entityManager.GetEntities().Where(e => e.Id != entity.Id && e.HasComponent(ComponentType.Collision));
+                    foreach(var collidedEntity in possibleCollisions) {
+                        var movement = entity.GetComponent<Movement>(ComponentType.Movement);
+                        var collision = entity.GetComponent<Collision>(ComponentType.Collision);
+                        var otherMovement = collidedEntity.GetComponent<Movement>(ComponentType.Movement);
+                        var otherCollision = collidedEntity.GetComponent<Collision>(ComponentType.Collision);
+
+                        var isCollision = false;
+                        if(collision is BoundingCircle && otherCollision is BoundingCircle)
+                        {
+                            isCollision = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
+                        }
+                        else if(collision is BoundingBox && otherCollision is BoundingBox)
+                        {
+                            isCollision = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
+                        }
+                        else if(collision is BoundingCircle && otherCollision is BoundingBox)
+                        {
+                            isCollision = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
+                        }
+                        else if (collision is BoundingBox && otherCollision is BoundingCircle)
+                        {
+                            isCollision = Collision.CircleIntersectsBox((BoundingCircle)otherCollision, (BoundingBox)collision);
+                        }
+
+                        if (isCollision)
+                        {
+                            movement.X = movement.PreviousX;
+                            movement.Y = movement.PreviousY;
+                        }
                     }
                 }
 
