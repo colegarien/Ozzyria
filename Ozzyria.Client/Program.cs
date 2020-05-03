@@ -65,7 +65,6 @@ namespace Ozzyria.Client
 
                 var entities = client.Entities;
                 var orbShapes = new List<ProjectileShape>();
-                var slimeShapes = new List<EntityShape>();
                 foreach (var entity in entities)
                 {
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
@@ -100,6 +99,30 @@ namespace Ozzyria.Client
                             cameraX = player.X - (window.Size.X / 2f);
                             cameraY = player.Y - (window.Size.Y / 2f);
                         }*/
+                    }else if (entity.HasComponent(ComponentType.Collision))
+                    {
+                        var collision = entity.GetComponent<Collision>(ComponentType.Collision);
+
+                        Shape shape;
+                        if (collision is BoundingCircle)
+                        {
+                            var radius = ((BoundingCircle)collision).Radius;
+                            shape = new CircleShape(radius);
+                            shape.Position = new SFML.System.Vector2f(movement.X - radius, movement.Y - radius);
+                        }
+                        else
+                        {
+                            var width = ((BoundingBox)collision).Width;
+                            var height = ((BoundingBox)collision).Height;
+                            shape = new RectangleShape(new SFML.System.Vector2f(width, height));
+                            shape.Position = new SFML.System.Vector2f(movement.X - (width/2f), movement.Y - (height/2f));
+                        }
+                        shape.FillColor = Color.Magenta;
+
+                        entityShapes[entity.Id] = new SimpleShape(shape)
+                        {
+                            Visible = true
+                        };
                     }
                 }
 
@@ -142,6 +165,22 @@ namespace Ozzyria.Client
                     client.Disconnect();
                     window.Close();
                 }
+            }
+        }
+
+        class SimpleShape : EntityShape
+        {
+            private Shape shape;
+            public SimpleShape(Shape shape)
+            {
+                this.shape = shape;
+            }
+
+            public override void Draw(RenderWindow window, float cameraX, float cameraY)
+            {
+                shape.Position = new SFML.System.Vector2f(shape.Position.X - cameraX, shape.Position.Y - cameraY);
+                window.Draw(shape);
+                shape.Position = new SFML.System.Vector2f(shape.Position.X + cameraX, shape.Position.Y + cameraY);
             }
         }
 
@@ -204,7 +243,7 @@ namespace Ozzyria.Client
                 nose.Rotation = AngleHelper.RadiansToDegrees(angle);
             }
 
-            public void Draw(RenderWindow window, float cameraX, float cameraY)
+            public virtual void Draw(RenderWindow window, float cameraX, float cameraY)
             {
                 if (!Visible)
                     return;

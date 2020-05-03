@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Client", "Ozzyria.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Game", "Ozzyria.Game\Ozzyria.Game.csproj", "{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozzyria.CollisionTests", "Ozzyria.CollisionTests\Ozzyria.CollisionTests.csproj", "{6F9AE2FD-7A90-4206-8FD2-94D288889383}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F9AE2FD-7A90-4206-8FD2-94D288889383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F9AE2FD-7A90-4206-8FD2-94D288889383}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9AE2FD-7A90-4206-8FD2-94D288889383}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9AE2FD-7A90-4206-8FD2-94D288889383}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

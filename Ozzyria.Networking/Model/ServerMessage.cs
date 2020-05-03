@@ -2,6 +2,7 @@
 using Ozzyria.Game.Component;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 
 namespace Ozzyria.Networking.Model
 {
@@ -142,6 +143,47 @@ namespace Ozzyria.Networking.Model
             };
         }
 
+        private static void WriteCollision(BinaryWriter writer, Collision collision)
+        {
+            if(collision is BoundingBox)
+            {
+                writer.Write(1);
+                writer.Write(((BoundingBox)collision).Width);
+                writer.Write(((BoundingBox)collision).Height);
+            }
+            else if(collision is BoundingCircle)
+            {
+                writer.Write(2);
+                writer.Write(((BoundingCircle)collision).Radius);
+
+            }
+            else
+            {
+                writer.Write(0);
+            }
+        }
+
+        private static Collision ReadCollision(BinaryReader reader)
+        {
+            var type = reader.ReadInt32();
+            if(type == 1)
+            {
+                return new BoundingBox
+                {
+                    Width = reader.ReadInt32(),
+                    Height = reader.ReadInt32(),
+                };
+            }else if (type == 2)
+            {
+                return new BoundingCircle
+                {
+                    Radius = reader.ReadSingle(),
+                };
+            }
+
+            return new Collision();
+        }
+
         private static void WriteEntity(BinaryWriter writer, Entity entity)
         {
             writer.Write(entity.Id);
@@ -160,6 +202,9 @@ namespace Ozzyria.Networking.Model
                         break;
                     case ComponentType.ExperienceBoost:
                         WriteExperienceBoost(writer, (ExperienceBoost)component);
+                        break;
+                    case ComponentType.Collision:
+                        WriteCollision(writer, (Collision)component);
                         break;
                 }
             }
@@ -187,6 +232,9 @@ namespace Ozzyria.Networking.Model
                         break;
                     case ComponentType.ExperienceBoost:
                         entity.AttachComponent(ReadExperienceBoost(reader));
+                        break;
+                    case ComponentType.Collision:
+                        entity.AttachComponent(ReadCollision(reader));
                         break;
                 }
 
