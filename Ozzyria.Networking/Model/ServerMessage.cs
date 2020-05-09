@@ -148,12 +148,14 @@ namespace Ozzyria.Networking.Model
             if(collision is BoundingBox)
             {
                 writer.Write(1);
+                writer.Write(collision.IsDynamic);
                 writer.Write(((BoundingBox)collision).Width);
                 writer.Write(((BoundingBox)collision).Height);
             }
             else if(collision is BoundingCircle)
             {
                 writer.Write(2);
+                writer.Write(collision.IsDynamic);
                 writer.Write(((BoundingCircle)collision).Radius);
 
             }
@@ -170,6 +172,7 @@ namespace Ozzyria.Networking.Model
             {
                 return new BoundingBox
                 {
+                    IsDynamic = reader.ReadBoolean(),
                     Width = reader.ReadInt32(),
                     Height = reader.ReadInt32(),
                 };
@@ -177,6 +180,7 @@ namespace Ozzyria.Networking.Model
             {
                 return new BoundingCircle
                 {
+                    IsDynamic = reader.ReadBoolean(),
                     Radius = reader.ReadSingle(),
                 };
             }

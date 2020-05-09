@@ -6,6 +6,7 @@ namespace Ozzyria.Game.Component
     public class Collision : Component
     {
         public override ComponentType Type() => ComponentType.Collision;
+        public bool IsDynamic { get; set; } = true;
 
         public static CollisionResult CircleIntersectsCircle(BoundingCircle circle1, BoundingCircle circle2)
         {

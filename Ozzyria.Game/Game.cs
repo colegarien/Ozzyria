@@ -21,17 +21,16 @@ namespace Ozzyria.Game
             entityManager.Register(CreateOrb(400, 300, 30));
             entityManager.Register(CreateSlime(500, 400));
 
-            // TODO resolve ALL collision results at once to avoid weird 'pushing' (vector math!?)
             var box = new Entity();
             box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
-            box.AttachComponent(new BoundingCircle() { Radius = 10 });
-            //box.AttachComponent(new BoundingBox() { Width = 20, Height = 20});
+            box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
+            //box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = 20, Height = 20});
             entityManager.Register(box);
 
             var box2 = new Entity();
             box2.AttachComponent(new Movement() { X = 80, Y = 80, PreviousX = 80, PreviousY = 80 });
-            box2.AttachComponent(new BoundingCircle() { Radius = 10 });
-            //box2.AttachComponent(new BoundingBox() { Width = 20, Height = 20 });
+            box2.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
+            //box2.AttachComponent(new BoundingBox() { IsDynamic = false, Width = 20, Height = 20 });
             entityManager.Register(box2);
 
             eventHandlers = new List<IEventHandler>();
@@ -113,12 +112,14 @@ namespace Ozzyria.Game
                 }
 
                 // Handle Collisions
-                if (entity.HasComponent(ComponentType.Collision))
+                if (entity.HasComponent(ComponentType.Collision) && entity.GetComponent<Collision>(ComponentType.Collision).IsDynamic)
                 {
+                    var movement = entity.GetComponent<Movement>(ComponentType.Movement);
+                    var collision = entity.GetComponent<Collision>(ComponentType.Collision);
+
                     var possibleCollisions = entityManager.GetEntities().Where(e => e.Id != entity.Id && e.HasComponent(ComponentType.Collision));
+                    var depthVector = Vector2.Zero;
                     foreach(var collidedEntity in possibleCollisions) {
-                        var movement = entity.GetComponent<Movement>(ComponentType.Movement);
-                        var collision = entity.GetComponent<Collision>(ComponentType.Collision);
                         var otherMovement = collidedEntity.GetComponent<Movement>(ComponentType.Movement);
                         var otherCollision = collidedEntity.GetComponent<Collision>(ComponentType.Collision);
 
@@ -127,9 +128,7 @@ namespace Ozzyria.Game
                             var result = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
-                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
-                                movement.X += depthVector.X;
-                                movement.Y += depthVector.Y;
+                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
                         else if(collision is BoundingBox && otherCollision is BoundingBox)
@@ -137,9 +136,7 @@ namespace Ozzyria.Game
                             var result = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
                             {
-                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
-                                movement.X += depthVector.X;
-                                movement.Y += depthVector.Y;
+                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
                         else if(collision is BoundingCircle && otherCollision is BoundingBox)
@@ -147,9 +144,7 @@ namespace Ozzyria.Game
                             var result = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
                             {
-                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
-                                movement.X += depthVector.X;
-                                movement.Y += depthVector.Y;
+                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
                         else if (collision is BoundingBox && otherCollision is BoundingCircle)
@@ -157,12 +152,12 @@ namespace Ozzyria.Game
                             var result = Collision.BoxIntersectsCircle((BoundingBox)collision, (BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
-                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
-                                movement.X += depthVector.X;
-                                movement.Y += depthVector.Y;
+                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
                     }
+                    movement.X += depthVector.X;
+                    movement.Y += depthVector.Y;
                 }
 
                 // Handle Combat
