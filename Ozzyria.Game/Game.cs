@@ -27,11 +27,14 @@ namespace Ozzyria.Game
             //box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = 20, Height = 20});
             entityManager.Register(box);
 
-            var box2 = new Entity();
-            box2.AttachComponent(new Movement() { X = 80, Y = 80, PreviousX = 80, PreviousY = 80 });
-            box2.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
-            //box2.AttachComponent(new BoundingBox() { IsDynamic = false, Width = 20, Height = 20 });
-            entityManager.Register(box2);
+            // wrap screen in border
+            entityManager.Register(CreateWall(400, -20, 900, 10));
+            entityManager.Register(CreateWall(400, 620, 900, 10));
+            entityManager.Register(CreateWall(-20, 300, 10, 700));
+            entityManager.Register(CreateWall(820, 300, 10, 700));
+
+            entityManager.Register(CreateWall(150, 300, 400, 10));
+            entityManager.Register(CreateWall(200, 300, 10, 300));
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -87,6 +90,15 @@ namespace Ozzyria.Game
             orb.AttachComponent(new ExperienceBoost { Experience = value });
 
             return orb;
+        }
+
+        protected Entity CreateWall(float x, float y, int w, int h)
+        {
+            var wall = new Entity();
+            wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
+            wall.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
+
+            return wall;
         }
 
         public void Update(float deltaTime)
