@@ -177,20 +177,31 @@ namespace Ozzyria.CollisionTests
             {
                 var dx = movement1.X - movement1.PreviousX;
                 var dy = movement1.Y - movement1.PreviousY;
+                // TODO play around with using dotProduct to correct current velocity (move direction + speed)
                 var dotProduct = new Vector2(result.NormalX, result.NormalY) * Vector2.Dot(new Vector2(dx, dy), new Vector2(result.NormalX, result.NormalY));
+                // This is for resolving intesecting
+                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
 
                 DrawLegs(window, movement1, movement2);
                 var verts = new Vertex[]
                 {
-                    new Vertex(new SFML.System.Vector2f(movement2.X, movement2.Y), Color.Green),
-                    new Vertex(new SFML.System.Vector2f(movement2.X-(dx - dotProduct.X), movement2.Y-(dy - dotProduct.Y)), Color.Green),
-                    new Vertex(new SFML.System.Vector2f(movement1.PreviousX, movement1.PreviousY), Color.Green),
-                    new Vertex(new SFML.System.Vector2f(movement1.PreviousX+(dx - dotProduct.X), movement1.PreviousY+(dy - dotProduct.Y)), Color.Green),
-                    //new Vertex(new SFML.System.Vector2f(movement2.X, movement2.Y), Color.Yellow),
-                    //new Vertex(new SFML.System.Vector2f(movement2.X+result.NormalX, movement2.Y+result.NormalY), Color.Yellow),
+                    //new Vertex(new SFML.System.Vector2f(movement2.X, movement2.Y), Color.Green),
+                    //new Vertex(new SFML.System.Vector2f(movement2.X-(dx - dotProduct.X), movement2.Y-(dy - dotProduct.Y)), Color.Green),
+                    //new Vertex(new SFML.System.Vector2f(movement1.PreviousX, movement1.PreviousY), Color.Green),
+                    //new Vertex(new SFML.System.Vector2f(movement1.PreviousX+(dx - dotProduct.X), movement1.PreviousY+(dy - dotProduct.Y)), Color.Green),
+                    new Vertex(new SFML.System.Vector2f(movement2.X, movement2.Y), Color.Yellow),
+                    new Vertex(new SFML.System.Vector2f(movement2.X+(depthVector.X), movement2.Y+(depthVector.Y)), Color.Yellow),
+                    new Vertex(new SFML.System.Vector2f(movement1.X, movement1.Y), Color.Green),
+                    new Vertex(new SFML.System.Vector2f(movement1.X-(dotProduct.X), movement1.Y-(dotProduct.Y)), Color.Green),
                 };
                 window.Draw(verts, PrimitiveType.Lines);
 
+                var collision = entity1.GetComponent<Collision>(ComponentType.Collision);
+                var isCircle = collision is BoundingCircle;
+                var width = isCircle ? ((BoundingCircle)collision).Radius : ((BoundingBox)collision).Width;
+                var height = isCircle ? ((BoundingCircle)collision).Radius : ((BoundingBox)collision).Height;
+                //DrawShape(window, entity1.GetComponent<Collision>(ComponentType.Collision) is BoundingCircle, movement1.PreviousX + (dx - dotProduct.X), movement1.PreviousY + (dy - dotProduct.Y), width, height, Color.Yellow);
+                DrawShape(window, entity1.GetComponent<Collision>(ComponentType.Collision) is BoundingCircle, movement1.X + depthVector.X, movement1.Y + depthVector.Y, width, height, Color.Yellow);
                 //movement.X = movement.PreviousX + (dx - dotProduct.X);
                 //movement.Y = movement.PreviousY + (dy - dotProduct.Y);
             }

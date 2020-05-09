@@ -21,19 +21,18 @@ namespace Ozzyria.Game
             entityManager.Register(CreateOrb(400, 300, 30));
             entityManager.Register(CreateSlime(500, 400));
 
+            // TODO resolve ALL collision results at once to avoid weird 'pushing' (vector math!?)
             var box = new Entity();
             box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
             box.AttachComponent(new BoundingCircle() { Radius = 10 });
             //box.AttachComponent(new BoundingBox() { Width = 20, Height = 20});
             entityManager.Register(box);
 
-            /*
             var box2 = new Entity();
             box2.AttachComponent(new Movement() { X = 80, Y = 80, PreviousX = 80, PreviousY = 80 });
-            //box2.AttachComponent(new BoundingCircle() { Radius = 10 });
-            box2.AttachComponent(new BoundingBox() { Width = 20, Height = 20 });
+            box2.AttachComponent(new BoundingCircle() { Radius = 10 });
+            //box2.AttachComponent(new BoundingBox() { Width = 20, Height = 20 });
             entityManager.Register(box2);
-            */
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -52,8 +51,7 @@ namespace Ozzyria.Game
             player.AttachComponent(new Stats());
             player.AttachComponent(new Combat());
             player.AttachComponent(new Input());
-            //player.AttachComponent(new BoundingCircle { Radius = 10 });
-            player.AttachComponent(new BoundingBox() { Width = 20, Height = 20 });
+            player.AttachComponent(new BoundingCircle { Radius = 10 });
 
             return entityManager.Register(player);
         }
@@ -77,7 +75,7 @@ namespace Ozzyria.Game
             slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
             slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
             slime.AttachComponent(new Combat());
-            slime.AttachComponent(new BoundingBox() { Width=20, Height=20 });
+            slime.AttachComponent(new BoundingCircle { Radius = 10 });
 
             return slime;
         }
@@ -129,12 +127,9 @@ namespace Ozzyria.Game
                             var result = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
-                                var dx = movement.X - movement.PreviousX;
-                                var dy = movement.Y - movement.PreviousY;
-                                var dotProduct = new Vector2(result.NormalX, result.NormalY) * Vector2.Dot(new Vector2(dx, dy), new Vector2(result.NormalX, result.NormalY));
-
-                                movement.X = movement.PreviousX + (dx - dotProduct.X);
-                                movement.Y = movement.PreviousY + (dy - dotProduct.Y);
+                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
+                                movement.X += depthVector.X;
+                                movement.Y += depthVector.Y;
                             }
                         }
                         else if(collision is BoundingBox && otherCollision is BoundingBox)
@@ -142,12 +137,9 @@ namespace Ozzyria.Game
                             var result = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
                             {
-                                var dx = movement.X - movement.PreviousX;
-                                var dy = movement.Y - movement.PreviousY;
-                                var dotProduct = new Vector2(result.NormalX, result.NormalY) * Vector2.Dot(new Vector2(dx, dy), new Vector2(result.NormalX, result.NormalY));
-
-                                movement.X = movement.PreviousX + (dx - dotProduct.X);
-                                movement.Y = movement.PreviousY + (dy - dotProduct.Y);
+                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
+                                movement.X += depthVector.X;
+                                movement.Y += depthVector.Y;
                             }
                         }
                         else if(collision is BoundingCircle && otherCollision is BoundingBox)
@@ -155,26 +147,19 @@ namespace Ozzyria.Game
                             var result = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
                             {
-                                var dx = movement.X - movement.PreviousX;
-                                var dy = movement.Y - movement.PreviousY;
-                                var dotProduct = new Vector2(result.NormalX, result.NormalY) * Vector2.Dot(new Vector2(dx, dy), new Vector2(result.NormalX, result.NormalY));
-
-                                movement.X = movement.PreviousX + (dx - dotProduct.X);
-                                movement.Y = movement.PreviousY + (dy - dotProduct.Y);
+                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
+                                movement.X += depthVector.X;
+                                movement.Y += depthVector.Y;
                             }
                         }
                         else if (collision is BoundingBox && otherCollision is BoundingCircle)
                         {
-                            // TODO this don't work
                             var result = Collision.BoxIntersectsCircle((BoundingBox)collision, (BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
-                                var dx = movement.X - movement.PreviousX;
-                                var dy = movement.Y - movement.PreviousY;
-                                var dotProduct = new Vector2(result.NormalX, result.NormalY) * Vector2.Dot(new Vector2(dx, dy), new Vector2(result.NormalX, result.NormalY));
-
-                                movement.X = movement.PreviousX + (dx - dotProduct.X);
-                                movement.Y = movement.PreviousY + (dy - dotProduct.Y);
+                                var depthVector = new Vector2(result.NormalX, result.NormalY) * System.Math.Abs(result.Depth);
+                                movement.X += depthVector.X;
+                                movement.Y += depthVector.Y;
                             }
                         }
                     }

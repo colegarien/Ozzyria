@@ -12,12 +12,13 @@ namespace Ozzyria.Game.Component
             var movement = circle1.Owner.GetComponent<Movement>(ComponentType.Movement);
             var otherMovement = circle2.Owner.GetComponent<Movement>(ComponentType.Movement);
 
-            var direction = Vector2.Normalize(new Vector2(movement.PreviousX - otherMovement.X, movement.PreviousY - otherMovement.Y));
+            var direction = Vector2.Normalize(new Vector2(movement.X - otherMovement.X, movement.Y - otherMovement.Y));
             var collisionResult = new CollisionResult
             {
                 Collided = movement.DistanceTo(otherMovement) < circle1.Radius + circle2.Radius,
                 NormalX = direction.X,
-                NormalY = direction.Y
+                NormalY = direction.Y,
+                Depth = Math.Abs(movement.DistanceTo(otherMovement) - circle2.Radius - circle1.Radius)
             };
 
             return collisionResult;
@@ -58,6 +59,7 @@ namespace Ozzyria.Game.Component
                 collisionResult.NormalY = collisionOnTop ? 1 : -1;
             }
 
+            collisionResult.Depth = Math.Abs(collisionResult.NormalX != 0 ? distanceH : distanceV);
             return collisionResult;
         }
 
@@ -81,47 +83,25 @@ namespace Ozzyria.Game.Component
             float deltaX = movement.X - testX;
             float deltaY = movement.Y - testY;
 
-            var direction = Vector2.Normalize(new Vector2(movement.PreviousX - testX, movement.PreviousY - testY));
+            var direction = Vector2.Normalize(new Vector2(movement.X - testX, movement.Y - testY));
+            var depth = (float)(Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY)) - circle.Radius);
             var collisionResult = new CollisionResult
             {
-                Collided = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY)) <= circle.Radius,
+                Collided = depth < 0,
                 NormalX = direction.X,
-                NormalY = direction.Y
+                NormalY = direction.Y,
+                Depth = Math.Abs(depth)
             };
 
             return collisionResult;
         }
+
         public static CollisionResult BoxIntersectsCircle(BoundingBox box, BoundingCircle circle)
         {
-            var circleMovement = circle.Owner.GetComponent<Movement>(ComponentType.Movement);
-
-            var testX = circleMovement.X;
-            var testY = circleMovement.Y;
-
-            if (circleMovement.X < box.GetLeft())
-                testX = box.GetLeft();
-            else if (circleMovement.X > box.GetRight())
-                testX = box.GetRight();
-
-            if (circleMovement.Y < box.GetTop())
-                testY = box.GetTop();
-            else if (circleMovement.Y > box.GetBottom())
-                testY = box.GetBottom();
-
-            float deltaX = circleMovement.X - testX;
-            float deltaY = circleMovement.Y - testY;
-
-
-            var movement = box.Owner.GetComponent<Movement>(ComponentType.Movement);
-            var direction = Vector2.Normalize(new Vector2(movement.PreviousX - testX, movement.PreviousY - testY));
-            var collisionResult = new CollisionResult
-            {
-                Collided = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY)) <= circle.Radius,
-                NormalX = direction.X,
-                NormalY = direction.Y
-            };
-
-            return collisionResult;
+            var result = CircleIntersectsBox(circle, box);
+            result.NormalX *= -1f;
+            result.NormalY *= -1f;
+            return result;
         }
     }
 }
