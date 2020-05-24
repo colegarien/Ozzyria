@@ -4,6 +4,7 @@ using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 
 namespace Ozzyria.Game
 {
@@ -48,6 +49,7 @@ namespace Ozzyria.Game
         public int OnPlayerJoin(int id)
         {
             var player = new Entity { Id = id };
+            player.AttachComponent(new Renderable { Sprite = SpriteType.Player });
             player.AttachComponent(new PlayerThought());
             player.AttachComponent(new Movement());
             player.AttachComponent(new Stats());
@@ -73,6 +75,7 @@ namespace Ozzyria.Game
         protected Entity CreateSlime(float x, float y)
         {
             var slime = new Entity();
+            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
             slime.AttachComponent(new SlimeThought());
             slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
             slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
@@ -85,6 +88,7 @@ namespace Ozzyria.Game
         protected Entity CreateOrb(float x, float y, int value)
         {
             var orb = new Entity();
+            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
             orb.AttachComponent(new ExperienceOrbThought());
             orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
             orb.AttachComponent(new ExperienceBoost { Experience = value });

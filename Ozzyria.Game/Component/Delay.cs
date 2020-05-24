@@ -3,7 +3,7 @@
     public class Delay : Component
     {
         public float DelayInSeconds { get; set; } = 0.5f;
-        public float Timer { get; set; } = 0f;
+        public float Timer { get; set; } = 0.5f;
         public bool Ready { get; set; } = false;
 
         public void Update(float deltaTime)

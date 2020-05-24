@@ -188,6 +188,19 @@ namespace Ozzyria.Networking.Model
             return new Collision();
         }
 
+        private static void WriteRenderable(BinaryWriter writer, Renderable renderable)
+        {
+            writer.Write((int)renderable.Sprite);
+        }
+
+        private static Renderable ReadRenderable(BinaryReader reader)
+        {
+            return new Renderable
+            {
+                Sprite = (SpriteType)reader.ReadInt32()
+            };
+        }
+
         private static void WriteEntity(BinaryWriter writer, Entity entity)
         {
             writer.Write(entity.Id);
@@ -209,6 +222,9 @@ namespace Ozzyria.Networking.Model
                         break;
                     case ComponentType.Collision:
                         WriteCollision(writer, (Collision)component);
+                        break;
+                    case ComponentType.Renderable:
+                        WriteRenderable(writer, (Renderable)component);
                         break;
                 }
             }
@@ -239,6 +255,9 @@ namespace Ozzyria.Networking.Model
                         break;
                     case ComponentType.Collision:
                         entity.AttachComponent(ReadCollision(reader));
+                        break;
+                    case ComponentType.Renderable:
+                        entity.AttachComponent(ReadRenderable(reader));
                         break;
                 }
 

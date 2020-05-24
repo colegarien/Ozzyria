@@ -2,18 +2,23 @@
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Ozzyria.Client
 {
     class Program
     {
+        const bool DEBUG_SHOW_COLLISIONS = true;
+
         static void Main(string[] args)
         {
+            var entityTexture = new Texture("Resources/Sprites/entity_set_001.png");
+            var tileSetTexture = new Texture("Resources/Sprites/outside_tileset_001.png");
+
             var client = new Networking.Client();
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             window.Closed += (sender, e) => {
@@ -31,8 +36,6 @@ namespace Ozzyria.Client
                 return;
             }
             Console.WriteLine($"Join as Client #{client.Id}");
-
-            var entityShapes = new Dictionary<int, EntityShape>();
             
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
@@ -64,42 +67,77 @@ namespace Ozzyria.Client
                 client.HandleIncomingMessages();
 
                 var entities = client.Entities;
-                var orbShapes = new List<ProjectileShape>();
+                var collisionShapes = new List<DebugCollisionShape>();
+                var sprites = new List<Sprite>();
+                var hoverStatBars = new List<HoverStatBar>();
+                var uiStatBars = new List<UIProgressBar>();
                 foreach (var entity in entities)
                 {
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
-                    if (entity.HasComponent(ComponentType.ExperienceBoost))
+                    if (entity.HasComponent(ComponentType.Renderable))
                     {
-                        // Orb stuff
-                        orbShapes.Add(new ProjectileShape(movement.X, movement.Y));
-                    }
-                    else if (entity.HasComponent(ComponentType.Stats) && entity.HasComponent(ComponentType.Combat))
-                    {
-                        var stats = entity.GetComponent<Stats>(ComponentType.Stats);
-                        var combat = entity.GetComponent<Combat>(ComponentType.Combat);
-
-                        if (!entityShapes.ContainsKey(entity.Id))
+                        var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
+                        var sfmlSprite = new Sprite(entityTexture);
+                        switch (sprite)
                         {
-                            entityShapes[entity.Id] = new EntityShape();
+                            case SpriteType.Particle:
+                                sfmlSprite.TextureRect = new IntRect(0, 96, 32, 32);
+                                sfmlSprite.Color = Color.Yellow;
+                                break;
+                            case SpriteType.Player:
+                                sfmlSprite.TextureRect = new IntRect(0, 32, 32, 32);
+                                break;
+                            case SpriteType.Slime:
+                            default:
+                                sfmlSprite.TextureRect = new IntRect(0, 0, 32, 32);
+                                break;
+                        }
+                        sfmlSprite.Origin = new Vector2f(16, 16);
+                        sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
+                        sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
+
+                        if (entity.HasComponent(ComponentType.Stats))
+                        {
+                            var stats = entity.GetComponent<Stats>(ComponentType.Stats);
+
+                            // only show health bar for entities that are not the local player
+                            if (entity.Id != client.Id)
+                            {
+                                var hoverStatBar = new HoverStatBar();
+                                hoverStatBar.Move(movement.X, movement.Y);
+                                hoverStatBar.SetMagnitude(stats.Health, stats.MaxHealth);
+                                hoverStatBars.Add(hoverStatBar);
+                            }
+                            else
+                            {
+                                var healthBar = new UIProgressBar(0, 578, Color.Magenta, Color.Green);
+                                healthBar.SetMagnitude(stats.Health, stats.MaxHealth);
+
+                                var expBar = new UIProgressBar(0, 590, Color.Magenta, Color.Yellow);
+                                expBar.SetMagnitude(stats.Experience, stats.MaxExperience);
+
+                                uiStatBars.Add(healthBar);
+                                uiStatBars.Add(expBar);
+                            }
                         }
 
-                        entityShapes[entity.Id].Visible = true;
-                        entityShapes[entity.Id].ShowHealth = entity.Id != client.Id; // don't show health bar for local player
-                        entityShapes[entity.Id].Color = entity.Id < 1000 
-                            ? (entity.Id != client.Id ? Color.Cyan : Color.Blue) // is a player
-                            : Color.Green; // is not a player
-                        entityShapes[entity.Id].SetHealth(stats.Health, stats.MaxHealth);
-                        // show as attacking for a brief period
-                        entityShapes[entity.Id].LastAttack = combat.Delay.Timer / combat.Delay.DelayInSeconds;
-                        entityShapes[entity.Id].Update(movement.X, movement.Y, movement.LookDirection);
+                        if (entity.HasComponent(ComponentType.Combat))
+                        {
+                            // show as attacking for a brief period
+                            var combat = entity.GetComponent<Combat>(ComponentType.Combat);
+                            sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
+                        }
+                        sprites.Add(sfmlSprite);
 
                         // center camera on entity
-                        /*if(entity.Id == client.Id)
+                        if(entity.Id == client.Id)
                         {
-                            cameraX = player.X - (window.Size.X / 2f);
-                            cameraY = player.Y - (window.Size.Y / 2f);
-                        }*/
-                    }else if (entity.HasComponent(ComponentType.Collision))
+                            cameraX = movement.X - (window.Size.X / 2f);
+                            cameraY = movement.Y - (window.Size.Y / 2f);
+                        }
+                    }
+                    
+                    if (DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
                     {
                         var collision = entity.GetComponent<Collision>(ComponentType.Collision);
 
@@ -108,21 +146,16 @@ namespace Ozzyria.Client
                         {
                             var radius = ((BoundingCircle)collision).Radius;
                             shape = new CircleShape(radius);
-                            shape.Position = new SFML.System.Vector2f(movement.X - radius, movement.Y - radius);
+                            shape.Position = new Vector2f(movement.X - radius, movement.Y - radius);
                         }
                         else
                         {
                             var width = ((BoundingBox)collision).Width;
                             var height = ((BoundingBox)collision).Height;
-                            shape = new RectangleShape(new SFML.System.Vector2f(width, height));
-                            shape.Position = new SFML.System.Vector2f(movement.X - (width/2f), movement.Y - (height/2f));
+                            shape = new RectangleShape(new Vector2f(width, height));
+                            shape.Position = new Vector2f(movement.X - (width/2f), movement.Y - (height/2f));
                         }
-                        shape.FillColor = Color.Magenta;
-
-                        entityShapes[entity.Id] = new SimpleShape(shape)
-                        {
-                            Visible = true
-                        };
+                        collisionShapes.Add(new DebugCollisionShape(shape));
                     }
                 }
 
@@ -130,33 +163,26 @@ namespace Ozzyria.Client
                 /// DRAWING HERE
                 ///
                 window.Clear();
-                foreach(var shape in orbShapes)
+                foreach(var sprite in sprites)
                 {
-                    shape.Draw(window, cameraX, cameraY);
-                }
-                foreach (var entityShape in entityShapes.Values.Reverse())
-                {
-                    entityShape.Draw(window, cameraX, cameraY);
-                    entityShape.Visible = false;
+                    sprite.Position = new Vector2f(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
+                    window.Draw(sprite);
+                    sprite.Position = new Vector2f(sprite.Position.X + cameraX, sprite.Position.Y + cameraY);
                 }
 
-                for (var i = 0; i<10;  i++) {
-                    var player = entities.Where(e => e.Id == client.Id).FirstOrDefault();
-                    var stats = player?.GetComponent<Stats>(ComponentType.Stats);
-                    var fillHpBar = i < Math.Round((float)(stats?.Health ?? 0f) / (float)(stats?.MaxHealth ?? 1f) * 10);
-                    window.Draw(new RectangleShape()
-                    {
-                        Position = new SFML.System.Vector2f(22 * i, 578),
-                        Size = new SFML.System.Vector2f(20, 10),
-                        FillColor = fillHpBar ? Color.Green : Color.Magenta
-                    });
-                    var fillExpBar = i < Math.Round((float)(stats?.Experience ?? 0f) / (float)(stats?.MaxExperience ?? 1f) * 10);
-                    window.Draw(new RectangleShape()
-                    {
-                        Position = new SFML.System.Vector2f(22*i, 590),
-                        Size = new SFML.System.Vector2f(20, 10),
-                        FillColor = fillExpBar ? Color.Yellow : Color.Magenta
-                    });
+                foreach (var collisionShape in collisionShapes)
+                {
+                    collisionShape.Draw(window, cameraX, cameraY);
+                }
+
+                foreach (var hoverStatBar in hoverStatBars)
+                {
+                    hoverStatBar.Draw(window, cameraX, cameraY);
+                }
+
+                foreach (var uiStatBar in uiStatBars)
+                {
+                    uiStatBar.Draw(window);
                 }
                 window.Display();
 
@@ -168,117 +194,104 @@ namespace Ozzyria.Client
             }
         }
 
-        class SimpleShape : EntityShape
+        class DebugCollisionShape
         {
             private Shape shape;
-            public SimpleShape(Shape shape)
+            public DebugCollisionShape(Shape shape)
             {
                 this.shape = shape;
-            }
-
-            public override void Draw(RenderWindow window, float cameraX, float cameraY)
-            {
-                shape.Position = new SFML.System.Vector2f(shape.Position.X - cameraX, shape.Position.Y - cameraY);
-                window.Draw(shape);
-                shape.Position = new SFML.System.Vector2f(shape.Position.X + cameraX, shape.Position.Y + cameraY);
-            }
-        }
-
-        class ProjectileShape
-        {
-            private CircleShape body;
-
-            public ProjectileShape(float x, float y)
-            {
-                body = new CircleShape(3f);
-                body.FillColor = Color.Yellow;
-                body.Position = new SFML.System.Vector2f(x - body.Radius, y - body.Radius);
+                shape.FillColor = Color.Transparent;
+                shape.OutlineColor = Color.Magenta;
+                shape.OutlineThickness = 1;
             }
 
             public void Draw(RenderWindow window, float cameraX, float cameraY)
             {
-                body.Position = new SFML.System.Vector2f(body.Position.X - cameraX, body.Position.Y - cameraY);
-                window.Draw(body);
-                body.Position = new SFML.System.Vector2f(body.Position.X + cameraX, body.Position.Y + cameraY);
+                shape.Position = new Vector2f(shape.Position.X - cameraX, shape.Position.Y - cameraY);
+                window.Draw(shape);
+                shape.Position = new Vector2f(shape.Position.X + cameraX, shape.Position.Y + cameraY);
             }
-
         }
 
-        class EntityShape
+        class UIProgressBar
         {
-            public bool Visible { get; set; }
-            public Color Color { get; set; }
-            public bool ShowHealth { get; set; } = true;
+            private const int NUM_SEGMENTS = 10;
+            private RectangleShape[] segments = new RectangleShape[NUM_SEGMENTS];
+            private Color background;
+            private Color foreground;
 
-            public float LastAttack { get; set; }
-
-            private CircleShape body;
-            private RectangleShape nose;
-
-            private RectangleShape healthUnderBar;
-            private RectangleShape healthOverBar;
-
-
-            public EntityShape()
+            public UIProgressBar(float X, float Y, Color backgroundColor, Color foregroundColor)
             {
-                body = new CircleShape(10f);
-
-                nose = new RectangleShape(new SFML.System.Vector2f(2, 15));
-                nose.Origin = new SFML.System.Vector2f(1, 0);
-
-                healthUnderBar = new RectangleShape(new SFML.System.Vector2f(26, 5));
-                healthUnderBar.FillColor = Color.Red;
-
-                healthOverBar = new RectangleShape(new SFML.System.Vector2f(15, 5));
-                healthOverBar.FillColor = Color.Green;
-
-                // initialize positioning
-                MoveBody(0, 0);
+                background = backgroundColor;
+                foreground = foregroundColor;
+                for(var segment = 0; segment < NUM_SEGMENTS; segment++)
+                {
+                    segments[segment] = new RectangleShape()
+                    {
+                        Position = new Vector2f(X + (22 * segment), Y),
+                        Size = new Vector2f(20, 10),
+                    };
+                }
             }
 
-            public void Update(float x, float y, float angle)
+            public void SetMagnitude(int current, int max)
             {
-                // Draw body centered on x and y
-                MoveBody(x - body.Radius, y - body.Radius);
-                nose.Rotation = AngleHelper.RadiansToDegrees(angle);
+                var fillToSegment = Math.Round((float)(current) / (float)(max) * NUM_SEGMENTS);
+                for (var segment = 0; segment < NUM_SEGMENTS; segment++)
+                {
+                    var fillSegment = segment < fillToSegment;
+                    segments[segment].FillColor = fillSegment ? foreground : background;
+                }
+            }
+
+            public void Draw(RenderWindow window)
+            {
+                foreach(var segment in segments)
+                {
+                    window.Draw(segment);
+                }
+            }
+        }
+
+        class HoverStatBar
+        {
+            private RectangleShape background;
+            private RectangleShape overlay;
+
+            public HoverStatBar()
+            {
+                var offset = new Vector2f(0, 14);
+
+                background = new RectangleShape(new Vector2f(26, 5));
+                background.Origin = new Vector2f(background.Size.X / 2 + offset.X, background.Size.Y + offset.Y);
+                background.FillColor = Color.Red;
+
+                overlay = new RectangleShape(background.Size);
+                overlay.Origin = background.Origin;
+                overlay.FillColor = Color.Green;
+            }
+
+            public void Move(float X, float Y)
+            {
+                background.Position = new Vector2f(X, Y);
+                overlay.Position = new Vector2f(X, Y);
+            }
+
+            public void SetMagnitude(int current, int max)
+            {
+                overlay.Size = new Vector2f(((float)current / (float)max) * background.Size.X, overlay.Size.Y);
             }
 
             public virtual void Draw(RenderWindow window, float cameraX, float cameraY)
             {
-                if (!Visible)
-                    return;
+                background.Position = new Vector2f(background.Position.X - cameraX, background.Position.Y - cameraY);
+                overlay.Position = new Vector2f(overlay.Position.X - cameraX, overlay.Position.Y - cameraY);
 
-                body.FillColor = Color;
-                nose.FillColor = Color.Red;
-                if (LastAttack < 0.25f)
-                {
-                    // only show red for 25% of the time between attacks
-                    body.FillColor = Color.Red;
-                }
+                window.Draw(background);
+                window.Draw(overlay);
 
-
-                MoveBody(body.Position.X - cameraX, body.Position.Y - cameraY);
-                window.Draw(body);
-                window.Draw(nose);
-                if (ShowHealth)
-                {
-                    window.Draw(healthUnderBar);
-                    window.Draw(healthOverBar);
-                }
-                MoveBody(body.Position.X + cameraX, body.Position.Y + cameraY);
-            }
-
-            public void SetHealth(int health, int maxHealth)
-            {
-                healthOverBar.Size = new SFML.System.Vector2f(((float)health / (float)maxHealth) * healthUnderBar.Size.X, healthOverBar.Size.Y);
-            }
-
-            private void MoveBody(float x, float y)
-            {
-                body.Position = new SFML.System.Vector2f(x, y);
-                nose.Position = new SFML.System.Vector2f(body.Position.X + body.Radius, body.Position.Y + body.Radius);
-                healthUnderBar.Position = new SFML.System.Vector2f(body.Position.X-3, body.Position.Y - healthUnderBar.Size.Y - 5);
-                healthOverBar.Position = new SFML.System.Vector2f(body.Position.X-3, body.Position.Y - healthOverBar.Size.Y - 5);
+                background.Position = new Vector2f(background.Position.X + cameraX, background.Position.Y + cameraY);
+                overlay.Position = new Vector2f(overlay.Position.X + cameraX, overlay.Position.Y + cameraY);
             }
         }
     }

@@ -4,7 +4,6 @@ using SFML.Graphics;
 using SFML.Window;
 using System.Diagnostics;
 using System.Numerics;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.CollisionTests
 {

@@ -11,6 +11,7 @@
         ExperienceBoost = 6,
         Input = 7,
         Collision = 8,
+        Renderable = 9,
     }
 
     public abstract class Component
