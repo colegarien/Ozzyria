@@ -8,6 +8,9 @@ namespace Ozzyria.Client
 {
     public class GraphicsManager
     {
+        public const int MINIMUM_LAYER = 0;
+        public const int MAXIMUM_LAYER = 255;
+
         private static GraphicsManager _manager;
         private IDictionary<string, Texture> _loadedTextures;
         
@@ -62,66 +65,13 @@ namespace Ozzyria.Client
             return sfmlSprite;
         }
 
-        public Vertex[] CreateVertexArray(TileMap tileMap)
+        public Sprite CreateTileSprite(Tile tile)
         {
-            var tileSetVertices = new List<Vertex>();
-            var tileSize = Tile.DIMENSION;
-            foreach(var tile in tileMap.backgroundTiles) {
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile.X * tileSize, tile.Y * tileSize),
-                    TexCoords = new Vector2f(tile.TextureCoordX * tileSize, tile.TextureCoordY * tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile.X * tileSize + tileSize, tile.Y * tileSize),
-                    TexCoords = new Vector2f(tile.TextureCoordX * tileSize + tileSize, tile.TextureCoordY * tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile.X * tileSize + tileSize, tile.Y * tileSize + tileSize),
-                    TexCoords = new Vector2f(tile.TextureCoordX * tileSize + tileSize, tile.TextureCoordY * tileSize + tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile.X * tileSize, tile.Y * tileSize + tileSize),
-                    TexCoords = new Vector2f(tile.TextureCoordX * tileSize, tile.TextureCoordY * tileSize + tileSize),
-                    Color = Color.White
-                });
-            }
-
-            // TODO need to layer middle ground with sprites instead
-            foreach (var tile2 in tileMap.middlegroundTiles)
-            {
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile2.X * tileSize, tile2.Y * tileSize),
-                    TexCoords = new Vector2f(tile2.TextureCoordX * tileSize, tile2.TextureCoordY * tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile2.X * tileSize + tileSize, tile2.Y * tileSize),
-                    TexCoords = new Vector2f(tile2.TextureCoordX * tileSize + tileSize, tile2.TextureCoordY * tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile2.X * tileSize + tileSize, tile2.Y * tileSize + tileSize),
-                    TexCoords = new Vector2f(tile2.TextureCoordX * tileSize + tileSize, tile2.TextureCoordY * tileSize + tileSize),
-                    Color = Color.White
-                });
-                tileSetVertices.Add(new Vertex
-                {
-                    Position = new Vector2f(tile2.X * tileSize, tile2.Y * tileSize + tileSize),
-                    TexCoords = new Vector2f(tile2.TextureCoordX * tileSize, tile2.TextureCoordY * tileSize + tileSize),
-                    Color = Color.White
-                });
-            }
-            return tileSetVertices.ToArray();
+            var sfmlSprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"));
+            sfmlSprite.Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
+            sfmlSprite.TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION);
+            
+            return sfmlSprite;
         }
 
     }

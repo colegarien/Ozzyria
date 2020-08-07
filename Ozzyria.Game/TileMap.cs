@@ -16,26 +16,27 @@ namespace Ozzyria.Game
         // TODO make these not public
         public int width = 32;
         public int height = 32;
-        public Tile[] backgroundTiles;
-        public List<Tile> middlegroundTiles;
+
+        public IDictionary<int, List<Tile>> layers;
 
         public TileMap()
         {
-            backgroundTiles = new Tile[width * height];
-            middlegroundTiles = new List<Tile>();
+            layers = new Dictionary<int, List<Tile>>();
+            layers[0] = new List<Tile>();
+            layers[1] = new List<Tile>();
             for (var x = 0; x < width; x++)
             {
                 for (var y = 0; y < height; y++)
                 {
-                    backgroundTiles[x + (y * width)] = new Tile { X = x, Y = y };
+                    var backgroundTile = new Tile { X = x, Y = y };
 
                     var makeWall = x == 0 || y == 0 || x == width - 1 || y == height - 1;
                     if (makeWall)
                     {
-                        backgroundTiles[x + (y * width)].TextureCoordX = 0;
-                        backgroundTiles[x + (y * width)].TextureCoordY = 1;
+                        backgroundTile.TextureCoordX = 0;
+                        backgroundTile.TextureCoordY = 1;
 
-                        middlegroundTiles.Add(new Tile
+                        layers[1].Add(new Tile
                         {
                             X = x,
                             Y = y,
@@ -43,6 +44,8 @@ namespace Ozzyria.Game
                             TextureCoordY = WallY(x, y, width, height)
                         });
                     }
+
+                    layers[0].Add(backgroundTile);
                 }
             }
         }

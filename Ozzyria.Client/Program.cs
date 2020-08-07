@@ -7,6 +7,7 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Ozzyria.Client
 {
@@ -17,8 +18,6 @@ namespace Ozzyria.Client
         static void Main(string[] args)
         {
             var tileMap = new TileMap();
-            var tileMapRenderState = new RenderStates(GraphicsManager.GetInstance().GetTexture("Resources/Sprites/outside_tileset_001.png"));
-            var tileMapVertices = GraphicsManager.GetInstance().CreateVertexArray(tileMap);
             
 
             var client = new Networking.Client();
@@ -28,6 +27,7 @@ namespace Ozzyria.Client
                 ((Window)sender).Close();
             };
 
+            // TODO make camera object
             var cameraX = 0f;
             var cameraY = 0f;
 
@@ -151,20 +151,49 @@ namespace Ozzyria.Client
                 ///
                 window.Clear();
 
-                var translation = Transform.Identity;
-                translation.Translate(-cameraX, -cameraY);
-                tileMapRenderState.Transform = translation;
-                window.Draw(tileMapVertices, PrimitiveType.Quads, tileMapRenderState);
-                foreach(var sprite in sprites)
+                var minRenderX = cameraX - 100;
+                var maxRenderX = cameraX + 800 + 100;
+                var minRenderY = cameraY - 100;
+                var maxRenderY = cameraY + 600 + 100;
+                for(var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
                 {
-                    sprite.Position = new Vector2f(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
-                    window.Draw(sprite);
-                    sprite.Position = new Vector2f(sprite.Position.X + cameraX, sprite.Position.Y + cameraY);
+                    // Render strip by strip from bottom of screen to top
+                    for (var y = tileMap.height - 1; y >= 0; y--)
+                    {
+                        if (layer == 1) // TODO allow sprites to be on any layer
+                        {
+                            var spritesInLayer = sprites.Where(s => s.Position.Y >= y * Tile.DIMENSION && s.Position.Y < (y + 1) * Tile.DIMENSION && s.Position.X >= minRenderX && s.Position.X <= maxRenderX && s.Position.Y >= minRenderY && s.Position.Y <= maxRenderY);
+                            foreach (var sprite in spritesInLayer)
+                            {
+                                sprite.Position = new Vector2f(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
+                                window.Draw(sprite);
+                                sprite.Position = new Vector2f(sprite.Position.X + cameraX, sprite.Position.Y + cameraY);
+                            }
+                        }
+
+                        if (tileMap.layers.ContainsKey(layer))
+                        {
+                            var tiles = tileMap.layers[layer].Where(t => t.Y == y && t.X * Tile.DIMENSION >= minRenderX && t.X * Tile.DIMENSION <= maxRenderX && t.Y * Tile.DIMENSION >= minRenderY && t.Y * Tile.DIMENSION <= maxRenderY);
+                            foreach (var tile in tiles)
+                            {
+                                var sprite = GraphicsManager.GetInstance().CreateTileSprite(tile);
+                                sprite.Position = new Vector2f(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
+                                window.Draw(sprite);
+                            }
+                        }
+                    }
                 }
 
-                foreach (var collisionShape in collisionShapes)
+
+                ///
+                /// Render UI
+                ///
+                if (DEBUG_SHOW_COLLISIONS)
                 {
-                    collisionShape.Draw(window, cameraX, cameraY);
+                    foreach (var collisionShape in collisionShapes)
+                    {
+                        collisionShape.Draw(window, cameraX, cameraY);
+                    }
                 }
 
                 foreach (var hoverStatBar in hoverStatBars)
