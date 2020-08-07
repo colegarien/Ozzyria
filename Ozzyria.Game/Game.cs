@@ -11,6 +11,8 @@ namespace Ozzyria.Game
     public class Game
     {
         public EntityManager entityManager;
+        public TileMap tileMap;
+
         private float eventTimer = 0;
 
         public List<IEventHandler> eventHandlers;
@@ -36,6 +38,8 @@ namespace Ozzyria.Game
 
             entityManager.Register(CreateWall(150, 300, 400, 10));
             entityManager.Register(CreateWall(200, 300, 10, 300));
+
+            tileMap = new TileMap();
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();

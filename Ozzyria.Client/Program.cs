@@ -16,8 +16,10 @@ namespace Ozzyria.Client
 
         static void Main(string[] args)
         {
-            var entityTexture = new Texture("Resources/Sprites/entity_set_001.png");
-            var tileSetTexture = new Texture("Resources/Sprites/outside_tileset_001.png");
+            var tileMap = new TileMap();
+            var tileMapRenderState = new RenderStates(GraphicsManager.GetInstance().GetTexture("Resources/Sprites/outside_tileset_001.png"));
+            var tileMapVertices = GraphicsManager.GetInstance().CreateVertexArray(tileMap);
+            
 
             var client = new Networking.Client();
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
@@ -77,22 +79,7 @@ namespace Ozzyria.Client
                     if (entity.HasComponent(ComponentType.Renderable))
                     {
                         var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
-                        var sfmlSprite = new Sprite(entityTexture);
-                        switch (sprite)
-                        {
-                            case SpriteType.Particle:
-                                sfmlSprite.TextureRect = new IntRect(0, 96, 32, 32);
-                                sfmlSprite.Color = Color.Yellow;
-                                break;
-                            case SpriteType.Player:
-                                sfmlSprite.TextureRect = new IntRect(0, 32, 32, 32);
-                                break;
-                            case SpriteType.Slime:
-                            default:
-                                sfmlSprite.TextureRect = new IntRect(0, 0, 32, 32);
-                                break;
-                        }
-                        sfmlSprite.Origin = new Vector2f(16, 16);
+                        var sfmlSprite = GraphicsManager.GetInstance().CreateSprite(sprite);
                         sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
                         sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
 
@@ -163,6 +150,11 @@ namespace Ozzyria.Client
                 /// DRAWING HERE
                 ///
                 window.Clear();
+
+                var translation = Transform.Identity;
+                translation.Translate(-cameraX, -cameraY);
+                tileMapRenderState.Transform = translation;
+                window.Draw(tileMapVertices, PrimitiveType.Quads, tileMapRenderState);
                 foreach(var sprite in sprites)
                 {
                     sprite.Position = new Vector2f(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
