@@ -160,7 +160,7 @@ namespace Ozzyria.Client
                     // Render strip by strip from bottom of screen to top
                     for (var y = tileMap.height - 1; y >= 0; y--)
                     {
-                        if (layer == 1) // TODO allow sprites to be on any layer
+                        if (layer == 1) // TODO allow sprites to be on any layer + colliders on different layers
                         {
                             var spritesInLayer = sprites.Where(s => s.Position.Y >= y * Tile.DIMENSION && s.Position.Y < (y + 1) * Tile.DIMENSION && s.Position.X >= minRenderX && s.Position.X <= maxRenderX && s.Position.Y >= minRenderY && s.Position.Y <= maxRenderY);
                             foreach (var sprite in spritesInLayer)

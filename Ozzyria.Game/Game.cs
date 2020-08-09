@@ -55,7 +55,7 @@ namespace Ozzyria.Game
             var player = new Entity { Id = id };
             player.AttachComponent(new Renderable { Sprite = SpriteType.Player });
             player.AttachComponent(new PlayerThought());
-            player.AttachComponent(new Movement());
+            player.AttachComponent(new Movement() { X = 140, Y = 140 });
             player.AttachComponent(new Stats());
             player.AttachComponent(new Combat());
             player.AttachComponent(new Input());
