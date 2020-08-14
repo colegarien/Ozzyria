@@ -2,6 +2,7 @@
 using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.System;
+using System;
 using System.Collections.Generic;
 
 namespace Ozzyria.Client
@@ -68,11 +69,15 @@ namespace Ozzyria.Client
         public Sprite CreateTileSprite(Tile tile)
         {
             var sfmlSprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"));
-            sfmlSprite.Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
+            sfmlSprite.Position = CreateSpritePosition(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
             sfmlSprite.TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION);
             
             return sfmlSprite;
         }
 
+        public Vector2f CreateSpritePosition(float x, float y)
+        {
+            return new Vector2f(x, y);
+        }
     }
 }
