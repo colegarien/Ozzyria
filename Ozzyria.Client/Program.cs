@@ -19,7 +19,7 @@ namespace Ozzyria.Client
         {
             var graphicsManger = GraphicsManager.GetInstance();
             var tileMap = new TileMap();
-            
+
 
             var client = new Networking.Client();
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
@@ -28,6 +28,8 @@ namespace Ozzyria.Client
                 ((Window)sender).Close();
             };
 
+            // TODO think about how multiple side-by-side tile mpas might work
+            var worldRenderTexture = new RenderTexture((uint)(tileMap.width * Tile.DIMENSION), (uint)(tileMap.height * Tile.DIMENSION));
             // TODO make camera object
             var cameraX = 0f;
             var cameraY = 0f;
@@ -157,20 +159,35 @@ namespace Ozzyria.Client
                 var minRenderY = cameraY - 100;
                 var maxRenderY = cameraY + 600 + 100;
 
-                // TODO to avoid screen tearing render all this to a RenderTexture and then shift it by cameraX and cameraY!
-                for(var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
+                worldRenderTexture.Clear();
+                for (var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
                 {
                     // Render strip by strip from bottom of screen to top
                     for (var y = tileMap.height - 1; y >= 0; y--)
                     {
                         if (layer == 1) // TODO allow sprites to be on any layer + colliders on different layers
                         {
+                            // entities in the world
                             var spritesInLayer = sprites.Where(s => s.Position.Y >= y * Tile.DIMENSION && s.Position.Y < (y + 1) * Tile.DIMENSION && s.Position.X >= minRenderX && s.Position.X <= maxRenderX && s.Position.Y >= minRenderY && s.Position.Y <= maxRenderY);
                             foreach (var sprite in spritesInLayer)
                             {
-                                sprite.Position = graphicsManger.CreateSpritePosition(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
-                                window.Draw(sprite);
-                                sprite.Position = graphicsManger.CreateSpritePosition(sprite.Position.X + cameraX, sprite.Position.Y + cameraY);
+                                worldRenderTexture.Draw(sprite);
+                            }
+
+
+                            if (DEBUG_SHOW_COLLISIONS)
+                            {
+                                // debug colissions boxes
+                                foreach (var collisionShape in collisionShapes)
+                                {
+                                    collisionShape.Draw(worldRenderTexture);
+                                }
+                            }
+
+                            // in-world ui
+                            foreach (var hoverStatBar in hoverStatBars)
+                            {
+                                hoverStatBar.Draw(worldRenderTexture);
                             }
                         }
 
@@ -180,30 +197,22 @@ namespace Ozzyria.Client
                             foreach (var tile in tiles)
                             {
                                 var sprite = graphicsManger.CreateTileSprite(tile);
-                                sprite.Position = graphicsManger.CreateSpritePosition(sprite.Position.X - cameraX, sprite.Position.Y - cameraY);
-                                window.Draw(sprite);
+                                sprite.Position = graphicsManger.CreateSpritePosition(sprite.Position.X, sprite.Position.Y);
+                                worldRenderTexture.Draw(sprite);
                             }
                         }
                     }
                 }
+                worldRenderTexture.Display();
+                window.Draw(new Sprite(worldRenderTexture.Texture)
+                {
+                    Position = graphicsManger.CreateSpritePosition(-cameraX, -cameraY)
+                });
 
 
                 ///
-                /// Render UI
+                /// Render UI Overlay
                 ///
-                if (DEBUG_SHOW_COLLISIONS)
-                {
-                    foreach (var collisionShape in collisionShapes)
-                    {
-                        collisionShape.Draw(window, cameraX, cameraY);
-                    }
-                }
-
-                foreach (var hoverStatBar in hoverStatBars)
-                {
-                    hoverStatBar.Draw(window, cameraX, cameraY);
-                }
-
                 foreach (var uiStatBar in uiStatBars)
                 {
                     uiStatBar.Draw(window);
@@ -229,11 +238,9 @@ namespace Ozzyria.Client
                 shape.OutlineThickness = 1;
             }
 
-            public void Draw(RenderWindow window, float cameraX, float cameraY)
+            public void Draw(RenderTarget window)
             {
-                shape.Position = GraphicsManager.GetInstance().CreateSpritePosition(shape.Position.X - cameraX, shape.Position.Y - cameraY);
                 window.Draw(shape);
-                shape.Position = GraphicsManager.GetInstance().CreateSpritePosition(shape.Position.X + cameraX, shape.Position.Y + cameraY);
             }
         }
 
@@ -306,16 +313,10 @@ namespace Ozzyria.Client
                 overlay.Size = new Vector2f(((float)current / (float)max) * background.Size.X, overlay.Size.Y);
             }
 
-            public virtual void Draw(RenderWindow window, float cameraX, float cameraY)
+            public virtual void Draw(RenderTarget window)
             {
-                background.Position = GraphicsManager.GetInstance().CreateSpritePosition(background.Position.X - cameraX, background.Position.Y - cameraY);
-                overlay.Position = GraphicsManager.GetInstance().CreateSpritePosition(overlay.Position.X - cameraX, overlay.Position.Y - cameraY);
-
                 window.Draw(background);
                 window.Draw(overlay);
-
-                background.Position = GraphicsManager.GetInstance().CreateSpritePosition(background.Position.X + cameraX, background.Position.Y + cameraY);
-                overlay.Position = GraphicsManager.GetInstance().CreateSpritePosition(overlay.Position.X + cameraX, overlay.Position.Y + cameraY);
             }
         }
     }
