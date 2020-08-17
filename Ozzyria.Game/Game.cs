@@ -31,10 +31,10 @@ namespace Ozzyria.Game
             entityManager.Register(box);
 
             // wrap screen in border
-            entityManager.Register(CreateWall(400, -20, 900, 10));
-            entityManager.Register(CreateWall(400, 620, 900, 10));
-            entityManager.Register(CreateWall(-20, 300, 10, 700));
-            entityManager.Register(CreateWall(820, 300, 10, 700));
+            entityManager.Register(CreateWall(400, 20, 900, 10));
+            entityManager.Register(CreateWall(400, 510, 900, 10));
+            entityManager.Register(CreateWall(20, 300, 10, 700));
+            entityManager.Register(CreateWall(780, 300, 10, 700));
 
             entityManager.Register(CreateWall(150, 300, 400, 10));
             entityManager.Register(CreateWall(200, 300, 10, 300));
