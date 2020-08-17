@@ -27,6 +27,10 @@ namespace Ozzyria.Client
                 client.Disconnect();
                 ((Window)sender).Close();
             };
+            window.Resized += (sender, e) =>
+            {
+                window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
+            };
 
             // TODO think about how multiple side-by-side tile mpas might work
             var worldRenderTexture = new RenderTexture((uint)(tileMap.width * Tile.DIMENSION), (uint)(tileMap.height * Tile.DIMENSION));
@@ -122,8 +126,8 @@ namespace Ozzyria.Client
                         // center camera on entity
                         if(entity.Id == client.Id)
                         {
-                            cameraX = (float)Math.Round(movement.X - (window.Size.X / 2f));
-                            cameraY = (float)Math.Round(movement.Y - (window.Size.Y / 2f));
+                            cameraX = movement.X - (window.Size.X / 2f);
+                            cameraY = movement.Y - (window.Size.Y / 2f);
                         }
                     }
                     
@@ -155,9 +159,9 @@ namespace Ozzyria.Client
                 window.Clear();
 
                 var minRenderX = cameraX - 100;
-                var maxRenderX = cameraX + 800 + 100;
+                var maxRenderX = cameraX + window.Size.X + 100;
                 var minRenderY = cameraY - 100;
-                var maxRenderY = cameraY + 600 + 100;
+                var maxRenderY = cameraY + window.Size.Y + 100;
 
                 worldRenderTexture.Clear();
                 for (var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
