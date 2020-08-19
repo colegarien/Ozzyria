@@ -3,6 +3,7 @@ using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.Window;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Ozzyria.MapEditor
@@ -12,12 +13,12 @@ namespace Ozzyria.MapEditor
         enum ToolType
         {
             Pan,
-            Paint,
-            Erase
+            Paint
         }
 
         enum BrushType
         {
+            None,
             Ground,
             Water,
             Fence
@@ -26,6 +27,7 @@ namespace Ozzyria.MapEditor
 
         class MapViewerSettings
         {
+            public int MaxLayers { get; set; } = 2; // TODO support more than 2 layers
             public int TileMapWidth { get; set; } = 24;
             public int TileMapHeight { get; set; } = 24;
 
@@ -62,8 +64,10 @@ namespace Ozzyria.MapEditor
             public float Y { get; set; }
             public float DeltaX { get => X - PreviousX; }
             public float DeltaY { get => Y - PreviousY; }
+            public int Layer { get; set; } = 0;
 
             public ToolType Type { get; set; } = ToolType.Pan;
+            public BrushType Brush { get; set; } = BrushType.Ground;
 
             public void MoveTool(float x, float y)
             {
@@ -83,6 +87,8 @@ namespace Ozzyria.MapEditor
                 ((Window)sender).Close();
             };
             var font = new Font("Fonts\\Bitter-Regular.otf");
+            var keyDelayTime = 200f;
+            var keyTimer = keyDelayTime;
 
             var settings = new MapViewerSettings
             {
@@ -92,9 +98,30 @@ namespace Ozzyria.MapEditor
                 MapOffsetY = 0
             };
 
+            var tiles = new Dictionary<int, int[,]>();
+            for (var layer = 0; layer < settings.MaxLayers; layer++)
+            {
+                tiles[layer] = new int[settings.TileMapWidth, settings.TileMapHeight];
+            }
+
             var tool = new Tool();
             var mousePosition = Mouse.GetPosition(window);
             tool.MoveTool(mousePosition.X, mousePosition.Y);
+
+            window.MouseWheelScrolled += (sender, e) =>
+            {
+                if (e.Delta == 1)
+                {
+                    // Scroll through tools
+                    tool.Type = (ToolType)(((int)tool.Type + 1) % Enum.GetValues(typeof(ToolType)).Length);
+                }
+                if (e.Delta == -1)
+                {
+                    // Scroll through brushes
+                    tool.Brush = (BrushType)(((int)tool.Brush+1) % Enum.GetValues(typeof(BrushType)).Length);
+                    
+                }
+            };
 
             var contextMenuOpen = false;
             var contextTileX = 0f;
@@ -123,6 +150,17 @@ namespace Ozzyria.MapEditor
                     Attack = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.Space)
                 };
 
+                if (keyTimer < keyDelayTime)
+                {
+                    // elapse time between last key press
+                    keyTimer += deltaTime;
+                }
+
+                if(Mouse.IsButtonPressed(Mouse.Button.Middle) && keyTimer >= keyDelayTime)
+                {
+                    keyTimer = 0f;
+                    tool.Layer = (tool.Layer + 1) % settings.MaxLayers;
+                }
 
                 mousePosition = Mouse.GetPosition(window);
                 tool.MoveTool(mousePosition.X, mousePosition.Y);
@@ -130,8 +168,21 @@ namespace Ozzyria.MapEditor
                 {
                     contextMenuOpen = false;
 
-                    settings.MapOffsetX += tool.DeltaX;
-                    settings.MapOffsetY += tool.DeltaY;
+                    if (tool.Type == ToolType.Pan)
+                    {
+                        settings.MapOffsetX += tool.DeltaX;
+                        settings.MapOffsetY += tool.DeltaY;
+                    }
+                    else if(tool.Type == ToolType.Paint)
+                    {
+                        var tileX = settings.ScreenToTileX(tool.X);
+                        var tileY = settings.ScreenToTileY(tool.Y);
+
+                        if(tileX >= 0 && tileX < settings.TileMapWidth && tileY >= 0 && tileY < settings.TileMapHeight)
+                        {
+                            tiles[tool.Layer][tileX, tileY] = (int)tool.Brush;
+                        }
+                    }
                 }
                 else if (Mouse.IsButtonPressed(Mouse.Button.Right))
                 {
@@ -148,7 +199,21 @@ namespace Ozzyria.MapEditor
                     for (var y = 0; y < settings.TileMapHeight; y++)
                     {
                         var shape = new RectangleShape(new SFML.System.Vector2f(settings.TileSize, settings.TileSize));
-                        shape.FillColor = Color.Transparent;
+                        switch(tiles[tool.Layer][x, y])
+                        {
+                            case (int)BrushType.Ground:
+                                shape.FillColor = Color.Green;
+                                break;
+                            case (int)BrushType.Water:
+                                shape.FillColor = Color.Blue;
+                                break;
+                            case (int)BrushType.Fence:
+                                shape.FillColor = Color.Red;
+                                break;
+                            default:
+                                shape.FillColor = Color.Transparent;
+                                break;
+                        }
                         shape.OutlineColor = Color.White;
                         shape.OutlineThickness = 1;
                         shape.Position = new SFML.System.Vector2f(settings.TileToScreenX(x), settings.TileToScreenY(y));
@@ -156,6 +221,13 @@ namespace Ozzyria.MapEditor
                         window.Draw(shape);
                     }
                 }
+
+                var cursor = new RectangleShape(new SFML.System.Vector2f(settings.TileSize, settings.TileSize));
+                cursor.FillColor = Color.Transparent;
+                cursor.OutlineColor = Color.Blue;
+                cursor.OutlineThickness = 4;
+                cursor.Position = new SFML.System.Vector2f(settings.TileToScreenX(settings.ScreenToTileX(tool.X)), settings.TileToScreenY(settings.ScreenToTileY(tool.Y)));
+                window.Draw(cursor);
 
                 if (contextMenuOpen)
                 {
@@ -169,13 +241,26 @@ namespace Ozzyria.MapEditor
 
 
                     var someText = new Text();
+                    someText.CharacterSize = 16;
                     someText.DisplayedString = "menu";
-                    someText.FillColor = Color.Black;
+                    someText.FillColor = Color.Red;
                     someText.Font = font;
                     someText.Position = new SFML.System.Vector2f(contextTileX, contextTileY);
 
                     window.Draw(someText);
                 }
+
+                // DEBUG STUFF
+                var debugText = new Text();
+                debugText.CharacterSize = 32;
+                debugText.DisplayedString = $"Layer: {tool.Layer}\nTool Type: {tool.Type}\nBrush Type: {tool.Brush}\nTile X: {settings.ScreenToTileX(tool.X)}\nTile Y: {settings.ScreenToTileY(tool.Y)}";
+                debugText.FillColor = Color.Red;
+                debugText.OutlineColor = Color.Black;
+                debugText.OutlineThickness = 1;
+                debugText.Font = font;
+                debugText.Position = new SFML.System.Vector2f(0, 0);
+
+                window.Draw(debugText);
 
                 window.Display();
 
