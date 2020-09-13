@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace Ozzyria.MapEditor
         static void Main(string[] args)
         {
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            ViewWindow viewWindow = new ViewWindow((int)window.Size.X, (int)window.Size.Y);
+            ViewWindow viewWindow = new ViewWindow(40, 40, (uint)(window.Size.X - 80), (uint)(window.Size.Y - 80), window.Size.X, window.Size.Y);
 
             var font = new Font("Fonts\\Bitter-Regular.otf");
             var keyDelayTime = 200f;
@@ -76,6 +77,11 @@ namespace Ozzyria.MapEditor
             window.Closed += (sender, e) =>
             {
                 ((Window)sender).Close();
+            };
+            window.Resized += (sender, e) =>
+            {
+                window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
+                viewWindow.ResizeWindow(40, 40, (uint)(window.Size.X - 80), (uint)(window.Size.Y - 80), window.Size.X, window.Size.Y);
             };
 
             var ctrlKeyDown = false;
@@ -104,6 +110,11 @@ namespace Ozzyria.MapEditor
             };
             window.MouseWheelScrolled += (sender, e) =>
             {
+                if (!viewWindow.IsInWindow(e.X, e.Y))
+                {
+                    return;
+                }
+
                 if(e.Wheel == Mouse.Wheel.HorizontalWheel || (altKeyDown && e.Wheel == Mouse.Wheel.VerticalWheel))
                 {
                     viewWindow.OnHorizontalScroll(e.Delta);
@@ -118,11 +129,15 @@ namespace Ozzyria.MapEditor
             };
 
             var middleMouseDown = false;
+            var middleDownStartX = 0;
+            var middleDownStartY = 0;
             window.MouseButtonPressed += (sender, e) =>
             {
                 if(e.Button == Mouse.Button.Middle)
                 {
                     middleMouseDown = true;
+                    middleDownStartX = e.X;
+                    middleDownStartY = e.Y;
                 }
             };
             window.MouseButtonReleased += (sender, e) =>
@@ -136,7 +151,7 @@ namespace Ozzyria.MapEditor
             var previousMouseY = 0;
             window.MouseMoved += (sender, e) =>
             {
-                if (middleMouseDown)
+                if (middleMouseDown && viewWindow.IsInWindow(middleDownStartX, middleDownStartY))
                 {
                     viewWindow.OnPan(e.X - previousMouseX, e.Y - previousMouseY);
                 }
@@ -167,7 +182,7 @@ namespace Ozzyria.MapEditor
                     keyTimer += deltaTime;
                 }
 
-                if(Mouse.IsButtonPressed(Mouse.Button.Middle) && keyTimer >= keyDelayTime)
+                if (Mouse.IsButtonPressed(Mouse.Button.Middle) && keyTimer >= keyDelayTime)
                 {
                     keyTimer = 0f;
                 }
@@ -176,7 +191,7 @@ namespace Ozzyria.MapEditor
 
                 if (Mouse.IsButtonPressed(Mouse.Button.Left))
                 {
-                    
+
                 }
                 else if (Mouse.IsButtonPressed(Mouse.Button.Right))
                 {
@@ -216,7 +231,7 @@ namespace Ozzyria.MapEditor
 
                 viewWindow.OnRender(window);
 
-                var cursor = new RectangleShape(new SFML.System.Vector2f(settings.TileSize, settings.TileSize));
+                var cursor = new RectangleShape(new Vector2f(settings.TileSize, settings.TileSize));
                 cursor.FillColor = Color.Transparent;
                 cursor.OutlineColor = Color.Blue;
                 cursor.OutlineThickness = 4;
@@ -252,7 +267,7 @@ namespace Ozzyria.MapEditor
                 debugText.OutlineColor = Color.Black;
                 debugText.OutlineThickness = 1;
                 debugText.Font = font;
-                debugText.Position = new SFML.System.Vector2f(0, 0);
+                debugText.Position = new Vector2f(0, 0);
 
                 window.Draw(debugText);
 

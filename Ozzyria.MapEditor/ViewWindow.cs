@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using SFML.Graphics;
+﻿using SFML.Graphics;
+using SFML.System;
 
 namespace Ozzyria.MapEditor
 {
@@ -9,26 +9,39 @@ namespace Ozzyria.MapEditor
         private const float vScrollSensitivity = 5f;
         private const float zoomSensitivity = 0.01f;
 
-        private int width;
-        private int height;
+        private int windowX;
+        private int windowY;
+        private uint windowWidth;
+        private uint windowHeight;
         private float xOffset = 0f;
         private float yOffset = 0f;
         private float zoomPercent = 1f;
 
         private Map _map;
-        private RenderTexture _renderBuffer;
+        private RenderTexture _renderBuffer; // for rendering window contents
+        private RenderTexture _screenBuffer; // for rendering window to screen (mostly for proper cropping!)
 
-        public ViewWindow(int width, int height)
+        public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {
-            this.width = width;
-            this.height = height;
-
             _map = new Map
             {
                 Width = 10,
                 Height = 10
             }; // TODO have like a 'un/load map' and make _map nullable
             _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
+
+            ResizeWindow(x, y, width, height, screenWidth, screenHeight);
+        }
+
+        public void ResizeWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
+        {
+            windowX = x;
+            windowY = y;
+            windowWidth = width;
+            windowHeight = height;
+
+            _screenBuffer = new RenderTexture(screenWidth, screenHeight);
+            _screenBuffer.SetView(new View(new FloatRect(windowX, windowY, windowWidth, windowHeight)));
 
             // Center on map
             CenterView();
@@ -43,9 +56,15 @@ namespace Ozzyria.MapEditor
                 zoomPercent = 1f;
             }
 
-            xOffset = ((_map.Width * _map.TileDimension) * 0.5f) - (this.width * 0.5f);
-            yOffset = ((_map.Height * _map.TileDimension) * 0.5f) - (this.height * 0.5f);
+            xOffset = ((_map.Width * _map.TileDimension) * 0.5f) - (this.windowX + this.windowWidth * 0.5f);
+            yOffset = ((_map.Height * _map.TileDimension) * 0.5f) - (this.windowY + this.windowHeight * 0.5f);
             zoomPercent = 1f;
+        }
+
+        public bool IsInWindow(int x, int y)
+        {
+            return x >= windowX && x < windowX + windowWidth
+                && y >= windowY && y < windowY + windowHeight;
         }
 
         public void OnPan(float deltaX, float deltaY)
@@ -107,7 +126,7 @@ namespace Ozzyria.MapEditor
             return (worldY - yOffset) * zoomPercent;
         }
 
-        public void OnRender(RenderWindow window)
+        public void OnRender(RenderTarget surface)
         {
             _renderBuffer.Clear();
             if (_map == null)
@@ -121,8 +140,8 @@ namespace Ozzyria.MapEditor
             {
                 for (var y = 0; y < _map.Height; y++)
                 {
-                    var tileShape = new RectangleShape(new SFML.System.Vector2f(tileDimension, tileDimension));
-                    tileShape.Position = new SFML.System.Vector2f((x * tileDimension), (y * tileDimension));
+                    var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
+                    tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
 
                     _renderBuffer.Draw(tileShape);
                 }
@@ -132,8 +151,8 @@ namespace Ozzyria.MapEditor
             {
                 for (var y = 0; y < _map.Height; y++)
                 {
-                    var overlayBorder = new RectangleShape(new SFML.System.Vector2f(tileDimension, tileDimension));
-                    overlayBorder.Position = new SFML.System.Vector2f((x * tileDimension), (y * tileDimension));
+                    var overlayBorder = new RectangleShape(new Vector2f(tileDimension, tileDimension));
+                    overlayBorder.Position = new Vector2f((x * tileDimension), (y * tileDimension));
                     overlayBorder.FillColor = Color.Transparent;
                     overlayBorder.OutlineThickness = 2;
                     overlayBorder.OutlineColor = Color.Black;
@@ -141,12 +160,30 @@ namespace Ozzyria.MapEditor
                     _renderBuffer.Draw(overlayBorder);
                 }
             }
-
             _renderBuffer.Display();
-            window.Draw(new Sprite(_renderBuffer.Texture)
+            _screenBuffer.Clear();
+            // draw map
+            _screenBuffer.Draw(new Sprite(_renderBuffer.Texture)
             {
-                Position = new SFML.System.Vector2f(WorldToScreenX(0), WorldToScreenY(0)),
-                Scale = new SFML.System.Vector2f(zoomPercent, zoomPercent)
+                Position = new Vector2f(WorldToScreenX(0), WorldToScreenY(0)),
+                Scale = new Vector2f(zoomPercent, zoomPercent)
+            });
+
+            // draw border around window
+            _screenBuffer.Draw(new RectangleShape
+            {
+                Position = new Vector2f(windowX+2, windowY+2),
+                Size = new Vector2f(windowWidth-4, windowHeight-4),
+                FillColor = Color.Transparent,
+                OutlineThickness = 2,
+                OutlineColor = Color.Yellow
+            });
+            _screenBuffer.Display();
+
+            surface.Draw(new Sprite(_screenBuffer.Texture)
+            {
+                Position = new Vector2f(windowX, windowY),
+                Scale = new Vector2f((float)windowWidth / (float)_screenBuffer.Size.X, (float)windowHeight / (float)_screenBuffer.Size.Y)
             });
         }
     }
