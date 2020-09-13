@@ -13,21 +13,21 @@ namespace Ozzyria.MapEditor
         private int windowY;
         private uint windowWidth;
         private uint windowHeight;
+
         private float xOffset = 0f;
         private float yOffset = 0f;
         private float zoomPercent = 1f;
 
-        private Map _map;
+        private Map _map; // current map being viewed
         private RenderTexture _renderBuffer; // for rendering window contents
         private RenderTexture _screenBuffer; // for rendering window to screen (mostly for proper cropping!)
 
+        private float cursorScreenX = 0;
+        private float cursorScreenY = 0;
+
         public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {
-            _map = new Map
-            {
-                Width = 10,
-                Height = 10
-            }; // TODO have like a 'un/load map' and make _map nullable
+            _map = new Map(10, 10); // TODO have like a 'un/load map' and make _map nullable
             _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
 
             ResizeWindow(x, y, width, height, screenWidth, screenHeight);
@@ -39,6 +39,11 @@ namespace Ozzyria.MapEditor
             windowY = y;
             windowWidth = width;
             windowHeight = height;
+
+            if (_screenBuffer != null)
+            {
+                _screenBuffer.Dispose();
+            }
 
             _screenBuffer = new RenderTexture(screenWidth, screenHeight);
             _screenBuffer.SetView(new View(new FloatRect(windowX, windowY, windowWidth, windowHeight)));
@@ -71,6 +76,17 @@ namespace Ozzyria.MapEditor
         {
             xOffset -= deltaX / zoomPercent;
             yOffset -= deltaY / zoomPercent;
+        }
+
+        public void OnPaint(int x, int y, TileType type)
+        {
+            if(_map == null)
+            {
+                return;
+            }
+
+            var tileDimension = _map.TileDimension;
+            _map.SetTileType(0, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
         }
 
         public void OnHorizontalScroll(float delta) {
@@ -108,6 +124,12 @@ namespace Ozzyria.MapEditor
             yOffset += previousWorldYOrigin - currentWorldYOrigin;
         }
 
+        public void OnMouseMove(int x, int y)
+        {
+            cursorScreenX = x;
+            cursorScreenY = y;
+        }
+
         private float ScreenToWorldX(float screenX)
         {
             return (screenX / zoomPercent) + xOffset;
@@ -142,6 +164,21 @@ namespace Ozzyria.MapEditor
                 {
                     var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
+                    switch(_map.GetTileType(0, x, y))
+                    {
+                        case TileType.Ground:
+                            tileShape.FillColor = Color.Green;
+                            break;
+                        case TileType.Water:
+                            tileShape.FillColor = Color.Blue;
+                            break;
+                        case TileType.Fence:
+                            tileShape.FillColor = Color.Red;
+                            break;
+                        default:
+                            tileShape.FillColor = Color.Black;
+                            break;
+                    }
 
                     _renderBuffer.Draw(tileShape);
                 }
@@ -155,11 +192,19 @@ namespace Ozzyria.MapEditor
                     overlayBorder.Position = new Vector2f((x * tileDimension), (y * tileDimension));
                     overlayBorder.FillColor = Color.Transparent;
                     overlayBorder.OutlineThickness = 2;
-                    overlayBorder.OutlineColor = Color.Black;
+                    overlayBorder.OutlineColor = new Color(140, 140, 140);
 
                     _renderBuffer.Draw(overlayBorder);
                 }
             }
+
+            var cursorShape = new RectangleShape(new Vector2f(tileDimension - 2, tileDimension - 2));
+            cursorShape.Position = new Vector2f(((int)(ScreenToWorldX(cursorScreenX)/tileDimension)*tileDimension) + 1, ((int)(ScreenToWorldY(cursorScreenY)/tileDimension) * tileDimension) + 1);
+            cursorShape.FillColor = Color.Transparent;
+            cursorShape.OutlineThickness = 1;
+            cursorShape.OutlineColor = Color.Cyan;
+            _renderBuffer.Draw(cursorShape);
+
             _renderBuffer.Display();
             _screenBuffer.Clear();
             // draw map

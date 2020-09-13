@@ -11,20 +11,6 @@ namespace Ozzyria.MapEditor
 {
     class Program
     {
-        enum ToolType
-        {
-            Pan,
-            Paint
-        }
-
-        enum BrushType
-        {
-            None,
-            Ground,
-            Water,
-            Fence
-        }
-
 
         class MapViewerSettings
         {
@@ -63,16 +49,6 @@ namespace Ozzyria.MapEditor
             ViewWindow viewWindow = new ViewWindow(40, 40, (uint)(window.Size.X - 80), (uint)(window.Size.Y - 80), window.Size.X, window.Size.Y);
 
             var font = new Font("Fonts\\Bitter-Regular.otf");
-            var keyDelayTime = 200f;
-            var keyTimer = keyDelayTime;
-
-            var settings = new MapViewerSettings
-            {
-                TileMapWidth = 32,
-                TileMapHeight = 32,
-                MapOffsetX = 0,
-                MapOffsetY = 0
-            };
 
             window.Closed += (sender, e) =>
             {
@@ -128,40 +104,53 @@ namespace Ozzyria.MapEditor
                 }
             };
 
+            var leftMouseDown = false;
             var middleMouseDown = false;
             var middleDownStartX = 0;
             var middleDownStartY = 0;
             window.MouseButtonPressed += (sender, e) =>
             {
-                if(e.Button == Mouse.Button.Middle)
+                viewWindow.OnMouseMove(e.X, e.Y);
+                if (e.Button == Mouse.Button.Middle)
                 {
                     middleMouseDown = true;
                     middleDownStartX = e.X;
                     middleDownStartY = e.Y;
                 }
+                else if(e.Button == Mouse.Button.Left)
+                {
+                    leftMouseDown = true;
+                }
             };
             window.MouseButtonReleased += (sender, e) =>
             {
+                viewWindow.OnMouseMove(e.X, e.Y);
                 if (e.Button == Mouse.Button.Middle)
                 {
                     middleMouseDown = false;
+                }
+                else if (e.Button == Mouse.Button.Left)
+                {
+                    leftMouseDown = false;
+                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
                 }
             };
             var previousMouseX = 0;
             var previousMouseY = 0;
             window.MouseMoved += (sender, e) =>
             {
+                var mouseDeltaX = e.X - previousMouseX;
+                var mouseDeltaY = e.Y - previousMouseY;
+
+                viewWindow.OnMouseMove(e.X, e.Y);
                 if (middleMouseDown && viewWindow.IsInWindow(middleDownStartX, middleDownStartY))
                 {
-                    viewWindow.OnPan(e.X - previousMouseX, e.Y - previousMouseY);
+                    viewWindow.OnPan(mouseDeltaX, mouseDeltaY);
                 }
                 previousMouseX = e.X;
                 previousMouseY = e.Y;
             };
 
-
-
-            var mousePosition = Mouse.GetPosition(window);
 
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
@@ -176,93 +165,14 @@ namespace Ozzyria.MapEditor
                 window.DispatchEvents();
                 var quit = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.Escape);
 
-                if (keyTimer < keyDelayTime)
-                {
-                    // elapse time between last key press
-                    keyTimer += deltaTime;
-                }
-
-                if (Mouse.IsButtonPressed(Mouse.Button.Middle) && keyTimer >= keyDelayTime)
-                {
-                    keyTimer = 0f;
-                }
-
-                mousePosition = Mouse.GetPosition(window);
-
-                if (Mouse.IsButtonPressed(Mouse.Button.Left))
-                {
-
-                }
-                else if (Mouse.IsButtonPressed(Mouse.Button.Right))
-                {
-
-                }
-
                 // DRAW STUFF
                 window.Clear();
-
-                //for (var x = 0; x < settings.TileMapWidth; x++)
-                //{
-                //    for (var y = 0; y < settings.TileMapHeight; y++)
-                //    {
-                //        var shape = new RectangleShape(new SFML.System.Vector2f(settings.TileSize, settings.TileSize));
-                //        switch (tiles[tool.Layer][x, y])
-                //        {
-                //            case (int)BrushType.Ground:
-                //                shape.FillColor = Color.Green;
-                //                break;
-                //            case (int)BrushType.Water:
-                //                shape.FillColor = Color.Blue;
-                //                break;
-                //            case (int)BrushType.Fence:
-                //                shape.FillColor = Color.Red;
-                //                break;
-                //            default:
-                //                shape.FillColor = Color.Transparent;
-                //                break;
-                //        }
-                //        shape.OutlineColor = Color.White;
-                //        shape.OutlineThickness = 1;
-                //        shape.Position = new SFML.System.Vector2f(settings.TileToScreenX(x), settings.TileToScreenY(y));
-
-                //        window.Draw(shape);
-                //    }
-                //}
-
                 viewWindow.OnRender(window);
-
-                var cursor = new RectangleShape(new Vector2f(settings.TileSize, settings.TileSize));
-                cursor.FillColor = Color.Transparent;
-                cursor.OutlineColor = Color.Blue;
-                cursor.OutlineThickness = 4;
-                // cursor.Position = new SFML.System.Vector2f(settings.TileToScreenX(settings.ScreenToTileX(tool.X)), settings.TileToScreenY(settings.ScreenToTileY(tool.Y)));
-                window.Draw(cursor);
-
-                //if (contextMenuOpen)
-                //{
-                //    var shape = new RectangleShape(new SFML.System.Vector2f(100, 200));
-                //    shape.FillColor = Color.Blue;
-                //    shape.OutlineColor = Color.White;
-                //    shape.OutlineThickness = 2;
-                //    shape.Position = new SFML.System.Vector2f(contextTileX, contextTileY);
-
-                //    window.Draw(shape);
-
-
-                //    var someText = new Text();
-                //    someText.CharacterSize = 16;
-                //    someText.DisplayedString = "menu";
-                //    someText.FillColor = Color.Red;
-                //    someText.Font = font;
-                //    someText.Position = new SFML.System.Vector2f(contextTileX, contextTileY);
-
-                //    window.Draw(someText);
-                //}
 
                 // DEBUG STUFF
                 var debugText = new Text();
                 debugText.CharacterSize = 32;
-                debugText.DisplayedString = $"Ctrl: {ctrlKeyDown}" ;
+                debugText.DisplayedString = $"Ctrl: {ctrlKeyDown}";
                 debugText.FillColor = Color.Red;
                 debugText.OutlineColor = Color.Black;
                 debugText.OutlineThickness = 1;
