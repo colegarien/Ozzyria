@@ -29,9 +29,21 @@ namespace Ozzyria.MapEditor
             }; // TODO have like a 'un/load map' and make _map nullable
             _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
 
-            // ReCenter on map
-            xOffset = 0; //((_map.Width * _map.TileDimension) * 0.5f) - (this.width * 0.5f);
-            yOffset = 0; //((_map.Height * _map.TileDimension) * 0.5f) - (this.height * 0.5f);
+            // Center on map
+            CenterView();
+        }
+
+        private void CenterView()
+        {
+            if(_map == null)
+            {
+                xOffset = 0;
+                yOffset = 0;
+                zoomPercent = 1f;
+            }
+
+            xOffset = ((_map.Width * _map.TileDimension) * 0.5f) - (this.width * 0.5f);
+            yOffset = ((_map.Height * _map.TileDimension) * 0.5f) - (this.height * 0.5f);
             zoomPercent = 1f;
         }
 
@@ -46,9 +58,10 @@ namespace Ozzyria.MapEditor
 
         public void OnZoom(int xOrigin, int yOrigin, float delta)
         {
-            var previousZoomPercent = zoomPercent;
+            var previousWorldXOrigin = ScreenToWorldX(xOrigin);
+            var previousWorldYOrigin = ScreenToWorldY(yOrigin);
+
             zoomPercent += delta * zoomSensitivity;
-            
             if(zoomPercent < 0.01f)
             {
                 zoomPercent = 0.01f;
@@ -58,15 +71,29 @@ namespace Ozzyria.MapEditor
                 zoomPercent = 200f;
             }
 
-            //var deltaZoom = zoomPercent - previousZoomPercent;
-            //var worldX =  (xOrigin * zoomPercent) - (xOrigin * previousZoomPercent);
-            //var worldY = (yOrigin * zoomPercent) - (yOrigin * previousZoomPercent);
+            var currentWorldXOrigin = ScreenToWorldX(xOrigin);
+            var currentWorldYOrigin = ScreenToWorldY(yOrigin);
 
-            //xOffset += xOrigin * deltaZoom;
-            //yOffset += yOrigin * deltaZoom;
-            //xOffset -= (((xOrigin + (xOffset)) * zoomPercent) - ((xOrigin + (xOffset)) * previousZoomPercent));
-            //yOffset -= (((yOrigin + (yOffset)) * zoomPercent) - ((yOrigin + (yOffset)) * previousZoomPercent));
-            // TODO zoom on xOrigin + yOrigin (if I remember right this is called 'Affine Transformation')
+            xOffset += previousWorldXOrigin - currentWorldXOrigin;
+            yOffset += previousWorldYOrigin - currentWorldYOrigin;
+        }
+
+        private float ScreenToWorldX(float screenX)
+        {
+            return (screenX / zoomPercent) + xOffset;
+        }
+        private float ScreenToWorldY(float screenY)
+        {
+            return (screenY / zoomPercent) + yOffset;
+        }
+
+        private float WorldToScreenX(float worldX)
+        {
+            return (worldX - xOffset) * zoomPercent;
+        }
+        private float WorldToScreenY(float worldY)
+        {
+            return (worldY - yOffset) * zoomPercent;
         }
 
         public void OnRender(RenderWindow window)
@@ -107,7 +134,7 @@ namespace Ozzyria.MapEditor
             _renderBuffer.Display();
             window.Draw(new Sprite(_renderBuffer.Texture)
             {
-                Position = new SFML.System.Vector2f(-xOffset, -yOffset),
+                Position = new SFML.System.Vector2f(WorldToScreenX(0), WorldToScreenY(0)),
                 Scale = new SFML.System.Vector2f(zoomPercent, zoomPercent)
             });
         }
