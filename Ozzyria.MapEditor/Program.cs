@@ -117,6 +117,33 @@ namespace Ozzyria.MapEditor
                 }
             };
 
+            var middleMouseDown = false;
+            window.MouseButtonPressed += (sender, e) =>
+            {
+                if(e.Button == Mouse.Button.Middle)
+                {
+                    middleMouseDown = true;
+                }
+            };
+            window.MouseButtonReleased += (sender, e) =>
+            {
+                if (e.Button == Mouse.Button.Middle)
+                {
+                    middleMouseDown = false;
+                }
+            };
+            var previousMouseX = 0;
+            var previousMouseY = 0;
+            window.MouseMoved += (sender, e) =>
+            {
+                if (middleMouseDown)
+                {
+                    viewWindow.OnPan(e.X - previousMouseX, e.Y - previousMouseY);
+                }
+                previousMouseX = e.X;
+                previousMouseY = e.Y;
+            };
+
 
 
             var mousePosition = Mouse.GetPosition(window);

@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Microsoft.VisualBasic.FileIO;
+using SFML.Graphics;
 
 namespace Ozzyria.MapEditor
 {
@@ -47,13 +48,19 @@ namespace Ozzyria.MapEditor
             zoomPercent = 1f;
         }
 
+        public void OnPan(float deltaX, float deltaY)
+        {
+            xOffset -= deltaX / zoomPercent;
+            yOffset -= deltaY / zoomPercent;
+        }
+
         public void OnHorizontalScroll(float delta) {
-            xOffset += delta * hScrollSensitivity;
+            xOffset += (delta / zoomPercent) * hScrollSensitivity;
         }
 
         public void OnVerticalScroll(float delta)
         {
-            yOffset -= delta * vScrollSensitivity;
+            yOffset -= (delta / zoomPercent) * vScrollSensitivity;
         }
 
         public void OnZoom(int xOrigin, int yOrigin, float delta)
@@ -61,7 +68,11 @@ namespace Ozzyria.MapEditor
             var previousWorldXOrigin = ScreenToWorldX(xOrigin);
             var previousWorldYOrigin = ScreenToWorldY(yOrigin);
 
-            zoomPercent += delta * zoomSensitivity;
+            var scale = (delta > 0)
+                ? zoomSensitivity
+                : -zoomSensitivity;
+            zoomPercent *= 1 + scale;
+
             if(zoomPercent < 0.01f)
             {
                 zoomPercent = 0.01f;
