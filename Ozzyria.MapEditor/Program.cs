@@ -105,6 +105,8 @@ namespace Ozzyria.MapEditor
             };
 
             var leftMouseDown = false;
+            var leftDownStartX = 0;
+            var leftDownStartY = 0;
             var middleMouseDown = false;
             var middleDownStartX = 0;
             var middleDownStartY = 0;
@@ -120,6 +122,9 @@ namespace Ozzyria.MapEditor
                 else if(e.Button == Mouse.Button.Left)
                 {
                     leftMouseDown = true;
+                    leftDownStartX = e.X;
+                    leftDownStartY = e.Y;
+                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
                 }
             };
             window.MouseButtonReleased += (sender, e) =>
@@ -132,7 +137,6 @@ namespace Ozzyria.MapEditor
                 else if (e.Button == Mouse.Button.Left)
                 {
                     leftMouseDown = false;
-                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
                 }
             };
             var previousMouseX = 0;
@@ -146,6 +150,11 @@ namespace Ozzyria.MapEditor
                 if (middleMouseDown && viewWindow.IsInWindow(middleDownStartX, middleDownStartY))
                 {
                     viewWindow.OnPan(mouseDeltaX, mouseDeltaY);
+                }
+
+                if(leftMouseDown && viewWindow.IsInWindow(leftDownStartX, leftDownStartY))
+                {
+                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
                 }
                 previousMouseX = e.X;
                 previousMouseY = e.Y;
