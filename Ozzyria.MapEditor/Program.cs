@@ -11,77 +11,52 @@ namespace Ozzyria.MapEditor
 {
     class Program
     {
-
-        class MapViewerSettings
-        {
-            public int MaxLayers { get; set; } = 2; // TODO support more than 2 layers
-            public int TileMapWidth { get; set; } = 24;
-            public int TileMapHeight { get; set; } = 24;
-
-            public float MapOffsetX { get; set; } = 0f;
-            public float MapOffsetY { get; set; } = 0f;
-            public float Zoom { get; set; } = 1f;
-
-            public float TileSize { get => 32f * Zoom; }
-
-            public float TileToScreenX(int TileX)
-            {
-                return MapOffsetX + (TileX * TileSize);
-            }
-            public float TileToScreenY(int TileY)
-            {
-                return MapOffsetY + (TileY * TileSize);
-            }
-
-            public int ScreenToTileX(float ScreenX)
-            {
-                return (int)Math.Floor((ScreenX - MapOffsetX) / TileSize);
-            }
-            public int ScreenToTileY(float ScreenY)
-            {
-                return (int)Math.Floor((ScreenY - MapOffsetY) / TileSize);
-            }
-        }
-
         static void Main(string[] args)
         {
-            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            ViewWindow viewWindow = new ViewWindow(40, 40, (uint)(window.Size.X - 80), (uint)(window.Size.Y - 80), window.Size.X, window.Size.Y);
-
             var font = new Font("Fonts\\Bitter-Regular.otf");
+            var paintType = TileType.Ground;
+            var inputState = new InputState();
 
+            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
+            ViewWindow viewWindow = new ViewWindow(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+            viewWindow.LoadMap(new Map(10, 10)); // TODO load/unload from file
+            window.Resized += (sender, e) =>
+            {
+                window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
+                viewWindow.ResizeWindow(40, 40, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+            };
             window.Closed += (sender, e) =>
             {
                 ((Window)sender).Close();
             };
-            window.Resized += (sender, e) =>
-            {
-                window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
-                viewWindow.ResizeWindow(40, 40, (uint)(window.Size.X - 80), (uint)(window.Size.Y - 80), window.Size.X, window.Size.Y);
-            };
-
-            var ctrlKeyDown = false;
-            var altKeyDown = false;
             window.KeyPressed += (sender, e) =>
             {
                 if (e.Code == Keyboard.Key.LControl || e.Code == Keyboard.Key.RControl)
                 {
-                    ctrlKeyDown = true;
+                    inputState.IsCtrlHeld = true;
                 }
                 else if (e.Code == Keyboard.Key.LAlt || e.Code == Keyboard.Key.RAlt)
                 {
-                    altKeyDown = true;
+                    inputState.IsAltHeld = true;
+                }
+                else if (e.Code == Keyboard.Key.LShift || e.Code == Keyboard.Key.RShift)
+                {
+                    inputState.IsShiftHeld = true;
                 }
             };
             window.KeyReleased += (sender, e) =>
             {
                 if (e.Code == Keyboard.Key.LControl || e.Code == Keyboard.Key.RControl)
                 {
-                    ctrlKeyDown = false;
+                    inputState.IsCtrlHeld = false;
                 }
                 else if (e.Code == Keyboard.Key.LAlt || e.Code == Keyboard.Key.RAlt)
                 {
-                    altKeyDown = false;
+                    inputState.IsAltHeld = false;
+                }
+                else if (e.Code == Keyboard.Key.LShift || e.Code == Keyboard.Key.RShift)
+                {
+                    inputState.IsShiftHeld = false;
                 }
             };
             window.MouseWheelScrolled += (sender, e) =>
@@ -91,11 +66,11 @@ namespace Ozzyria.MapEditor
                     return;
                 }
 
-                if(e.Wheel == Mouse.Wheel.HorizontalWheel || (altKeyDown && e.Wheel == Mouse.Wheel.VerticalWheel))
+                if(e.Wheel == Mouse.Wheel.HorizontalWheel || (inputState.IsAltHeld && e.Wheel == Mouse.Wheel.VerticalWheel))
                 {
                     viewWindow.OnHorizontalScroll(e.Delta);
                 }
-                else if (ctrlKeyDown)
+                else if (inputState.IsCtrlHeld)
                 {
                     viewWindow.OnZoom(e.X, e.Y, e.Delta);
                 }
@@ -103,28 +78,21 @@ namespace Ozzyria.MapEditor
                     viewWindow.OnVerticalScroll(e.Delta);
                 }
             };
-
-            var leftMouseDown = false;
-            var leftDownStartX = 0;
-            var leftDownStartY = 0;
-            var middleMouseDown = false;
-            var middleDownStartX = 0;
-            var middleDownStartY = 0;
             window.MouseButtonPressed += (sender, e) =>
             {
                 viewWindow.OnMouseMove(e.X, e.Y);
                 if (e.Button == Mouse.Button.Middle)
                 {
-                    middleMouseDown = true;
-                    middleDownStartX = e.X;
-                    middleDownStartY = e.Y;
+                    inputState.MiddleMouseDown = true;
+                    inputState.MiddleDownStartX = e.X;
+                    inputState.MiddleDownStartY = e.Y;
                 }
                 else if(e.Button == Mouse.Button.Left)
                 {
-                    leftMouseDown = true;
-                    leftDownStartX = e.X;
-                    leftDownStartY = e.Y;
-                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
+                    inputState.LeftMouseDown = true;
+                    inputState.LeftDownStartX = e.X;
+                    inputState.LeftDownStartY = e.Y;
+                    viewWindow.OnPaint(e.X, e.Y, paintType);
                 }
             };
             window.MouseButtonReleased += (sender, e) =>
@@ -132,11 +100,11 @@ namespace Ozzyria.MapEditor
                 viewWindow.OnMouseMove(e.X, e.Y);
                 if (e.Button == Mouse.Button.Middle)
                 {
-                    middleMouseDown = false;
+                    inputState.MiddleMouseDown = false;
                 }
                 else if (e.Button == Mouse.Button.Left)
                 {
-                    leftMouseDown = false;
+                    inputState.LeftMouseDown = false;
                 }
             };
             var previousMouseX = 0;
@@ -147,14 +115,14 @@ namespace Ozzyria.MapEditor
                 var mouseDeltaY = e.Y - previousMouseY;
 
                 viewWindow.OnMouseMove(e.X, e.Y);
-                if (middleMouseDown && viewWindow.IsInWindow(middleDownStartX, middleDownStartY))
+                if (inputState.MiddleMouseDown && viewWindow.IsInWindow(inputState.MiddleDownStartX, inputState.MiddleDownStartY))
                 {
                     viewWindow.OnPan(mouseDeltaX, mouseDeltaY);
                 }
 
-                if(leftMouseDown && viewWindow.IsInWindow(leftDownStartX, leftDownStartY))
+                if(inputState.LeftMouseDown && viewWindow.IsInWindow(inputState.LeftDownStartX, inputState.LeftDownStartY))
                 {
-                    viewWindow.OnPaint(e.X, e.Y, TileType.Ground);
+                    viewWindow.OnPaint(e.X, e.Y, paintType);
                 }
                 previousMouseX = e.X;
                 previousMouseY = e.Y;
@@ -181,7 +149,7 @@ namespace Ozzyria.MapEditor
                 // DEBUG STUFF
                 var debugText = new Text();
                 debugText.CharacterSize = 32;
-                debugText.DisplayedString = $"Ctrl: {ctrlKeyDown}";
+                debugText.DisplayedString = $"Ctrl: {inputState.IsCtrlHeld}";
                 debugText.FillColor = Color.Red;
                 debugText.OutlineColor = Color.Black;
                 debugText.OutlineThickness = 1;

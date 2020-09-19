@@ -27,10 +27,20 @@ namespace Ozzyria.MapEditor
 
         public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {
-            _map = new Map(10, 10); // TODO have like a 'un/load map' and make _map nullable
-            _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
-
             ResizeWindow(x, y, width, height, screenWidth, screenHeight);
+        }
+
+        public void LoadMap(Map map)
+        {
+            if(_map != null)
+            {
+                _map = null;
+                _renderBuffer.Dispose();
+            }
+
+            _map = map;
+            _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
+            CenterView();
         }
 
         public void ResizeWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
@@ -59,6 +69,7 @@ namespace Ozzyria.MapEditor
                 xOffset = 0;
                 yOffset = 0;
                 zoomPercent = 1f;
+                return;
             }
 
             xOffset = ((_map.Width * _map.TileDimension) * 0.5f) - (this.windowX + this.windowWidth * 0.5f);
@@ -150,12 +161,36 @@ namespace Ozzyria.MapEditor
 
         public void OnRender(RenderTarget surface)
         {
-            _renderBuffer.Clear();
+            _screenBuffer.Clear();
+            RenderWindowContents(_screenBuffer);
+
+            // draw border around window
+            _screenBuffer.Draw(new RectangleShape
+            {
+                Position = new Vector2f(windowX + 2, windowY + 2),
+                Size = new Vector2f(windowWidth - 4, windowHeight - 4),
+                FillColor = Color.Transparent,
+                OutlineThickness = 2,
+                OutlineColor = Color.Yellow
+            });
+            _screenBuffer.Display();
+
+            // draw window to surface
+            surface.Draw(new Sprite(_screenBuffer.Texture)
+            {
+                Position = new Vector2f(windowX, windowY),
+                Scale = new Vector2f((float)windowWidth / (float)_screenBuffer.Size.X, (float)windowHeight / (float)_screenBuffer.Size.Y)
+            });
+        }
+
+        private void RenderWindowContents(RenderTarget buffer)
+        {
             if (_map == null)
             {
                 return;
             }
 
+            _renderBuffer.Clear();
             var tileDimension = _map.TileDimension;
 
             for (var x = 0; x < _map.Width; x++)
@@ -164,7 +199,7 @@ namespace Ozzyria.MapEditor
                 {
                     var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    switch(_map.GetTileType(0, x, y))
+                    switch (_map.GetTileType(0, x, y))
                     {
                         case TileType.Ground:
                             tileShape.FillColor = Color.Green;
@@ -199,36 +234,19 @@ namespace Ozzyria.MapEditor
             }
 
             var cursorShape = new RectangleShape(new Vector2f(tileDimension - 2, tileDimension - 2));
-            cursorShape.Position = new Vector2f(((int)(ScreenToWorldX(cursorScreenX)/tileDimension)*tileDimension) + 1, ((int)(ScreenToWorldY(cursorScreenY)/tileDimension) * tileDimension) + 1);
+            cursorShape.Position = new Vector2f(((int)(ScreenToWorldX(cursorScreenX) / tileDimension) * tileDimension) + 1, ((int)(ScreenToWorldY(cursorScreenY) / tileDimension) * tileDimension) + 1);
             cursorShape.FillColor = Color.Transparent;
             cursorShape.OutlineThickness = 1;
             cursorShape.OutlineColor = Color.Cyan;
             _renderBuffer.Draw(cursorShape);
 
             _renderBuffer.Display();
-            _screenBuffer.Clear();
+
             // draw map
-            _screenBuffer.Draw(new Sprite(_renderBuffer.Texture)
+            buffer.Draw(new Sprite(_renderBuffer.Texture)
             {
                 Position = new Vector2f(WorldToScreenX(0), WorldToScreenY(0)),
                 Scale = new Vector2f(zoomPercent, zoomPercent)
-            });
-
-            // draw border around window
-            _screenBuffer.Draw(new RectangleShape
-            {
-                Position = new Vector2f(windowX+2, windowY+2),
-                Size = new Vector2f(windowWidth-4, windowHeight-4),
-                FillColor = Color.Transparent,
-                OutlineThickness = 2,
-                OutlineColor = Color.Yellow
-            });
-            _screenBuffer.Display();
-
-            surface.Draw(new Sprite(_screenBuffer.Texture)
-            {
-                Position = new Vector2f(windowX, windowY),
-                Scale = new Vector2f((float)windowWidth / (float)_screenBuffer.Size.X, (float)windowHeight / (float)_screenBuffer.Size.Y)
             });
         }
     }
