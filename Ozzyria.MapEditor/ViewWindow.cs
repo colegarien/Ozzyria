@@ -3,16 +3,11 @@ using SFML.System;
 
 namespace Ozzyria.MapEditor
 {
-    class ViewWindow
+    class ViewWindow : GWindow
     {
         private const float hScrollSensitivity = 5f;
         private const float vScrollSensitivity = 5f;
         private const float zoomSensitivity = 0.01f;
-
-        private int windowX;
-        private int windowY;
-        private uint windowWidth;
-        private uint windowHeight;
 
         private float xOffset = 0f;
         private float yOffset = 0f;
@@ -20,14 +15,12 @@ namespace Ozzyria.MapEditor
 
         private Map _map; // current map being viewed
         private RenderTexture _renderBuffer; // for rendering window contents
-        private RenderTexture _screenBuffer; // for rendering window to screen (mostly for proper cropping!)
 
         private float cursorScreenX = 0;
         private float cursorScreenY = 0;
 
-        public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
+        public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
         {
-            ResizeWindow(x, y, width, height, screenWidth, screenHeight);
         }
 
         public void LoadMap(Map map)
@@ -43,20 +36,9 @@ namespace Ozzyria.MapEditor
             CenterView();
         }
 
-        public void ResizeWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
+        public override void OnResize(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {
-            windowX = x;
-            windowY = y;
-            windowWidth = width;
-            windowHeight = height;
-
-            if (_screenBuffer != null)
-            {
-                _screenBuffer.Dispose();
-            }
-
-            _screenBuffer = new RenderTexture(screenWidth, screenHeight);
-            _screenBuffer.SetView(new View(new FloatRect(windowX, windowY, windowWidth, windowHeight)));
+            base.OnResize(x, y, width, height, screenWidth, screenHeight);
 
             // Center on map
             CenterView();
@@ -77,12 +59,6 @@ namespace Ozzyria.MapEditor
             zoomPercent = 1f;
         }
 
-        public bool IsInWindow(int x, int y)
-        {
-            return x >= windowX && x < windowX + windowWidth
-                && y >= windowY && y < windowY + windowHeight;
-        }
-
         public void OnPan(float deltaX, float deltaY)
         {
             xOffset -= deltaX / zoomPercent;
@@ -100,13 +76,19 @@ namespace Ozzyria.MapEditor
             _map.SetTileType(0, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
         }
 
-        public void OnHorizontalScroll(float delta) {
+        public override void OnHorizontalScroll(float delta) {
             xOffset += (delta / zoomPercent) * hScrollSensitivity;
         }
 
-        public void OnVerticalScroll(float delta)
+        public override void OnVerticalScroll(float delta)
         {
             yOffset -= (delta / zoomPercent) * vScrollSensitivity;
+        }
+
+        public override void OnMouseMove(int x, int y)
+        {
+            cursorScreenX = x;
+            cursorScreenY = y;
         }
 
         public void OnZoom(int xOrigin, int yOrigin, float delta)
@@ -135,12 +117,6 @@ namespace Ozzyria.MapEditor
             yOffset += previousWorldYOrigin - currentWorldYOrigin;
         }
 
-        public void OnMouseMove(int x, int y)
-        {
-            cursorScreenX = x;
-            cursorScreenY = y;
-        }
-
         private float ScreenToWorldX(float screenX)
         {
             return (screenX / zoomPercent) + xOffset;
@@ -159,31 +135,7 @@ namespace Ozzyria.MapEditor
             return (worldY - yOffset) * zoomPercent;
         }
 
-        public void OnRender(RenderTarget surface)
-        {
-            _screenBuffer.Clear();
-            RenderWindowContents(_screenBuffer);
-
-            // draw border around window
-            _screenBuffer.Draw(new RectangleShape
-            {
-                Position = new Vector2f(windowX + 2, windowY + 2),
-                Size = new Vector2f(windowWidth - 4, windowHeight - 4),
-                FillColor = Color.Transparent,
-                OutlineThickness = 2,
-                OutlineColor = Color.Yellow
-            });
-            _screenBuffer.Display();
-
-            // draw window to surface
-            surface.Draw(new Sprite(_screenBuffer.Texture)
-            {
-                Position = new Vector2f(windowX, windowY),
-                Scale = new Vector2f((float)windowWidth / (float)_screenBuffer.Size.X, (float)windowHeight / (float)_screenBuffer.Size.Y)
-            });
-        }
-
-        private void RenderWindowContents(RenderTarget buffer)
+        protected override void RenderWindowContents(RenderTarget buffer)
         {
             if (_map == null)
             {

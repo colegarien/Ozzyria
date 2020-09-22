@@ -1,10 +1,6 @@
-﻿using Ozzyria.Game;
-using Ozzyria.Game.Component;
-using SFML.Graphics;
+﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Ozzyria.MapEditor
@@ -14,16 +10,20 @@ namespace Ozzyria.MapEditor
         static void Main(string[] args)
         {
             var font = new Font("Fonts\\Bitter-Regular.otf");
-            var paintType = TileType.Ground;
             var inputState = new InputState();
 
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             ViewWindow viewWindow = new ViewWindow(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
             viewWindow.LoadMap(new Map(10, 10)); // TODO load/unload from file
+            // TODO add Layers window to control currently selected ViewWindow layer
+
+            BrushWindow brushWindow = new BrushWindow(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
             window.Resized += (sender, e) =>
             {
                 window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
-                viewWindow.ResizeWindow(40, 40, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+                // TODO wrap this in a 'Layout' class that calculates all this junk
+                viewWindow.OnResize(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+                brushWindow.OnResize(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
             };
             window.Closed += (sender, e) =>
             {
@@ -61,26 +61,45 @@ namespace Ozzyria.MapEditor
             };
             window.MouseWheelScrolled += (sender, e) =>
             {
-                if (!viewWindow.IsInWindow(e.X, e.Y))
+                var horizontalScroll = false;
+                var verticalScroll = false;
+                var zooming = false;
+                if (e.Wheel == Mouse.Wheel.HorizontalWheel || (inputState.IsAltHeld && e.Wheel == Mouse.Wheel.VerticalWheel))
                 {
-                    return;
-                }
-
-                if(e.Wheel == Mouse.Wheel.HorizontalWheel || (inputState.IsAltHeld && e.Wheel == Mouse.Wheel.VerticalWheel))
-                {
-                    viewWindow.OnHorizontalScroll(e.Delta);
+                    horizontalScroll = true;
                 }
                 else if (inputState.IsCtrlHeld)
                 {
-                    viewWindow.OnZoom(e.X, e.Y, e.Delta);
+                    zooming = true;
                 }
                 else {
-                    viewWindow.OnVerticalScroll(e.Delta);
+                    verticalScroll = true;
+                }
+
+
+                // TODO make event listeners delegated easier (GWindow event system wrapper?)
+                if(viewWindow.IsInWindow(e.X, e.Y))
+                {
+                    if(horizontalScroll)
+                        viewWindow.OnHorizontalScroll(e.Delta);
+                    else if (verticalScroll)
+                        viewWindow.OnVerticalScroll(e.Delta);
+                    else if (zooming)
+                        viewWindow.OnZoom(e.X, e.Y, e.Delta);
+                }
+
+                if (brushWindow.IsInWindow(e.X, e.Y))
+                {
+                    if (horizontalScroll)
+                        brushWindow.OnHorizontalScroll(e.Delta);
+                    else if (verticalScroll)
+                        brushWindow.OnVerticalScroll(e.Delta);
                 }
             };
             window.MouseButtonPressed += (sender, e) =>
             {
                 viewWindow.OnMouseMove(e.X, e.Y);
+                brushWindow.OnMouseMove(e.X, e.Y);
                 if (e.Button == Mouse.Button.Middle)
                 {
                     inputState.MiddleMouseDown = true;
@@ -92,12 +111,14 @@ namespace Ozzyria.MapEditor
                     inputState.LeftMouseDown = true;
                     inputState.LeftDownStartX = e.X;
                     inputState.LeftDownStartY = e.Y;
-                    viewWindow.OnPaint(e.X, e.Y, paintType);
+                    viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
+                    brushWindow.OnPickTool(e.X, e.Y);
                 }
             };
             window.MouseButtonReleased += (sender, e) =>
             {
                 viewWindow.OnMouseMove(e.X, e.Y);
+                brushWindow.OnMouseMove(e.X, e.Y);
                 if (e.Button == Mouse.Button.Middle)
                 {
                     inputState.MiddleMouseDown = false;
@@ -115,6 +136,7 @@ namespace Ozzyria.MapEditor
                 var mouseDeltaY = e.Y - previousMouseY;
 
                 viewWindow.OnMouseMove(e.X, e.Y);
+                brushWindow.OnMouseMove(e.X, e.Y);
                 if (inputState.MiddleMouseDown && viewWindow.IsInWindow(inputState.MiddleDownStartX, inputState.MiddleDownStartY))
                 {
                     viewWindow.OnPan(mouseDeltaX, mouseDeltaY);
@@ -122,7 +144,7 @@ namespace Ozzyria.MapEditor
 
                 if(inputState.LeftMouseDown && viewWindow.IsInWindow(inputState.LeftDownStartX, inputState.LeftDownStartY))
                 {
-                    viewWindow.OnPaint(e.X, e.Y, paintType);
+                    viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
                 }
                 previousMouseX = e.X;
                 previousMouseY = e.Y;
@@ -145,6 +167,7 @@ namespace Ozzyria.MapEditor
                 // DRAW STUFF
                 window.Clear();
                 viewWindow.OnRender(window);
+                brushWindow.OnRender(window);
 
                 // DEBUG STUFF
                 var debugText = new Text();
