@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System;
 using System.Diagnostics;
 
 namespace Ozzyria.MapEditor
@@ -172,12 +173,12 @@ namespace Ozzyria.MapEditor
                 // DEBUG STUFF
                 var debugText = new Text();
                 debugText.CharacterSize = 32;
-                debugText.DisplayedString = $"Ctrl: {inputState.IsCtrlHeld}";
+                debugText.DisplayedString = $"Zoom: {Math.Round(viewWindow.zoomPercent * 100)}%";
                 debugText.FillColor = Color.Red;
                 debugText.OutlineColor = Color.Black;
                 debugText.OutlineThickness = 1;
                 debugText.Font = font;
-                debugText.Position = new Vector2f(0, 0);
+                debugText.Position = new Vector2f(0, 15 + (int)(15 + window.Size.Y * 0.6) + 67);
 
                 window.Draw(debugText);
 

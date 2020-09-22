@@ -11,7 +11,7 @@ namespace Ozzyria.MapEditor
 
         private float xOffset = 0f;
         private float yOffset = 0f;
-        private float zoomPercent = 1f;
+        public float zoomPercent = 1f;
 
         private Map _map; // current map being viewed
         private RenderTexture _renderBuffer; // for rendering window contents
@@ -101,13 +101,13 @@ namespace Ozzyria.MapEditor
                 : -zoomSensitivity;
             zoomPercent *= 1 + scale;
 
-            if(zoomPercent < 0.01f)
+            if(zoomPercent < 0.05f)
             {
-                zoomPercent = 0.01f;
+                zoomPercent = 0.05f;
             }
-            else if(zoomPercent > 200f)
+            else if(zoomPercent > 10f)
             {
-                zoomPercent = 200f;
+                zoomPercent = 10f;
             }
 
             var currentWorldXOrigin = ScreenToWorldX(xOrigin);
