@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.MapEditor
 {
@@ -14,6 +15,7 @@ namespace Ozzyria.MapEditor
         public float zoomPercent = 1f;
 
         private Map _map; // current map being viewed
+        private int _layer = 0;
         private RenderTexture _renderBuffer; // for rendering window contents
 
         private float cursorScreenX = 0;
@@ -32,7 +34,7 @@ namespace Ozzyria.MapEditor
             }
 
             _map = map;
-            _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Width * _map.TileDimension));
+            _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Height * _map.TileDimension));
             CenterView();
         }
 
@@ -54,9 +56,19 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            xOffset = ((_map.Width * _map.TileDimension) * 0.5f) - (this.windowX + this.windowWidth * 0.5f);
-            yOffset = ((_map.Height * _map.TileDimension) * 0.5f) - (this.windowY + this.windowHeight * 0.5f);
+            // center in window based
             zoomPercent = 1f;
+            xOffset = (((_map.Width * _map.TileDimension) * 0.5f) - (this.windowX + this.windowWidth * 0.5f));
+            yOffset = (((_map.Height * _map.TileDimension) * 0.5f) - (this.windowY + this.windowHeight * 0.5f));
+
+            // biggest dimension should take of 88% of the screen (cause it look nice)
+            var newZoom = (0.88f * (float)this.windowWidth) / (_map.TileDimension * _map.Width);
+            if (windowHeight < windowWidth)
+            {
+                newZoom = (0.88f * (float)this.windowHeight) / (_map.TileDimension * _map.Height);
+            }
+
+            ZoomTo((int)(this.windowX + this.windowWidth * 0.5f), (int)(this.windowY + this.windowHeight * 0.5f), newZoom);
         }
 
         public void OnPan(float deltaX, float deltaY)
@@ -73,7 +85,7 @@ namespace Ozzyria.MapEditor
             }
 
             var tileDimension = _map.TileDimension;
-            _map.SetTileType(0, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
+            _map.SetTileType(_layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
         }
 
         public override void OnHorizontalScroll(float delta) {
@@ -93,19 +105,25 @@ namespace Ozzyria.MapEditor
 
         public void OnZoom(int xOrigin, int yOrigin, float delta)
         {
-            var previousWorldXOrigin = ScreenToWorldX(xOrigin);
-            var previousWorldYOrigin = ScreenToWorldY(yOrigin);
-
             var scale = (delta > 0)
                 ? zoomSensitivity
                 : -zoomSensitivity;
-            zoomPercent *= 1 + scale;
+            var targetZoomPercent = zoomPercent * (1 + scale);
 
-            if(zoomPercent < 0.05f)
+            ZoomTo(xOrigin, yOrigin, targetZoomPercent);
+        }
+
+        private void ZoomTo(int xOrigin, int yOrigin, float targetZoomPercent)
+        {
+            var previousWorldXOrigin = ScreenToWorldX(xOrigin);
+            var previousWorldYOrigin = ScreenToWorldY(yOrigin);
+
+            zoomPercent = targetZoomPercent;
+            if (zoomPercent < 0.05f)
             {
                 zoomPercent = 0.05f;
             }
-            else if(zoomPercent > 10f)
+            else if (zoomPercent > 10f)
             {
                 zoomPercent = 10f;
             }
@@ -151,7 +169,7 @@ namespace Ozzyria.MapEditor
                 {
                     var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    switch (_map.GetTileType(0, x, y))
+                    switch (_map.GetTileType(_layer, x, y))
                     {
                         case TileType.Ground:
                             tileShape.FillColor = Color.Green;
