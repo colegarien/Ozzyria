@@ -26,7 +26,7 @@ namespace Ozzyria.MapEditor
                 // TODO wrap this in a 'Layout' class that calculates all this junk
                 viewWindow.OnResize(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
                 brushWindow.OnResize(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
-                layerWindow.OnResize((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, 50, window.Size.X, window.Size.Y);
+                layerWindow.OnResize((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
             };
             window.Closed += (sender, e) =>
             {
