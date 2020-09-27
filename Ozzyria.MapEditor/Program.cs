@@ -3,6 +3,7 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Ozzyria.MapEditor
 {
@@ -14,10 +15,12 @@ namespace Ozzyria.MapEditor
 
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             ViewWindow viewWindow = new ViewWindow(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
-            viewWindow.LoadMap(new Map(20, 20)); // TODO load/unload from file
-
             BrushWindow brushWindow = new BrushWindow(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
             LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+
+            viewWindow.LoadMap(new Map(20, 20)); // TODO load/unload from file
+            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
+
             window.Resized += (sender, e) =>
             {
                 window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
@@ -129,7 +132,25 @@ namespace Ozzyria.MapEditor
                         brushWindow.OnPickTool(e.X, e.Y);
                     if (layerWindow.IsInWindow(e.X, e.Y))
                     {
-                        layerWindow.OnPickLayer(e.X, e.Y);
+                        var result = layerWindow.OnPickLayer(e.X, e.Y);
+                        if (result == -2)
+                        {
+                            viewWindow._map.AddLayer();
+                            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
+                        }
+                        else if (result >= 0)
+                        {
+                            viewWindow._map.RemoveLayer(result);
+                            if (result != 0 && result <= layerWindow.CurrentLayer)
+                            {
+                                layerWindow.CurrentLayer -= result == layerWindow.CurrentLayer && viewWindow._map.layers.ContainsKey(result)
+                                    ? 0
+                                    : 1;
+                            }
+                            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
+                            viewWindow.Layer = layerWindow.CurrentLayer;
+                        }
+                        layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
                         viewWindow.Layer = layerWindow.CurrentLayer;
                     }
                 }
@@ -194,7 +215,7 @@ namespace Ozzyria.MapEditor
                 // DEBUG STUFF
                 var debugText = new Text();
                 debugText.CharacterSize = 16;
-                debugText.DisplayedString = $"Zoom: {Math.Round(viewWindow.zoomPercent * 100)}% | Brush: {brushWindow.SelectedBrush}";
+                debugText.DisplayedString = $"Zoom: {Math.Round(viewWindow.zoomPercent * 100)}%  | Layer: {layerWindow.CurrentLayer} | Brush: {brushWindow.SelectedBrush}";
                 debugText.FillColor = Color.Red;
                 debugText.OutlineColor = Color.Black;
                 debugText.OutlineThickness = 1;

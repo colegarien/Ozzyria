@@ -18,12 +18,18 @@ namespace Ozzyria.MapEditor
             Height = height;
 
             layers = new Dictionary<int, Layer>();
-            layers[0] = new Layer(width, height);
+            AddLayer();
+            AddLayer();
         }
 
         public void AddLayer()
         {
-            layers[layers.Keys.Max() + 1] = new Layer(Width, Height);
+            var newLayer = 0;
+            if(layers.Keys.Count != 0)
+            {
+                newLayer = layers.Keys.Max() + 1;
+            }
+            layers[newLayer] = new Layer(Width, Height);
         }
 
         public void RemoveLayer(int layer)

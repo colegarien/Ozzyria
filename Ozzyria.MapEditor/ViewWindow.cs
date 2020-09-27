@@ -13,7 +13,7 @@ namespace Ozzyria.MapEditor
         private float yOffset = 0f;
         public float zoomPercent = 1f;
 
-        private Map _map; // current map being viewed
+        public Map _map; // current map being viewed, TODO might make some kind of singleton thing... or something since mutiple things read from map
         public int Layer { get; set; } = 0;
         private RenderTexture _renderBuffer; // for rendering window contents
 

@@ -32,9 +32,40 @@ namespace Ozzyria.MapEditor
             // might needed?
         }
 
-        public void OnPickLayer(int x, int y)
+        public int OnPickLayer(int x, int y)
         {
-            // change layer selection
+            // TODO do some kind of 'event' or 'command' pattern, right now this is crap
+            var height = 25;
+            var width = windowWidth - 20;
+            var left = windowX + 10;
+            var top = 0;
+
+            var ii = 0;
+            for (var i = 0; i < NumberOfLayers; i++)
+            {
+                top = windowY + 10 + (i * (height + 5));
+
+                var removeButtonLeft = left + width - (height - 8) - 4;
+                if (x >= removeButtonLeft && x < removeButtonLeft + (height - 8) && y >= top + 4 && y < top + 4 + (height - 8))
+                {
+                    return i;
+                }
+                else if (x >= left && x < left + width && y >= top && y < top + height)
+                {
+                    CurrentLayer = i;
+                    return -1;
+                }
+
+                ii = i + 1;
+            }
+
+            top = windowY + 10 + (ii * (height + 5));
+            if (x >= left && x < left + width && y >= top && y < top + height)
+            {
+                return -2;
+            }
+
+            return -1;
         }
 
         protected override void RenderWindowContents(RenderTarget buffer)
