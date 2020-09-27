@@ -69,8 +69,8 @@ namespace Ozzyria.MapEditor
         public void OnPickLayer(int x, int y)
         {
             var height = 25;
-            var width = windowWidth - 20;
-            var left = windowX + 10;
+            var width = GetWidth() - 20;
+            var left = GetLeft() + 10;
             var top = 0;
 
             var ii = 0;
@@ -119,8 +119,8 @@ namespace Ozzyria.MapEditor
             var font = FontFactory.GetRegular();
 
             var height = 25;
-            var width = windowWidth - 20;
-            var left = windowX + 10;
+            var width = GetWidth() - 20;
+            var left = GetLeft() + 10;
             var top = 0;
 
             // TODO... this is a doozy, probably add a 'button class' of some kind?

@@ -96,17 +96,17 @@ namespace Ozzyria.MapEditor
 
             // center in window based
             zoomPercent = 1f;
-            xOffset = (_renderBuffer.Size.X * 0.5f) - (this.windowX + this.windowWidth * 0.5f);
-            yOffset = (_renderBuffer.Size.Y * 0.5f) - (this.windowY + this.windowHeight * 0.5f);
+            xOffset = (_renderBuffer.Size.X * 0.5f) - GetCenterX();
+            yOffset = (_renderBuffer.Size.Y * 0.5f) - GetCenterY();
 
             // biggest dimension should take of 88% of the screen (cause it look nice)
-            var newZoom = (0.88f * windowWidth) / _renderBuffer.Size.X;
-            if (windowHeight < windowWidth)
+            var newZoom = (0.88f * GetWidth()) / _renderBuffer.Size.X;
+            if (GetHeight() < GetWidth())
             {
-                newZoom = (0.88f * windowHeight) / _renderBuffer.Size.Y;
+                newZoom = (0.88f * GetHeight()) / _renderBuffer.Size.Y;
             }
 
-            ZoomTo((int)(windowX + windowWidth * 0.5f), (int)(windowY + windowHeight * 0.5f), newZoom);
+            ZoomTo(GetCenterX(), GetCenterY(), newZoom);
         }
 
         public void OnPan(float deltaX, float deltaY)

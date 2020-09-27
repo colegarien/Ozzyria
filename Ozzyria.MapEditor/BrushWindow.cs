@@ -30,8 +30,8 @@ namespace Ozzyria.MapEditor
             var i = 0;
             foreach (TileType type in Enum.GetValues(typeof(TileType)))
             {
-                var left = windowX + 10 + (i * 37); // TODO this is gross and copy+pasted from Draw, should make some kinda Button Class?
-                var top = windowY + 10;
+                var left = GetLeft() + 10 + (i * 37); // TODO this is gross and copy+pasted from Draw, should make some kinda Button Class?
+                var top = GetTop() + 10;
                 var dimension = 32;
                 if (e.OriginX >= left && e.OriginX < left + dimension
                     && e.OriginY >= top && e.OriginY < top + dimension)
@@ -86,8 +86,8 @@ namespace Ozzyria.MapEditor
                         break;
                 }
 
-                var left = windowX + 10 + (i * 37);
-                var top = windowY + 10;
+                var left = GetLeft() + 10 + (i * 37);
+                var top = GetTop() + 10;
                 var dimension = 32;
                 buffer.Draw(new RectangleShape()
                 {
@@ -116,7 +116,7 @@ namespace Ozzyria.MapEditor
                 buffer.Draw(new RectangleShape()
                 {
                     Size = new SFML.System.Vector2f(32, 32),
-                    Position = new SFML.System.Vector2f(windowX + 10 + (i * 37), windowY + 10),
+                    Position = new SFML.System.Vector2f(GetLeft() + 10 + (i * 37), GetTop() + 10),
                     FillColor = Color.Transparent,
                     OutlineColor = outlineColor,
                     OutlineThickness = 2

@@ -6,7 +6,7 @@ namespace Ozzyria.MapEditor
 {
     abstract class GWindow : IObserver
     {
-        protected int windowX;
+        protected int windowX; // TODO add margins and padding
         protected int windowY;
         protected uint windowWidth;
         protected uint windowHeight;
@@ -16,6 +16,45 @@ namespace Ozzyria.MapEditor
         public GWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {
             OnResize(x, y, width, height, screenWidth, screenHeight);
+        }
+
+        protected int GetLeft()
+        {
+            return windowX;
+        }
+
+        protected int GetTop()
+        {
+            return windowY;
+        }
+
+        protected int GetWidth()
+        {
+            return (int)windowWidth;
+        }
+        protected int GetHeight()
+        {
+            return (int)windowHeight;
+        }
+
+        protected int GetRight()
+        {
+            return (int)(GetLeft() + GetWidth());
+        }
+
+        protected int GetCenterX()
+        {
+            return (int)(GetLeft() + GetWidth() * 0.5f);
+        }
+
+        protected int GetBottom()
+        {
+            return (int)(GetTop() + GetHeight());
+        }
+
+        protected int GetCenterY()
+        {
+            return (int)(GetTop() + GetHeight() * 0.5f);
         }
 
         public virtual void OnResize(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
@@ -85,8 +124,8 @@ namespace Ozzyria.MapEditor
             // draw border around window
             _screenBuffer.Draw(new RectangleShape
             {
-                Position = new Vector2f(windowX + 2, windowY + 2),
-                Size = new Vector2f(windowWidth - 4, windowHeight - 4),
+                Position = new Vector2f(GetLeft() + 2, GetTop() + 2),
+                Size = new Vector2f(GetWidth() - 4, GetHeight() - 4),
                 FillColor = Color.Transparent,
                 OutlineThickness = 2,
                 OutlineColor = Color.Yellow
@@ -96,8 +135,8 @@ namespace Ozzyria.MapEditor
             // draw window to surface
             surface.Draw(new Sprite(_screenBuffer.Texture)
             {
-                Position = new Vector2f(windowX, windowY),
-                Scale = new Vector2f((float)windowWidth / (float)_screenBuffer.Size.X, (float)windowHeight / (float)_screenBuffer.Size.Y)
+                Position = new Vector2f(GetLeft(), GetTop()),
+                Scale = new Vector2f((float)GetWidth() / (float)_screenBuffer.Size.X, (float)GetHeight() / (float)_screenBuffer.Size.Y)
             });
         }
 
