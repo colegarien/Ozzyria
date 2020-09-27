@@ -1,6 +1,5 @@
 ﻿using SFML.Graphics;
 using SFML.System;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.MapEditor
 {
@@ -15,7 +14,7 @@ namespace Ozzyria.MapEditor
         public float zoomPercent = 1f;
 
         private Map _map; // current map being viewed
-        private int _layer = 0;
+        public int Layer { get; set; } = 0;
         private RenderTexture _renderBuffer; // for rendering window contents
 
         private float cursorScreenX = 0;
@@ -85,7 +84,7 @@ namespace Ozzyria.MapEditor
             }
 
             var tileDimension = _map.TileDimension;
-            _map.SetTileType(_layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
+            _map.SetTileType(Layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
         }
 
         public override void OnHorizontalScroll(float delta) {
@@ -169,7 +168,7 @@ namespace Ozzyria.MapEditor
                 {
                     var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    switch (_map.GetTileType(_layer, x, y))
+                    switch (_map.GetTileType(Layer, x, y))
                     {
                         case TileType.Ground:
                             tileShape.FillColor = Color.Green;

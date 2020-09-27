@@ -15,7 +15,6 @@ namespace Ozzyria.MapEditor
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             ViewWindow viewWindow = new ViewWindow(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
             viewWindow.LoadMap(new Map(20, 20)); // TODO load/unload from file
-            // TODO add Layers window to control currently selected ViewWindow layer
 
             BrushWindow brushWindow = new BrushWindow(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
             LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
@@ -124,9 +123,15 @@ namespace Ozzyria.MapEditor
                     inputState.LeftMouseDown = true;
                     inputState.LeftDownStartX = e.X;
                     inputState.LeftDownStartY = e.Y;
-                    viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
-                    brushWindow.OnPickTool(e.X, e.Y);
-                    layerWindow.OnPickLayer(e.X, e.Y);
+                    if (viewWindow.IsInWindow(e.X, e.Y))
+                        viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
+                    if (brushWindow.IsInWindow(e.X, e.Y))
+                        brushWindow.OnPickTool(e.X, e.Y);
+                    if (layerWindow.IsInWindow(e.X, e.Y))
+                    {
+                        layerWindow.OnPickLayer(e.X, e.Y);
+                        viewWindow.Layer = layerWindow.CurrentLayer;
+                    }
                 }
             };
             window.MouseButtonReleased += (sender, e) =>

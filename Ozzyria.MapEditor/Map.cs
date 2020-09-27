@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Ozzyria.MapEditor
 {
@@ -17,6 +19,28 @@ namespace Ozzyria.MapEditor
 
             layers = new Dictionary<int, Layer>();
             layers[0] = new Layer(width, height);
+        }
+
+        public void AddLayer()
+        {
+            layers[layers.Keys.Max() + 1] = new Layer(Width, Height);
+        }
+
+        public void RemoveLayer(int layer)
+        {
+            if (!layers.ContainsKey(layer) || layers.Keys.Count <= 1)
+            {
+                return;
+            }
+
+            var lastLayer = layers.Keys.Max();
+            layers.Remove(layer);
+            for(var i = layer+1; i <= lastLayer; i++)
+            {
+                var currentLayer = layers[i];
+                layers[i - 1] = currentLayer;
+                layers.Remove(i);
+            }
         }
 
         public TileType GetTileType(int layer, int x, int y)
