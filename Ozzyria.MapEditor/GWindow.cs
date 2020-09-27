@@ -1,9 +1,10 @@
-﻿using SFML.Graphics;
+﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Ozzyria.MapEditor
 {
-    abstract class GWindow
+    abstract class GWindow : IObserver
     {
         protected int windowX;
         protected int windowY;
@@ -39,10 +40,41 @@ namespace Ozzyria.MapEditor
                 && y >= windowY && y < windowY + windowHeight;
         }
 
+        public virtual bool CanHandle(IEvent e)
+        {
+            if (e is WindowSpecificEvent)
+            {
+                var w = (WindowSpecificEvent)e;
+                return IsInWindow(w.OriginX, w.OriginY);
+            }
 
-        public abstract void OnMouseMove(int x, int y);
-        public abstract void OnHorizontalScroll(float delta);
-        public abstract void OnVerticalScroll(float delta);
+            return e is MouseMoveEvent;
+        }
+
+        public virtual void Notify(IEvent e)
+        {
+            if (e is HorizontalScrollEvent)
+            {
+                OnHorizontalScroll((HorizontalScrollEvent)e);
+            }
+            else if (e is VerticalScrollEvent)
+            {
+                OnVerticalScroll((VerticalScrollEvent)e);
+            }
+            else if (e is MouseMoveEvent)
+            {
+                OnMouseMove((MouseMoveEvent)e);
+            }
+            else if (e is MouseDownEvent)
+            {
+                OnMouseDown((MouseDownEvent)e);
+            }
+        }
+
+        public abstract void OnMouseDown(MouseDownEvent e);
+        public abstract void OnMouseMove(MouseMoveEvent e);
+        public abstract void OnHorizontalScroll(HorizontalScrollEvent e);
+        public abstract void OnVerticalScroll(VerticalScrollEvent e);
 
 
         public void OnRender(RenderTarget surface)

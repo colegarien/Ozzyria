@@ -1,5 +1,5 @@
-﻿using SFML.Graphics;
-using System;
+﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 
 namespace Ozzyria.MapEditor
 {
@@ -14,27 +14,60 @@ namespace Ozzyria.MapEditor
 
         public LayerWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
         {
+            EventQueue.Queue(new LayerChangedEvent
+            {
+                SelectedLayer = CurrentLayer
+            });
         }
 
-        public override void OnHorizontalScroll(float delta)
+        public override bool CanHandle(IEvent e)
+        {
+            return e is MapLoadedEvent
+                || base.CanHandle(e);
+        }
+
+        public override void Notify(IEvent e)
+        {
+            base.Notify(e);
+            if (e is MapLoadedEvent)
+            {
+                OnLoadMap((MapLoadedEvent)e);
+            }
+        }
+
+        public void OnLoadMap(MapLoadedEvent e)
+        {
+            NumberOfLayers = MapManager.GetNumberOfLayers();
+        }
+
+        public override void OnHorizontalScroll(HorizontalScrollEvent e)
         {
             // not needed
         }
 
-        public override void OnMouseMove(int x, int y)
+        public override void OnMouseMove(MouseMoveEvent e)
         {
-            mouseX = x;
-            mouseY = y;
+            mouseX = e.X;
+            mouseY = e.Y;
         }
 
-        public override void OnVerticalScroll(float delta)
+        public override void OnVerticalScroll(VerticalScrollEvent e)
         {
             // might needed?
         }
 
-        public int OnPickLayer(int x, int y)
+        public override void OnMouseDown(MouseDownEvent e)
         {
-            // TODO do some kind of 'event' or 'command' pattern, right now this is crap
+            if (!e.LeftMouseDown)
+            {
+                return;
+            }
+
+            OnPickLayer(e.OriginX, e.OriginY);
+        }
+
+        public void OnPickLayer(int x, int y)
+        {
             var height = 25;
             var width = windowWidth - 20;
             var left = windowX + 10;
@@ -48,12 +81,26 @@ namespace Ozzyria.MapEditor
                 var removeButtonLeft = left + width - (height - 8) - 4;
                 if (x >= removeButtonLeft && x < removeButtonLeft + (height - 8) && y >= top + 4 && y < top + 4 + (height - 8))
                 {
-                    return i;
+                    MapManager.RemoveLayer(i);
+                    NumberOfLayers = MapManager.GetNumberOfLayers();
+                    if (i <= CurrentLayer && (i != CurrentLayer || i >= NumberOfLayers))
+                    {
+                        CurrentLayer -= 1;
+                        EventQueue.Queue(new LayerChangedEvent
+                        {
+                            SelectedLayer = CurrentLayer
+                        });
+                    }
+                    return;
                 }
                 else if (x >= left && x < left + width && y >= top && y < top + height)
                 {
                     CurrentLayer = i;
-                    return -1;
+                    EventQueue.Queue(new LayerChangedEvent
+                    {
+                        SelectedLayer = CurrentLayer
+                    });
+                    return;
                 }
 
                 ii = i + 1;
@@ -62,10 +109,9 @@ namespace Ozzyria.MapEditor
             top = windowY + 10 + (ii * (height + 5));
             if (x >= left && x < left + width && y >= top && y < top + height)
             {
-                return -2;
+                MapManager.AddLayer();
+                NumberOfLayers = MapManager.GetNumberOfLayers();
             }
-
-            return -1;
         }
 
         protected override void RenderWindowContents(RenderTarget buffer)

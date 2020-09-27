@@ -19,7 +19,6 @@ namespace Ozzyria.MapEditor
 
             layers = new Dictionary<int, Layer>();
             AddLayer();
-            AddLayer();
         }
 
         public void AddLayer()

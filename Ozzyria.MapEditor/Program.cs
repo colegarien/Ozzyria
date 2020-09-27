@@ -1,12 +1,13 @@
-﻿using SFML.Graphics;
+﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Ozzyria.MapEditor
 {
+
     class Program
     {
         static void Main(string[] args)
@@ -18,14 +19,17 @@ namespace Ozzyria.MapEditor
             BrushWindow brushWindow = new BrushWindow(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
             LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
 
-            viewWindow.LoadMap(new Map(20, 20)); // TODO load/unload from file
-            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
+            EventQueue.AttachObserver(viewWindow);
+            EventQueue.AttachObserver(brushWindow);
+            EventQueue.AttachObserver(layerWindow);
+
+            MapManager.LoadMap(new Map(20, 20)); // Needs to happen after observers setup
 
             window.Resized += (sender, e) =>
             {
                 window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
 
-                // TODO wrap this in a 'Layout' class that calculates all this junk
+                // TODO wrap this in a 'Layout' class that calculates all this junk / make a OnResize event?
                 viewWindow.OnResize(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
                 brushWindow.OnResize(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
                 layerWindow.OnResize((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
@@ -66,100 +70,91 @@ namespace Ozzyria.MapEditor
             };
             window.MouseWheelScrolled += (sender, e) =>
             {
-                var horizontalScroll = false;
-                var verticalScroll = false;
-                var zooming = false;
                 if (e.Wheel == Mouse.Wheel.HorizontalWheel || (inputState.IsAltHeld && e.Wheel == Mouse.Wheel.VerticalWheel))
                 {
-                    horizontalScroll = true;
+                    EventQueue.Queue(new HorizontalScrollEvent
+                    {
+                        OriginX = e.X,
+                        OriginY = e.Y,
+                        Delta = e.Delta
+                    });
                 }
                 else if (inputState.IsCtrlHeld)
                 {
-                    zooming = true;
+                    EventQueue.Queue(new ZoomEvent
+                    {
+                        OriginX = e.X,
+                        OriginY = e.Y,
+                        Delta = e.Delta
+                    });
                 }
                 else
                 {
-                    verticalScroll = true;
-                }
-
-
-                // TODO make event listeners delegated easier (GWindow event system wrapper?)
-                if (viewWindow.IsInWindow(e.X, e.Y))
-                {
-                    if (horizontalScroll)
-                        viewWindow.OnHorizontalScroll(e.Delta);
-                    else if (verticalScroll)
-                        viewWindow.OnVerticalScroll(e.Delta);
-                    else if (zooming)
-                        viewWindow.OnZoom(e.X, e.Y, e.Delta);
-                }
-
-                if (brushWindow.IsInWindow(e.X, e.Y))
-                {
-                    if (horizontalScroll)
-                        brushWindow.OnHorizontalScroll(e.Delta);
-                    else if (verticalScroll)
-                        brushWindow.OnVerticalScroll(e.Delta);
-                }
-
-                if (layerWindow.IsInWindow(e.X, e.Y))
-                {
-                    if (horizontalScroll)
-                        layerWindow.OnHorizontalScroll(e.Delta);
-                    else if (verticalScroll)
-                        layerWindow.OnVerticalScroll(e.Delta);
+                    EventQueue.Queue(new VerticalScrollEvent
+                    {
+                        OriginX = e.X,
+                        OriginY = e.Y,
+                        Delta = e.Delta
+                    });
                 }
             };
             window.MouseButtonPressed += (sender, e) =>
             {
-                viewWindow.OnMouseMove(e.X, e.Y);
-                brushWindow.OnMouseMove(e.X, e.Y);
-                layerWindow.OnMouseMove(e.X, e.Y);
+                inputState.PreviousMouseX = inputState.CurrentMouseX;
+                inputState.PreviousMouseY = inputState.CurrentMouseY;
+                inputState.CurrentMouseX = e.X;
+                inputState.CurrentMouseY = e.Y;
+                EventQueue.Queue(new EventSystem.MouseMoveEvent()
+                {
+                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
+                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
+                    X = e.X,
+                    Y = e.Y,
+                });
+
+                EventQueue.Queue(new MouseDownEvent
+                {
+                    OriginX = e.X,
+                    OriginY = e.Y,
+                    LeftMouseDown = e.Button == Mouse.Button.Left,
+                    RightMouseDown = e.Button == Mouse.Button.Right,
+                    MiddleMouseDown = e.Button == Mouse.Button.Middle,
+                });
+
                 if (e.Button == Mouse.Button.Middle)
                 {
                     inputState.MiddleMouseDown = true;
-                    inputState.MiddleDownStartX = e.X;
-                    inputState.MiddleDownStartY = e.Y;
+                    inputState.DragStartX = e.X;
+                    inputState.DragStartY = e.Y;
                 }
                 else if (e.Button == Mouse.Button.Left)
                 {
                     inputState.LeftMouseDown = true;
-                    inputState.LeftDownStartX = e.X;
-                    inputState.LeftDownStartY = e.Y;
-                    if (viewWindow.IsInWindow(e.X, e.Y))
-                        viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
-                    if (brushWindow.IsInWindow(e.X, e.Y))
-                        brushWindow.OnPickTool(e.X, e.Y);
-                    if (layerWindow.IsInWindow(e.X, e.Y))
-                    {
-                        var result = layerWindow.OnPickLayer(e.X, e.Y);
-                        if (result == -2)
-                        {
-                            viewWindow._map.AddLayer();
-                            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
-                        }
-                        else if (result >= 0)
-                        {
-                            viewWindow._map.RemoveLayer(result);
-                            if (result != 0 && result <= layerWindow.CurrentLayer)
-                            {
-                                layerWindow.CurrentLayer -= result == layerWindow.CurrentLayer && viewWindow._map.layers.ContainsKey(result)
-                                    ? 0
-                                    : 1;
-                            }
-                            layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
-                            viewWindow.Layer = layerWindow.CurrentLayer;
-                        }
-                        layerWindow.NumberOfLayers = viewWindow._map.layers.Count;
-                        viewWindow.Layer = layerWindow.CurrentLayer;
-                    }
+                    inputState.DragStartX = e.X;
+                    inputState.DragStartY = e.Y;
                 }
+                else if (e.Button == Mouse.Button.Right)
+                {
+                    inputState.RightMouseDown = true;
+                    inputState.DragStartX = e.X;
+                    inputState.DragStartY = e.Y;
+                }
+
             };
             window.MouseButtonReleased += (sender, e) =>
             {
-                viewWindow.OnMouseMove(e.X, e.Y);
-                brushWindow.OnMouseMove(e.X, e.Y);
-                layerWindow.OnMouseMove(e.X, e.Y);
+                inputState.PreviousMouseX = inputState.CurrentMouseX;
+                inputState.PreviousMouseY = inputState.CurrentMouseY;
+                inputState.CurrentMouseX = e.X;
+                inputState.CurrentMouseY = e.Y;
+                EventQueue.Queue(new EventSystem.MouseMoveEvent()
+                {
+                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
+                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
+                    X = e.X,
+                    Y = e.Y,
+                });
+
                 if (e.Button == Mouse.Button.Middle)
                 {
                     inputState.MiddleMouseDown = false;
@@ -168,28 +163,42 @@ namespace Ozzyria.MapEditor
                 {
                     inputState.LeftMouseDown = false;
                 }
+                else if (e.Button == Mouse.Button.Right)
+                {
+                    inputState.RightMouseDown = false;
+                }
             };
-            var previousMouseX = 0;
-            var previousMouseY = 0;
+
             window.MouseMoved += (sender, e) =>
             {
-                var mouseDeltaX = e.X - previousMouseX;
-                var mouseDeltaY = e.Y - previousMouseY;
+                inputState.PreviousMouseX = inputState.CurrentMouseX;
+                inputState.PreviousMouseY = inputState.CurrentMouseY;
+                inputState.CurrentMouseX = e.X;
+                inputState.CurrentMouseY = e.Y;
 
-                viewWindow.OnMouseMove(e.X, e.Y);
-                brushWindow.OnMouseMove(e.X, e.Y);
-                layerWindow.OnMouseMove(e.X, e.Y);
-                if (inputState.MiddleMouseDown && viewWindow.IsInWindow(inputState.MiddleDownStartX, inputState.MiddleDownStartY))
+                EventQueue.Queue(new EventSystem.MouseMoveEvent()
                 {
-                    viewWindow.OnPan(mouseDeltaX, mouseDeltaY);
-                }
+                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
+                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
+                    X = e.X,
+                    Y = e.Y,
+                });
 
-                if (inputState.LeftMouseDown && viewWindow.IsInWindow(inputState.LeftDownStartX, inputState.LeftDownStartY))
+                if (inputState.LeftMouseDown || inputState.RightMouseDown || inputState.MiddleMouseDown)
                 {
-                    viewWindow.OnPaint(e.X, e.Y, brushWindow.SelectedBrush);
+                    EventQueue.Queue(new MouseDragEvent()
+                    {
+                        OriginX = inputState.DragStartX,
+                        OriginY = inputState.DragStartY,
+                        DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
+                        DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
+                        X = e.X,
+                        Y = e.Y,
+                        LeftMouseDown = inputState.LeftMouseDown,
+                        RightMouseDown = inputState.RightMouseDown,
+                        MiddleMouseDown = inputState.MiddleMouseDown,
+                    });
                 }
-                previousMouseX = e.X;
-                previousMouseY = e.Y;
             };
 
 
@@ -204,6 +213,7 @@ namespace Ozzyria.MapEditor
                 /// EVENT HANDLING HERE
                 ///
                 window.DispatchEvents();
+                EventQueue.DispatchEvents();
                 var quit = window.HasFocus() && Keyboard.IsKeyPressed(Keyboard.Key.Escape);
 
                 // DRAW STUFF

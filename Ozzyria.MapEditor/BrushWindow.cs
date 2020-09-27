@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 using System;
 
 namespace Ozzyria.MapEditor
@@ -12,38 +13,52 @@ namespace Ozzyria.MapEditor
 
         public BrushWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
         {
+            EventQueue.Queue(new BrushTypeChangeEvent
+            {
+                SelectedBrush = SelectedBrush
+            });
         }
 
-        public override void OnMouseMove(int x, int y)
-        {
-            mouseX = x;
-            mouseY = y;
-        }
 
-        public void OnPickTool(int x, int y)
+        public override void OnMouseDown(MouseDownEvent e)
         {
+            if (!e.LeftMouseDown)
+            {
+                return;
+            }
+
             var i = 0;
             foreach (TileType type in Enum.GetValues(typeof(TileType)))
             {
                 var left = windowX + 10 + (i * 37); // TODO this is gross and copy+pasted from Draw, should make some kinda Button Class?
                 var top = windowY + 10;
                 var dimension = 32;
-                if (mouseX >= left && mouseX < left + dimension
-                    && mouseY >= top && mouseY < top + dimension)
+                if (e.OriginX >= left && e.OriginX < left + dimension
+                    && e.OriginY >= top && e.OriginY < top + dimension)
                 {
                     SelectedBrush = type;
+                    EventQueue.Queue(new BrushTypeChangeEvent
+                    {
+                        SelectedBrush = SelectedBrush
+                    });
                     return;
                 }
                 i++;
             }
         }
 
-        public override void OnHorizontalScroll(float delta)
+        public override void OnMouseMove(MouseMoveEvent e)
+        {
+            mouseX = e.X;
+            mouseY = e.Y;
+        }
+
+        public override void OnHorizontalScroll(HorizontalScrollEvent e)
         {
             // do nothing
         }
 
-        public override void OnVerticalScroll(float delta)
+        public override void OnVerticalScroll(VerticalScrollEvent e)
         {
             // do nothing
         }

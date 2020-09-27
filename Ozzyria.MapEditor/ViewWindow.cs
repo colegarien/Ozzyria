@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 using SFML.System;
 
 namespace Ozzyria.MapEditor
@@ -13,27 +14,65 @@ namespace Ozzyria.MapEditor
         private float yOffset = 0f;
         public float zoomPercent = 1f;
 
-        public Map _map; // current map being viewed, TODO might make some kind of singleton thing... or something since mutiple things read from map
-        public int Layer { get; set; } = 0;
         private RenderTexture _renderBuffer; // for rendering window contents
 
         private float cursorScreenX = 0;
         private float cursorScreenY = 0;
+        public int Layer { get; set; } = 0;
+        public TileType SelectedBrush { get; set; }
 
         public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
         {
         }
 
-        public void LoadMap(Map map)
+        public override bool CanHandle(IEvent e)
         {
-            if(_map != null)
+            return e is MapLoadedEvent
+                || e is LayerChangedEvent
+                || e is BrushTypeChangeEvent
+                || base.CanHandle(e);
+        }
+
+        public override void Notify(IEvent e)
+        {
+            base.Notify(e);
+            if (e is ZoomEvent)
             {
-                _map = null;
+                OnZoom((ZoomEvent)e);
+            }
+            else if (e is MouseDragEvent)
+            {
+                var m = (MouseDragEvent)e;
+                if (m.MiddleMouseDown)
+                {
+                    OnPan(m.DeltaX, m.DeltaY);
+                } else if (m.LeftMouseDown)
+                {
+                    OnPaint(m.X, m.Y);
+                }
+            }
+            else if (e is MapLoadedEvent)
+            {
+                OnLoadMap((MapLoadedEvent)e);
+            }
+            else if (e is LayerChangedEvent)
+            {
+                Layer = ((LayerChangedEvent)e).SelectedLayer;
+            }
+            else if (e is BrushTypeChangeEvent)
+            {
+                SelectedBrush = ((BrushTypeChangeEvent)e).SelectedBrush;
+            }
+        }
+
+        public void OnLoadMap(MapLoadedEvent e)
+        {
+            if (_renderBuffer != null)
+            {
                 _renderBuffer.Dispose();
             }
 
-            _map = map;
-            _renderBuffer = new RenderTexture((uint)(_map.Width * _map.TileDimension), (uint)(_map.Height * _map.TileDimension));
+            _renderBuffer = new RenderTexture((uint)(e.Width * e.TileDimension), (uint)(e.Height * e.TileDimension));
             CenterView();
         }
 
@@ -47,7 +86,7 @@ namespace Ozzyria.MapEditor
 
         private void CenterView()
         {
-            if(_map == null)
+            if (_renderBuffer == null)
             {
                 xOffset = 0;
                 yOffset = 0;
@@ -57,17 +96,17 @@ namespace Ozzyria.MapEditor
 
             // center in window based
             zoomPercent = 1f;
-            xOffset = (((_map.Width * _map.TileDimension) * 0.5f) - (this.windowX + this.windowWidth * 0.5f));
-            yOffset = (((_map.Height * _map.TileDimension) * 0.5f) - (this.windowY + this.windowHeight * 0.5f));
+            xOffset = (_renderBuffer.Size.X * 0.5f) - (this.windowX + this.windowWidth * 0.5f);
+            yOffset = (_renderBuffer.Size.Y * 0.5f) - (this.windowY + this.windowHeight * 0.5f);
 
             // biggest dimension should take of 88% of the screen (cause it look nice)
-            var newZoom = (0.88f * (float)this.windowWidth) / (_map.TileDimension * _map.Width);
+            var newZoom = (0.88f * windowWidth) / _renderBuffer.Size.X;
             if (windowHeight < windowWidth)
             {
-                newZoom = (0.88f * (float)this.windowHeight) / (_map.TileDimension * _map.Height);
+                newZoom = (0.88f * windowHeight) / _renderBuffer.Size.Y;
             }
 
-            ZoomTo((int)(this.windowX + this.windowWidth * 0.5f), (int)(this.windowY + this.windowHeight * 0.5f), newZoom);
+            ZoomTo((int)(windowX + windowWidth * 0.5f), (int)(windowY + windowHeight * 0.5f), newZoom);
         }
 
         public void OnPan(float deltaX, float deltaY)
@@ -76,40 +115,46 @@ namespace Ozzyria.MapEditor
             yOffset -= deltaY / zoomPercent;
         }
 
-        public void OnPaint(int x, int y, TileType type)
+        public override void OnMouseDown(MouseDownEvent e)
         {
-            if(_map == null)
+            if (!e.LeftMouseDown)
             {
                 return;
             }
 
-            var tileDimension = _map.TileDimension;
-            _map.SetTileType(Layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), type);
+            OnPaint(e.OriginX, e.OriginY);
         }
 
-        public override void OnHorizontalScroll(float delta) {
-            xOffset += (delta / zoomPercent) * hScrollSensitivity;
-        }
-
-        public override void OnVerticalScroll(float delta)
+        public void OnPaint(int x, int y)
         {
-            yOffset -= (delta / zoomPercent) * vScrollSensitivity;
+            var tileDimension = MapManager.GetTileDimension();
+            MapManager.PaintTile(Layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), SelectedBrush);
         }
 
-        public override void OnMouseMove(int x, int y)
+        public override void OnHorizontalScroll(HorizontalScrollEvent e)
         {
-            cursorScreenX = x;
-            cursorScreenY = y;
+            xOffset += (e.Delta / zoomPercent) * hScrollSensitivity;
         }
 
-        public void OnZoom(int xOrigin, int yOrigin, float delta)
+        public override void OnVerticalScroll(VerticalScrollEvent e)
         {
-            var scale = (delta > 0)
+            yOffset -= (e.Delta / zoomPercent) * vScrollSensitivity;
+        }
+
+        public override void OnMouseMove(MouseMoveEvent e)
+        {
+            cursorScreenX = e.X;
+            cursorScreenY = e.Y;
+        }
+
+        public void OnZoom(ZoomEvent e)
+        {
+            var scale = (e.Delta > 0)
                 ? zoomSensitivity
                 : -zoomSensitivity;
             var targetZoomPercent = zoomPercent * (1 + scale);
 
-            ZoomTo(xOrigin, yOrigin, targetZoomPercent);
+            ZoomTo(e.OriginX, e.OriginY, targetZoomPercent);
         }
 
         private void ZoomTo(int xOrigin, int yOrigin, float targetZoomPercent)
@@ -154,21 +199,23 @@ namespace Ozzyria.MapEditor
 
         protected override void RenderWindowContents(RenderTarget buffer)
         {
-            if (_map == null)
+            if (_renderBuffer == null)
             {
                 return;
             }
 
             _renderBuffer.Clear();
-            var tileDimension = _map.TileDimension;
+            var tileDimension = MapManager.GetTileDimension();
 
-            for (var x = 0; x < _map.Width; x++)
+            var mapWidth = MapManager.GetWidth();
+            var mapHeight = MapManager.GetHeight();
+            for (var x = 0; x < mapWidth; x++)
             {
-                for (var y = 0; y < _map.Height; y++)
+                for (var y = 0; y < mapHeight; y++)
                 {
                     var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    switch (_map.GetTileType(Layer, x, y))
+                    switch (MapManager.GetTileType(Layer, x, y))
                     {
                         case TileType.Ground:
                             tileShape.FillColor = Color.Green;
@@ -188,9 +235,9 @@ namespace Ozzyria.MapEditor
                 }
             }
 
-            for (var x = 0; x < _map.Width; x++)
+            for (var x = 0; x < mapWidth; x++)
             {
-                for (var y = 0; y < _map.Height; y++)
+                for (var y = 0; y < mapHeight; y++)
                 {
                     var overlayBorder = new RectangleShape(new Vector2f(tileDimension, tileDimension));
                     overlayBorder.Position = new Vector2f((x * tileDimension), (y * tileDimension));
