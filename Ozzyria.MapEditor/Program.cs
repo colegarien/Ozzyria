@@ -23,7 +23,7 @@ namespace Ozzyria.MapEditor
             EventQueue.AttachObserver(brushWindow);
             EventQueue.AttachObserver(layerWindow);
 
-            MapManager.LoadMap(new Map(20, 20)); // Needs to happen after observers setup
+            MapManager.LoadMap(new Map(20, 20));
 
             window.Resized += (sender, e) =>
             {
@@ -38,168 +38,12 @@ namespace Ozzyria.MapEditor
             {
                 ((Window)sender).Close();
             };
-            window.KeyPressed += (sender, e) =>
-            {
-                if (e.Code == Keyboard.Key.LControl || e.Code == Keyboard.Key.RControl)
-                {
-                    inputState.IsCtrlHeld = true;
-                }
-                else if (e.Code == Keyboard.Key.LAlt || e.Code == Keyboard.Key.RAlt)
-                {
-                    inputState.IsAltHeld = true;
-                }
-                else if (e.Code == Keyboard.Key.LShift || e.Code == Keyboard.Key.RShift)
-                {
-                    inputState.IsShiftHeld = true;
-                }
-            };
-            window.KeyReleased += (sender, e) =>
-            {
-                if (e.Code == Keyboard.Key.LControl || e.Code == Keyboard.Key.RControl)
-                {
-                    inputState.IsCtrlHeld = false;
-                }
-                else if (e.Code == Keyboard.Key.LAlt || e.Code == Keyboard.Key.RAlt)
-                {
-                    inputState.IsAltHeld = false;
-                }
-                else if (e.Code == Keyboard.Key.LShift || e.Code == Keyboard.Key.RShift)
-                {
-                    inputState.IsShiftHeld = false;
-                }
-            };
-            window.MouseWheelScrolled += (sender, e) =>
-            {
-                if (e.Wheel == Mouse.Wheel.HorizontalWheel || (inputState.IsAltHeld && e.Wheel == Mouse.Wheel.VerticalWheel))
-                {
-                    EventQueue.Queue(new HorizontalScrollEvent
-                    {
-                        OriginX = e.X,
-                        OriginY = e.Y,
-                        Delta = e.Delta
-                    });
-                }
-                else if (inputState.IsCtrlHeld)
-                {
-                    EventQueue.Queue(new ZoomEvent
-                    {
-                        OriginX = e.X,
-                        OriginY = e.Y,
-                        Delta = e.Delta
-                    });
-                }
-                else
-                {
-                    EventQueue.Queue(new VerticalScrollEvent
-                    {
-                        OriginX = e.X,
-                        OriginY = e.Y,
-                        Delta = e.Delta
-                    });
-                }
-            };
-            window.MouseButtonPressed += (sender, e) =>
-            {
-                inputState.PreviousMouseX = inputState.CurrentMouseX;
-                inputState.PreviousMouseY = inputState.CurrentMouseY;
-                inputState.CurrentMouseX = e.X;
-                inputState.CurrentMouseY = e.Y;
-                EventQueue.Queue(new EventSystem.MouseMoveEvent()
-                {
-                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
-                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
-                    X = e.X,
-                    Y = e.Y,
-                });
-
-                EventQueue.Queue(new MouseDownEvent
-                {
-                    OriginX = e.X,
-                    OriginY = e.Y,
-                    LeftMouseDown = e.Button == Mouse.Button.Left,
-                    RightMouseDown = e.Button == Mouse.Button.Right,
-                    MiddleMouseDown = e.Button == Mouse.Button.Middle,
-                });
-
-                if (e.Button == Mouse.Button.Middle)
-                {
-                    inputState.MiddleMouseDown = true;
-                    inputState.DragStartX = e.X;
-                    inputState.DragStartY = e.Y;
-                }
-                else if (e.Button == Mouse.Button.Left)
-                {
-                    inputState.LeftMouseDown = true;
-                    inputState.DragStartX = e.X;
-                    inputState.DragStartY = e.Y;
-                }
-                else if (e.Button == Mouse.Button.Right)
-                {
-                    inputState.RightMouseDown = true;
-                    inputState.DragStartX = e.X;
-                    inputState.DragStartY = e.Y;
-                }
-
-            };
-            window.MouseButtonReleased += (sender, e) =>
-            {
-                inputState.PreviousMouseX = inputState.CurrentMouseX;
-                inputState.PreviousMouseY = inputState.CurrentMouseY;
-                inputState.CurrentMouseX = e.X;
-                inputState.CurrentMouseY = e.Y;
-                EventQueue.Queue(new EventSystem.MouseMoveEvent()
-                {
-                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
-                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
-                    X = e.X,
-                    Y = e.Y,
-                });
-
-                if (e.Button == Mouse.Button.Middle)
-                {
-                    inputState.MiddleMouseDown = false;
-                }
-                else if (e.Button == Mouse.Button.Left)
-                {
-                    inputState.LeftMouseDown = false;
-                }
-                else if (e.Button == Mouse.Button.Right)
-                {
-                    inputState.RightMouseDown = false;
-                }
-            };
-
-            window.MouseMoved += (sender, e) =>
-            {
-                inputState.PreviousMouseX = inputState.CurrentMouseX;
-                inputState.PreviousMouseY = inputState.CurrentMouseY;
-                inputState.CurrentMouseX = e.X;
-                inputState.CurrentMouseY = e.Y;
-
-                EventQueue.Queue(new EventSystem.MouseMoveEvent()
-                {
-                    DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
-                    DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
-                    X = e.X,
-                    Y = e.Y,
-                });
-
-                if (inputState.LeftMouseDown || inputState.RightMouseDown || inputState.MiddleMouseDown)
-                {
-                    EventQueue.Queue(new MouseDragEvent()
-                    {
-                        OriginX = inputState.DragStartX,
-                        OriginY = inputState.DragStartY,
-                        DeltaX = inputState.CurrentMouseX - inputState.PreviousMouseX,
-                        DeltaY = inputState.CurrentMouseY - inputState.PreviousMouseY,
-                        X = e.X,
-                        Y = e.Y,
-                        LeftMouseDown = inputState.LeftMouseDown,
-                        RightMouseDown = inputState.RightMouseDown,
-                        MiddleMouseDown = inputState.MiddleMouseDown,
-                    });
-                }
-            };
+            window.KeyPressed += inputState.HandleSfmlKeyPressed;
+            window.KeyReleased += inputState.HandleSfmlKeyReleased;
+            window.MouseWheelScrolled += inputState.HandleSfmlMouseWheelScrolled;
+            window.MouseButtonPressed += inputState.HandleSfmlMousePressed;
+            window.MouseButtonReleased += inputState.HandleSfmlMouseReleased;
+            window.MouseMoved += inputState.HandleSfmlMouseMoved;
 
 
             Stopwatch stopWatch = new Stopwatch();
