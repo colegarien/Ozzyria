@@ -11,7 +11,7 @@ namespace Ozzyria.MapEditor
         private int mouseY = 0;
 
 
-        public BrushWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
+        public BrushWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding) : base(x, y, width, height, screenWidth, screenHeight, margin, padding)
         {
             EventQueue.Queue(new BrushTypeChangeEvent
             {

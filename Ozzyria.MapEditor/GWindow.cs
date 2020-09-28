@@ -6,35 +6,40 @@ namespace Ozzyria.MapEditor
 {
     abstract class GWindow : IObserver
     {
-        protected int windowX; // TODO add margins and padding
+        protected int windowX;
         protected int windowY;
         protected uint windowWidth;
         protected uint windowHeight;
 
+        protected int margin;
+        protected int padding;
+
         protected RenderTexture _screenBuffer; // for rendering window to screen (mostly for proper cropping!)
 
-        public GWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
+        public GWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding)
         {
+            this.margin = margin;
+            this.padding = padding; // TODO use padding
             OnResize(x, y, width, height, screenWidth, screenHeight);
         }
 
         protected int GetLeft()
         {
-            return windowX;
+            return windowX + margin;
         }
 
         protected int GetTop()
         {
-            return windowY;
+            return windowY + margin;
         }
 
         protected int GetWidth()
         {
-            return (int)windowWidth;
+            return (int)windowWidth - (margin * 2);
         }
         protected int GetHeight()
         {
-            return (int)windowHeight;
+            return (int)windowHeight - (margin * 2);
         }
 
         protected int GetRight()
@@ -70,13 +75,13 @@ namespace Ozzyria.MapEditor
             }
 
             _screenBuffer = new RenderTexture(screenWidth, screenHeight);
-            _screenBuffer.SetView(new View(new FloatRect(windowX, windowY, windowWidth, windowHeight)));
+            _screenBuffer.SetView(new View(new FloatRect(GetLeft(), GetTop(), GetWidth(), GetHeight())));
         }
 
         public bool IsInWindow(int x, int y)
         {
-            return x >= windowX && x < windowX + windowWidth
-                && y >= windowY && y < windowY + windowHeight;
+            return x >= GetLeft() && x < GetRight()
+                && y >= GetTop() && y < GetBottom();
         }
 
         public virtual bool CanHandle(IEvent e)

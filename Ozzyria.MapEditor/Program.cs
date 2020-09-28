@@ -15,9 +15,9 @@ namespace Ozzyria.MapEditor
             var inputState = new InputState();
 
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            ViewWindow viewWindow = new ViewWindow(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
-            BrushWindow brushWindow = new BrushWindow(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
-            LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+            ViewWindow viewWindow = new ViewWindow(0, 0, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y, 10, 0);
+            BrushWindow brushWindow = new BrushWindow(0, (int)(window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y, 10, 10);
+            LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6), 0, (uint)(window.Size.X * 0.4), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y, 10, 10);
 
             EventQueue.AttachObserver(viewWindow);
             EventQueue.AttachObserver(brushWindow);
@@ -30,9 +30,9 @@ namespace Ozzyria.MapEditor
                 window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
 
                 // TODO wrap this in a 'Layout' class that calculates all this junk / make a OnResize event?
-                viewWindow.OnResize(15, 15, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
-                brushWindow.OnResize(15, 15 + (int)(15 + window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 52, window.Size.X, window.Size.Y);
-                layerWindow.OnResize((int)(window.Size.X * 0.6) + 30, 15, (uint)(window.Size.X * 0.4) - 45, (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+                viewWindow.OnResize(0, 0, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
+                brushWindow.OnResize(0, (int)(window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y);
+                layerWindow.OnResize((int)(window.Size.X * 0.6), 0, (uint)(window.Size.X * 0.4), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
             };
             window.Closed += (sender, e) =>
             {

@@ -21,7 +21,7 @@ namespace Ozzyria.MapEditor
         public int Layer { get; set; } = 0;
         public TileType SelectedBrush { get; set; }
 
-        public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
+        public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding) : base(x, y, width, height, screenWidth, screenHeight, margin, padding)
         {
         }
 

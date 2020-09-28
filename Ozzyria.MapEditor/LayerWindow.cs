@@ -12,7 +12,7 @@ namespace Ozzyria.MapEditor
         private int mouseX = 0;
         private int mouseY = 0;
 
-        public LayerWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight) : base(x, y, width, height, screenWidth, screenHeight)
+        public LayerWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding) : base(x, y, width, height, screenWidth, screenHeight, margin, padding)
         {
             EventQueue.Queue(new LayerChangedEvent
             {
@@ -76,7 +76,7 @@ namespace Ozzyria.MapEditor
             var ii = 0;
             for (var i = 0; i < NumberOfLayers; i++)
             {
-                top = windowY + 10 + (i * (height + 5));
+                top = GetTop() + 10 + (i * (height + 5));
 
                 var removeButtonLeft = left + width - (height - 8) - 4;
                 if (x >= removeButtonLeft && x < removeButtonLeft + (height - 8) && y >= top + 4 && y < top + 4 + (height - 8))
@@ -106,7 +106,7 @@ namespace Ozzyria.MapEditor
                 ii = i + 1;
             }
 
-            top = windowY + 10 + (ii * (height + 5));
+            top = GetTop() + 10 + (ii * (height + 5));
             if (x >= left && x < left + width && y >= top && y < top + height)
             {
                 MapManager.AddLayer();
@@ -127,7 +127,7 @@ namespace Ozzyria.MapEditor
             var ii = 0;
             for (var i = 0; i < NumberOfLayers; i++)
             {
-                top = windowY + 10 + (i * (height + 5));
+                top = GetTop() + 10 + (i * (height + 5));
                 buffer.Draw(new RectangleShape()
                 {
                     Size = new SFML.System.Vector2f(width, height),
@@ -151,7 +151,7 @@ namespace Ozzyria.MapEditor
                 ii = i + 1;
             }
 
-            top = windowY + 10 + (ii * (height + 5));
+            top = GetTop() + 10 + (ii * (height + 5));
             buffer.Draw(new RectangleShape()
             {
                 Size = new SFML.System.Vector2f(width, height),
