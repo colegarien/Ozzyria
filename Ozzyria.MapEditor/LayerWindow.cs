@@ -69,14 +69,14 @@ namespace Ozzyria.MapEditor
         public void OnPickLayer(int x, int y)
         {
             var height = 25;
-            var width = GetWidth() - 20;
-            var left = GetLeft() + 10;
+            var width = GetIWidth();
+            var left = GetILeft();
             var top = 0;
 
             var ii = 0;
             for (var i = 0; i < NumberOfLayers; i++)
             {
-                top = GetTop() + 10 + (i * (height + 5));
+                top = GetITop() + (i * (height + 5));
 
                 var removeButtonLeft = left + width - (height - 8) - 4;
                 if (x >= removeButtonLeft && x < removeButtonLeft + (height - 8) && y >= top + 4 && y < top + 4 + (height - 8))
@@ -106,7 +106,7 @@ namespace Ozzyria.MapEditor
                 ii = i + 1;
             }
 
-            top = GetTop() + 10 + (ii * (height + 5));
+            top = GetITop() + (ii * (height + 5));
             if (x >= left && x < left + width && y >= top && y < top + height)
             {
                 MapManager.AddLayer();
@@ -119,15 +119,15 @@ namespace Ozzyria.MapEditor
             var font = FontFactory.GetRegular();
 
             var height = 25;
-            var width = GetWidth() - 20;
-            var left = GetLeft() + 10;
+            var width = GetIWidth();
+            var left = GetILeft();
             var top = 0;
 
             // TODO... this is a doozy, probably add a 'button class' of some kind?
             var ii = 0;
             for (var i = 0; i < NumberOfLayers; i++)
             {
-                top = GetTop() + 10 + (i * (height + 5));
+                top = GetITop() + (i * (height + 5));
                 buffer.Draw(new RectangleShape()
                 {
                     Size = new SFML.System.Vector2f(width, height),
@@ -151,7 +151,7 @@ namespace Ozzyria.MapEditor
                 ii = i + 1;
             }
 
-            top = GetTop() + 10 + (ii * (height + 5));
+            top = GetITop() + (ii * (height + 5));
             buffer.Draw(new RectangleShape()
             {
                 Size = new SFML.System.Vector2f(width, height),

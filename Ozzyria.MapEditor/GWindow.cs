@@ -19,20 +19,19 @@ namespace Ozzyria.MapEditor
         public GWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding)
         {
             this.margin = margin;
-            this.padding = padding; // TODO use padding
+            this.padding = padding;
             OnResize(x, y, width, height, screenWidth, screenHeight);
         }
 
+        #region external window dimensions
         protected int GetLeft()
         {
             return windowX + margin;
         }
-
         protected int GetTop()
         {
             return windowY + margin;
         }
-
         protected int GetWidth()
         {
             return (int)windowWidth - (margin * 2);
@@ -46,7 +45,6 @@ namespace Ozzyria.MapEditor
         {
             return (int)(GetLeft() + GetWidth());
         }
-
         protected int GetCenterX()
         {
             return (int)(GetLeft() + GetWidth() * 0.5f);
@@ -56,11 +54,47 @@ namespace Ozzyria.MapEditor
         {
             return (int)(GetTop() + GetHeight());
         }
-
         protected int GetCenterY()
         {
             return (int)(GetTop() + GetHeight() * 0.5f);
         }
+        #endregion
+        #region internal window dimension (w/padding)
+        protected int GetILeft()
+        {
+            return GetLeft() + padding;
+        }
+        protected int GetITop()
+        {
+            return GetTop() + padding;
+        }
+        protected int GetIWidth()
+        {
+            return GetWidth() - (padding * 2);
+        }
+        protected int GetIHeight()
+        {
+            return GetHeight() - (padding * 2);
+        }
+
+        protected int GetIRight()
+        {
+            return (int)(GetILeft() + GetIWidth());
+        }
+        protected int GetICenterX()
+        {
+            return (int)(GetILeft() + GetIWidth() * 0.5f);
+        }
+
+        protected int GetIBottom()
+        {
+            return (int)(GetITop() + GetIHeight());
+        }
+        protected int GetICenterY()
+        {
+            return (int)(GetITop() + GetIHeight() * 0.5f);
+        }
+        #endregion
 
         public virtual void OnResize(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight)
         {

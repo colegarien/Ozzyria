@@ -1,6 +1,7 @@
 ﻿using Ozzyria.MapEditor.EventSystem;
 using SFML.Graphics;
 using SFML.System;
+using System;
 
 namespace Ozzyria.MapEditor
 {
@@ -128,7 +129,7 @@ namespace Ozzyria.MapEditor
         public void OnPaint(int x, int y)
         {
             var tileDimension = MapManager.GetTileDimension();
-            MapManager.PaintTile(Layer, (int)(ScreenToWorldX(x) / tileDimension), (int)(ScreenToWorldY(y) / tileDimension), SelectedBrush);
+            MapManager.PaintTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
         }
 
         public override void OnHorizontalScroll(HorizontalScrollEvent e)
@@ -250,7 +251,7 @@ namespace Ozzyria.MapEditor
             }
 
             var cursorShape = new RectangleShape(new Vector2f(tileDimension - 2, tileDimension - 2));
-            cursorShape.Position = new Vector2f(((int)(ScreenToWorldX(cursorScreenX) / tileDimension) * tileDimension) + 1, ((int)(ScreenToWorldY(cursorScreenY) / tileDimension) * tileDimension) + 1);
+            cursorShape.Position = new Vector2f(((int)Math.Floor(ScreenToWorldX(cursorScreenX) / tileDimension) * tileDimension) + 1, ((int)Math.Floor(ScreenToWorldY(cursorScreenY) / tileDimension) * tileDimension) + 1);
             cursorShape.FillColor = Color.Transparent;
             cursorShape.OutlineThickness = 1;
             cursorShape.OutlineColor = Color.Cyan;
