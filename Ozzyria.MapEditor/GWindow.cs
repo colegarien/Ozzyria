@@ -19,7 +19,7 @@ namespace Ozzyria.MapEditor
         public GWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding)
         {
             this.margin = margin;
-            this.padding = padding;
+            this.padding = padding; // TODO make padding + margin more flexible (have a left, right, top, bottom margins/padding)
             OnResize(x, y, width, height, screenWidth, screenHeight);
         }
 
