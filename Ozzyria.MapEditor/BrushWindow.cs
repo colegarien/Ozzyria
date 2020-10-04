@@ -68,24 +68,6 @@ namespace Ozzyria.MapEditor
             var i = 0;
             foreach(TileType type in Enum.GetValues(typeof(TileType)))
             {
-                var color = Color.Green;
-                switch (type)
-                {
-                    case TileType.None:
-                        color = Color.Black;
-                        break;
-                    case TileType.Water:
-                        color = Color.Blue;
-                        break;
-                    case TileType.Fence:
-                        color = Color.Red;
-                        break;
-                    case TileType.Ground:
-                    default:
-                        color = Color.Green;
-                        break;
-                }
-
                 var left = GetILeft() + (i * 37);
                 var top = GetITop();
                 var dimension = 32;
@@ -93,24 +75,24 @@ namespace Ozzyria.MapEditor
                 {
                     Size = new SFML.System.Vector2f(dimension, dimension),
                     Position = new SFML.System.Vector2f(left, top),
-                    FillColor = color,
+                    FillColor = Colors.TileColor(type),
                 });
 
-                var outlineColor = Color.White; // not hovered over and not selected
+                var outlineColor = Colors.DefaultElement();
                 if(mouseX >= left && mouseX < left+dimension
                     && mouseY >= top && mouseY < top + dimension)
                 {
                     if (type == SelectedBrush)
                     {
-                        outlineColor = Color.Yellow; // current selected and hovered over
+                        outlineColor = Colors.HoverSelectedElement();
                     }
                     else
                     {
-                        outlineColor = Color.Cyan; // just hovered over
+                        outlineColor = Colors.HoverElement();
                     }
                 }else if (type == SelectedBrush)
                 {
-                    outlineColor = Color.Magenta; // currently selected and not hovered over
+                    outlineColor = Colors.SelectedElement();
                 }
 
                 buffer.Draw(new RectangleShape()

@@ -29,15 +29,15 @@ namespace Ozzyria.MapEditor
         public override void Notify(IEvent e)
         {
             base.Notify(e);
-            if (e is MapLoadedEvent)
+            if (e is MapLoadedEvent m)
             {
-                OnLoadMap((MapLoadedEvent)e);
+                OnLoadMap(m);
             }
         }
 
         public void OnLoadMap(MapLoadedEvent e)
         {
-            NumberOfLayers = MapManager.GetNumberOfLayers();
+            NumberOfLayers = e.NumberOfLayers;
         }
 
         public override void OnHorizontalScroll(HorizontalScrollEvent e)
@@ -71,9 +71,8 @@ namespace Ozzyria.MapEditor
             var height = 25;
             var width = GetIWidth();
             var left = GetILeft();
-            var top = 0;
-
             var ii = 0;
+            int top;
             for (var i = 0; i < NumberOfLayers; i++)
             {
                 top = GetITop() + (i * (height + 5));
@@ -121,10 +120,10 @@ namespace Ozzyria.MapEditor
             var height = 25;
             var width = GetIWidth();
             var left = GetILeft();
-            var top = 0;
 
             // TODO... this is a doozy, probably add a 'button class' of some kind?
             var ii = 0;
+            int top;
             for (var i = 0; i < NumberOfLayers; i++)
             {
                 top = GetITop() + (i * (height + 5));
@@ -133,7 +132,7 @@ namespace Ozzyria.MapEditor
                     Size = new SFML.System.Vector2f(width, height),
                     Position = new SFML.System.Vector2f(left, top),
                     FillColor = Color.White,
-                    OutlineColor = (mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height) ? (CurrentLayer == i ? Color.Yellow : Color.Cyan) : (CurrentLayer == i ? Color.Magenta : Color.White),
+                    OutlineColor = (mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height) ? (CurrentLayer == i ? Colors.HoverSelectedElement() : Colors.HoverElement()) : (CurrentLayer == i ? Colors.SelectedElement() : Colors.DefaultElement()),
                     OutlineThickness = 1
                 });
                 buffer.Draw(new RectangleShape()
@@ -142,10 +141,12 @@ namespace Ozzyria.MapEditor
                     Position = new SFML.System.Vector2f(left + width - (height - 8) - 4, top + 4),
                     FillColor = Color.Red,
                 });
-                var text = new Text("Layer #" + i, font);
-                text.CharacterSize = 12;
-                text.Position = new SFML.System.Vector2f(left, top);
-                text.FillColor = Color.Black;
+                var text = new Text("Layer #" + i, font)
+                {
+                    CharacterSize = 12,
+                    Position = new SFML.System.Vector2f(left, top),
+                    FillColor = Color.Black
+                };
                 buffer.Draw(text);
 
                 ii = i + 1;
@@ -157,14 +158,16 @@ namespace Ozzyria.MapEditor
                 Size = new SFML.System.Vector2f(width, height),
                 Position = new SFML.System.Vector2f(left, top),
                 FillColor = Color.Green,
-                OutlineColor = (mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height) ? Color.Cyan : Color.Green,
+                OutlineColor = (mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height) ? Colors.HoverElement() : Colors.DefaultElement(),
                 OutlineThickness = 1
             });
 
-            var addText = new Text("Add Layer", font);
-            addText.CharacterSize = 12;
-            addText.Position = new SFML.System.Vector2f(left, top);
-            addText.FillColor = Color.Black;
+            var addText = new Text("Add Layer", font)
+            {
+                CharacterSize = 12,
+                Position = new SFML.System.Vector2f(left, top),
+                FillColor = Color.Black
+            };
             buffer.Draw(addText);
         }
     }

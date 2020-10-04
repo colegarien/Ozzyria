@@ -1,4 +1,5 @@
 ﻿using Ozzyria.MapEditor.EventSystem;
+using SFML.Graphics;
 
 namespace Ozzyria.MapEditor
 {

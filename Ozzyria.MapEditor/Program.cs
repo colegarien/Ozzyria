@@ -10,7 +10,7 @@ namespace Ozzyria.MapEditor
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var inputState = new InputState();
 
@@ -67,14 +67,16 @@ namespace Ozzyria.MapEditor
                 layerWindow.OnRender(window);
 
                 // DEBUG STUFF
-                var debugText = new Text();
-                debugText.CharacterSize = 16;
-                debugText.DisplayedString = $"Zoom: {Math.Round(viewWindow.zoomPercent * 100)}%  | Layer: {layerWindow.CurrentLayer} | Brush: {brushWindow.SelectedBrush}";
-                debugText.FillColor = Color.Red;
-                debugText.OutlineColor = Color.Black;
-                debugText.OutlineThickness = 1;
-                debugText.Font = FontFactory.GetRegular();
-                debugText.Position = new Vector2f(0, 15 + (int)(15 + window.Size.Y * 0.6) + 67);
+                var debugText = new Text
+                {
+                    CharacterSize = 16,
+                    DisplayedString = $"Zoom: {Math.Round(viewWindow.zoomPercent * 100)}%  | Layer: {layerWindow.CurrentLayer} | Brush: {brushWindow.SelectedBrush}",
+                    FillColor = Color.Red,
+                    OutlineColor = Color.Black,
+                    OutlineThickness = 1,
+                    Font = FontFactory.GetRegular(),
+                    Position = new Vector2f(0, 15 + (int)(15 + window.Size.Y * 0.6) + 67)
+                };
                 window.Draw(debugText);
 
 

@@ -37,32 +37,32 @@ namespace Ozzyria.MapEditor
         public override void Notify(IEvent e)
         {
             base.Notify(e);
-            if (e is ZoomEvent)
+            if (e is ZoomEvent z)
             {
-                OnZoom((ZoomEvent)e);
+                OnZoom(z);
             }
-            else if (e is MouseDragEvent)
+            else if (e is MouseDragEvent m)
             {
-                var m = (MouseDragEvent)e;
                 if (m.MiddleMouseDown)
                 {
                     OnPan(m.DeltaX, m.DeltaY);
-                } else if (m.LeftMouseDown)
+                }
+                else if (m.LeftMouseDown)
                 {
                     OnPaint(m.X, m.Y);
                 }
             }
-            else if (e is MapLoadedEvent)
+            else if (e is MapLoadedEvent l)
             {
-                OnLoadMap((MapLoadedEvent)e);
+                OnLoadMap(l);
             }
-            else if (e is LayerChangedEvent)
+            else if (e is LayerChangedEvent c)
             {
-                Layer = ((LayerChangedEvent)e).SelectedLayer;
+                Layer = c.SelectedLayer;
             }
-            else if (e is BrushTypeChangeEvent)
+            else if (e is BrushTypeChangeEvent b)
             {
-                SelectedBrush = ((BrushTypeChangeEvent)e).SelectedBrush;
+                SelectedBrush = b.SelectedBrush;
             }
         }
 
@@ -210,29 +210,37 @@ namespace Ozzyria.MapEditor
 
             var mapWidth = MapManager.GetWidth();
             var mapHeight = MapManager.GetHeight();
+            var tileSize = new Vector2f(tileDimension, tileDimension);
             for (var x = 0; x < mapWidth; x++)
             {
                 for (var y = 0; y < mapHeight; y++)
                 {
-                    var tileShape = new RectangleShape(new Vector2f(tileDimension, tileDimension));
-                    tileShape.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    switch (MapManager.GetTileType(Layer, x, y))
+                    var tileType = MapManager.GetTileType(Layer, x, y);
+                    var tilePosition = new Vector2f((x * tileDimension), (y * tileDimension));
+                    for (var i = 1; i <= 3; i++)
                     {
-                        case TileType.Ground:
-                            tileShape.FillColor = Color.Green;
-                            break;
-                        case TileType.Water:
-                            tileShape.FillColor = Color.Blue;
-                            break;
-                        case TileType.Fence:
-                            tileShape.FillColor = Color.Red;
-                            break;
-                        default:
-                            tileShape.FillColor = Color.Black;
-                            break;
+                        if (Layer - i >= 0)
+                        {
+                            var rawColor = Colors.TileColor(MapManager.GetTileType(Layer - i, x, y));
+                            rawColor.A = (byte)(rawColor.A * (1 - (0.25 * i)));
+                            var tileBackLayerShape = new RectangleShape(tileSize)
+                            {
+                                Position = tilePosition,
+                                FillColor = rawColor
+                            };
+                            _renderBuffer.Draw(tileBackLayerShape);
+                        }
                     }
 
-                    _renderBuffer.Draw(tileShape);
+                    if (tileType != TileType.None)
+                    {
+                        var tileShape = new RectangleShape(tileSize)
+                        {
+                            Position = tilePosition,
+                            FillColor = Colors.TileColor(tileType)
+                        };
+                        _renderBuffer.Draw(tileShape);
+                    }
                 }
             }
 
@@ -240,21 +248,25 @@ namespace Ozzyria.MapEditor
             {
                 for (var y = 0; y < mapHeight; y++)
                 {
-                    var overlayBorder = new RectangleShape(new Vector2f(tileDimension, tileDimension));
-                    overlayBorder.Position = new Vector2f((x * tileDimension), (y * tileDimension));
-                    overlayBorder.FillColor = Color.Transparent;
-                    overlayBorder.OutlineThickness = 2;
-                    overlayBorder.OutlineColor = new Color(140, 140, 140);
+                    var overlayBorder = new RectangleShape(tileSize)
+                    {
+                        Position = new Vector2f((x * tileDimension), (y * tileDimension)),
+                        FillColor = Color.Transparent,
+                        OutlineThickness = 2,
+                        OutlineColor = new Color(140, 140, 140)
+                    };
 
                     _renderBuffer.Draw(overlayBorder);
                 }
             }
 
-            var cursorShape = new RectangleShape(new Vector2f(tileDimension - 2, tileDimension - 2));
-            cursorShape.Position = new Vector2f(((int)Math.Floor(ScreenToWorldX(cursorScreenX) / tileDimension) * tileDimension) + 1, ((int)Math.Floor(ScreenToWorldY(cursorScreenY) / tileDimension) * tileDimension) + 1);
-            cursorShape.FillColor = Color.Transparent;
-            cursorShape.OutlineThickness = 1;
-            cursorShape.OutlineColor = Color.Cyan;
+            var cursorShape = new RectangleShape(new Vector2f(tileDimension - 2, tileDimension - 2))
+            {
+                Position = new Vector2f(((int)Math.Floor(ScreenToWorldX(cursorScreenX) / tileDimension) * tileDimension) + 1, ((int)Math.Floor(ScreenToWorldY(cursorScreenY) / tileDimension) * tileDimension) + 1),
+                FillColor = Color.Transparent,
+                OutlineThickness = 1,
+                OutlineColor = Colors.HoverElement()
+            };
             _renderBuffer.Draw(cursorShape);
 
             _renderBuffer.Display();

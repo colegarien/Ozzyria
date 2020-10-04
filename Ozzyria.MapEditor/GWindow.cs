@@ -120,9 +120,8 @@ namespace Ozzyria.MapEditor
 
         public virtual bool CanHandle(IEvent e)
         {
-            if (e is WindowSpecificEvent)
+            if (e is WindowSpecificEvent w)
             {
-                var w = (WindowSpecificEvent)e;
                 return IsInWindow(w.OriginX, w.OriginY);
             }
 
@@ -131,21 +130,20 @@ namespace Ozzyria.MapEditor
 
         public virtual void Notify(IEvent e)
         {
-            if (e is HorizontalScrollEvent)
+            switch (e)
             {
-                OnHorizontalScroll((HorizontalScrollEvent)e);
-            }
-            else if (e is VerticalScrollEvent)
-            {
-                OnVerticalScroll((VerticalScrollEvent)e);
-            }
-            else if (e is MouseMoveEvent)
-            {
-                OnMouseMove((MouseMoveEvent)e);
-            }
-            else if (e is MouseDownEvent)
-            {
-                OnMouseDown((MouseDownEvent)e);
+                case HorizontalScrollEvent s:
+                    OnHorizontalScroll(s);
+                    break;
+                case VerticalScrollEvent s:
+                    OnVerticalScroll(s);
+                    break;
+                case MouseMoveEvent m:
+                    OnMouseMove(m);
+                    break;
+                case MouseDownEvent m:
+                    OnMouseDown(m);
+                    break;
             }
         }
 
