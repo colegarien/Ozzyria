@@ -17,10 +17,12 @@ namespace Ozzyria.MapEditor
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
             ViewWindow viewWindow = new ViewWindow(0, 0, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y, 10, 0);
             BrushWindow brushWindow = new BrushWindow(0, (int)(window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y, 10, 10);
+            ToolWindow toolWindow = new ToolWindow(0, (int)(window.Size.Y * 0.6) + 72, (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y, 10, 10);
             LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6), 0, (uint)(window.Size.X * 0.4), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y, 10, 10);
 
             EventQueue.AttachObserver(viewWindow);
             EventQueue.AttachObserver(brushWindow);
+            EventQueue.AttachObserver(toolWindow);
             EventQueue.AttachObserver(layerWindow);
 
             MapManager.LoadMap(new Map(20, 20)); // TODO allow save/load from file
@@ -32,6 +34,7 @@ namespace Ozzyria.MapEditor
                 // TODO wrap this in a 'Layout' class that calculates all this junk / make a OnResize event?
                 viewWindow.OnResize(0, 0, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
                 brushWindow.OnResize(0, (int)(window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y);
+                toolWindow.OnResize(0, (int)(window.Size.Y * 0.6) + 72, (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y);
                 layerWindow.OnResize((int)(window.Size.X * 0.6), 0, (uint)(window.Size.X * 0.4), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
             };
             window.Closed += (sender, e) =>
@@ -64,6 +67,7 @@ namespace Ozzyria.MapEditor
                 window.Clear();
                 viewWindow.OnRender(window);
                 brushWindow.OnRender(window);
+                toolWindow.OnRender(window);
                 layerWindow.OnRender(window);
 
                 // DEBUG STUFF
@@ -75,7 +79,7 @@ namespace Ozzyria.MapEditor
                     OutlineColor = Color.Black,
                     OutlineThickness = 1,
                     Font = FontFactory.GetRegular(),
-                    Position = new Vector2f(0, 15 + (int)(15 + window.Size.Y * 0.6) + 67)
+                    Position = new Vector2f(0, 15 + (int)(15 + window.Size.Y * 0.6) + 110)
                 };
                 window.Draw(debugText);
 
