@@ -21,7 +21,25 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            // TODO select tool
+
+            var i = 0;
+            foreach (ToolType type in Enum.GetValues(typeof(ToolType)))
+            {
+                var left = GetILeft() + (i * 37); // TODO this is gross and copy+pasted from Draw, should make some kinda Button Class?
+                var top = GetITop();
+                var dimension = 32;
+                if (e.OriginX >= left && e.OriginX < left + dimension
+                    && e.OriginY >= top && e.OriginY < top + dimension)
+                {
+                    SelectedTool = type;
+                    EventQueue.Queue(new ToolTypeChangeEvent
+                    {
+                        SelectedTool = SelectedTool
+                    });
+                    return;
+                }
+                i++;
+            }
         }
 
         public override void OnMouseMove(MouseMoveEvent e)
@@ -43,54 +61,57 @@ namespace Ozzyria.MapEditor
         protected override void RenderWindowContents(RenderTarget buffer)
         {
             var i = 0;
-            var tool = ToolType.Pencil;
-
-            var left = GetILeft() + (i * 37);
-            var top = GetITop();
-            var dimension = 32;
-            buffer.Draw(new RectangleShape()
+            foreach (ToolType type in Enum.GetValues(typeof(ToolType)))
             {
-                Size = new SFML.System.Vector2f(dimension, dimension),
-                Position = new SFML.System.Vector2f(left, top),
-                FillColor = Color.Black,
-            });
-            buffer.Draw(new Text
-            {
-                CharacterSize = 16,
-                DisplayedString = "P",
-                FillColor = Color.Red,
-                OutlineColor = Color.Black,
-                OutlineThickness = 1,
-                Font = FontFactory.GetRegular(),
-                Position = new SFML.System.Vector2f(left+10, top+5)
-            });
-
-            var outlineColor = Colors.DefaultElement();
-            if (mouseX >= left && mouseX < left + dimension
-                && mouseY >= top && mouseY < top + dimension)
-            {
-                if (tool == SelectedTool)
+                var left = GetILeft() + (i * 37);
+                var top = GetITop();
+                var dimension = 32;
+                buffer.Draw(new RectangleShape()
                 {
-                    outlineColor = Colors.HoverSelectedElement();
-                }
-                else
+                    Size = new SFML.System.Vector2f(dimension, dimension),
+                    Position = new SFML.System.Vector2f(left, top),
+                    FillColor = Color.Black,
+                });
+                buffer.Draw(new Text
                 {
-                    outlineColor = Colors.HoverElement();
-                }
-            }
-            else if (tool == SelectedTool)
-            {
-                outlineColor = Colors.SelectedElement();
-            }
+                    CharacterSize = 16,
+                    DisplayedString = type.ToString().Substring(0,1),
+                    FillColor = Color.Red,
+                    OutlineColor = Color.Black,
+                    OutlineThickness = 1,
+                    Font = FontFactory.GetRegular(),
+                    Position = new SFML.System.Vector2f(left + 10, top + 5)
+                });
 
-            buffer.Draw(new RectangleShape()
-            {
-                Size = new SFML.System.Vector2f(32, 32),
-                Position = new SFML.System.Vector2f(GetILeft() + (i * 37), GetITop()),
-                FillColor = Color.Transparent,
-                OutlineColor = outlineColor,
-                OutlineThickness = 2
-            });
+                var outlineColor = Colors.DefaultElement();
+                if (mouseX >= left && mouseX < left + dimension
+                    && mouseY >= top && mouseY < top + dimension)
+                {
+                    if (type == SelectedTool)
+                    {
+                        outlineColor = Colors.HoverSelectedElement();
+                    }
+                    else
+                    {
+                        outlineColor = Colors.HoverElement();
+                    }
+                }
+                else if (type == SelectedTool)
+                {
+                    outlineColor = Colors.SelectedElement();
+                }
+
+                buffer.Draw(new RectangleShape()
+                {
+                    Size = new SFML.System.Vector2f(32, 32),
+                    Position = new SFML.System.Vector2f(GetILeft() + (i * 37), GetITop()),
+                    FillColor = Color.Transparent,
+                    OutlineColor = outlineColor,
+                    OutlineThickness = 2
+                });
+
+                i++;
+            }
 
         }
     }

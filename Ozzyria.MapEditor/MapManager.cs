@@ -1,5 +1,4 @@
 ﻿using Ozzyria.MapEditor.EventSystem;
-using SFML.Graphics;
 
 namespace Ozzyria.MapEditor
 {
@@ -33,6 +32,37 @@ namespace Ozzyria.MapEditor
             }
 
             _map.SetTileType(layer, x, y, type);
+        }
+
+        public static void FillTile(int layer, int x, int y, TileType type)
+        {
+            if (!MapIsLoaded())
+            {
+                return;
+            }
+
+            var currentTile = _map.GetTileType(layer, x, y);
+            if (currentTile == type)
+            {
+                return;
+            }
+
+            FillRecursive(layer, x, y, type, currentTile);
+        }
+
+        private static void FillRecursive(int layer, int x, int y, TileType type, TileType toFill)
+        {
+            var currentTileType = _map.GetTileType(layer, x, y);
+            if (x < 0 || x >= GetWidth() || y < 0 || y >= GetHeight() || currentTileType != toFill || currentTileType == type)
+            {
+                return;
+            }
+
+            _map.SetTileType(layer, x, y, type);
+            FillRecursive(layer, x - 1, y, type, toFill);
+            FillRecursive(layer, x + 1, y, type, toFill);
+            FillRecursive(layer, x, y - 1, type, toFill);
+            FillRecursive(layer, x, y + 1, type, toFill);
         }
 
         public static void AddLayer()

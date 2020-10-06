@@ -21,6 +21,7 @@ namespace Ozzyria.MapEditor
         private float cursorScreenY = 0;
         public int Layer { get; set; } = 0;
         public TileType SelectedBrush { get; set; }
+        public ToolType SelectedTool { get; set; }
 
         public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding) : base(x, y, width, height, screenWidth, screenHeight, margin, padding)
         {
@@ -31,6 +32,7 @@ namespace Ozzyria.MapEditor
             return e is MapLoadedEvent
                 || e is LayerChangedEvent
                 || e is BrushTypeChangeEvent
+                || e is ToolTypeChangeEvent
                 || base.CanHandle(e);
         }
 
@@ -63,6 +65,10 @@ namespace Ozzyria.MapEditor
             else if (e is BrushTypeChangeEvent b)
             {
                 SelectedBrush = b.SelectedBrush;
+            }
+            else if (e is ToolTypeChangeEvent t)
+            {
+                SelectedTool = t.SelectedTool;
             }
         }
 
@@ -129,7 +135,13 @@ namespace Ozzyria.MapEditor
         public void OnPaint(int x, int y)
         {
             var tileDimension = MapManager.GetTileDimension();
-            MapManager.PaintTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
+            if (SelectedTool == ToolType.Pencil)
+            {
+                MapManager.PaintTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
+            } else if (SelectedTool == ToolType.Fill)
+            {
+                MapManager.FillTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
+            }
         }
 
         public override void OnHorizontalScroll(HorizontalScrollEvent e)

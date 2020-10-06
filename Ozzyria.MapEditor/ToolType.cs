@@ -2,6 +2,7 @@
 {
     enum ToolType
     {
-        Pencil
+        Pencil,
+        Fill
     }
 }
