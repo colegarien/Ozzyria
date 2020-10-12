@@ -1,5 +1,4 @@
 ﻿using Ozzyria.MapEditor.EventSystem;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace Ozzyria.MapEditor
 {
@@ -23,6 +22,154 @@ namespace Ozzyria.MapEditor
                 Height = _map.Height,
                 NumberOfLayers = _map.layers.Count
             });
+        }
+
+        public static void BakeMap()
+        {
+            for (var layer = 0; layer < GetNumberOfLayers(); layer++)
+            {
+                for (var x = 0; x < _map.Width; x++)
+                {
+                    for (var y = 0; y < _map.Height; y++)
+                    {
+                        var tileType = GetTileType(layer, x, y);
+
+                        // reset before recalculating
+                        _map.SetTransitionType(layer, x, y, TransitionType.None);
+                        _map.SetPathDirection(layer, x, y, PathDirection.None);
+
+                        if (tileType == TileType.Water)
+                        {
+                            var leftIsGround = GetTileType(layer, x - 1, y) == TileType.Ground;
+                            var rightIsGround = GetTileType(layer, x + 1, y) == TileType.Ground;
+                            var upIsGround = GetTileType(layer, x, y - 1) == TileType.Ground;
+                            var downIsGround = GetTileType(layer, x, y + 1) == TileType.Ground;
+
+                            var upLeftIsGround = GetTileType(layer, x - 1, y - 1) == TileType.Ground;
+                            var upRightIsGround = GetTileType(layer, x + 1, y - 1) == TileType.Ground;
+                            var downLeftIsGround = GetTileType(layer, x - 1, y + 1) == TileType.Ground;
+                            var downRightIsGround = GetTileType(layer, x + 1, y + 1) == TileType.Ground;
+
+                            if (upIsGround && leftIsGround && upLeftIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.UpLeft);
+                            }
+                            else if (upIsGround && rightIsGround && upRightIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.UpRight);
+                            }
+                            else if (downIsGround && leftIsGround && downLeftIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.DownLeft);
+                            }
+                            else if (downIsGround && rightIsGround && downRightIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.DownRight);
+                            }
+                            else if (upIsGround && (upRightIsGround || upLeftIsGround))
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.Up);
+                            }
+                            else if (downIsGround && (downLeftIsGround || downRightIsGround))
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.Down);
+                            }
+                            else if (leftIsGround && (upLeftIsGround || downLeftIsGround))
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.Left);
+                            }
+                            else if (rightIsGround && (upRightIsGround || downRightIsGround))
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.Right);
+                            }
+                            else if (!downIsGround && !rightIsGround && downRightIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.DownRightDiagonal);
+                            }
+                            else if (!downIsGround && !leftIsGround && downLeftIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.DownLeftDiagonal);
+                            }
+                            else if (!upIsGround && !leftIsGround && upLeftIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.UpLeftDiagonal);
+                            }
+                            else if (!upIsGround && !leftIsGround && upRightIsGround)
+                            {
+                                _map.SetTransitionType(layer, x, y, TransitionType.UpRightDiagonal);
+                            }
+                        }
+                        else if (tileType == TileType.Fence)
+                        {
+                            var leftIsPath = GetTileType(layer, x - 1, y) == tileType;
+                            var rightIsPath = GetTileType(layer, x + 1, y) == tileType;
+                            var upIsPath = GetTileType(layer, x, y - 1) == tileType;
+                            var downIsPath = GetTileType(layer, x, y + 1) == tileType;
+
+                            if (leftIsPath && !rightIsPath && !upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.Left);
+                            }
+                            else if (!leftIsPath && rightIsPath && !upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.Right);
+                            }
+                            else if (!leftIsPath && !rightIsPath && upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.Up);
+                            }
+                            else if (!leftIsPath && !rightIsPath && !upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.Down);
+                            }
+                            else if (leftIsPath && rightIsPath && !upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.LeftRight);
+                            }
+                            else if (leftIsPath && rightIsPath && upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.UpT);
+                            }
+                            else if (leftIsPath && rightIsPath && !upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.DownT);
+                            }
+                            else if (!leftIsPath && !rightIsPath && upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.UpDown);
+                            }
+                            else if (leftIsPath && !rightIsPath && upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.LeftT);
+                            }
+                            else if (!leftIsPath && rightIsPath && upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.RightT);
+                            }
+                            else if (leftIsPath && !rightIsPath && upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.UpLeft);
+                            }
+                            else if (!leftIsPath && rightIsPath && upIsPath && !downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.UpRight);
+                            }
+                            else if (!leftIsPath && rightIsPath && !upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.DownRight);
+                            }
+                            else if (leftIsPath && !rightIsPath && !upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.DownLeft);
+                            }
+                            else if (leftIsPath && rightIsPath && upIsPath && downIsPath)
+                            {
+                                _map.SetPathDirection(layer, x, y, PathDirection.All);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public static void SaveMap()
@@ -62,199 +209,132 @@ namespace Ozzyria.MapEditor
                             }
                             else if (tileType == TileType.Water)
                             {
-                                var leftIsGround = GetTileType(layer, x - 1, y) == TileType.Ground;
-                                var rightIsGround = GetTileType(layer, x + 1, y) == TileType.Ground;
-                                var upIsGround = GetTileType(layer, x, y - 1) == TileType.Ground;
-                                var downIsGround = GetTileType(layer, x, y + 1) == TileType.Ground;
-
-                                var upLeftIsGround = GetTileType(layer, x - 1, y - 1) == TileType.Ground;
-                                var upRightIsGround = GetTileType(layer, x + 1, y - 1) == TileType.Ground;
-                                var downLeftIsGround = GetTileType(layer, x - 1, y + 1) == TileType.Ground;
-                                var downRightIsGround = GetTileType(layer, x + 1, y + 1) == TileType.Ground;
-
-                                // TODO genricify 'transition' connecting
-                                if (upIsGround && leftIsGround && upLeftIsGround)
+                                // TODO need to.. centralize this tx, ty stuff?
+                                switch (_map.GetTransitionType(layer, x, y))
                                 {
-                                    // inner corner on top-left
-                                    tx = 1;
-                                    ty = 0;
-                                }
-                                else if (upIsGround && rightIsGround && upRightIsGround)
-                                {
-                                    // inner corner on top-right
-                                    tx = 3;
-                                    ty = 0;
-                                }
-                                else if (downIsGround && leftIsGround && downLeftIsGround)
-                                {
-                                    // inner corner on bottom-left
-                                    tx = 1;
-                                    ty = 2;
-                                }
-                                else if (downIsGround && rightIsGround && downRightIsGround)
-                                {
-                                    // inner corner on bottom-right
-                                    tx = 3;
-                                    ty = 2;
-                                }
-                                else if (upIsGround && (upRightIsGround || upLeftIsGround))
-                                {
-                                    // left right at top
-                                    tx = 2;
-                                    ty = 0;
-                                }
-                                else if (downIsGround && (downLeftIsGround || downRightIsGround))
-                                {
-                                    // left right at bottom
-                                    tx = 2;
-                                    ty = 2;
-                                }
-                                else if (leftIsGround && (upLeftIsGround || downLeftIsGround))
-                                {
-                                    // up odwn at left
-                                    tx = 1;
-                                    ty = 1;
-                                }
-                                else if (rightIsGround && (upRightIsGround || downRightIsGround))
-                                {
-                                    // up down at right
-                                    tx = 3;
-                                    ty = 1;
-                                }
-                                else if (!downIsGround && !rightIsGround && downRightIsGround)
-                                {
-                                    // outer corner on top-left
-                                    tx = 2;
-                                    ty = 3;
-                                }
-                                else if (!downIsGround && !leftIsGround && downLeftIsGround)
-                                {
-                                    // outer corner on top-right
-                                    tx = 3;
-                                    ty = 3;
-                                }
-                                else if (!upIsGround && !leftIsGround && upLeftIsGround)
-                                {
-                                    // outer corner on bottom-right
-                                    tx = 3;
-                                    ty = 4;
-                                }
-                                else if (!upIsGround && !leftIsGround && upRightIsGround)
-                                {
-                                    // outer corner on bottom-left
-                                    tx = 2;
-                                    ty = 4;
-                                }
-                                else
-                                {
-                                    // no transition
-                                    tx = 0;
-                                    ty = 1;
+                                    case TransitionType.UpLeft:
+                                        tx = 1;
+                                        ty = 0;
+                                        break;
+                                    case TransitionType.UpRight:
+                                        tx = 3;
+                                        ty = 0;
+                                        break;
+                                    case TransitionType.DownLeft:
+                                        tx = 1;
+                                        ty = 2;
+                                        break;
+                                    case TransitionType.DownRight:
+                                        tx = 3;
+                                        ty = 2;
+                                        break;
+                                    case TransitionType.Up:
+                                        tx = 2;
+                                        ty = 0;
+                                        break;
+                                    case TransitionType.Down:
+                                        tx = 2;
+                                        ty = 2;
+                                        break;
+                                    case TransitionType.Left:
+                                        tx = 1;
+                                        ty = 1;
+                                        break;
+                                    case TransitionType.Right:
+                                        tx = 3;
+                                        ty = 1;
+                                        break;
+                                    case TransitionType.DownRightDiagonal:
+                                        tx = 2;
+                                        ty = 3;
+                                        break;
+                                    case TransitionType.DownLeftDiagonal:
+                                        tx = 3;
+                                        ty = 3;
+                                        break;
+                                    case TransitionType.UpLeftDiagonal:
+                                        tx = 3;
+                                        ty = 4;
+                                        break;
+                                    case TransitionType.UpRightDiagonal:
+                                        tx = 2;
+                                        ty = 4;
+                                        break;
+                                    default:
+                                        tx = 0;
+                                        ty = 1;
+                                        break;
                                 }
                             }
                             else if (tileType == TileType.Fence)
                             {
-                                var leftIsFence = GetTileType(layer, x - 1, y) == TileType.Fence;
-                                var rightIsFence = GetTileType(layer, x + 1, y) == TileType.Fence;
-                                var upIsFence = GetTileType(layer, x, y - 1) == TileType.Fence;
-                                var downIsFence = GetTileType(layer, x, y + 1) == TileType.Fence;
-                                
-                                // TODO genricify 'wall' connecting
-                                if(leftIsFence && !rightIsFence && !upIsFence && !downIsFence)
+                                // TODO need to.. centralize this tx, ty stuff?
+                                switch (_map.GetPathDirection(layer, x, y))
                                 {
-                                    // tile to left
-                                    tx = 6;
-                                    ty = 3;
-                                }
-                                else if (!leftIsFence && rightIsFence && !upIsFence && !downIsFence)
-                                {
-                                    // tile to right
-                                    tx = 7;
-                                    ty = 3;
-                                }
-                                else if (!leftIsFence && !rightIsFence && upIsFence && !downIsFence)
-                                {
-                                    // tile to up
-                                    tx = 4;
-                                    ty = 3;
-                                }
-                                else if (!leftIsFence && !rightIsFence && !upIsFence && downIsFence)
-                                {
-                                    // tile to down
-                                    tx = 5;
-                                    ty = 3;
-                                }
-                                else if (leftIsFence && rightIsFence && !upIsFence && !downIsFence)
-                                {
-                                    // tile to left & right
-                                    tx = 5;
-                                    ty = 0;
-                                }
-                                else if (leftIsFence && rightIsFence && upIsFence && !downIsFence)
-                                {
-                                    // tile to left & right & up
-                                    tx = 7;
-                                    ty = 0;
-                                }
-                                else if (leftIsFence && rightIsFence && !upIsFence && downIsFence)
-                                {
-                                    // tile to left & right & down
-                                    tx = 6;
-                                    ty = 0;
-                                }
-                                else if (!leftIsFence && !rightIsFence && upIsFence && downIsFence)
-                                {
-                                    // tile to up & down
-                                    tx = 6;
-                                    ty = 2;
-                                }
-                                else if (leftIsFence && !rightIsFence && upIsFence && downIsFence)
-                                {
-                                    // tile to up & down & left
-                                    tx = 7;
-                                    ty = 2;
-                                }
-                                else if (!leftIsFence && rightIsFence && upIsFence && downIsFence)
-                                {
-                                    // tile to up & down & right
-                                    tx = 7;
-                                    ty = 1;
-                                }
-                                else if (leftIsFence && !rightIsFence && upIsFence && !downIsFence)
-                                {
-                                    // up & left
-                                    tx = 5;
-                                    ty = 2;
-                                }
-                                else if (!leftIsFence && rightIsFence && upIsFence && !downIsFence)
-                                {
-                                    // up & right
-                                    tx = 4;
-                                    ty = 2;
-                                }
-                                else if (!leftIsFence && rightIsFence && !upIsFence && downIsFence)
-                                {
-                                    // down & right
-                                    tx = 4;
-                                    ty = 1;
-                                }
-                                else if (leftIsFence && !rightIsFence && !upIsFence && downIsFence)
-                                {
-                                    // down & left
-                                    tx = 5;
-                                    ty = 1;
-                                }
-                                else if (leftIsFence && rightIsFence && upIsFence && downIsFence)
-                                {
-                                    // all adjacent tile
-                                    tx = 4;
-                                    ty = 0;
-                                }
-                                else
-                                {
-                                    // no adjacent tile
-                                    tx = 6;
-                                    ty = 1;
+                                    case PathDirection.Left:
+                                        tx = 6;
+                                        ty = 3;
+                                        break;
+                                    case PathDirection.Right:
+                                        tx = 7;
+                                        ty = 3;
+                                        break;
+                                    case PathDirection.Up:
+                                        tx = 4;
+                                        ty = 3;
+                                        break;
+                                    case PathDirection.Down:
+                                        tx = 5;
+                                        ty = 3;
+                                        break;
+                                    case PathDirection.LeftRight:
+                                        tx = 5;
+                                        ty = 0;
+                                        break;
+                                    case PathDirection.UpT:
+                                        tx = 7;
+                                        ty = 0;
+                                        break;
+                                    case PathDirection.DownT:
+                                        tx = 6;
+                                        ty = 0;
+                                        break;
+                                    case PathDirection.UpDown:
+                                        tx = 6;
+                                        ty = 2;
+                                        break;
+                                    case PathDirection.LeftT:
+                                        tx = 7;
+                                        ty = 2;
+                                        break;
+                                    case PathDirection.RightT:
+                                        tx = 7;
+                                        ty = 1;
+                                        break;
+                                    case PathDirection.UpLeft:
+                                        tx = 5;
+                                        ty = 2;
+                                        break;
+                                    case PathDirection.UpRight:
+                                        tx = 4;
+                                        ty = 2;
+                                        break;
+                                    case PathDirection.DownRight:
+                                        tx = 4;
+                                        ty = 1;
+                                        break;
+                                    case PathDirection.DownLeft:
+                                        tx = 5;
+                                        ty = 1;
+                                        break;
+                                    case PathDirection.All:
+                                        tx = 4;
+                                        ty = 0;
+                                        break;
+                                    default:
+                                        tx = 6;
+                                        ty = 1;
+                                        break;
                                 }
                             }
                             file.WriteLine($"{layer}|{x}|{y}|{tx}|{ty}");
@@ -355,6 +435,7 @@ namespace Ozzyria.MapEditor
 
             return _map.Height;
         }
+
         public static TileType GetTileType(int layer, int x, int y)
         {
             if (!MapIsLoaded())
@@ -363,6 +444,26 @@ namespace Ozzyria.MapEditor
             }
 
             return _map.GetTileType(layer, x, y);
+        }
+
+        public static TransitionType GetTransitionType(int layer, int x, int y)
+        {
+            if (!MapIsLoaded())
+            {
+                return TransitionType.None;
+            }
+
+            return _map.GetTransitionType(layer, x, y);
+        }
+
+        public static PathDirection GetPathDirection(int layer, int x, int y)
+        {
+            if (!MapIsLoaded())
+            {
+                return PathDirection.None;
+            }
+
+            return _map.GetPathDirection(layer, x, y);
         }
 
         public static int GetNumberOfLayers()
@@ -374,5 +475,6 @@ namespace Ozzyria.MapEditor
 
             return _map.layers.Count;
         }
+
     }
 }

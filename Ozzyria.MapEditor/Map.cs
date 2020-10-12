@@ -23,7 +23,7 @@ namespace Ozzyria.MapEditor
         public void AddLayer()
         {
             var newLayer = 0;
-            if(layers.Keys.Count != 0)
+            if (layers.Keys.Count != 0)
             {
                 newLayer = layers.Keys.Max() + 1;
             }
@@ -39,7 +39,7 @@ namespace Ozzyria.MapEditor
 
             var lastLayer = layers.Keys.Max();
             layers.Remove(layer);
-            for(var i = layer+1; i <= lastLayer; i++)
+            for (var i = layer + 1; i <= lastLayer; i++)
             {
                 var currentLayer = layers[i];
                 layers[i - 1] = currentLayer;
@@ -65,6 +65,46 @@ namespace Ozzyria.MapEditor
             }
 
             layers[layer].SetTileType(x, y, type);
+        }
+
+        public TransitionType GetTransitionType(int layer, int x, int y)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return TransitionType.None;
+            }
+
+            return layers[layer].GetTransitionType(x, y);
+        }
+
+        public void SetTransitionType(int layer, int x, int y, TransitionType type)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return;
+            }
+
+            layers[layer].SetTransitionType(x, y, type);
+        }
+
+        public PathDirection GetPathDirection(int layer, int x, int y)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return PathDirection.None;
+            }
+
+            return layers[layer].GetPathDirection(x, y);
+        }
+
+        public void SetPathDirection(int layer, int x, int y, PathDirection direction)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return;
+            }
+
+            layers[layer].SetPathDirection(x, y, direction);
         }
     }
 }

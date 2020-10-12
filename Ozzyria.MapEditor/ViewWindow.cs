@@ -252,6 +252,9 @@ namespace Ozzyria.MapEditor
                             FillColor = Colors.TileColor(tileType)
                         };
                         _renderBuffer.Draw(tileShape);
+
+                        DrawPathDirection(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetPathDirection(Layer, x, y));
+                        //DrawTransitionType(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetTransitionType(Layer, x, y)); // TODO draw transition type
                     }
                 }
             }
@@ -289,6 +292,91 @@ namespace Ozzyria.MapEditor
                 Position = new Vector2f(WorldToScreenX(0), WorldToScreenY(0)),
                 Scale = new Vector2f(zoomPercent, zoomPercent)
             });
+        }
+
+        private void DrawPathDirection(float x, float y, int width, int height, PathDirection direction)
+        {
+            var pathDimension = 8f;
+            var horizontalSize = new Vector2f(width / 2f, pathDimension);
+            var verticalSize = new Vector2f(pathDimension, height / 2f);
+
+            var horizontalY = y + (height / 2f) - (horizontalSize.Y / 2f);
+            var verticalY = x + (width / 2f) - (verticalSize.X / 2f);
+
+            if (direction != PathDirection.None)
+            {
+                if (direction == PathDirection.Up
+                    || direction == PathDirection.UpDown
+                    || direction == PathDirection.UpLeft
+                    || direction == PathDirection.UpRight
+                    || direction == PathDirection.UpT
+                    || direction == PathDirection.LeftT
+                    || direction == PathDirection.RightT
+                    || direction == PathDirection.All)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(verticalY, y),
+                        Size = verticalSize,
+                        FillColor = Color.Cyan
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (direction == PathDirection.Down
+                    || direction == PathDirection.DownLeft
+                    || direction == PathDirection.DownRight
+                    || direction == PathDirection.DownT
+                    || direction == PathDirection.UpDown
+                    || direction == PathDirection.LeftT
+                    || direction == PathDirection.RightT
+                    || direction == PathDirection.All)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(verticalY, y + verticalSize.Y),
+                        Size = verticalSize,
+                        FillColor = Color.Cyan
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (direction == PathDirection.Left
+                    || direction == PathDirection.LeftRight
+                    || direction == PathDirection.LeftT
+                    || direction == PathDirection.UpT
+                    || direction == PathDirection.DownT
+                    || direction == PathDirection.DownLeft
+                    || direction == PathDirection.UpLeft
+                    || direction == PathDirection.All)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x, horizontalY),
+                        Size = horizontalSize,
+                        FillColor = Color.Cyan
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (direction == PathDirection.Right
+                    || direction == PathDirection.RightT
+                    || direction == PathDirection.DownT
+                    || direction == PathDirection.UpT
+                    || direction == PathDirection.DownRight
+                    || direction == PathDirection.LeftRight
+                    || direction == PathDirection.UpRight
+                    || direction == PathDirection.All)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x + horizontalSize.X, horizontalY),
+                        Size = horizontalSize,
+                        FillColor = Color.Cyan
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+            }
         }
     }
 }
