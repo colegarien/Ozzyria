@@ -50,6 +50,12 @@ namespace Ozzyria.MapEditor
             {
                 IsShiftHeld = false;
             }
+
+            if(e.Code == Keyboard.Key.S && IsCtrlHeld)
+            {
+                // TODO little ghetto... probably make a ShortCut handler or something
+                MapManager.SaveMap();
+            }
         }
 
         public void HandleSfmlMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e)

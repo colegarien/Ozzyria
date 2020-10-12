@@ -25,7 +25,7 @@ namespace Ozzyria.MapEditor
             EventQueue.AttachObserver(toolWindow);
             EventQueue.AttachObserver(layerWindow);
 
-            MapManager.LoadMap(new Map(20, 20)); // TODO allow save/load from file
+            MapManager.LoadMap(new Map(32, 32)); // TODO allow save/load from file
 
             window.Resized += (sender, e) =>
             {
