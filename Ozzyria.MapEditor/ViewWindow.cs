@@ -138,7 +138,8 @@ namespace Ozzyria.MapEditor
             if (SelectedTool == ToolType.Pencil)
             {
                 MapManager.PaintTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
-            } else if (SelectedTool == ToolType.Fill)
+            }
+            else if (SelectedTool == ToolType.Fill)
             {
                 MapManager.FillTile(Layer, (int)Math.Floor(ScreenToWorldX(x) / tileDimension), (int)Math.Floor(ScreenToWorldY(y) / tileDimension), SelectedBrush);
             }
@@ -254,7 +255,7 @@ namespace Ozzyria.MapEditor
                         _renderBuffer.Draw(tileShape);
 
                         DrawPathDirection(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetPathDirection(Layer, x, y));
-                        //DrawTransitionType(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetTransitionType(Layer, x, y)); // TODO draw transition type
+                        DrawTransitionType(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetTransitionType(Layer, x, y));
                     }
                 }
             }
@@ -296,7 +297,7 @@ namespace Ozzyria.MapEditor
 
         private void DrawPathDirection(float x, float y, int width, int height, PathDirection direction)
         {
-            var pathDimension = 8f;
+            var pathDimension = 6f;
             var horizontalSize = new Vector2f(width / 2f, pathDimension);
             var verticalSize = new Vector2f(pathDimension, height / 2f);
 
@@ -305,6 +306,15 @@ namespace Ozzyria.MapEditor
 
             if (direction != PathDirection.None)
             {
+                var centerShape = new RectangleShape()
+                {
+                    Position = new Vector2f(verticalY, horizontalY),
+                    Size = new Vector2f(pathDimension, pathDimension),
+                    FillColor = Color.White
+                };
+                _renderBuffer.Draw(centerShape);
+
+
                 if (direction == PathDirection.Up
                     || direction == PathDirection.UpDown
                     || direction == PathDirection.UpLeft
@@ -318,7 +328,7 @@ namespace Ozzyria.MapEditor
                     {
                         Position = new Vector2f(verticalY, y),
                         Size = verticalSize,
-                        FillColor = Color.Cyan
+                        FillColor = Color.White
                     };
                     _renderBuffer.Draw(shape);
                 }
@@ -336,7 +346,7 @@ namespace Ozzyria.MapEditor
                     {
                         Position = new Vector2f(verticalY, y + verticalSize.Y),
                         Size = verticalSize,
-                        FillColor = Color.Cyan
+                        FillColor = Color.White
                     };
                     _renderBuffer.Draw(shape);
                 }
@@ -354,7 +364,7 @@ namespace Ozzyria.MapEditor
                     {
                         Position = new Vector2f(x, horizontalY),
                         Size = horizontalSize,
-                        FillColor = Color.Cyan
+                        FillColor = Color.White
                     };
                     _renderBuffer.Draw(shape);
                 }
@@ -372,11 +382,127 @@ namespace Ozzyria.MapEditor
                     {
                         Position = new Vector2f(x + horizontalSize.X, horizontalY),
                         Size = horizontalSize,
-                        FillColor = Color.Cyan
+                        FillColor = Color.White
                     };
                     _renderBuffer.Draw(shape);
                 }
             }
         }
+
+        private void DrawTransitionType(float x, float y, int width, int height, TransitionType type)
+        {
+            var transitionDimension = 8f;
+            var size = new Vector2f(transitionDimension, transitionDimension);
+
+            var horizontalCenter = x + (width / 2f) - (transitionDimension / 2f);
+            var verticalCenter = y + (height / 2f) - (transitionDimension / 2f);
+            var right = x + width - transitionDimension;
+            var bottom = y + height - transitionDimension;
+
+            if (type != TransitionType.None)
+            {
+
+                if (type == TransitionType.Up
+                    || type == TransitionType.UpLeft
+                    || type == TransitionType.UpRight)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(horizontalCenter, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.UpRightDiagonal
+                    || type == TransitionType.UpRight)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.Right
+                    || type == TransitionType.UpRight
+                    || type == TransitionType.DownRight)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, verticalCenter),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.DownRightDiagonal
+                    || type == TransitionType.DownRight)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, bottom),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.Down
+                    || type == TransitionType.DownLeft
+                    || type == TransitionType.DownRight)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(horizontalCenter, bottom),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.DownLeftDiagonal
+                    || type == TransitionType.DownLeft)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x, bottom),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.Left
+                    || type == TransitionType.UpLeft
+                    || type == TransitionType.DownLeft)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x, verticalCenter),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (type == TransitionType.UpLeftDiagonal
+                    || type == TransitionType.UpLeft)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+            }
+        }
+
     }
 }
