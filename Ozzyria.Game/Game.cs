@@ -24,7 +24,7 @@ namespace Ozzyria.Game
             entityManager = new EntityManager();
 
             tileMap = new TileMap();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_e.ozz")) // TODO not hardcode this
+            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_e.ozz")) // TODO OZ-12 not hardcode this
             {
                 Entity currentEntity = new Entity();
                 var options = new JsonSerializerOptions();

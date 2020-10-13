@@ -214,7 +214,7 @@ namespace Ozzyria.MapEditor
                             }
                             else if (tileType == TileType.Water)
                             {
-                                // TODO need to.. centralize this tx, ty stuff?
+                                // TODO OZ-12 need to.. centralize this tx, ty stuff?
                                 switch (_map.GetTransitionType(layer, x, y))
                                 {
                                     case TransitionType.UpLeft:
@@ -277,11 +277,11 @@ namespace Ozzyria.MapEditor
                                 int baseTy = 0;
                                 if (tileType == TileType.Road)
                                 {
-                                    // TODO right now this is a azy hack... probably store this data in a meta file for the tile set
+                                    // TODO OZ-12 right now this is a azy hack... probably store this data in a meta file for the tile set
                                     baseTx = 4;
                                     baseTy = 0;
                                 }
-                                // TODO need to.. centralize this tx, ty stuff?
+                                // TODO OZ-12 need to.. centralize this tx, ty stuff?
                                 switch (_map.GetPathDirection(layer, x, y))
                                 {
                                     case PathDirection.Left:
@@ -397,7 +397,7 @@ namespace Ozzyria.MapEditor
             }
         }
 
-        private static void WriteWall(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, float x, float y, int w, int h) // TODO move somewhere else
+        private static void WriteWall(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, float x, float y, int w, int h) // TODO OZ-12 move somewhere else
         {
             var wall = new Entity();
             wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
@@ -405,7 +405,7 @@ namespace Ozzyria.MapEditor
             WriteEntity(file, serializeOptions, wall);
         }
 
-        private static void WriteEntity(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, Entity entity) // TODO move somewhere else
+        private static void WriteEntity(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, Entity entity) // TODO OZ-12 move somewhere else
         {
             file.WriteLine("!---");
             foreach (var component in entity.GetAllComponents())

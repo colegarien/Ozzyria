@@ -24,7 +24,7 @@ namespace Ozzyria.Game
         public TileMap()
         {
             layers = new Dictionary<int, List<Tile>>();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_m.ozz")) // TODO not hardcode this
+            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_m.ozz")) // TODO OZ-12 not hardcode this
             {
                 width = int.Parse(file.ReadLine());
                 height = int.Parse(file.ReadLine());
