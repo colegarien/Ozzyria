@@ -1,10 +1,11 @@
 ﻿using Ozzyria.Game.Component;
 using Ozzyria.Game.Event;
 using Ozzyria.Game.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
+using System.Text.Json;
 
 namespace Ozzyria.Game
 {
@@ -21,25 +22,32 @@ namespace Ozzyria.Game
         public Game()
         {
             entityManager = new EntityManager();
-            entityManager.Register(CreateOrb(400, 300, 30));
-            entityManager.Register(CreateSlime(500, 400));
-
-            var box = new Entity();
-            box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
-            box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
-            //box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = 20, Height = 20});
-            entityManager.Register(box);
-
-            // wrap screen in border
-            entityManager.Register(CreateWall(400, 20, 900, 10));
-            entityManager.Register(CreateWall(400, 510, 900, 10));
-            entityManager.Register(CreateWall(20, 300, 10, 700));
-            entityManager.Register(CreateWall(780, 300, 10, 700));
-
-            entityManager.Register(CreateWall(150, 300, 400, 10));
-            entityManager.Register(CreateWall(200, 300, 10, 300));
 
             tileMap = new TileMap();
+            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_e.ozz")) // TODO not hardcode this
+            {
+                Entity currentEntity = new Entity();
+                var options = new JsonSerializerOptions();
+
+                string line;
+                while ((line = file.ReadLine().Trim()) != "" && line != "END")
+                {
+                    if (line == "!---")
+                    {
+                        currentEntity = new Entity();
+                    }
+                    else if (line == "---!")
+                    {
+                        entityManager.Register(currentEntity);
+                    }
+                    else
+                    {
+                        var data = file.ReadLine().Trim();
+                        var type = Type.GetType(line);
+                        currentEntity.AttachComponent((Component.Component)JsonSerializer.Deserialize(data, type, options));
+                    }
+                }
+            }
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -100,15 +108,6 @@ namespace Ozzyria.Game
             return orb;
         }
 
-        protected Entity CreateWall(float x, float y, int w, int h)
-        {
-            var wall = new Entity();
-            wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
-            wall.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
-
-            return wall;
-        }
-
         public void Update(float deltaTime)
         {
             eventTimer += deltaTime;
@@ -121,7 +120,8 @@ namespace Ozzyria.Game
                 }
 
                 // Handle thoughts
-                if (entity.HasComponent(ComponentType.Thought)) {
+                if (entity.HasComponent(ComponentType.Thought))
+                {
                     entity.GetComponent<Thought>(ComponentType.Thought).Update(deltaTime, entityManager);
 
                     // TODO likey move this to collision thang (when it exists)
@@ -139,11 +139,12 @@ namespace Ozzyria.Game
 
                     var possibleCollisions = entityManager.GetEntities().Where(e => e.Id != entity.Id && e.HasComponent(ComponentType.Collision));
                     var depthVector = Vector2.Zero;
-                    foreach(var collidedEntity in possibleCollisions) {
+                    foreach (var collidedEntity in possibleCollisions)
+                    {
                         var otherMovement = collidedEntity.GetComponent<Movement>(ComponentType.Movement);
                         var otherCollision = collidedEntity.GetComponent<Collision>(ComponentType.Collision);
 
-                        if(collision is BoundingCircle && otherCollision is BoundingCircle)
+                        if (collision is BoundingCircle && otherCollision is BoundingCircle)
                         {
                             var result = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
                             if (result.Collided)
@@ -151,7 +152,7 @@ namespace Ozzyria.Game
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
-                        else if(collision is BoundingBox && otherCollision is BoundingBox)
+                        else if (collision is BoundingBox && otherCollision is BoundingBox)
                         {
                             var result = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
@@ -159,7 +160,7 @@ namespace Ozzyria.Game
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
-                        else if(collision is BoundingCircle && otherCollision is BoundingBox)
+                        else if (collision is BoundingCircle && otherCollision is BoundingBox)
                         {
                             var result = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
                             if (result.Collided)
@@ -219,11 +220,11 @@ namespace Ozzyria.Game
 
         private void ProcessEvents()
         {
-            while(events.Count > 0)
+            while (events.Count > 0)
             {
                 var gameEvent = events[0];
 
-                if(gameEvent is EntityDead)
+                if (gameEvent is EntityDead)
                 {
                     var entity = entityManager.GetEntity(((EntityDead)gameEvent).Id);
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
@@ -238,7 +239,7 @@ namespace Ozzyria.Game
                     }
                 }
 
-                foreach(var eventHandler in eventHandlers)
+                foreach (var eventHandler in eventHandlers)
                 {
                     if (eventHandler.CanHandle(gameEvent))
                     {

@@ -1,4 +1,8 @@
-﻿using Ozzyria.MapEditor.EventSystem;
+﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
+using Ozzyria.MapEditor.EventSystem;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace Ozzyria.MapEditor
 {
@@ -179,11 +183,12 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            if (!System.IO.Directory.Exists("Maps"))
+            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Game\Maps"; // TODO this is just to make debuggery easier for now
+            if (!System.IO.Directory.Exists(baseMapsDirectory))
             {
-                System.IO.Directory.CreateDirectory("Maps"); // TODO probably wnat to be more tidy about this
+                System.IO.Directory.CreateDirectory(baseMapsDirectory);
             }
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter("Maps\\test.ozz"))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\test_m.ozz"))
             {
                 file.WriteLine(_map.Width);
                 file.WriteLine(_map.Height);
@@ -343,6 +348,62 @@ namespace Ozzyria.MapEditor
                 }
                 file.WriteLine("END");
             }
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\test_e.ozz"))
+            {
+                var serializeOptions = new JsonSerializerOptions();
+
+                var orb = new Entity();
+                orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
+                orb.AttachComponent(new ExperienceOrbThought());
+                orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 });
+                orb.AttachComponent(new ExperienceBoost { Experience = 30 });
+                WriteEntity(file, serializeOptions, orb);
+
+                var slime = new Entity();
+                slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
+                slime.AttachComponent(new SlimeThought());
+                slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 });
+                slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
+                slime.AttachComponent(new Combat());
+                slime.AttachComponent(new BoundingCircle { Radius = 10 });
+                WriteEntity(file, serializeOptions, slime);
+
+                var box = new Entity();
+                box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
+                box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
+                WriteEntity(file, serializeOptions, box);
+
+
+                // wrap screen in border
+               WriteWall(file, serializeOptions, 400, 20, 900, 10);
+               WriteWall(file, serializeOptions, 400, 510, 900, 10);
+               WriteWall(file, serializeOptions, 20, 300, 10, 700);
+               WriteWall(file, serializeOptions, 780, 300, 10, 700);
+
+               WriteWall(file, serializeOptions, 150, 300, 400, 10);
+               WriteWall(file, serializeOptions, 200, 300, 10, 300);
+
+                file.WriteLine("END");
+            }
+        }
+
+        private static void WriteWall(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, float x, float y, int w, int h) // TODO move somewhere else
+        {
+            var wall = new Entity();
+            wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
+            wall.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
+            WriteEntity(file, serializeOptions, wall);
+        }
+
+        private static void WriteEntity(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, Entity entity) // TODO move somewhere else
+        {
+            file.WriteLine("!---");
+            foreach (var component in entity.GetAllComponents())
+            {
+                file.WriteLine(component.GetType());
+                file.WriteLine(JsonSerializer.Serialize(component, component.GetType(), serializeOptions));
+            }
+            file.WriteLine("---!");
         }
 
         public static void PaintTile(int layer, int x, int y, TileType type)
