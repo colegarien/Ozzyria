@@ -5,7 +5,8 @@
         None,
         Ground,
         Water,
-        Fence
+        Fence,
+        Road
     }
 
     enum TransitionType

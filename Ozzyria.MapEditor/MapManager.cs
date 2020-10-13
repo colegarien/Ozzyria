@@ -103,7 +103,7 @@ namespace Ozzyria.MapEditor
                                 _map.SetTransitionType(layer, x, y, TransitionType.UpRightDiagonal);
                             }
                         }
-                        else if (tileType == TileType.Fence)
+                        else if (tileType == TileType.Fence || tileType == TileType.Road)
                         {
                             var leftIsPath = GetTileType(layer, x - 1, y) == tileType;
                             var rightIsPath = GetTileType(layer, x + 1, y) == tileType;
@@ -271,8 +271,16 @@ namespace Ozzyria.MapEditor
                                         break;
                                 }
                             }
-                            else if (tileType == TileType.Fence)
+                            else if (tileType == TileType.Fence || tileType == TileType.Road)
                             {
+                                int baseTx = 0;
+                                int baseTy = 0;
+                                if (tileType == TileType.Road)
+                                {
+                                    // TODO right now this is a azy hack... probably store this data in a meta file for the tile set
+                                    baseTx = 4;
+                                    baseTy = 0;
+                                }
                                 // TODO need to.. centralize this tx, ty stuff?
                                 switch (_map.GetPathDirection(layer, x, y))
                                 {
@@ -341,6 +349,8 @@ namespace Ozzyria.MapEditor
                                         ty = 1;
                                         break;
                                 }
+                                tx += baseTx;
+                                ty += baseTy;
                             }
                             file.WriteLine($"{layer}|{x}|{y}|{tx}|{ty}");
                         }
