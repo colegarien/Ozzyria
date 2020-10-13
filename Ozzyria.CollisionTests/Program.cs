@@ -109,7 +109,6 @@ namespace Ozzyria.CollisionTests
             var movement = entity.GetComponent<Movement>(ComponentType.Movement);
             var collision = entity.GetComponent<Collision>(ComponentType.Collision);
 
-            Shape shape;
             if(collision is BoundingCircle)
             {
                 var circle = (BoundingCircle)collision;
