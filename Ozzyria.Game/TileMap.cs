@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+using System.Linq;
 
 namespace Ozzyria.Game
 {
@@ -15,49 +14,24 @@ namespace Ozzyria.Game
 
     public class TileMap
     {
-        // TODO make these not public
-        public int width = 32;
-        public int height = 32;
+        public int Width { get; set; } = 32;
+        public int Height { get; set; } = 32;
 
-        public IDictionary<int, List<Tile>> layers;
+        public IDictionary<int, List<Tile>> Layers { get; set; } = new Dictionary<int, List<Tile>>();
 
-        public TileMap()
+        public bool HasLayer(int layer)
         {
-            layers = new Dictionary<int, List<Tile>>();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_m.ozz")) // TODO OZ-12 not hardcode this
+            return Layers.ContainsKey(layer);
+        }
+
+        public IEnumerable<Tile> GetTilesInArea(int layer, int stripY, float minX, float minY, float maxX, float maxY)
+        {
+            if (!HasLayer(layer))
             {
-                width = int.Parse(file.ReadLine());
-                height = int.Parse(file.ReadLine());
-                var numberOfLayers = int.Parse(file.ReadLine());
-                for(var i = 0; i < numberOfLayers; i++)
-                {
-                    layers[i] = new List<Tile>();
-                }
-
-                string line;
-                while((line = file.ReadLine().Trim()) != "" && line != "END")
-                {
-                    var pieces = line.Split("|");
-                    if(pieces.Length != 5)
-                    {
-                        continue;
-                    }
-
-                    var layer = int.Parse(pieces[0]);
-                    var x = int.Parse(pieces[1]);
-                    var y = int.Parse(pieces[2]);
-                    var tx = int.Parse(pieces[3]);
-                    var ty = int.Parse(pieces[4]);
-
-                    layers[layer].Add(new Tile
-                    {
-                        X = x,
-                        Y = y,
-                        TextureCoordX = tx,
-                        TextureCoordY = ty
-                    });
-                }                
+                return System.Array.Empty<Tile>();
             }
+
+            return Layers[layer].Where(t => t.Y == stripY && t.X * Tile.DIMENSION >= minX && t.X * Tile.DIMENSION <= maxX && t.Y * Tile.DIMENSION >= minY && t.Y * Tile.DIMENSION <= maxY);
         }
     }
 }

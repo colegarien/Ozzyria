@@ -1,8 +1,8 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
+using Ozzyria.Game.Persistence;
 using Ozzyria.MapEditor.EventSystem;
-using System.Runtime.InteropServices;
-using System.Text.Json;
+using System.Collections.Generic;
 
 namespace Ozzyria.MapEditor
 {
@@ -36,12 +36,11 @@ namespace Ozzyria.MapEditor
                 {
                     for (var y = 0; y < _map.Height; y++)
                     {
-                        var tileType = GetTileType(layer, x, y);
-
                         // reset before recalculating
                         _map.SetTransitionType(layer, x, y, TransitionType.None);
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
+                        var tileType = GetTileType(layer, x, y);
                         if (tileType == TileType.Water)
                         {
                             var leftIsGround = GetTileType(layer, x - 1, y) == TileType.Ground;
@@ -183,237 +182,232 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Game\Maps"; // TODO this is just to make debuggery easier for now
-            if (!System.IO.Directory.Exists(baseMapsDirectory))
+            var layers = new Dictionary<int, List<Game.Tile>>();
+            for (var layer = 0; layer < GetNumberOfLayers(); layer++)
             {
-                System.IO.Directory.CreateDirectory(baseMapsDirectory);
-            }
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\test_m.ozz"))
-            {
-                file.WriteLine(_map.Width);
-                file.WriteLine(_map.Height);
-                file.WriteLine(GetNumberOfLayers());
-                for (var layer = 0; layer < GetNumberOfLayers(); layer++)
+                layers[layer] = new List<Game.Tile>();
+                for (var x = 0; x < _map.Width; x++)
                 {
-                    for (var x = 0; x < _map.Width; x++)
+                    for (var y = 0; y < _map.Height; y++)
                     {
-                        for (var y = 0; y < _map.Height; y++)
-                        {
-                            var tileType = GetTileType(layer, x, y);
+                        var tx = 0;
+                        var ty = 0;
 
-                            var tx = 0;
-                            var ty = 0;
-                            if (tileType == TileType.None)
-                            {
-                                continue;
-                            }
-                            else if (tileType == TileType.Ground)
-                            {
-                                tx = 0;
-                                ty = 0;
-                            }
-                            else if (tileType == TileType.Water)
-                            {
-                                // TODO OZ-12 need to.. centralize this tx, ty stuff?
-                                switch (_map.GetTransitionType(layer, x, y))
-                                {
-                                    case TransitionType.UpLeft:
-                                        tx = 1;
-                                        ty = 0;
-                                        break;
-                                    case TransitionType.UpRight:
-                                        tx = 3;
-                                        ty = 0;
-                                        break;
-                                    case TransitionType.DownLeft:
-                                        tx = 1;
-                                        ty = 2;
-                                        break;
-                                    case TransitionType.DownRight:
-                                        tx = 3;
-                                        ty = 2;
-                                        break;
-                                    case TransitionType.Up:
-                                        tx = 2;
-                                        ty = 0;
-                                        break;
-                                    case TransitionType.Down:
-                                        tx = 2;
-                                        ty = 2;
-                                        break;
-                                    case TransitionType.Left:
-                                        tx = 1;
-                                        ty = 1;
-                                        break;
-                                    case TransitionType.Right:
-                                        tx = 3;
-                                        ty = 1;
-                                        break;
-                                    case TransitionType.DownRightDiagonal:
-                                        tx = 2;
-                                        ty = 3;
-                                        break;
-                                    case TransitionType.DownLeftDiagonal:
-                                        tx = 3;
-                                        ty = 3;
-                                        break;
-                                    case TransitionType.UpLeftDiagonal:
-                                        tx = 3;
-                                        ty = 4;
-                                        break;
-                                    case TransitionType.UpRightDiagonal:
-                                        tx = 2;
-                                        ty = 4;
-                                        break;
-                                    default:
-                                        tx = 0;
-                                        ty = 1;
-                                        break;
-                                }
-                            }
-                            else if (tileType == TileType.Fence || tileType == TileType.Road)
-                            {
-                                int baseTx = 0;
-                                int baseTy = 0;
-                                if (tileType == TileType.Road)
-                                {
-                                    // TODO OZ-12 right now this is a azy hack... probably store this data in a meta file for the tile set
-                                    baseTx = 4;
-                                    baseTy = 0;
-                                }
-                                // TODO OZ-12 need to.. centralize this tx, ty stuff?
-                                switch (_map.GetPathDirection(layer, x, y))
-                                {
-                                    case PathDirection.Left:
-                                        tx = 6;
-                                        ty = 3;
-                                        break;
-                                    case PathDirection.Right:
-                                        tx = 7;
-                                        ty = 3;
-                                        break;
-                                    case PathDirection.Up:
-                                        tx = 4;
-                                        ty = 3;
-                                        break;
-                                    case PathDirection.Down:
-                                        tx = 5;
-                                        ty = 3;
-                                        break;
-                                    case PathDirection.LeftRight:
-                                        tx = 5;
-                                        ty = 0;
-                                        break;
-                                    case PathDirection.UpT:
-                                        tx = 7;
-                                        ty = 0;
-                                        break;
-                                    case PathDirection.DownT:
-                                        tx = 6;
-                                        ty = 0;
-                                        break;
-                                    case PathDirection.UpDown:
-                                        tx = 6;
-                                        ty = 2;
-                                        break;
-                                    case PathDirection.LeftT:
-                                        tx = 7;
-                                        ty = 2;
-                                        break;
-                                    case PathDirection.RightT:
-                                        tx = 7;
-                                        ty = 1;
-                                        break;
-                                    case PathDirection.UpLeft:
-                                        tx = 5;
-                                        ty = 2;
-                                        break;
-                                    case PathDirection.UpRight:
-                                        tx = 4;
-                                        ty = 2;
-                                        break;
-                                    case PathDirection.DownRight:
-                                        tx = 4;
-                                        ty = 1;
-                                        break;
-                                    case PathDirection.DownLeft:
-                                        tx = 5;
-                                        ty = 1;
-                                        break;
-                                    case PathDirection.All:
-                                        tx = 4;
-                                        ty = 0;
-                                        break;
-                                    default:
-                                        tx = 6;
-                                        ty = 1;
-                                        break;
-                                }
-                                tx += baseTx;
-                                ty += baseTy;
-                            }
-                            file.WriteLine($"{layer}|{x}|{y}|{tx}|{ty}");
+                        var tileType = GetTileType(layer, x, y);
+                        if (tileType == TileType.None)
+                        {
+                            continue;
                         }
+                        else if (tileType == TileType.Ground)
+                        {
+                            tx = 0;
+                            ty = 0;
+                        }
+                        else if (tileType == TileType.Water)
+                        {
+                            // TODO OZ-12 need to.. centralize this tx, ty stuff?
+                            switch (_map.GetTransitionType(layer, x, y))
+                            {
+                                case TransitionType.UpLeft:
+                                    tx = 1;
+                                    ty = 0;
+                                    break;
+                                case TransitionType.UpRight:
+                                    tx = 3;
+                                    ty = 0;
+                                    break;
+                                case TransitionType.DownLeft:
+                                    tx = 1;
+                                    ty = 2;
+                                    break;
+                                case TransitionType.DownRight:
+                                    tx = 3;
+                                    ty = 2;
+                                    break;
+                                case TransitionType.Up:
+                                    tx = 2;
+                                    ty = 0;
+                                    break;
+                                case TransitionType.Down:
+                                    tx = 2;
+                                    ty = 2;
+                                    break;
+                                case TransitionType.Left:
+                                    tx = 1;
+                                    ty = 1;
+                                    break;
+                                case TransitionType.Right:
+                                    tx = 3;
+                                    ty = 1;
+                                    break;
+                                case TransitionType.DownRightDiagonal:
+                                    tx = 2;
+                                    ty = 3;
+                                    break;
+                                case TransitionType.DownLeftDiagonal:
+                                    tx = 3;
+                                    ty = 3;
+                                    break;
+                                case TransitionType.UpLeftDiagonal:
+                                    tx = 3;
+                                    ty = 4;
+                                    break;
+                                case TransitionType.UpRightDiagonal:
+                                    tx = 2;
+                                    ty = 4;
+                                    break;
+                                default:
+                                    tx = 0;
+                                    ty = 1;
+                                    break;
+                            }
+                        }
+                        else if (tileType == TileType.Fence || tileType == TileType.Road)
+                        {
+                            int baseTx = 0;
+                            int baseTy = 0;
+                            if (tileType == TileType.Road)
+                            {
+                                // TODO OZ-12 right now this is a azy hack... probably store this data in a meta file for the tile set
+                                baseTx = 4;
+                                baseTy = 0;
+                            }
+                            // TODO OZ-12 need to.. centralize this tx, ty stuff?
+                            switch (_map.GetPathDirection(layer, x, y))
+                            {
+                                case PathDirection.Left:
+                                    tx = 6;
+                                    ty = 3;
+                                    break;
+                                case PathDirection.Right:
+                                    tx = 7;
+                                    ty = 3;
+                                    break;
+                                case PathDirection.Up:
+                                    tx = 4;
+                                    ty = 3;
+                                    break;
+                                case PathDirection.Down:
+                                    tx = 5;
+                                    ty = 3;
+                                    break;
+                                case PathDirection.LeftRight:
+                                    tx = 5;
+                                    ty = 0;
+                                    break;
+                                case PathDirection.UpT:
+                                    tx = 7;
+                                    ty = 0;
+                                    break;
+                                case PathDirection.DownT:
+                                    tx = 6;
+                                    ty = 0;
+                                    break;
+                                case PathDirection.UpDown:
+                                    tx = 6;
+                                    ty = 2;
+                                    break;
+                                case PathDirection.LeftT:
+                                    tx = 7;
+                                    ty = 2;
+                                    break;
+                                case PathDirection.RightT:
+                                    tx = 7;
+                                    ty = 1;
+                                    break;
+                                case PathDirection.UpLeft:
+                                    tx = 5;
+                                    ty = 2;
+                                    break;
+                                case PathDirection.UpRight:
+                                    tx = 4;
+                                    ty = 2;
+                                    break;
+                                case PathDirection.DownRight:
+                                    tx = 4;
+                                    ty = 1;
+                                    break;
+                                case PathDirection.DownLeft:
+                                    tx = 5;
+                                    ty = 1;
+                                    break;
+                                case PathDirection.All:
+                                    tx = 4;
+                                    ty = 0;
+                                    break;
+                                default:
+                                    tx = 6;
+                                    ty = 1;
+                                    break;
+                            }
+                            tx += baseTx;
+                            ty += baseTy;
+                        }
+
+                        layers[layer].Add(new Game.Tile
+                        {
+                            X = x,
+                            Y = y,
+                            TextureCoordX = tx,
+                            TextureCoordY = ty
+                        });
                     }
                 }
-                file.WriteLine("END");
             }
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\test_e.ozz"))
+
+            var tileMap = new TileMap
             {
-                var serializeOptions = new JsonSerializerOptions();
+                Width = _map.Width,
+                Height = _map.Height,
+                Layers = layers
+            };
 
-                var orb = new Entity();
-                orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
-                orb.AttachComponent(new ExperienceOrbThought());
-                orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 });
-                orb.AttachComponent(new ExperienceBoost { Experience = 30 });
-                WriteEntity(file, serializeOptions, orb);
+            var worldLoader = new WorldPersistence();
+            worldLoader.SaveMap("test_m", tileMap);
 
-                var slime = new Entity();
-                slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
-                slime.AttachComponent(new SlimeThought());
-                slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 });
-                slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
-                slime.AttachComponent(new Combat());
-                slime.AttachComponent(new BoundingCircle { Radius = 10 });
-                WriteEntity(file, serializeOptions, slime);
+            var entityManager = new EntityManager();
 
-                var box = new Entity();
-                box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
-                box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
-                WriteEntity(file, serializeOptions, box);
+            var orb = new Entity();
+            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
+            orb.AttachComponent(new ExperienceOrbThought());
+            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 });
+            orb.AttachComponent(new ExperienceBoost { Experience = 30 });
+            entityManager.Register(orb);
+
+            var slime = new Entity();
+            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
+            slime.AttachComponent(new SlimeThought());
+            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 });
+            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
+            slime.AttachComponent(new Combat());
+            slime.AttachComponent(new BoundingCircle { Radius = 10 });
+            entityManager.Register(slime);
+
+            var box = new Entity();
+            box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
+            box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
+            entityManager.Register(box);
 
 
-                // wrap screen in border
-               WriteWall(file, serializeOptions, 400, 20, 900, 10);
-               WriteWall(file, serializeOptions, 400, 510, 900, 10);
-               WriteWall(file, serializeOptions, 20, 300, 10, 700);
-               WriteWall(file, serializeOptions, 780, 300, 10, 700);
+            // wrap screen in border
+            entityManager.Register(CreateWall(400, 20, 900, 10));
+            entityManager.Register(CreateWall(400, 510, 900, 10));
+            entityManager.Register(CreateWall(20, 300, 10, 700));
+            entityManager.Register(CreateWall(780, 300, 10, 700));
 
-               WriteWall(file, serializeOptions, 150, 300, 400, 10);
-               WriteWall(file, serializeOptions, 200, 300, 10, 300);
+            entityManager.Register(CreateWall(150, 300, 400, 10));
+            entityManager.Register(CreateWall(200, 300, 10, 300));
 
-                file.WriteLine("END");
-            }
+            worldLoader.SaveEntityManager("test_e", entityManager);
         }
 
-        private static void WriteWall(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, float x, float y, int w, int h) // TODO OZ-12 move somewhere else
+        private static Entity CreateWall(float x, float y, int w, int h) // TODO OZ-12 move somewhere else (EntityFactory of some kind in Game project)
         {
             var wall = new Entity();
             wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
             wall.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
-            WriteEntity(file, serializeOptions, wall);
-        }
 
-        private static void WriteEntity(System.IO.StreamWriter file, JsonSerializerOptions serializeOptions, Entity entity) // TODO OZ-12 move somewhere else
-        {
-            file.WriteLine("!---");
-            foreach (var component in entity.GetAllComponents())
-            {
-                file.WriteLine(component.GetType());
-                file.WriteLine(JsonSerializer.Serialize(component, component.GetType(), serializeOptions));
-            }
-            file.WriteLine("---!");
+            return wall;
         }
 
         public static void PaintTile(int layer, int x, int y, TileType type)

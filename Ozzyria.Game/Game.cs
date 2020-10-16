@@ -1,11 +1,10 @@
 ﻿using Ozzyria.Game.Component;
 using Ozzyria.Game.Event;
+using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text.Json;
 
 namespace Ozzyria.Game
 {
@@ -21,33 +20,9 @@ namespace Ozzyria.Game
 
         public Game()
         {
-            entityManager = new EntityManager();
-
-            tileMap = new TileMap();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_e.ozz")) // TODO OZ-12 not hardcode this
-            {
-                Entity currentEntity = new Entity();
-                var options = new JsonSerializerOptions();
-
-                string line;
-                while ((line = file.ReadLine().Trim()) != "" && line != "END")
-                {
-                    if (line == "!---")
-                    {
-                        currentEntity = new Entity();
-                    }
-                    else if (line == "---!")
-                    {
-                        entityManager.Register(currentEntity);
-                    }
-                    else
-                    {
-                        var data = file.ReadLine().Trim();
-                        var type = Type.GetType(line);
-                        currentEntity.AttachComponent((Component.Component)JsonSerializer.Deserialize(data, type, options));
-                    }
-                }
-            }
+            var worldLoader = new WorldPersistence();
+            tileMap = worldLoader.LoadMap("test_m");
+            entityManager = worldLoader.LoadEntityManager("test_e");
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();

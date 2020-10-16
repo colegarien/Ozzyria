@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Utility;
+using Ozzyria.Game.Persistence;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -18,12 +19,14 @@ namespace Ozzyria.Client
         static void Main(string[] args)
         {
             var graphicsManger = GraphicsManager.GetInstance();
-            var tileMap = new TileMap();
+            var worldLoader = new WorldPersistence();
+            var tileMap = worldLoader.LoadMap("test_m"); // TODO server should be telling user what map
 
 
             var client = new Networking.Client();
             RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            window.Closed += (sender, e) => {
+            window.Closed += (sender, e) =>
+            {
                 client.Disconnect();
                 ((Window)sender).Close();
             };
@@ -33,7 +36,7 @@ namespace Ozzyria.Client
             };
 
             // TODO think about how multiple side-by-side tile mpas might work
-            var worldRenderTexture = new RenderTexture((uint)(tileMap.width * Tile.DIMENSION), (uint)(tileMap.height * Tile.DIMENSION));
+            var worldRenderTexture = new RenderTexture((uint)(tileMap.Width * Tile.DIMENSION), (uint)(tileMap.Height * Tile.DIMENSION));
             // TODO make camera object
             var cameraX = 0f;
             var cameraY = 0f;
@@ -45,7 +48,7 @@ namespace Ozzyria.Client
                 return;
             }
             Console.WriteLine($"Join as Client #{client.Id}");
-            
+
             Stopwatch stopWatch = new Stopwatch();
             var deltaTime = 0f;
             while (window.IsOpen && client.IsConnected())
@@ -124,13 +127,13 @@ namespace Ozzyria.Client
                         sprites.Add(sfmlSprite);
 
                         // center camera on entity
-                        if(entity.Id == client.Id)
+                        if (entity.Id == client.Id)
                         {
                             cameraX = movement.X - (window.Size.X / 2f);
                             cameraY = movement.Y - (window.Size.Y / 2f);
                         }
                     }
-                    
+
                     if (DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
                     {
                         var collision = entity.GetComponent<Collision>(ComponentType.Collision);
@@ -147,7 +150,7 @@ namespace Ozzyria.Client
                             var width = ((BoundingBox)collision).Width;
                             var height = ((BoundingBox)collision).Height;
                             shape = new RectangleShape(new Vector2f(width, height));
-                            shape.Position = graphicsManger.CreateSpritePosition(movement.X - (width/2f), movement.Y - (height/2f));
+                            shape.Position = graphicsManger.CreateSpritePosition(movement.X - (width / 2f), movement.Y - (height / 2f));
                         }
                         collisionShapes.Add(new DebugCollisionShape(shape));
                     }
@@ -167,7 +170,7 @@ namespace Ozzyria.Client
                 for (var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
                 {
                     // Render strip by strip from bottom of screen to top
-                    for (var y = tileMap.height - 1; y >= 0; y--)
+                    for (var y = tileMap.Height - 1; y >= 0; y--)
                     {
                         if (layer == 1) // TODO allow sprites to be on any layer + colliders on different layers
                         {
@@ -195,9 +198,9 @@ namespace Ozzyria.Client
                             }
                         }
 
-                        if (tileMap.layers.ContainsKey(layer))
+                        if (tileMap.HasLayer(layer))
                         {
-                            var tiles = tileMap.layers[layer].Where(t => t.Y == y && t.X * Tile.DIMENSION >= minRenderX && t.X * Tile.DIMENSION <= maxRenderX && t.Y * Tile.DIMENSION >= minRenderY && t.Y * Tile.DIMENSION <= maxRenderY);
+                            var tiles = tileMap.GetTilesInArea(layer, y, minRenderX, minRenderY, maxRenderX, maxRenderY);
                             foreach (var tile in tiles)
                             {
                                 var sprite = graphicsManger.CreateTileSprite(tile);
@@ -259,7 +262,7 @@ namespace Ozzyria.Client
             {
                 background = backgroundColor;
                 foreground = foregroundColor;
-                for(var segment = 0; segment < NUM_SEGMENTS; segment++)
+                for (var segment = 0; segment < NUM_SEGMENTS; segment++)
                 {
                     segments[segment] = new RectangleShape()
                     {
@@ -281,7 +284,7 @@ namespace Ozzyria.Client
 
             public void Draw(RenderWindow window)
             {
-                foreach(var segment in segments)
+                foreach (var segment in segments)
                 {
                     window.Draw(segment);
                 }

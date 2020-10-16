@@ -7,9 +7,9 @@ namespace Ozzyria.Game.Component
     {
         public override ComponentType Type() => ComponentType.Movement;
 
-        public float ACCELERATION = 200f;
-        public float MAX_SPEED = 100f;
-        public float TURN_SPEED = 5f;
+        public float ACCELERATION { get; set; } = 200f;
+        public float MAX_SPEED { get; set; } = 100f;
+        public float TURN_SPEED { get; set; } = 5f;
 
         public float PreviousX { get; set; } = 0f;
         public float PreviousY { get; set; } = 0f;
