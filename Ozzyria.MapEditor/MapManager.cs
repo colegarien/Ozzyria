@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Component;
 using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using Ozzyria.MapEditor.EventSystem;
@@ -10,6 +9,7 @@ namespace Ozzyria.MapEditor
     class MapManager
     {
         protected static Map _map;
+        protected static TileMetaData _tileMetaData;
 
         public static bool MapIsLoaded()
         {
@@ -19,6 +19,7 @@ namespace Ozzyria.MapEditor
         public static void LoadMap(Map map)
         {
             _map = map;
+            _tileMetaData = new TileMetaData(); // TODO OZ-18 load from file
 
             EventQueue.Queue(new MapLoadedEvent
             {
@@ -42,68 +43,68 @@ namespace Ozzyria.MapEditor
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
                         var tileType = GetTileType(layer, x, y);
-                        if (tileType == TileType.Water)
+                        if (_tileMetaData.IsTransitionable(tileType))
                         {
-                            var leftIsGround = GetTileType(layer, x - 1, y) == TileType.Ground;
-                            var rightIsGround = GetTileType(layer, x + 1, y) == TileType.Ground;
-                            var upIsGround = GetTileType(layer, x, y - 1) == TileType.Ground;
-                            var downIsGround = GetTileType(layer, x, y + 1) == TileType.Ground;
+                            var leftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y));
+                            var rightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y));
+                            var upIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x, y - 1));
+                            var downIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x, y + 1));
 
-                            var upLeftIsGround = GetTileType(layer, x - 1, y - 1) == TileType.Ground;
-                            var upRightIsGround = GetTileType(layer, x + 1, y - 1) == TileType.Ground;
-                            var downLeftIsGround = GetTileType(layer, x - 1, y + 1) == TileType.Ground;
-                            var downRightIsGround = GetTileType(layer, x + 1, y + 1) == TileType.Ground;
+                            var upLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y - 1));
+                            var upRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y - 1));
+                            var downLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y + 1));
+                            var downRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y + 1));
 
-                            if (upIsGround && leftIsGround && upLeftIsGround)
+                            if (upIsTransitionable && leftIsTransitionable && upLeftIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.UpLeft);
                             }
-                            else if (upIsGround && rightIsGround && upRightIsGround)
+                            else if (upIsTransitionable && rightIsTransitionable && upRightIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.UpRight);
                             }
-                            else if (downIsGround && leftIsGround && downLeftIsGround)
+                            else if (downIsTransitionable && leftIsTransitionable && downLeftIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.DownLeft);
                             }
-                            else if (downIsGround && rightIsGround && downRightIsGround)
+                            else if (downIsTransitionable && rightIsTransitionable && downRightIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.DownRight);
                             }
-                            else if (upIsGround && (upRightIsGround || upLeftIsGround))
+                            else if (upIsTransitionable && (upRightIsTransitionable || upLeftIsTransitionable))
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.Up);
                             }
-                            else if (downIsGround && (downLeftIsGround || downRightIsGround))
+                            else if (downIsTransitionable && (downLeftIsTransitionable || downRightIsTransitionable))
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.Down);
                             }
-                            else if (leftIsGround && (upLeftIsGround || downLeftIsGround))
+                            else if (leftIsTransitionable && (upLeftIsTransitionable || downLeftIsTransitionable))
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.Left);
                             }
-                            else if (rightIsGround && (upRightIsGround || downRightIsGround))
+                            else if (rightIsTransitionable && (upRightIsTransitionable || downRightIsTransitionable))
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.Right);
                             }
-                            else if (!downIsGround && !rightIsGround && downRightIsGround)
+                            else if (!downIsTransitionable && !rightIsTransitionable && downRightIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.DownRightDiagonal);
                             }
-                            else if (!downIsGround && !leftIsGround && downLeftIsGround)
+                            else if (!downIsTransitionable && !leftIsTransitionable && downLeftIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.DownLeftDiagonal);
                             }
-                            else if (!upIsGround && !leftIsGround && upLeftIsGround)
+                            else if (!upIsTransitionable && !leftIsTransitionable && upLeftIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.UpLeftDiagonal);
                             }
-                            else if (!upIsGround && !leftIsGround && upRightIsGround)
+                            else if (!upIsTransitionable && !leftIsTransitionable && upRightIsTransitionable)
                             {
                                 _map.SetTransitionType(layer, x, y, TransitionType.UpRightDiagonal);
                             }
                         }
-                        else if (tileType == TileType.Fence || tileType == TileType.Road)
+                        else if (_tileMetaData.IsPathable(tileType))
                         {
                             var leftIsPath = GetTileType(layer, x - 1, y) == tileType;
                             var rightIsPath = GetTileType(layer, x + 1, y) == tileType;
@@ -191,166 +192,22 @@ namespace Ozzyria.MapEditor
                 {
                     for (var y = 0; y < _map.Height; y++)
                     {
-                        var tx = 0;
-                        var ty = 0;
-
                         var tileType = GetTileType(layer, x, y);
                         if (tileType == TileType.None)
-                        {
                             continue;
-                        }
-                        else if (tileType == TileType.Ground)
-                        {
-                            tx = 0;
-                            ty = 0;
-                        }
-                        else if (tileType == TileType.Water)
-                        {
-                            // TODO OZ-12 need to.. centralize this tx, ty stuff?
-                            switch (_map.GetTransitionType(layer, x, y))
-                            {
-                                case TransitionType.UpLeft:
-                                    tx = 1;
-                                    ty = 0;
-                                    break;
-                                case TransitionType.UpRight:
-                                    tx = 3;
-                                    ty = 0;
-                                    break;
-                                case TransitionType.DownLeft:
-                                    tx = 1;
-                                    ty = 2;
-                                    break;
-                                case TransitionType.DownRight:
-                                    tx = 3;
-                                    ty = 2;
-                                    break;
-                                case TransitionType.Up:
-                                    tx = 2;
-                                    ty = 0;
-                                    break;
-                                case TransitionType.Down:
-                                    tx = 2;
-                                    ty = 2;
-                                    break;
-                                case TransitionType.Left:
-                                    tx = 1;
-                                    ty = 1;
-                                    break;
-                                case TransitionType.Right:
-                                    tx = 3;
-                                    ty = 1;
-                                    break;
-                                case TransitionType.DownRightDiagonal:
-                                    tx = 2;
-                                    ty = 3;
-                                    break;
-                                case TransitionType.DownLeftDiagonal:
-                                    tx = 3;
-                                    ty = 3;
-                                    break;
-                                case TransitionType.UpLeftDiagonal:
-                                    tx = 3;
-                                    ty = 4;
-                                    break;
-                                case TransitionType.UpRightDiagonal:
-                                    tx = 2;
-                                    ty = 4;
-                                    break;
-                                default:
-                                    tx = 0;
-                                    ty = 1;
-                                    break;
-                            }
-                        }
-                        else if (tileType == TileType.Fence || tileType == TileType.Road)
-                        {
-                            int baseTx = 0;
-                            int baseTy = 0;
-                            if (tileType == TileType.Road)
-                            {
-                                // TODO OZ-12 right now this is a azy hack... probably store this data in a meta file for the tile set
-                                baseTx = 4;
-                                baseTy = 0;
-                            }
-                            // TODO OZ-12 need to.. centralize this tx, ty stuff?
-                            switch (_map.GetPathDirection(layer, x, y))
-                            {
-                                case PathDirection.Left:
-                                    tx = 6;
-                                    ty = 3;
-                                    break;
-                                case PathDirection.Right:
-                                    tx = 7;
-                                    ty = 3;
-                                    break;
-                                case PathDirection.Up:
-                                    tx = 4;
-                                    ty = 3;
-                                    break;
-                                case PathDirection.Down:
-                                    tx = 5;
-                                    ty = 3;
-                                    break;
-                                case PathDirection.LeftRight:
-                                    tx = 5;
-                                    ty = 0;
-                                    break;
-                                case PathDirection.UpT:
-                                    tx = 7;
-                                    ty = 0;
-                                    break;
-                                case PathDirection.DownT:
-                                    tx = 6;
-                                    ty = 0;
-                                    break;
-                                case PathDirection.UpDown:
-                                    tx = 6;
-                                    ty = 2;
-                                    break;
-                                case PathDirection.LeftT:
-                                    tx = 7;
-                                    ty = 2;
-                                    break;
-                                case PathDirection.RightT:
-                                    tx = 7;
-                                    ty = 1;
-                                    break;
-                                case PathDirection.UpLeft:
-                                    tx = 5;
-                                    ty = 2;
-                                    break;
-                                case PathDirection.UpRight:
-                                    tx = 4;
-                                    ty = 2;
-                                    break;
-                                case PathDirection.DownRight:
-                                    tx = 4;
-                                    ty = 1;
-                                    break;
-                                case PathDirection.DownLeft:
-                                    tx = 5;
-                                    ty = 1;
-                                    break;
-                                case PathDirection.All:
-                                    tx = 4;
-                                    ty = 0;
-                                    break;
-                                default:
-                                    tx = 6;
-                                    ty = 1;
-                                    break;
-                            }
-                            tx += baseTx;
-                            ty += baseTy;
-                        }
+
+                        var textureCoordinates = _tileMetaData.GetTextureCoordinates(
+                            tileType,
+                            GetTransitionType(layer, x, y),
+                            GetPathDirection(layer, x, y)
+                        );
 
                         layers[layer].Add(new Game.Tile
                         {
                             X = x,
                             Y = y,
-                            TextureCoordX = tx,
-                            TextureCoordY = ty
+                            TextureCoordX = textureCoordinates.X,
+                            TextureCoordY = textureCoordinates.Y
                         });
                     }
                 }
@@ -392,6 +249,7 @@ namespace Ozzyria.MapEditor
             }
 
             _map.SetTileType(layer, x, y, type);
+            BakeMap();
         }
 
         public static void FillTile(int layer, int x, int y, TileType type)
@@ -408,6 +266,7 @@ namespace Ozzyria.MapEditor
             }
 
             FillRecursive(layer, x, y, type, currentTile);
+            BakeMap();
         }
 
         private static void FillRecursive(int layer, int x, int y, TileType type, TileType toFill)
