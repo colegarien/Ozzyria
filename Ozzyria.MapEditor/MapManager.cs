@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Persistence;
+using Ozzyria.Game.Utility;
 using Ozzyria.MapEditor.EventSystem;
 using System.Collections.Generic;
 
@@ -367,47 +368,20 @@ namespace Ozzyria.MapEditor
 
             var entityManager = new EntityManager();
 
-            var orb = new Entity();
-            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
-            orb.AttachComponent(new ExperienceOrbThought());
-            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = 400, Y = 300 });
-            orb.AttachComponent(new ExperienceBoost { Experience = 30 });
-            entityManager.Register(orb);
-
-            var slime = new Entity();
-            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
-            slime.AttachComponent(new SlimeThought());
-            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = 500, Y = 400 });
-            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
-            slime.AttachComponent(new Combat());
-            slime.AttachComponent(new BoundingCircle { Radius = 10 });
-            entityManager.Register(slime);
-
-            var box = new Entity();
-            box.AttachComponent(new Movement() { X = 60, Y = 60, PreviousX = 60, PreviousY = 60 });
-            box.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = 10 });
-            entityManager.Register(box);
-
+            entityManager.Register(EntityFactory.CreateExperienceOrb(400, 300, 30));
+            entityManager.Register(EntityFactory.CreateSlime(500, 400));
+            entityManager.Register(EntityFactory.CreateCircleCollider(60, 60, 10));
 
             // wrap screen in border
-            entityManager.Register(CreateWall(400, 20, 900, 10));
-            entityManager.Register(CreateWall(400, 510, 900, 10));
-            entityManager.Register(CreateWall(20, 300, 10, 700));
-            entityManager.Register(CreateWall(780, 300, 10, 700));
+            entityManager.Register(EntityFactory.CreateBoxCollider(400, 20, 900, 10));
+            entityManager.Register(EntityFactory.CreateBoxCollider(400, 510, 900, 10));
+            entityManager.Register(EntityFactory.CreateBoxCollider(20, 300, 10, 700));
+            entityManager.Register(EntityFactory.CreateBoxCollider(780, 300, 10, 700));
 
-            entityManager.Register(CreateWall(150, 300, 400, 10));
-            entityManager.Register(CreateWall(200, 300, 10, 300));
+            entityManager.Register(EntityFactory.CreateBoxCollider(150, 300, 400, 10));
+            entityManager.Register(EntityFactory.CreateBoxCollider(200, 300, 10, 300));
 
             worldLoader.SaveEntityManager("test_e", entityManager);
-        }
-
-        private static Entity CreateWall(float x, float y, int w, int h) // TODO OZ-12 move somewhere else (EntityFactory of some kind in Game project)
-        {
-            var wall = new Entity();
-            wall.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
-            wall.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
-
-            return wall;
         }
 
         public static void PaintTile(int layer, int x, int y, TileType type)

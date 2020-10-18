@@ -35,16 +35,7 @@ namespace Ozzyria.Game
 
         public int OnPlayerJoin(int id)
         {
-            var player = new Entity { Id = id };
-            player.AttachComponent(new Renderable { Sprite = SpriteType.Player });
-            player.AttachComponent(new PlayerThought());
-            player.AttachComponent(new Movement() { X = 140, Y = 140 });
-            player.AttachComponent(new Stats());
-            player.AttachComponent(new Combat());
-            player.AttachComponent(new Input());
-            player.AttachComponent(new BoundingCircle { Radius = 10 });
-
-            return entityManager.Register(player);
+            return entityManager.Register(EntityFactory.CreatePlayer(id));
         }
 
         public void OnPlayerInput(int id, Input input)
@@ -57,30 +48,6 @@ namespace Ozzyria.Game
         {
             // Do something special for players
             entityManager.DeRegister(id);
-        }
-
-        protected Entity CreateSlime(float x, float y)
-        {
-            var slime = new Entity();
-            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
-            slime.AttachComponent(new SlimeThought());
-            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
-            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
-            slime.AttachComponent(new Combat());
-            slime.AttachComponent(new BoundingCircle { Radius = 10 });
-
-            return slime;
-        }
-
-        protected Entity CreateOrb(float x, float y, int value)
-        {
-            var orb = new Entity();
-            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
-            orb.AttachComponent(new ExperienceOrbThought());
-            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
-            orb.AttachComponent(new ExperienceBoost { Experience = value });
-
-            return orb;
         }
 
         public void Update(float deltaTime)
@@ -186,7 +153,7 @@ namespace Ozzyria.Game
                 eventTimer = 0;
                 if (entityManager.GetEntities().Count(e => e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is SlimeThought) < 3)
                 {
-                    entityManager.Register(CreateSlime(500, 400));
+                    entityManager.Register(EntityFactory.CreateSlime(500, 400));
                 }
             }
 
@@ -204,7 +171,7 @@ namespace Ozzyria.Game
                     var entity = entityManager.GetEntity(((EntityDead)gameEvent).Id);
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
 
-                    entityManager.Register(CreateOrb(movement.X, movement.Y, 10));
+                    entityManager.Register(EntityFactory.CreateExperienceOrb(movement.X, movement.Y, 10));
                     entityManager.DeRegister(entity.Id);
 
                     if (entity.HasComponent(ComponentType.Thought) && entity.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
