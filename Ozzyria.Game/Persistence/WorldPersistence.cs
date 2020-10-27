@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.Component;
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.IO;
+using System.Linq;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -11,7 +14,7 @@ namespace Ozzyria.Game.Persistence
         {
             int width = 0, height = 0;
             var layers = new Dictionary<int, List<Tile>>();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\" + resource + ".ozz"))
+            using (StreamReader file = new StreamReader("Maps\\" + resource + ".ozz"))
             {
                 width = int.Parse(file.ReadLine());
                 height = int.Parse(file.ReadLine());
@@ -57,12 +60,12 @@ namespace Ozzyria.Game.Persistence
         public void SaveMap(string resource, TileMap map)
         {
             var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Game\Maps"; // TODO this is just to make debuggery easier for now
-            if (!System.IO.Directory.Exists(baseMapsDirectory))
+            if (!Directory.Exists(baseMapsDirectory))
             {
-                System.IO.Directory.CreateDirectory(baseMapsDirectory);
+                Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\" + resource + ".ozz"))
+            using (StreamWriter file = new StreamWriter(baseMapsDirectory + "\\" + resource + ".ozz"))
             {
                 file.WriteLine(map.Width);
                 file.WriteLine(map.Height);
@@ -81,28 +84,11 @@ namespace Ozzyria.Game.Persistence
         public EntityManager LoadEntityManager(string resource)
         {
             var entityManager = new EntityManager();
-            var options = GetOptions();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\" + resource + ".ozz"))
+            using (BinaryReader reader = new BinaryReader(File.OpenRead("Maps\\" + resource + ".ozz")))
             {
-                Entity currentEntity = new Entity();
-
-                string line;
-                while ((line = file.ReadLine().Trim()) != "" && line != "END")
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
-                    if (line == "!---")
-                    {
-                        currentEntity = new Entity();
-                    }
-                    else if (line == "---!")
-                    {
-                        entityManager.Register(currentEntity);
-                    }
-                    else
-                    {
-                        var data = file.ReadLine().Trim();
-                        var type = Type.GetType(line);
-                        currentEntity.AttachComponent((Component.Component)JsonSerializer.Deserialize(data, type, options));
-                    }
+                    entityManager.Register(ReadEntity(reader));
                 }
             }
 
@@ -112,32 +98,146 @@ namespace Ozzyria.Game.Persistence
         public void SaveEntityManager(string resource, EntityManager entityManager)
         {
             var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Game\Maps"; // TODO this is just to make debuggery easier for now
-            if (!System.IO.Directory.Exists(baseMapsDirectory))
+            if (!Directory.Exists(baseMapsDirectory))
             {
-                System.IO.Directory.CreateDirectory(baseMapsDirectory);
+                Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            var options = GetOptions();
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(baseMapsDirectory + "\\" + resource + ".ozz"))
+            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "\\" + resource + ".ozz", FileMode.Create)))
             {
                 foreach (var entity in entityManager.GetEntities())
                 {
-                    file.WriteLine("!---");
-                    foreach (var component in entity.GetAllComponents())
-                    {
-                        file.WriteLine(component.GetType());
-                        file.WriteLine(JsonSerializer.Serialize(component, component.GetType(), options));
-                    }
-                    file.WriteLine("---!");
+                    WriteEntity(writer, entity);
                 }
-                file.WriteLine("END");
             }
         }
 
-        private JsonSerializerOptions GetOptions()
+
+        public static void WriteEntity(BinaryWriter writer, Entity entity)
         {
-            return new JsonSerializerOptions();
+            writer.Write(entity.Id);
+            foreach (var component in entity.GetAllComponents())
+            {
+                writer.Write(false); // signal not done reading entity
+                WriteComponent(writer, component);
+            }
+            writer.Write(true); // signal end-of-entity
         }
+
+        private static void WriteComponent(BinaryWriter writer, Component.Component component)
+        {
+            var options = (OptionsAttribute)component?.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
+            if (options == null)
+            {
+                writer.Write("");
+                return;
+            }
+
+            writer.Write(options.Name);
+            var props = component.GetType().GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
+                .OrderBy(p => p.Name);
+            foreach (var p in props)
+            {
+                var type = p.PropertyType.IsEnum ? typeof(Enum) :
+                    (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
+                WriteValueOfType(writer, type, p.GetValue(component));
+            }
+        }
+
+        public static Entity ReadEntity(BinaryReader reader)
+        {
+            var entity = new Entity
+            {
+                Id = reader.ReadInt32(),
+            };
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                var isEndOfEntity = reader.ReadBoolean();
+                if (isEndOfEntity)
+                    break;
+
+                entity.AttachComponent(ReadComponent(reader));
+            }
+
+            return entity;
+        }
+
+        private static Component.Component ReadComponent(BinaryReader reader)
+        {
+            var componentType = reader.ReadString();
+            if (!componentTypes.ContainsKey(componentType))
+                return null;
+
+            var component = Activator.CreateInstance(componentTypes[componentType]);
+            var props = component.GetType().GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
+                .OrderBy(p => p.Name);
+
+            foreach (var p in props)
+            {
+                var type = p.PropertyType.IsEnum ? typeof(Enum) :
+                    (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
+
+                p.SetValue(component, ReadValueOfType(reader, type), null);
+            }
+            return (Component.Component)component;
+        }
+
+        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value)
+        {
+            if (supportedWriteTypes.Count == 0)
+            {
+                // TODO OZ-12 instantiate dictionaries and such togo superfast
+            }
+
+            supportedWriteTypes[type](writer, value);
+        }
+
+        private static object? ReadValueOfType(BinaryReader reader, Type type)
+        {
+            if (supportedReadTypes.Count == 0)
+            {
+                // TODO OZ-12 instantiate dictionaries and such togo superfast
+            }
+
+            return supportedReadTypes[type](reader);
+        }
+
+        private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>{
+            {"BoundingBox", typeof(BoundingBox) },
+            {"BoundingCircle", typeof(BoundingCircle) },
+            {"Combat", typeof(Combat) },
+            {"Delay", typeof(Delay) },
+            {"ExperienceBoost", typeof(ExperienceBoost) },
+            {"Input", typeof(Input) },
+            {"Movement", typeof(Movement) },
+            {"Renderable", typeof(Renderable) },
+            {"Stats", typeof(Stats) },
+            {"ExperienceOrbThought", typeof(ExperienceOrbThought) },
+            {"PlayerThought", typeof(PlayerThought) },
+            {"SlimeThought", typeof(SlimeThought) },
+        }; // TODO OZ-12 build this on instantiation / boot of program to avoid all the reflection slowness
+
+        private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
+        {
+            { typeof(int), br => br.ReadInt32() },
+            { typeof(bool), br => br.ReadBoolean() },
+            { typeof(float), br => br.ReadSingle() },
+            { typeof(string), br => br.ReadString() },
+            { typeof(Enum), br => br.ReadInt32() },
+            { typeof(Component.Component), br => ReadComponent(br) },
+        };
+
+        private static Dictionary<Type, Action<BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<BinaryWriter, object?>>
+        {
+            { typeof(int), (bw, value) => bw.Write((int)value) },
+            { typeof(bool), (bw, value) => bw.Write((bool)value) },
+            { typeof(float), (bw, value) => bw.Write((float)value) },
+            { typeof(string), (bw, value) => bw.Write((string)value) },
+            { typeof(Enum), (bw, value) => bw.Write((int)value) },
+            { typeof(Component.Component), (bw, value) => WriteComponent(bw, (Component.Component)value) },
+        };
 
     }
 }

@@ -1,5 +1,8 @@
-﻿namespace Ozzyria.Game.Component
+﻿using Ozzyria.Game.Component.Attribute;
+
+namespace Ozzyria.Game.Component
 {
+    [Options(Name = "PlayerThought")]
     public class PlayerThought : Thought
     {
         public override void Update(float deltaTime, EntityManager entityManager)

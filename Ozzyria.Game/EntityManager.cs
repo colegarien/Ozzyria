@@ -25,9 +25,13 @@ namespace Ozzyria.Game
 
         public int Register(Entity entity)
         {
-            if(entity.Id < 0)
+            if (entity.Id < 0)
             {
                 entity.Id = maxEntityId++;
+            }
+            else if (entity.Id >= maxEntityId)
+            {
+                maxEntityId = entity.Id + 1;
             }
 
             entities[entity.Id] = entity;
