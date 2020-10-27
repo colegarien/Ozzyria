@@ -1,10 +1,15 @@
-﻿namespace Ozzyria.Game.Component
+﻿using Ozzyria.Game.Component.Attribute;
+
+namespace Ozzyria.Game.Component
 {
+    [Options(Name = "Combat")]
     public class Combat : Component
     {
         public override ComponentType Type() => ComponentType.Combat;
 
+        [Savable]
         public Delay Delay { get; set; } = new Delay { DelayInSeconds = 0.5f };
+        [Savable]
         public bool Attacking { get; set; } = false;
         public float AttackAngle { get; set; } = 0.78f; // forty-five degrees-ish
         public float AttackRange { get; set; } = 21f;

@@ -1,8 +1,10 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
+using Ozzyria.Game.Component.Attribute;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Linq;
 
 namespace Ozzyria.Networking.Model
 {
@@ -68,138 +70,78 @@ namespace Ozzyria.Networking.Model
             }
         }
 
-        private static void WriteMovement(BinaryWriter writer, Movement movement)
+        private static void WriteComponent(BinaryWriter writer, Component component)
         {
-            writer.Write(movement.PreviousX);
-            writer.Write(movement.PreviousY);
-            writer.Write(movement.X);
-            writer.Write(movement.Y);
-            writer.Write(movement.Speed);
-            writer.Write(movement.MoveDirection);
-            writer.Write(movement.LookDirection);
-        }
-
-        private static Movement ReadMovement(BinaryReader reader)
-        {
-            return new Movement
+            var options = (OptionsAttribute)component.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
+            if (options == null)
             {
-                PreviousX = reader.ReadSingle(),
-                PreviousY = reader.ReadSingle(),
-                X = reader.ReadSingle(),
-                Y = reader.ReadSingle(),
-                Speed = reader.ReadSingle(),
-                MoveDirection = reader.ReadSingle(),
-                LookDirection = reader.ReadSingle(),
-            };
-        }
-
-        private static void WriteStats(BinaryWriter writer, Stats stats)
-        {
-            writer.Write(stats.Health);
-            writer.Write(stats.MaxHealth);
-            writer.Write(stats.Experience);
-            writer.Write(stats.MaxExperience);
-        }
-
-        private static Stats ReadStats(BinaryReader reader)
-        {
-            return new Stats
-            {
-                Health = reader.ReadInt32(),
-                MaxHealth = reader.ReadInt32(),
-                Experience = reader.ReadInt32(),
-                MaxExperience = reader.ReadInt32()
-            };
-        }
-
-        private static void WriteExperienceBoost(BinaryWriter writer, ExperienceBoost exp)
-        {
-            writer.Write(exp.Experience);
-            writer.Write(exp.HasBeenAbsorbed);
-        }
-
-        private static ExperienceBoost ReadExperienceBoost(BinaryReader reader)
-        {
-            return new ExperienceBoost
-            {
-                Experience = reader.ReadInt32(),
-                HasBeenAbsorbed = reader.ReadBoolean()
-            };
-        }
-
-        private static void WriteCombat(BinaryWriter writer, Combat combat)
-        {
-            writer.Write(combat.Delay.DelayInSeconds);
-            writer.Write(combat.Delay.Timer);
-            writer.Write(combat.Attacking);
-        }
-
-        private static Combat ReadCombat(BinaryReader reader)
-        {
-            return new Combat
-            {
-                Delay = new Delay { DelayInSeconds = reader.ReadSingle(), Timer = reader.ReadSingle() },
-                Attacking = reader.ReadBoolean()
-            };
-        }
-
-        private static void WriteCollision(BinaryWriter writer, Collision collision)
-        {
-            if(collision is BoundingBox)
-            {
-                writer.Write(1);
-                writer.Write(collision.IsDynamic);
-                writer.Write(((BoundingBox)collision).Width);
-                writer.Write(((BoundingBox)collision).Height);
+                writer.Write(""); // TODO this is a hackity hack because currently writing Components that are missing OptionsAttribute
+                return;
             }
-            else if(collision is BoundingCircle)
-            {
-                writer.Write(2);
-                writer.Write(collision.IsDynamic);
-                writer.Write(((BoundingCircle)collision).Radius);
 
-            }
-            else
+            writer.Write(options.Name);
+
+            var props = component.GetType().GetProperties()
+                .Where(prop => System.Attribute.IsDefined(prop, typeof(SavableAttribute)))
+                .OrderBy(p => p.Name);
+            foreach (var p in props)
             {
-                writer.Write(0);
+                var type = p.PropertyType.IsEnum ? typeof(Enum) :
+                    (p.PropertyType.BaseType == typeof(Component) ? typeof(Component) : p.PropertyType);
+                supportedWriteTypes[type](writer, p.GetValue(component));
             }
         }
 
-        private static Collision ReadCollision(BinaryReader reader)
+        private static Component ReadComponent(BinaryReader reader)
         {
-            var type = reader.ReadInt32();
-            if(type == 1)
+            var componentType = reader.ReadString();
+            if (!componentTypes.ContainsKey(componentType))
+                return null;
+
+            var component = Activator.CreateInstance(componentTypes[componentType]);
+            var props = component.GetType().GetProperties()
+                .Where(prop => System.Attribute.IsDefined(prop, typeof(SavableAttribute)))
+                .OrderBy(p => p.Name);
+
+            foreach (var p in props)
             {
-                return new BoundingBox
-                {
-                    IsDynamic = reader.ReadBoolean(),
-                    Width = reader.ReadInt32(),
-                    Height = reader.ReadInt32(),
-                };
-            }else if (type == 2)
-            {
-                return new BoundingCircle
-                {
-                    IsDynamic = reader.ReadBoolean(),
-                    Radius = reader.ReadSingle(),
-                };
+                var type = p.PropertyType.IsEnum ? typeof(Enum) :
+                    (p.PropertyType.BaseType == typeof(Component) ? typeof(Component) : p.PropertyType);
+
+                p.SetValue(component, supportedReadTypes[type](reader), null);
             }
-
-            return new Collision();
+            return (Component)component;
         }
 
-        private static void WriteRenderable(BinaryWriter writer, Renderable renderable)
+        private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>{
+            {"BoundingBox", typeof(BoundingBox) },
+            {"BoundingCircle", typeof(BoundingCircle) },
+            {"Combat", typeof(Combat) },
+            {"Delay", typeof(Delay) },
+            {"ExperienceBoost", typeof(ExperienceBoost) },
+            {"Input", typeof(Input) },
+            {"Movement", typeof(Movement) },
+            {"Renderable", typeof(Renderable) },
+            {"Stats", typeof(Stats) },
+        }; // TODO build this on instantiation / boot of program to avoid all the reflection slowness
+
+        private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
         {
-            writer.Write((int)renderable.Sprite);
-        }
+            { typeof(int), br => br.ReadInt32() },
+            { typeof(bool), br => br.ReadBoolean() },
+            { typeof(float), br => br.ReadSingle() },
+            { typeof(Enum), br => br.ReadInt32() },
+            { typeof(Component), br => ReadComponent(br) },
+        };
 
-        private static Renderable ReadRenderable(BinaryReader reader)
+        private static Dictionary<Type, Action<BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<BinaryWriter, object?>>
         {
-            return new Renderable
-            {
-                Sprite = (SpriteType)reader.ReadInt32()
-            };
-        }
+            { typeof(int), (bw, value) => bw.Write((int)value) },
+            { typeof(bool), (bw, value) => bw.Write((bool)value) },
+            { typeof(float), (bw, value) => bw.Write((float)value) },
+            { typeof(Enum), (bw, value) => bw.Write((int)value) },
+            { typeof(Component), (bw, value) => WriteComponent(bw, (Component)value) },
+        };
 
         private static void WriteEntity(BinaryWriter writer, Entity entity)
         {
@@ -207,26 +149,7 @@ namespace Ozzyria.Networking.Model
             foreach (var component in entity.GetAllComponents())
             {
                 writer.Write((int)component.Type());
-                switch (component.Type()) {
-                    case ComponentType.Movement:
-                        WriteMovement(writer, (Movement)component);
-                        break;
-                    case ComponentType.Combat:
-                        WriteCombat(writer, (Combat)component);
-                        break;
-                    case ComponentType.Stats:
-                        WriteStats(writer, (Stats)component);
-                        break;
-                    case ComponentType.ExperienceBoost:
-                        WriteExperienceBoost(writer, (ExperienceBoost)component);
-                        break;
-                    case ComponentType.Collision:
-                        WriteCollision(writer, (Collision)component);
-                        break;
-                    case ComponentType.Renderable:
-                        WriteRenderable(writer, (Renderable)component);
-                        break;
-                }
+                WriteComponent(writer, component);
             }
             writer.Write((int)ComponentType.None); // signal end-of-entity with empty component
         }
@@ -240,29 +163,10 @@ namespace Ozzyria.Networking.Model
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 var componentType = (ComponentType)reader.ReadInt32();
-                switch (componentType) {
-                    case ComponentType.Movement:
-                        entity.AttachComponent(ReadMovement(reader));
-                        break;
-                    case ComponentType.Combat:
-                        entity.AttachComponent(ReadCombat(reader));
-                        break;
-                    case ComponentType.Stats:
-                        entity.AttachComponent(ReadStats(reader));
-                        break;
-                    case ComponentType.ExperienceBoost:
-                        entity.AttachComponent(ReadExperienceBoost(reader));
-                        break;
-                    case ComponentType.Collision:
-                        entity.AttachComponent(ReadCollision(reader));
-                        break;
-                    case ComponentType.Renderable:
-                        entity.AttachComponent(ReadRenderable(reader));
-                        break;
-                }
-
                 if (componentType == ComponentType.None)
                     break; // None type signals end of entity
+                else
+                    entity.AttachComponent(ReadComponent(reader));
             }
 
             return entity;
