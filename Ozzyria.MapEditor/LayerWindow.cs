@@ -121,7 +121,6 @@ namespace Ozzyria.MapEditor
             var width = GetIWidth();
             var left = GetILeft();
 
-            // TODO... this is a doozy, probably add a 'button class' of some kind?
             var ii = 0;
             int top;
             for (var i = 0; i < NumberOfLayers; i++)

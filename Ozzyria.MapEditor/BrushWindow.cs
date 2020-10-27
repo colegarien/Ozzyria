@@ -30,7 +30,7 @@ namespace Ozzyria.MapEditor
             var i = 0;
             foreach (TileType type in Enum.GetValues(typeof(TileType)))
             {
-                var left = GetILeft() + (i * 37); // TODO this is gross and copy+pasted from Draw, should make some kinda Button Class?
+                var left = GetILeft() + (i * 37);
                 var top = GetITop();
                 var dimension = 32;
                 if (e.OriginX >= left && e.OriginX < left + dimension

@@ -31,7 +31,6 @@ namespace Ozzyria.MapEditor
             {
                 window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
 
-                // TODO wrap this in a 'Layout' class that calculates all this junk / make a OnResize event?
                 viewWindow.OnResize(0, 0, (uint)(window.Size.X * 0.6), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y);
                 brushWindow.OnResize(0, (int)(window.Size.Y * 0.6), (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y);
                 toolWindow.OnResize(0, (int)(window.Size.Y * 0.6) + 72, (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y);
