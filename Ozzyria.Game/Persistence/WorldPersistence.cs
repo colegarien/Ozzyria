@@ -184,32 +184,48 @@ namespace Ozzyria.Game.Persistence
 
         private static object? GetPropertyValue(PropertyInfo p, object? instance)
         {
-            var method = p.GetGetMethod();
-            var paramExpress = Expression.Parameter(typeof(object), "instance");
-            var instanceCast = !p.DeclaringType.IsValueType
-                ? Expression.TypeAs(paramExpress, p.DeclaringType)
-                : Expression.Convert(paramExpress, p.DeclaringType);
+            if (!propertyGetters.ContainsKey(instance.GetType()))
+            {
+                propertyGetters[instance.GetType()] = new Dictionary<string, Func<object, object?>>();
+            }
+            if (!propertyGetters[instance.GetType()].ContainsKey(p.Name))
+            {
+                var method = p.GetGetMethod();
+                var paramExpress = Expression.Parameter(typeof(object), "instance");
+                var instanceCast = !p.DeclaringType.IsValueType
+                    ? Expression.TypeAs(paramExpress, p.DeclaringType)
+                    : Expression.Convert(paramExpress, p.DeclaringType);
 
-            var expr =
-                Expression.Lambda<Func<object, object?>>(
-                    Expression.TypeAs(
-                        Expression.Call(instanceCast, method),
-                        typeof(object)
-                     ),
-                    paramExpress);
+                var expr =
+                    Expression.Lambda<Func<object, object?>>(
+                        Expression.TypeAs(
+                            Expression.Call(instanceCast, method),
+                            typeof(object)
+                         ),
+                        paramExpress);
 
-            var getter = expr.Compile();
-            return getter(instance);
+                propertyGetters[instance.GetType()][p.Name] = expr.Compile();
+            }
+
+            return propertyGetters[instance.GetType()][p.Name](instance);
         }
 
         private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
         {
-            var i = Expression.Parameter(p.DeclaringType, "i");
-            var a = Expression.Parameter(typeof(object), "a");
-            var setterCall = Expression.Call(i, p.GetSetMethod(), Expression.Convert(a, p.PropertyType));
-            var exp = Expression.Lambda(setterCall, i, a);
-            var setter = exp.Compile();
-            setter.DynamicInvoke(instance, value);
+            if (!propertySetters.ContainsKey(instance.GetType()))
+            {
+                propertySetters[instance.GetType()] = new Dictionary<string, Delegate>();
+            }
+            if (!propertySetters[instance.GetType()].ContainsKey(p.Name))
+            {
+                var i = Expression.Parameter(p.DeclaringType, "i");
+                var a = Expression.Parameter(typeof(object), "a");
+                var setterCall = Expression.Call(i, p.GetSetMethod(), Expression.Convert(a, p.PropertyType));
+                var exp = Expression.Lambda(setterCall, i, a);
+                propertySetters[instance.GetType()][p.Name] = exp.Compile();
+            }
+
+            propertySetters[instance.GetType()][p.Name].DynamicInvoke(instance, value);
         }
 
         private static OptionsAttribute GetOptionsAttribute(Component.Component component)
@@ -272,6 +288,8 @@ namespace Ozzyria.Game.Persistence
 
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
         private static Dictionary<Type, OptionsAttribute> componentOptions = new Dictionary<Type, OptionsAttribute>();
+        private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
+        private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
 
         private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
         {
