@@ -183,7 +183,7 @@ namespace Ozzyria.Game.Persistence
 
         private static object? GetPropertyValue(PropertyInfo p, object? instance)
         {
-            /*var method = p.GetGetMethod();
+            var method = p.GetGetMethod();
             var paramExpress = Expression.Parameter(typeof(object), "instance");
             var instanceCast = !p.DeclaringType.IsValueType
                 ? Expression.TypeAs(paramExpress, p.DeclaringType)
@@ -198,8 +198,7 @@ namespace Ozzyria.Game.Persistence
                     paramExpress);
 
             var getter = expr.Compile();
-            return getter(instance);*/
-            return p.GetValue(instance);
+            return getter(instance);
         }
 
         private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
