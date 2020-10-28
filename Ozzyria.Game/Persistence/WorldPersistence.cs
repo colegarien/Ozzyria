@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -126,7 +128,7 @@ namespace Ozzyria.Game.Persistence
 
         private static void WriteComponent(BinaryWriter writer, Component.Component component)
         {
-            var options = (OptionsAttribute)component?.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
+            var options = GetOptionsAttribute(component);
             if (options == null)
             {
                 writer.Write("");
@@ -134,14 +136,12 @@ namespace Ozzyria.Game.Persistence
             }
 
             writer.Write(options.Name);
-            var props = component.GetType().GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
-                .OrderBy(p => p.Name);
+            var props = GetSavableProperties(component);
             foreach (var p in props)
             {
                 var type = p.PropertyType.IsEnum ? typeof(Enum) :
                     (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
-                WriteValueOfType(writer, type, p.GetValue(component));
+                WriteValueOfType(writer, type, GetPropertyValue(p, component));
             }
         }
 
@@ -170,18 +170,79 @@ namespace Ozzyria.Game.Persistence
                 return null;
 
             var component = Activator.CreateInstance(componentTypes[componentType]);
-            var props = component.GetType().GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
-                .OrderBy(p => p.Name);
+            var props = GetSavableProperties(component);
 
             foreach (var p in props)
             {
                 var type = p.PropertyType.IsEnum ? typeof(Enum) :
                     (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
-
-                p.SetValue(component, ReadValueOfType(reader, type), null);
+                SetPropertyValue(p, component, ReadValueOfType(reader, type));
             }
             return (Component.Component)component;
+        }
+
+        private static object? GetPropertyValue(PropertyInfo p, object? instance)
+        {
+            /*var method = p.GetGetMethod();
+            var paramExpress = Expression.Parameter(typeof(object), "instance");
+            var instanceCast = !p.DeclaringType.IsValueType
+                ? Expression.TypeAs(paramExpress, p.DeclaringType)
+                : Expression.Convert(paramExpress, p.DeclaringType);
+
+            var expr =
+                Expression.Lambda<Func<object, object?>>(
+                    Expression.TypeAs(
+                        Expression.Call(instanceCast, method),
+                        typeof(object)
+                     ),
+                    paramExpress);
+
+            var getter = expr.Compile();
+            return getter(instance);*/
+            return p.GetValue(instance);
+        }
+
+        private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
+        {
+            /*var method = p.GetSetMethod();
+            var obj = Expression.Parameter(typeof(object), "o");
+            var valueParam = Expression.Parameter(typeof(object));
+
+            Expression<Action<object, object>> expr =
+                Expression.Lambda<Action<object, object>>(
+                    Expression.Call(
+                        Expression.Convert(obj, method.DeclaringType),
+                        method,
+                        Expression.Convert(valueParam, method.GetParameters()[0].ParameterType)),
+                    obj,
+                    valueParam);
+            var setter = expr.Compile(); // TODO OZ-12 cache
+
+            setter(instance, value);*/
+            p.SetValue(instance, value, null);
+        }
+
+        private static OptionsAttribute GetOptionsAttribute(Component.Component component)
+        {
+            if (!componentOptions.ContainsKey(component.GetType())) // TODO OZ-12 think on this (see other cache type things)
+            {
+                componentOptions[component.GetType()] = (OptionsAttribute)component?.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
+            }
+
+            return componentOptions[component.GetType()];
+        }
+
+        private static PropertyInfo[] GetSavableProperties(object o)
+        {
+            if (!componentProperties.ContainsKey(o.GetType())) // TODO OZ-12 make thing 'component name' centric (name from Options)
+            {
+                componentProperties[o.GetType()] = o.GetType().GetProperties()
+                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
+                .OrderBy(p => p.Name)
+                .ToArray();
+            }
+
+            return componentProperties[o.GetType()];
         }
 
         private static void WriteValueOfType(BinaryWriter writer, Type type, object? value)
@@ -218,6 +279,9 @@ namespace Ozzyria.Game.Persistence
             {"PlayerThought", typeof(PlayerThought) },
             {"SlimeThought", typeof(SlimeThought) },
         }; // TODO OZ-12 build this on instantiation / boot of program to avoid all the reflection slowness
+
+        private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
+        private static Dictionary<Type, OptionsAttribute> componentOptions = new Dictionary<Type, OptionsAttribute>();
 
         private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
         {
