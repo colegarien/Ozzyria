@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.ComponentModel;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -203,22 +204,12 @@ namespace Ozzyria.Game.Persistence
 
         private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
         {
-            /*var method = p.GetSetMethod();
-            var obj = Expression.Parameter(typeof(object), "o");
-            var valueParam = Expression.Parameter(typeof(object));
-
-            Expression<Action<object, object>> expr =
-                Expression.Lambda<Action<object, object>>(
-                    Expression.Call(
-                        Expression.Convert(obj, method.DeclaringType),
-                        method,
-                        Expression.Convert(valueParam, method.GetParameters()[0].ParameterType)),
-                    obj,
-                    valueParam);
-            var setter = expr.Compile(); // TODO OZ-12 cache
-
-            setter(instance, value);*/
-            p.SetValue(instance, value, null);
+            var i = Expression.Parameter(p.DeclaringType, "i");
+            var a = Expression.Parameter(typeof(object), "a");
+            var setterCall = Expression.Call(i, p.GetSetMethod(), Expression.Convert(a, p.PropertyType));
+            var exp = Expression.Lambda(setterCall, i, a);
+            var setter = exp.Compile();
+            setter.DynamicInvoke(instance, value);
         }
 
         private static OptionsAttribute GetOptionsAttribute(Component.Component component)
