@@ -1,11 +1,6 @@
-﻿using Ozzyria.Game.Component.Attribute;
-using Ozzyria.Game.Component;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Linq.Expressions;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -128,7 +123,7 @@ namespace Ozzyria.Game.Persistence
 
         private static void WriteComponent(BinaryWriter writer, Component.Component component)
         {
-            var options = GetOptionsAttribute(component);
+            var options = Reflector.GetOptionsAttribute(component?.GetType());
             if (options == null)
             {
                 writer.Write("");
@@ -136,12 +131,10 @@ namespace Ozzyria.Game.Persistence
             }
 
             writer.Write(options.Name);
-            var props = GetSavableProperties(component);
+            var props = Reflector.GetSavableProperties(component.GetType());
             foreach (var p in props)
             {
-                var type = p.PropertyType.IsEnum ? typeof(Enum) :
-                    (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
-                WriteValueOfType(writer, type, GetPropertyValue(p, component));
+                WriteValueOfType(writer, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
             }
         }
 
@@ -165,138 +158,37 @@ namespace Ozzyria.Game.Persistence
 
         private static Component.Component ReadComponent(BinaryReader reader)
         {
-            var componentType = reader.ReadString();
-            if (!componentTypes.ContainsKey(componentType))
+            var component = Reflector.CreateInstance(reader.ReadString());
+            if (component == null)
                 return null;
 
-            var component = Activator.CreateInstance(componentTypes[componentType]);
-            var props = GetSavableProperties(component);
-
+            var props = Reflector.GetSavableProperties(component.GetType());
             foreach (var p in props)
             {
-                var type = p.PropertyType.IsEnum ? typeof(Enum) :
-                    (p.PropertyType.BaseType == typeof(Component.Component) ? typeof(Component.Component) : p.PropertyType);
-                SetPropertyValue(p, component, ReadValueOfType(reader, type));
+                Reflector.SetPropertyValue(p, component, ReadValueOfType(reader, GetSerializableBaseType(p.PropertyType)));
             }
             return (Component.Component)component;
         }
 
-        private static object? GetPropertyValue(PropertyInfo p, object? instance)
+        private static Type GetSerializableBaseType(Type type) // TODO OZ-12 : should I abstract the binary writing?
         {
-            ValidateReflectionCaches();
-            if (!propertyGetters.ContainsKey(instance.GetType()))
-            {
-                propertyGetters[instance.GetType()] = new Dictionary<string, Func<object, object?>>();
-            }
-            if (!propertyGetters[instance.GetType()].ContainsKey(p.Name))
-            {
-                var method = p.GetGetMethod();
-                var paramExpress = Expression.Parameter(typeof(object), "instance");
-                var instanceCast = !p.DeclaringType.IsValueType
-                    ? Expression.TypeAs(paramExpress, p.DeclaringType)
-                    : Expression.Convert(paramExpress, p.DeclaringType);
-
-                var expr =
-                    Expression.Lambda<Func<object, object?>>(
-                        Expression.TypeAs(
-                            Expression.Call(instanceCast, method),
-                            typeof(object)
-                         ),
-                        paramExpress);
-
-                propertyGetters[instance.GetType()][p.Name] = expr.Compile();
-            }
-
-            return propertyGetters[instance.GetType()][p.Name](instance);
+            if (type.IsEnum)
+                return typeof(Enum);
+            else if (type.BaseType == typeof(Component.Component))
+                return type.BaseType;
+            else
+                return type;
         }
 
-        private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
+        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value) // TODO OZ-12 : should I abstract the binary writing?
         {
-            ValidateReflectionCaches();
-            if (!propertySetters.ContainsKey(instance.GetType()))
-            {
-                propertySetters[instance.GetType()] = new Dictionary<string, Delegate>();
-            }
-            if (!propertySetters[instance.GetType()].ContainsKey(p.Name))
-            {
-                var i = Expression.Parameter(p.DeclaringType, "i");
-                var a = Expression.Parameter(typeof(object), "a");
-                var setterCall = Expression.Call(i, p.GetSetMethod(), Expression.Convert(a, p.PropertyType));
-                var exp = Expression.Lambda(setterCall, i, a);
-                propertySetters[instance.GetType()][p.Name] = exp.Compile();
-            }
-
-            propertySetters[instance.GetType()][p.Name].DynamicInvoke(instance, value);
-        }
-
-        private static OptionsAttribute GetOptionsAttribute(Component.Component component)
-        {
-            ValidateReflectionCaches();
-            if (!componentOptions.ContainsKey(component.GetType())) // TODO OZ-12 think on this (see other cache type things)
-            {
-                componentOptions[component.GetType()] = (OptionsAttribute)component?.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
-            }
-
-            return componentOptions[component.GetType()];
-        }
-
-        private static PropertyInfo[] GetSavableProperties(object o)
-        {
-            ValidateReflectionCaches();
-            if (!componentProperties.ContainsKey(o.GetType())) // TODO OZ-12 make thing 'component name' centric (name from Options)
-            {
-                componentProperties[o.GetType()] = o.GetType().GetProperties()
-                .Where(prop => Attribute.IsDefined(prop, typeof(SavableAttribute)))
-                .OrderBy(p => p.Name)
-                .ToArray();
-            }
-
-            return componentProperties[o.GetType()];
-        }
-
-        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value)
-        {
-            ValidateReflectionCaches();
             supportedWriteTypes[type](writer, value);
         }
 
-        private static object? ReadValueOfType(BinaryReader reader, Type type)
+        private static object? ReadValueOfType(BinaryReader reader, Type type) // TODO OZ-12 : should I abstract the binary writing?
         {
-            ValidateReflectionCaches();
             return supportedReadTypes[type](reader);
         }
-
-        private static void ValidateReflectionCaches() // TODO OZ-12 move all this magically reflection stuff into it's own thing
-        {
-            if (componentProperties.Count != 0 || componentOptions.Count != 0 || propertyGetters.Count != 0 || propertySetters.Count != 0) // TODO OZ-12 less dumb way? maybe a variable or something
-            {
-                return;
-            }
-
-            // TODO OZ-12 dynamically load reflection caches
-            var componentTypes = Assembly.GetExecutingAssembly().GetTypes()
-                      .Where(t => t.IsClass && t.Namespace == "Ozzyria.Game.Component");
-        }
-
-        private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>{
-            {"BoundingBox", typeof(BoundingBox) },
-            {"BoundingCircle", typeof(BoundingCircle) },
-            {"Combat", typeof(Combat) },
-            {"Delay", typeof(Delay) },
-            {"ExperienceBoost", typeof(ExperienceBoost) },
-            {"Input", typeof(Input) },
-            {"Movement", typeof(Movement) },
-            {"Renderable", typeof(Renderable) },
-            {"Stats", typeof(Stats) },
-            {"ExperienceOrbThought", typeof(ExperienceOrbThought) },
-            {"PlayerThought", typeof(PlayerThought) },
-            {"SlimeThought", typeof(SlimeThought) },
-        }; // TODO OZ-12 build this on instantiation / boot of program to avoid all the reflection slowness
-
-        private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
-        private static Dictionary<Type, OptionsAttribute> componentOptions = new Dictionary<Type, OptionsAttribute>();
-        private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
-        private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
 
         private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
         {
