@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Linq.Expressions;
-using System.ComponentModel;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -184,6 +183,7 @@ namespace Ozzyria.Game.Persistence
 
         private static object? GetPropertyValue(PropertyInfo p, object? instance)
         {
+            ValidateReflectionCaches();
             if (!propertyGetters.ContainsKey(instance.GetType()))
             {
                 propertyGetters[instance.GetType()] = new Dictionary<string, Func<object, object?>>();
@@ -212,6 +212,7 @@ namespace Ozzyria.Game.Persistence
 
         private static void SetPropertyValue(PropertyInfo p, object instance, object? value)
         {
+            ValidateReflectionCaches();
             if (!propertySetters.ContainsKey(instance.GetType()))
             {
                 propertySetters[instance.GetType()] = new Dictionary<string, Delegate>();
@@ -230,6 +231,7 @@ namespace Ozzyria.Game.Persistence
 
         private static OptionsAttribute GetOptionsAttribute(Component.Component component)
         {
+            ValidateReflectionCaches();
             if (!componentOptions.ContainsKey(component.GetType())) // TODO OZ-12 think on this (see other cache type things)
             {
                 componentOptions[component.GetType()] = (OptionsAttribute)component?.GetType().GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
@@ -240,6 +242,7 @@ namespace Ozzyria.Game.Persistence
 
         private static PropertyInfo[] GetSavableProperties(object o)
         {
+            ValidateReflectionCaches();
             if (!componentProperties.ContainsKey(o.GetType())) // TODO OZ-12 make thing 'component name' centric (name from Options)
             {
                 componentProperties[o.GetType()] = o.GetType().GetProperties()
@@ -253,22 +256,26 @@ namespace Ozzyria.Game.Persistence
 
         private static void WriteValueOfType(BinaryWriter writer, Type type, object? value)
         {
-            if (supportedWriteTypes.Count == 0)
-            {
-                // TODO OZ-12 instantiate dictionaries and such togo superfast
-            }
-
+            ValidateReflectionCaches();
             supportedWriteTypes[type](writer, value);
         }
 
         private static object? ReadValueOfType(BinaryReader reader, Type type)
         {
-            if (supportedReadTypes.Count == 0)
+            ValidateReflectionCaches();
+            return supportedReadTypes[type](reader);
+        }
+
+        private static void ValidateReflectionCaches() // TODO OZ-12 move all this magically reflection stuff into it's own thing
+        {
+            if (componentProperties.Count != 0 || componentOptions.Count != 0 || propertyGetters.Count != 0 || propertySetters.Count != 0) // TODO OZ-12 less dumb way? maybe a variable or something
             {
-                // TODO OZ-12 instantiate dictionaries and such togo superfast
+                return;
             }
 
-            return supportedReadTypes[type](reader);
+            // TODO OZ-12 dynamically load reflection caches
+            var componentTypes = Assembly.GetExecutingAssembly().GetTypes()
+                      .Where(t => t.IsClass && t.Namespace == "Ozzyria.Game.Component");
         }
 
         private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>{
