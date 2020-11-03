@@ -27,9 +27,10 @@ namespace Ozzyria.Game.Persistence
         public static object? GetPropertyValue(PropertyInfo p, object? instance)
         {
             ValidateReflectionCaches();
-            if (!propertyGetters.ContainsKey(instance.GetType()) || !propertyGetters[instance.GetType()].ContainsKey(p.Name))
+            if (instance == null || !propertyGetters.ContainsKey(instance.GetType()) || !propertyGetters[instance.GetType()].ContainsKey(p.Name))
             {
-                // TODO OZ-12 : throw error or something instead
+                // TODO OZ-21 : add logger
+                Console.WriteLine($"[ERROR] Reflector: Cannot Get Property '{p.Name}' from '{instance?.GetType().Name ?? "null"}'");
                 return null;
             }
 
@@ -39,9 +40,10 @@ namespace Ozzyria.Game.Persistence
         public static void SetPropertyValue(PropertyInfo p, object instance, object? value)
         {
             ValidateReflectionCaches();
-            if (!propertySetters.ContainsKey(instance.GetType()) || !propertySetters[instance.GetType()].ContainsKey(p.Name))
+            if (instance == null || !propertySetters.ContainsKey(instance.GetType()) || !propertySetters[instance.GetType()].ContainsKey(p.Name))
             {
-                // TODO OZ-12 : throw error or something instead
+                // TODO OZ-21 : add logger
+                Console.WriteLine($"[ERROR] Reflector: Cannot Set Property '{p.Name}' to '{value}' on '{instance?.GetType().Name ?? "null"}'");
                 return;
             }
 
@@ -53,7 +55,8 @@ namespace Ozzyria.Game.Persistence
             ValidateReflectionCaches();
             if (!componentOptions.ContainsKey(type))
             {
-                // TODO OZ-12 : throw error or something instead
+                // TODO OZ-21 : add logger
+                Console.WriteLine($"[ERROR] Reflector: Type '{type.Name}' Missing OptionsAttribute");
                 return null;
             }
 
@@ -65,7 +68,8 @@ namespace Ozzyria.Game.Persistence
             ValidateReflectionCaches();
             if (!componentProperties.ContainsKey(type))
             {
-                // TODO OZ-12 : throw error or something instead
+                // TODO OZ-21 : add logger
+                Console.WriteLine($"[ERROR] Reflector: Type '{type.Name}' Properties Failed to Load");
                 return null;
             }
 
