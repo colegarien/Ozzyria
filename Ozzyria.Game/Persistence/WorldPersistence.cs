@@ -170,7 +170,7 @@ namespace Ozzyria.Game.Persistence
             return (Component.Component)component;
         }
 
-        private static Type GetSerializableBaseType(Type type) // TODO OZ-12 : should I abstract the binary writing?
+        private static Type GetSerializableBaseType(Type type) // TODO abstract binary read/write possibly once have dependency injection
         {
             if (type.IsEnum)
                 return typeof(Enum);
@@ -180,12 +180,12 @@ namespace Ozzyria.Game.Persistence
                 return type;
         }
 
-        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value) // TODO OZ-12 : should I abstract the binary writing?
+        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value) // TODO abstract binary read/write possibly once have dependency injection
         {
             supportedWriteTypes[type](writer, value);
         }
 
-        private static object? ReadValueOfType(BinaryReader reader, Type type) // TODO OZ-12 : should I abstract the binary writing?
+        private static object? ReadValueOfType(BinaryReader reader, Type type) // TODO abstract binary read/write possibly once have dependency injection
         {
             return supportedReadTypes[type](reader);
         }
