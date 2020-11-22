@@ -13,8 +13,6 @@ namespace Ozzyria.Game
         public EntityManager entityManager;
         public TileMap tileMap;
 
-        private float eventTimer = 0;
-
         public List<IEventHandler> eventHandlers;
         public List<IEvent> events;
 
@@ -23,6 +21,10 @@ namespace Ozzyria.Game
             var worldLoader = new WorldPersistence();
             tileMap = worldLoader.LoadMap("test_m");
             entityManager = worldLoader.LoadEntityManager("test_e");
+
+            var slimeSpawn = new Entity();
+            slimeSpawn.AttachComponent(new SlimeSpawner());
+            entityManager.Register(slimeSpawn);
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -52,7 +54,6 @@ namespace Ozzyria.Game
 
         public void Update(float deltaTime)
         {
-            eventTimer += deltaTime;
             foreach (var entity in entityManager.GetEntities())
             {
                 // Death Check
@@ -145,15 +146,6 @@ namespace Ozzyria.Game
                             }
                         }
                     }
-                }
-            }
-
-            if (eventTimer > 5)
-            {
-                eventTimer = 0;
-                if (entityManager.GetEntities().Count(e => e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is SlimeThought) < 3)
-                {
-                    entityManager.Register(EntityFactory.CreateSlime(500, 400));
                 }
             }
 

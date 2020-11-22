@@ -32,6 +32,22 @@ namespace Ozzyria.Game.Utility
             return slime;
         }
 
+        public static Entity CreateSlimeSpawner(float x, float y)
+        {
+            var spawner = new Entity();
+            spawner.AttachComponent(new SlimeSpawner
+            {
+                X = x,
+                Y = y,
+                ThinkDelay = new Delay
+                {
+                    DelayInSeconds = 5f
+                }
+            });
+
+            return spawner;
+        }
+
         public static Entity CreateExperienceOrb(float x, float y, int value)
         {
             var orb = new Entity();

@@ -226,7 +226,7 @@ namespace Ozzyria.MapEditor
             var entityManager = new EntityManager();
 
             entityManager.Register(EntityFactory.CreateExperienceOrb(400, 300, 30));
-            entityManager.Register(EntityFactory.CreateSlime(500, 400));
+            entityManager.Register(EntityFactory.CreateSlimeSpawner(500, 400));
             entityManager.Register(EntityFactory.CreateCircleCollider(60, 60, 10));
 
             // wrap screen in border
