@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Game", "Ozzyria.Gam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.CollisionTests", "Ozzyria.CollisionTests\Ozzyria.CollisionTests.csproj", "{6F9AE2FD-7A90-4206-8FD2-94D288889383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozzyria.MapEditor", "Ozzyria.MapEditor\Ozzyria.MapEditor.csproj", "{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.MapEditor", "Ozzyria.MapEditor\Ozzyria.MapEditor.csproj", "{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D} = {CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}
 	EndProjectSection

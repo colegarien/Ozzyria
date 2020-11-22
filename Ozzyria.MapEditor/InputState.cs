@@ -53,12 +53,7 @@ namespace Ozzyria.MapEditor
 
             if(e.Code == Keyboard.Key.S && IsCtrlHeld)
             {
-                // TODO little ghetto... probably make a ShortCut handler or something
                 MapManager.SaveMap();
-            } else if(e.Code == Keyboard.Key.B && IsCtrlHeld)
-            {
-                // TODO little sad...
-                MapManager.BakeMap();
             }
         }
 

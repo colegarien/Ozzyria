@@ -11,6 +11,9 @@ namespace Ozzyria.Game
 
         public void AttachComponent(Component.Component component)
         {
+            if (component == null)
+                return;
+
             component.Owner = this;
             Components[component.Type()] = component;
         }

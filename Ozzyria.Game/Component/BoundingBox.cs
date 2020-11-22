@@ -1,8 +1,13 @@
-﻿namespace Ozzyria.Game.Component
+﻿using Ozzyria.Game.Component.Attribute;
+
+namespace Ozzyria.Game.Component
 {
+    [Options(Name = "BoundingBox")]
     public class BoundingBox : Collision
     {
+        [Savable]
         public int Width { get; set; } = 10;
+        [Savable]
         public int Height { get; set; } = 10;
 
         public float GetLeft()

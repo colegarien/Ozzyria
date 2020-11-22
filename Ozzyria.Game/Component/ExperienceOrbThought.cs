@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using Ozzyria.Game.Component.Attribute;
+using System.Linq;
 
 namespace Ozzyria.Game.Component
 {
+    [Options(Name = "ExperienceOrbThought")]
     public class ExperienceOrbThought : Thought
     {
         const float MAX_FOLLOW_DISTANCE = 200;

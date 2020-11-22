@@ -1,11 +1,10 @@
 ﻿using Ozzyria.Game.Component;
 using Ozzyria.Game.Event;
+using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text.Json;
 
 namespace Ozzyria.Game
 {
@@ -14,40 +13,18 @@ namespace Ozzyria.Game
         public EntityManager entityManager;
         public TileMap tileMap;
 
-        private float eventTimer = 0;
-
         public List<IEventHandler> eventHandlers;
         public List<IEvent> events;
 
         public Game()
         {
-            entityManager = new EntityManager();
+            var worldLoader = new WorldPersistence();
+            tileMap = worldLoader.LoadMap("test_m");
+            entityManager = worldLoader.LoadEntityManager("test_e");
 
-            tileMap = new TileMap();
-            using (System.IO.StreamReader file = new System.IO.StreamReader("Maps\\test_e.ozz")) // TODO not hardcode this
-            {
-                Entity currentEntity = new Entity();
-                var options = new JsonSerializerOptions();
-
-                string line;
-                while ((line = file.ReadLine().Trim()) != "" && line != "END")
-                {
-                    if (line == "!---")
-                    {
-                        currentEntity = new Entity();
-                    }
-                    else if (line == "---!")
-                    {
-                        entityManager.Register(currentEntity);
-                    }
-                    else
-                    {
-                        var data = file.ReadLine().Trim();
-                        var type = Type.GetType(line);
-                        currentEntity.AttachComponent((Component.Component)JsonSerializer.Deserialize(data, type, options));
-                    }
-                }
-            }
+            var slimeSpawn = new Entity();
+            slimeSpawn.AttachComponent(new SlimeSpawner());
+            entityManager.Register(slimeSpawn);
 
             eventHandlers = new List<IEventHandler>();
             events = new List<IEvent>();
@@ -60,16 +37,7 @@ namespace Ozzyria.Game
 
         public int OnPlayerJoin(int id)
         {
-            var player = new Entity { Id = id };
-            player.AttachComponent(new Renderable { Sprite = SpriteType.Player });
-            player.AttachComponent(new PlayerThought());
-            player.AttachComponent(new Movement() { X = 140, Y = 140 });
-            player.AttachComponent(new Stats());
-            player.AttachComponent(new Combat());
-            player.AttachComponent(new Input());
-            player.AttachComponent(new BoundingCircle { Radius = 10 });
-
-            return entityManager.Register(player);
+            return entityManager.Register(EntityFactory.CreatePlayer(id));
         }
 
         public void OnPlayerInput(int id, Input input)
@@ -84,33 +52,8 @@ namespace Ozzyria.Game
             entityManager.DeRegister(id);
         }
 
-        protected Entity CreateSlime(float x, float y)
-        {
-            var slime = new Entity();
-            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime });
-            slime.AttachComponent(new SlimeThought());
-            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
-            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
-            slime.AttachComponent(new Combat());
-            slime.AttachComponent(new BoundingCircle { Radius = 10 });
-
-            return slime;
-        }
-
-        protected Entity CreateOrb(float x, float y, int value)
-        {
-            var orb = new Entity();
-            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle });
-            orb.AttachComponent(new ExperienceOrbThought());
-            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
-            orb.AttachComponent(new ExperienceBoost { Experience = value });
-
-            return orb;
-        }
-
         public void Update(float deltaTime)
         {
-            eventTimer += deltaTime;
             foreach (var entity in entityManager.GetEntities())
             {
                 // Death Check
@@ -206,15 +149,6 @@ namespace Ozzyria.Game
                 }
             }
 
-            if (eventTimer > 5)
-            {
-                eventTimer = 0;
-                if (entityManager.GetEntities().Count(e => e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is SlimeThought) < 3)
-                {
-                    entityManager.Register(CreateSlime(500, 400));
-                }
-            }
-
             ProcessEvents();
         }
 
@@ -229,7 +163,7 @@ namespace Ozzyria.Game
                     var entity = entityManager.GetEntity(((EntityDead)gameEvent).Id);
                     var movement = entity.GetComponent<Movement>(ComponentType.Movement);
 
-                    entityManager.Register(CreateOrb(movement.X, movement.Y, 10));
+                    entityManager.Register(EntityFactory.CreateExperienceOrb(movement.X, movement.Y, 10));
                     entityManager.DeRegister(entity.Id);
 
                     if (entity.HasComponent(ComponentType.Thought) && entity.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)

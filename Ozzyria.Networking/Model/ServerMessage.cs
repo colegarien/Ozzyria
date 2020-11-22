@@ -1,8 +1,7 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 
 namespace Ozzyria.Networking.Model
 {
@@ -68,206 +67,6 @@ namespace Ozzyria.Networking.Model
             }
         }
 
-        private static void WriteMovement(BinaryWriter writer, Movement movement)
-        {
-            writer.Write(movement.PreviousX);
-            writer.Write(movement.PreviousY);
-            writer.Write(movement.X);
-            writer.Write(movement.Y);
-            writer.Write(movement.Speed);
-            writer.Write(movement.MoveDirection);
-            writer.Write(movement.LookDirection);
-        }
-
-        private static Movement ReadMovement(BinaryReader reader)
-        {
-            return new Movement
-            {
-                PreviousX = reader.ReadSingle(),
-                PreviousY = reader.ReadSingle(),
-                X = reader.ReadSingle(),
-                Y = reader.ReadSingle(),
-                Speed = reader.ReadSingle(),
-                MoveDirection = reader.ReadSingle(),
-                LookDirection = reader.ReadSingle(),
-            };
-        }
-
-        private static void WriteStats(BinaryWriter writer, Stats stats)
-        {
-            writer.Write(stats.Health);
-            writer.Write(stats.MaxHealth);
-            writer.Write(stats.Experience);
-            writer.Write(stats.MaxExperience);
-        }
-
-        private static Stats ReadStats(BinaryReader reader)
-        {
-            return new Stats
-            {
-                Health = reader.ReadInt32(),
-                MaxHealth = reader.ReadInt32(),
-                Experience = reader.ReadInt32(),
-                MaxExperience = reader.ReadInt32()
-            };
-        }
-
-        private static void WriteExperienceBoost(BinaryWriter writer, ExperienceBoost exp)
-        {
-            writer.Write(exp.Experience);
-            writer.Write(exp.HasBeenAbsorbed);
-        }
-
-        private static ExperienceBoost ReadExperienceBoost(BinaryReader reader)
-        {
-            return new ExperienceBoost
-            {
-                Experience = reader.ReadInt32(),
-                HasBeenAbsorbed = reader.ReadBoolean()
-            };
-        }
-
-        private static void WriteCombat(BinaryWriter writer, Combat combat)
-        {
-            writer.Write(combat.Delay.DelayInSeconds);
-            writer.Write(combat.Delay.Timer);
-            writer.Write(combat.Attacking);
-        }
-
-        private static Combat ReadCombat(BinaryReader reader)
-        {
-            return new Combat
-            {
-                Delay = new Delay { DelayInSeconds = reader.ReadSingle(), Timer = reader.ReadSingle() },
-                Attacking = reader.ReadBoolean()
-            };
-        }
-
-        private static void WriteCollision(BinaryWriter writer, Collision collision)
-        {
-            if(collision is BoundingBox)
-            {
-                writer.Write(1);
-                writer.Write(collision.IsDynamic);
-                writer.Write(((BoundingBox)collision).Width);
-                writer.Write(((BoundingBox)collision).Height);
-            }
-            else if(collision is BoundingCircle)
-            {
-                writer.Write(2);
-                writer.Write(collision.IsDynamic);
-                writer.Write(((BoundingCircle)collision).Radius);
-
-            }
-            else
-            {
-                writer.Write(0);
-            }
-        }
-
-        private static Collision ReadCollision(BinaryReader reader)
-        {
-            var type = reader.ReadInt32();
-            if(type == 1)
-            {
-                return new BoundingBox
-                {
-                    IsDynamic = reader.ReadBoolean(),
-                    Width = reader.ReadInt32(),
-                    Height = reader.ReadInt32(),
-                };
-            }else if (type == 2)
-            {
-                return new BoundingCircle
-                {
-                    IsDynamic = reader.ReadBoolean(),
-                    Radius = reader.ReadSingle(),
-                };
-            }
-
-            return new Collision();
-        }
-
-        private static void WriteRenderable(BinaryWriter writer, Renderable renderable)
-        {
-            writer.Write((int)renderable.Sprite);
-        }
-
-        private static Renderable ReadRenderable(BinaryReader reader)
-        {
-            return new Renderable
-            {
-                Sprite = (SpriteType)reader.ReadInt32()
-            };
-        }
-
-        private static void WriteEntity(BinaryWriter writer, Entity entity)
-        {
-            writer.Write(entity.Id);
-            foreach (var component in entity.GetAllComponents())
-            {
-                writer.Write((int)component.Type());
-                switch (component.Type()) {
-                    case ComponentType.Movement:
-                        WriteMovement(writer, (Movement)component);
-                        break;
-                    case ComponentType.Combat:
-                        WriteCombat(writer, (Combat)component);
-                        break;
-                    case ComponentType.Stats:
-                        WriteStats(writer, (Stats)component);
-                        break;
-                    case ComponentType.ExperienceBoost:
-                        WriteExperienceBoost(writer, (ExperienceBoost)component);
-                        break;
-                    case ComponentType.Collision:
-                        WriteCollision(writer, (Collision)component);
-                        break;
-                    case ComponentType.Renderable:
-                        WriteRenderable(writer, (Renderable)component);
-                        break;
-                }
-            }
-            writer.Write((int)ComponentType.None); // signal end-of-entity with empty component
-        }
-
-        private static Entity ReadEntity(BinaryReader reader)
-        {
-            var entity = new Entity
-            {
-                Id = reader.ReadInt32(),
-            };
-            while (reader.BaseStream.Position < reader.BaseStream.Length)
-            {
-                var componentType = (ComponentType)reader.ReadInt32();
-                switch (componentType) {
-                    case ComponentType.Movement:
-                        entity.AttachComponent(ReadMovement(reader));
-                        break;
-                    case ComponentType.Combat:
-                        entity.AttachComponent(ReadCombat(reader));
-                        break;
-                    case ComponentType.Stats:
-                        entity.AttachComponent(ReadStats(reader));
-                        break;
-                    case ComponentType.ExperienceBoost:
-                        entity.AttachComponent(ReadExperienceBoost(reader));
-                        break;
-                    case ComponentType.Collision:
-                        entity.AttachComponent(ReadCollision(reader));
-                        break;
-                    case ComponentType.Renderable:
-                        entity.AttachComponent(ReadRenderable(reader));
-                        break;
-                }
-
-                if (componentType == ComponentType.None)
-                    break; // None type signals end of entity
-            }
-
-            return entity;
-        }
-
         public static byte[] EntityUpdates(Entity[] entities)
         {
             using (MemoryStream m = new MemoryStream())
@@ -277,7 +76,7 @@ namespace Ozzyria.Networking.Model
                     writer.Write((int)ServerMessage.EntityUpdate);
                     foreach (var entity in entities)
                     {
-                        WriteEntity(writer, entity);
+                        WorldPersistence.WriteEntity(writer, entity);
                     }
                 }
 
@@ -294,7 +93,7 @@ namespace Ozzyria.Networking.Model
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        entities.Add(ReadEntity(reader));
+                        entities.Add(WorldPersistence.ReadEntity(reader));
                     }
                 }
             }

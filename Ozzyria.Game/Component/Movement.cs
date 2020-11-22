@@ -1,22 +1,31 @@
-﻿using Ozzyria.Game.Utility;
+﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.Utility;
 using System;
 
 namespace Ozzyria.Game.Component
 {
+    [Options(Name = "Movement")]
     public class Movement : Component
     {
         public override ComponentType Type() => ComponentType.Movement;
 
-        public float ACCELERATION = 200f;
-        public float MAX_SPEED = 100f;
-        public float TURN_SPEED = 5f;
+        public float ACCELERATION { get; set; } = 200f;
+        public float MAX_SPEED { get; set; } = 100f;
+        public float TURN_SPEED { get; set; } = 5f;
 
+        [Savable]
         public float PreviousX { get; set; } = 0f;
+        [Savable]
         public float PreviousY { get; set; } = 0f;
+        [Savable]
         public float X { get; set; } = 0f;
+        [Savable]
         public float Y { get; set; } = 0f;
+        [Savable]
         public float Speed { get; set; } = 0f;
+        [Savable]
         public float MoveDirection { get; set; } = 0f;
+        [Savable]
         public float LookDirection { get; set; } = 0f;
         
 

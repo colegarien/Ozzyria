@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game.Component.Attribute;
+using System;
 using System.Numerics;
 
 namespace Ozzyria.Game.Component
@@ -6,6 +7,7 @@ namespace Ozzyria.Game.Component
     public class Collision : Component
     {
         public override ComponentType Type() => ComponentType.Collision;
+        [Savable]
         public bool IsDynamic { get; set; } = true;
 
         public static CollisionResult CircleIntersectsCircle(BoundingCircle circle1, BoundingCircle circle2)

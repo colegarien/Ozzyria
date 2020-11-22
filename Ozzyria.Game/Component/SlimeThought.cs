@@ -1,9 +1,11 @@
-﻿using Ozzyria.Game.Utility;
+﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.Utility;
 using System;
 using System.Linq;
 
 namespace Ozzyria.Game.Component
 {
+    [Options(Name = "SlimeThought")]
     public class SlimeThought : Thought
     {
         const float MAX_FOLLOW_DISTANCE = 200;

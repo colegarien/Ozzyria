@@ -1,11 +1,18 @@
-﻿namespace Ozzyria.Game.Component
+﻿using Ozzyria.Game.Component.Attribute;
+
+namespace Ozzyria.Game.Component
 {
+    [Options(Name = "Stats")]
     public class Stats : Component
     {
         public override ComponentType Type() => ComponentType.Stats;
+        [Savable]
         public int Experience { get; set; } = 0;
+        [Savable]
         public int MaxExperience { get; set; } = 100;
+        [Savable]
         public int Health { get; set; } = 100;
+        [Savable]
         public int MaxHealth { get; set; } = 100;
 
 

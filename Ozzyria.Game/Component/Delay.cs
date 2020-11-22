@@ -1,8 +1,13 @@
-﻿namespace Ozzyria.Game.Component
+﻿using Ozzyria.Game.Component.Attribute;
+
+namespace Ozzyria.Game.Component
 {
+    [Options(Name = "Delay")]
     public class Delay : Component
     {
+        [Savable]
         public float DelayInSeconds { get; set; } = 0.5f;
+        [Savable]
         public float Timer { get; set; } = 0.5f;
         public bool Ready { get; set; } = false;
 
