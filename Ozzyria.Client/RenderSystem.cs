@@ -1,7 +1,10 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
+using Ozzyria.Game.Utility;
 using SFML.Graphics;
 using SFML.System;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ozzyria.Client
@@ -13,74 +16,147 @@ namespace Ozzyria.Client
         // OZ-13 : have a mapping of entities and tiles to their sprites to avoid constant NEWing of sprites over and over again
 
         // OZ-13 : actually use Game specific stuff, maybe even do ALL the rendering here
-        public void Render(RenderTarget worldRenderTexture, Camera camera, TileMap tileMap, Sprite[] sprites, HoverStatBar[] hoverStatBars, DebugCollisionShape[] collisionShapes)
+        public void Render(RenderTarget worldRenderTexture, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
         {
             var graphicsManager = GraphicsManager.GetInstance();
-            for (var layer = GraphicsManager.MINIMUM_LAYER; layer <= GraphicsManager.MAXIMUM_LAYER; layer++)
+            var graphics = new List<Graphic>();
+            foreach (var entity in entities)
             {
-                // OZ-13 refactor this so it grabs everything within the renderable space then sorts by layer & Z (and maybe Y for things on the same Z)
-
-                // Render strip by strip from bottom of screen to top
-                for (var y = tileMap.Height - 1; y >= 0; y--)
+                var movement = entity.GetComponent<Movement>(ComponentType.Movement);
+                if (entity.HasComponent(ComponentType.Renderable))
                 {
-                    if (layer == 1) // TODO OZ-13 allow sprites to be on any layer + colliders on different layers
+                    var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
+                    var sfmlSprite = graphicsManager.CreateSprite(sprite);
+                    sfmlSprite.Position = graphicsManager.CreateSpritePosition(movement.X, movement.Y);
+                    sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
+
+                    if (entity.HasComponent(ComponentType.Stats))
                     {
-                        // entities in the world
-                        var spritesInLayer = sprites.Where(s => s.Position.Y >= y * Tile.DIMENSION && s.Position.Y < (y + 1) * Tile.DIMENSION && camera.IsInView(s.Position.X, s.Position.Y));
-                        foreach (var sprite in spritesInLayer)
-                        {
-                            worldRenderTexture.Draw(sprite);
-                        }
+                        var stats = entity.GetComponent<Stats>(ComponentType.Stats);
 
-                        // in-world ui
-                        foreach (var hoverStatBar in hoverStatBars)
+                        // only show health bar for entities that are not the local player
+                        if (entity.Id != localPlayerId)
                         {
-                            hoverStatBar.Draw(worldRenderTexture);
-                        }
+                            var offset = new Vector2f(0, 14);
 
-                        if (DEBUG_SHOW_COLLISIONS)
-                        {
-                            // debug colissions boxes
-                            foreach (var collisionShape in collisionShapes)
+                            var background = new RectangleShape(new Vector2f(26, 5));
+                            background.Position = new Vector2f(movement.X, movement.Y);
+                            background.Origin = new Vector2f(background.Size.X / 2 + offset.X, background.Size.Y + offset.Y);
+                            background.FillColor = Color.Red;
+
+                            var overlay = new RectangleShape(background.Size);
+                            overlay.Position = new Vector2f(movement.X, movement.Y);
+                            overlay.Size = new Vector2f(((float)stats.Health / (float)stats.MaxHealth) * background.Size.X, overlay.Size.Y);
+                            overlay.Origin = background.Origin;
+                            overlay.FillColor = Color.Green;
+
+                            graphics.Add(new Graphic
                             {
-                                collisionShape.Draw(worldRenderTexture);
-                            }
+                                Layer = 1, // TODO OZ-13 : make entities on a layer?
+                                X = background.Position.X,
+                                Y = background.Position.Y,
+                                Z = 10, // TODO OZ-13 : grab from entity... movement?
+                                drawables = new List<Drawable>() {
+                                    background,
+                                    overlay
+                                }
+                            });
                         }
                     }
 
-                    if (tileMap.HasLayer(layer))
+                    if (entity.HasComponent(ComponentType.Combat))
                     {
-                        var tiles = tileMap.GetTiles(layer).Where(t => t.Y == y && camera.IsInView(t.X * Tile.DIMENSION, t.Y * Tile.DIMENSION));
-                        foreach (var tile in tiles)
-                        {
-                            var sprite = graphicsManager.CreateTileSprite(tile);
-                            worldRenderTexture.Draw(sprite);
-                        }
+                        // show as attacking for a brief period
+                        var combat = entity.GetComponent<Combat>(ComponentType.Combat);
+                        sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
+                    }
+                    graphics.Add(new Graphic
+                    {
+                        Layer = 1, // TODO OZ-13 : make entities on a layer?
+                        X = sfmlSprite.Position.X,
+                        Y = sfmlSprite.Position.Y,
+                        Z = 5, // TODO OZ-13 : grab from entity... movement?
+                        drawables = new List<Drawable>() { sfmlSprite }
+                    });
+
+                    // center camera on entity
+                    if (entity.Id == localPlayerId)
+                    {
+                        camera.CenterView(movement.X, movement.Y);
                     }
                 }
+
+                if (DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
+                {
+                    var collision = entity.GetComponent<Collision>(ComponentType.Collision);
+
+                    Shape shape;
+                    if (collision is BoundingCircle)
+                    {
+                        var radius = ((BoundingCircle)collision).Radius;
+                        shape = new CircleShape(radius);
+                        shape.Position = new Vector2f(movement.X - radius, movement.Y - radius);
+                    }
+                    else
+                    {
+                        var width = ((BoundingBox)collision).Width;
+                        var height = ((BoundingBox)collision).Height;
+                        shape = new RectangleShape(new Vector2f(width, height));
+                        shape.Position = new Vector2f(movement.X - (width / 2f), movement.Y - (height / 2f));
+                    }
+                    shape.FillColor = Color.Transparent;
+                    shape.OutlineColor = Color.Magenta;
+                    shape.OutlineThickness = 1;
+
+                    graphics.Add(new Graphic
+                    {
+                        Layer = 1, // for der lols
+                        X = shape.Position.X,
+                        Y = shape.Position.Y,
+                        Z = 10000, // show on top
+                        drawables = new List<Drawable>() {
+                            shape
+                        }
+                    });
+                }
+            }
+            foreach (var layer in tileMap.Layers)
+            {
+                foreach (var tile in layer.Value)
+                {
+                    var sprite = graphicsManager.CreateTileSprite(tile);
+                    graphics.Add(new Graphic
+                    {
+                        Layer = layer.Key,
+                        X = sprite.Position.X,
+                        Y = sprite.Position.Y,
+                        Z = tile.Z,
+                        drawables = new List<Drawable>() {
+                            sprite
+                        }
+                    });
+                }
+            }
+
+            RenderSprites(worldRenderTexture, camera, graphics.ToArray());
+        }
+
+        private void RenderSprites(RenderTarget worldRenderTexture, Camera camera, Graphic[] graphics)
+        {
+            var graphicsInLayer = graphics
+                .Where(s => camera.IsInView(s.X, s.Y))
+                .OrderBy(g => g.Layer)
+                .ThenBy(g => g.Z)
+                .ThenBy(g => g.Y);
+            foreach (var graphic in graphicsInLayer)
+            {
+                graphic.Draw(worldRenderTexture);
             }
         }
     }
 
 
-    // OZ-13 : get rid of all of this non-sense white noise (or at-least pack it into folders and their own classes
-    class DebugCollisionShape
-    {
-        private Shape shape;
-        public DebugCollisionShape(Shape shape)
-        {
-            this.shape = shape;
-            shape.FillColor = Color.Transparent;
-            shape.OutlineColor = Color.Magenta;
-            shape.OutlineThickness = 1;
-        }
-
-        public void Draw(RenderTarget window)
-        {
-            window.Draw(shape);
-        }
-    }
-
+    // OZ-13 : convert these to special "Graphic" subclasses
     class UIProgressBar
     {
         private const int NUM_SEGMENTS = 10;
@@ -120,7 +196,6 @@ namespace Ozzyria.Client
             }
         }
     }
-
     class HoverStatBar
     {
         private RectangleShape background;

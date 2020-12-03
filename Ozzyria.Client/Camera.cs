@@ -55,7 +55,7 @@ namespace Ozzyria.Client
             }
         }
 
-        public bool IsInView(float x, float y)
+        public bool IsInView(float x, float y) // TODO OZ-13 : also check width+height so bigger obj dont vanish
         {
             return x >= minRenderX && x <= maxRenderX
                 && y >= minRenderY && y <= maxRenderY;

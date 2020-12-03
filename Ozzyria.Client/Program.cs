@@ -78,81 +78,6 @@ namespace Ozzyria.Client
                 client.HandleIncomingMessages();
 
                 var entities = client.Entities;
-                var collisionShapes = new List<DebugCollisionShape>();
-                var sprites = new List<Sprite>();
-                var hoverStatBars = new List<HoverStatBar>();
-                var uiStatBars = new List<UIProgressBar>();
-                foreach (var entity in entities)
-                {
-                    var movement = entity.GetComponent<Movement>(ComponentType.Movement);
-                    if (entity.HasComponent(ComponentType.Renderable))
-                    {
-                        var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
-                        var sfmlSprite = graphicsManger.CreateSprite(sprite);
-                        sfmlSprite.Position = graphicsManger.CreateSpritePosition(movement.X, movement.Y);
-                        sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
-
-                        if (entity.HasComponent(ComponentType.Stats))
-                        {
-                            var stats = entity.GetComponent<Stats>(ComponentType.Stats);
-
-                            // only show health bar for entities that are not the local player
-                            if (entity.Id != client.Id)
-                            {
-                                var hoverStatBar = new HoverStatBar();
-                                hoverStatBar.Move(movement.X, movement.Y);
-                                hoverStatBar.SetMagnitude(stats.Health, stats.MaxHealth);
-                                hoverStatBars.Add(hoverStatBar);
-                            }
-                            else
-                            {
-                                var healthBar = new UIProgressBar(0, 578, Color.Magenta, Color.Green);
-                                healthBar.SetMagnitude(stats.Health, stats.MaxHealth);
-
-                                var expBar = new UIProgressBar(0, 590, Color.Magenta, Color.Yellow);
-                                expBar.SetMagnitude(stats.Experience, stats.MaxExperience);
-
-                                uiStatBars.Add(healthBar);
-                                uiStatBars.Add(expBar);
-                            }
-                        }
-
-                        if (entity.HasComponent(ComponentType.Combat))
-                        {
-                            // show as attacking for a brief period
-                            var combat = entity.GetComponent<Combat>(ComponentType.Combat);
-                            sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
-                        }
-                        sprites.Add(sfmlSprite);
-
-                        // center camera on entity
-                        if (entity.Id == client.Id)
-                        {
-                            camera.CenterView(movement.X, movement.Y);
-                        }
-                    }
-
-                    if (RenderSystem.DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
-                    {
-                        var collision = entity.GetComponent<Collision>(ComponentType.Collision);
-
-                        Shape shape;
-                        if (collision is BoundingCircle)
-                        {
-                            var radius = ((BoundingCircle)collision).Radius;
-                            shape = new CircleShape(radius);
-                            shape.Position = graphicsManger.CreateSpritePosition(movement.X - radius, movement.Y - radius);
-                        }
-                        else
-                        {
-                            var width = ((BoundingBox)collision).Width;
-                            var height = ((BoundingBox)collision).Height;
-                            shape = new RectangleShape(new Vector2f(width, height));
-                            shape.Position = graphicsManger.CreateSpritePosition(movement.X - (width / 2f), movement.Y - (height / 2f));
-                        }
-                        collisionShapes.Add(new DebugCollisionShape(shape));
-                    }
-                }
 
                 ///
                 /// DRAWING HERE
@@ -160,7 +85,7 @@ namespace Ozzyria.Client
                 window.Clear();
 
                 worldRenderTexture.Clear();
-                renderSystem.Render(worldRenderTexture, camera, tileMap, sprites.ToArray(), hoverStatBars.ToArray(), collisionShapes.ToArray());
+                renderSystem.Render(worldRenderTexture, camera, tileMap, client.Id, entities);
                 worldRenderTexture.Display();
                 window.Draw(new Sprite(worldRenderTexture.Texture)
                 {
@@ -171,10 +96,11 @@ namespace Ozzyria.Client
                 ///
                 /// Render UI Overlay
                 ///
-                foreach (var uiStatBar in uiStatBars)
+                // TODO OZ-13 : bring back UI overlay
+                /*foreach (var uiStatBar in uiStatBars)
                 {
                     uiStatBar.Draw(window);
-                }
+                }*/
                 window.Display();
 
                 if (quit || !client.IsConnected())
