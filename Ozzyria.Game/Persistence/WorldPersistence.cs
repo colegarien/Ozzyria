@@ -25,7 +25,7 @@ namespace Ozzyria.Game.Persistence
                 while ((line = file.ReadLine().Trim()) != "" && line != "END")
                 {
                     var pieces = line.Split("|");
-                    if (pieces.Length != 5)
+                    if (pieces.Length != 6)
                     {
                         continue;
                     }
@@ -33,13 +33,15 @@ namespace Ozzyria.Game.Persistence
                     var layer = int.Parse(pieces[0]);
                     var x = int.Parse(pieces[1]);
                     var y = int.Parse(pieces[2]);
-                    var tx = int.Parse(pieces[3]);
-                    var ty = int.Parse(pieces[4]);
+                    var z = int.Parse(pieces[3]);
+                    var tx = int.Parse(pieces[4]);
+                    var ty = int.Parse(pieces[5]);
 
                     layers[layer].Add(new Tile
                     {
                         X = x,
                         Y = y,
+                        Z = z,
                         TextureCoordX = tx,
                         TextureCoordY = ty
                     });
@@ -71,7 +73,7 @@ namespace Ozzyria.Game.Persistence
                 {
                     foreach (var tile in map.Layers[layer])
                     {
-                        file.WriteLine($"{layer}|{tile.X}|{tile.Y}|{tile.TextureCoordX}|{tile.TextureCoordY}");
+                        file.WriteLine($"{layer}|{tile.X}|{tile.Y}|{tile.Z}|{tile.TextureCoordX}|{tile.TextureCoordY}");
                     }
                 }
                 file.WriteLine("END");

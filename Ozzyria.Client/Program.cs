@@ -1,14 +1,10 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
-using Ozzyria.Game.Utility;
 using Ozzyria.Game.Persistence;
 using SFML.Graphics;
-using SFML.System;
 using SFML.Window;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Ozzyria.Client
 {

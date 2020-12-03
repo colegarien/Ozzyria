@@ -42,6 +42,15 @@ namespace Ozzyria.MapEditor
             { TileType.Road, true},
         };
 
+        public int GetZIndex(TileType type)
+        {
+            if(type == TileType.Fence)
+            {
+                return 10; // TODO OZ-13 : standardize Z-indexes
+            }
+
+            return 0;
+        }
 
         public Vector2i GetTextureCoordinates(TileType type, TransitionType transition, PathDirection direction)
         {

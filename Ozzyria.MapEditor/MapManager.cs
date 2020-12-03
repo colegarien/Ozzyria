@@ -201,11 +201,13 @@ namespace Ozzyria.MapEditor
                             GetTransitionType(layer, x, y),
                             GetPathDirection(layer, x, y)
                         );
+                        var z = _tileMetaData.GetZIndex(tileType);
 
                         layers[layer].Add(new Game.Tile
                         {
                             X = x,
                             Y = y,
+                            Z = z,
                             TextureCoordX = textureCoordinates.X,
                             TextureCoordY = textureCoordinates.Y
                         });

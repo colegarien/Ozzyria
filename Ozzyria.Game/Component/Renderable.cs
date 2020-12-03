@@ -20,6 +20,6 @@ namespace Ozzyria.Game.Component
         public SpriteType Sprite { get; set; } = SpriteType.Default;
 
         [Savable]
-        public int Z { get; set; } = 0;
+        public int Z { get; set; } = 0; // TODO OZ-13 : standardize Z-indexes
     }
 }
