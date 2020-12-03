@@ -12,6 +12,8 @@ namespace Ozzyria.Client
     class RenderSystem
     {
         public const bool DEBUG_SHOW_COLLISIONS = true;
+        public const bool DEBUG_SHOW_RENDER_AREA = true;
+
 
         // OZ-13 : have a mapping of entities and tiles to their sprites to avoid constant NEWing of sprites over and over again
 
@@ -27,7 +29,7 @@ namespace Ozzyria.Client
                 {
                     var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
                     var sfmlSprite = graphicsManager.CreateSprite(sprite);
-                    sfmlSprite.Position = graphicsManager.CreateSpritePosition(movement.X, movement.Y);
+                    sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
                     sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
 
                     if (entity.HasComponent(ComponentType.Stats))
@@ -53,8 +55,10 @@ namespace Ozzyria.Client
                             graphics.Add(new Graphic
                             {
                                 Layer = 1, // TODO OZ-13 : make entities on a layer?
-                                X = background.Position.X,
-                                Y = background.Position.Y,
+                                X = background.Position.X - background.Origin.X,
+                                Y = background.Position.Y - background.Origin.Y,
+                                Width = background.Size.X,
+                                Height = background.Size.Y,
                                 Z = 10, // TODO OZ-13 : grab from entity... movement?
                                 drawables = new List<Drawable>() {
                                     background,
@@ -66,15 +70,17 @@ namespace Ozzyria.Client
 
                     if (entity.HasComponent(ComponentType.Combat))
                     {
-                        // show as attacking for a brief period
+                        // show as attacking for a brief period, OZ-23 : swich this over to be an animation instead
                         var combat = entity.GetComponent<Combat>(ComponentType.Combat);
                         sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
                     }
                     graphics.Add(new Graphic
                     {
                         Layer = 1, // TODO OZ-13 : make entities on a layer?
-                        X = sfmlSprite.Position.X,
-                        Y = sfmlSprite.Position.Y,
+                        X = sfmlSprite.Position.X - sfmlSprite.Origin.X,
+                        Y = sfmlSprite.Position.Y - sfmlSprite.Origin.Y,
+                        Width = sfmlSprite.TextureRect.Width,
+                        Height = sfmlSprite.TextureRect.Height,
                         Z = 5, // TODO OZ-13 : grab from entity... movement?
                         drawables = new List<Drawable>() { sfmlSprite }
                     });
@@ -90,12 +96,20 @@ namespace Ozzyria.Client
                 {
                     var collision = entity.GetComponent<Collision>(ComponentType.Collision);
 
+                    var graphic = new Graphic
+                    {
+                        Layer = 1, // TODO OZ-13 : grab from entity... movement?
+                        Z = 99999, // show on top
+                    };
                     Shape shape;
                     if (collision is BoundingCircle)
                     {
                         var radius = ((BoundingCircle)collision).Radius;
                         shape = new CircleShape(radius);
                         shape.Position = new Vector2f(movement.X - radius, movement.Y - radius);
+
+                        graphic.Width = radius * 2f;
+                        graphic.Height = radius * 2f;
                     }
                     else
                     {
@@ -103,23 +117,21 @@ namespace Ozzyria.Client
                         var height = ((BoundingBox)collision).Height;
                         shape = new RectangleShape(new Vector2f(width, height));
                         shape.Position = new Vector2f(movement.X - (width / 2f), movement.Y - (height / 2f));
+
+                        graphic.Width = width;
+                        graphic.Height = height;
                     }
                     shape.FillColor = Color.Transparent;
                     shape.OutlineColor = Color.Magenta;
                     shape.OutlineThickness = 1;
 
-                    graphics.Add(new Graphic
-                    {
-                        Layer = 1, // for der lols
-                        X = shape.Position.X,
-                        Y = shape.Position.Y,
-                        Z = 10000, // show on top
-                        drawables = new List<Drawable>() {
-                            shape
-                        }
-                    });
+                    graphic.X = shape.Position.X;
+                    graphic.Y = shape.Position.Y;
+                    graphic.drawables = new List<Drawable>() { shape };
+                    graphics.Add(graphic);
                 }
             }
+
             foreach (var layer in tileMap.Layers)
             {
                 foreach (var tile in layer.Value)
@@ -130,6 +142,8 @@ namespace Ozzyria.Client
                         Layer = layer.Key,
                         X = sprite.Position.X,
                         Y = sprite.Position.Y,
+                        Width = Tile.DIMENSION,
+                        Height = Tile.DIMENSION,
                         Z = tile.Z,
                         drawables = new List<Drawable>() {
                             sprite
@@ -143,14 +157,29 @@ namespace Ozzyria.Client
 
         private void RenderSprites(RenderTarget worldRenderTexture, Camera camera, Graphic[] graphics)
         {
-            var graphicsInLayer = graphics
-                .Where(s => camera.IsInView(s.X, s.Y))
+            var graphicsInRenderOrder = graphics
+                .Where(s => camera.IsInView(s.X, s.Y, s.Width, s.Height))
                 .OrderBy(g => g.Layer)
                 .ThenBy(g => g.Z)
                 .ThenBy(g => g.Y);
-            foreach (var graphic in graphicsInLayer)
+            foreach (var graphic in graphicsInRenderOrder)
             {
                 graphic.Draw(worldRenderTexture);
+            }
+
+            if (DEBUG_SHOW_RENDER_AREA)
+            {
+                foreach (var graphic in graphicsInRenderOrder)
+                {
+                    if (graphic.Z == 0) continue; // skip rendering ground debug squares
+
+                    var shape = new RectangleShape(new Vector2f(graphic.Width, graphic.Height));
+                    shape.Position = new Vector2f(graphic.X, graphic.Y);
+                    shape.FillColor = Color.Transparent;
+                    shape.OutlineColor = Color.Blue;
+                    shape.OutlineThickness = 1;
+                    worldRenderTexture.Draw(shape);
+                }
             }
         }
     }
@@ -216,8 +245,8 @@ namespace Ozzyria.Client
 
         public void Move(float X, float Y)
         {
-            background.Position = GraphicsManager.GetInstance().CreateSpritePosition(X, Y);
-            overlay.Position = GraphicsManager.GetInstance().CreateSpritePosition(X, Y);
+            background.Position = new Vector2f(X, Y);
+            overlay.Position = new Vector2f(X, Y);
         }
 
         public void SetMagnitude(int current, int max)
