@@ -2,7 +2,8 @@
 
 namespace Ozzyria.Game.Component
 {
-    public enum SpriteType
+
+    public enum SpriteType  // OZ-23 : refactor this to not be an enum (make more data-driven)
     {
         Default = 1,
         Player = 2,
@@ -17,5 +18,8 @@ namespace Ozzyria.Game.Component
 
         [Savable]
         public SpriteType Sprite { get; set; } = SpriteType.Default;
+
+        [Savable]
+        public int Z { get; set; } = 0;
     }
 }

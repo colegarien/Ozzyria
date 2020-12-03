@@ -2,7 +2,6 @@
 using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.System;
-using System;
 using System.Collections.Generic;
 
 namespace Ozzyria.Client
@@ -77,6 +76,7 @@ namespace Ozzyria.Client
 
         public Vector2f CreateSpritePosition(float x, float y)
         {
+            // OZ-13 get rid of this.. so dumb; only existing because of the constant NEWing of sprites and such
             return new Vector2f(x, y);
         }
     }
