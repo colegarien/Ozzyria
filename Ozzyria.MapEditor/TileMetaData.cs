@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using Ozzyria.Game.Component;
+using SFML.System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,6 +43,15 @@ namespace Ozzyria.MapEditor
             { TileType.Road, true},
         };
 
+        public int GetZIndex(TileType type)
+        {
+            if(type == TileType.Fence)
+            {
+                return Renderable.Z_FOREGROUND;
+            }
+
+            return Renderable.Z_BACKGROUND;
+        }
 
         public Vector2i GetTextureCoordinates(TileType type, TransitionType transition, PathDirection direction)
         {
