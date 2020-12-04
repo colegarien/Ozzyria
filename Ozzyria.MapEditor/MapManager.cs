@@ -38,6 +38,8 @@ namespace Ozzyria.MapEditor
                 {
                     for (var y = 0; y < _map.Height; y++)
                     {
+                        // TODO OZ-19 : instead of all this white noise, simpify with Edge and Corner Transistion (simple math since it's binary encoded!!!)
+
                         // reset before recalculating
                         _map.SetTransitionType(layer, x, y, TransitionType.None);
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
