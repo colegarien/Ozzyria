@@ -2,7 +2,7 @@
 
 namespace Ozzyria.Client.Graphics
 {
-    interface IGraphic
+    public interface IGraphic
     {
         public float GetLeft();
         public float GetTop();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Ozzyria.Client.Graphics
 {
-    class EntityGraphic : IGraphic
+    public class CompositeGraphic : IGraphic
     {
         public int Layer { get; set; } = 0;
         public float X { get; set; } = 0;

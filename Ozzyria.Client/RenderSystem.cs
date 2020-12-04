@@ -50,7 +50,7 @@ namespace Ozzyria.Client
                         sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
                     }
 
-                    graphics.Add(new EntityGraphic
+                    graphics.Add(new CompositeGraphic
                     {
                         Layer = movement.Layer,
                         X = sfmlSprite.Position.X - sfmlSprite.Origin.X,
@@ -79,19 +79,7 @@ namespace Ozzyria.Client
             {
                 foreach (var tile in layer.Value)
                 {
-                    var sprite = graphicsManager.CreateTileSprite(tile);
-                    graphics.Add(new EntityGraphic
-                    {
-                        Layer = layer.Key,
-                        X = sprite.Position.X,
-                        Y = sprite.Position.Y,
-                        Width = Tile.DIMENSION,
-                        Height = Tile.DIMENSION,
-                        Z = tile.Z,
-                        drawables = new List<Drawable>() {
-                            sprite
-                        }
-                    });
+                    graphics.Add(graphicsManager.CreateTileGraphic(layer.Key, tile));
                 }
             }
 

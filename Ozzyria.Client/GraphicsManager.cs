@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game;
+﻿using Ozzyria.Client.Graphics;
+using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.System;
@@ -13,7 +14,7 @@ namespace Ozzyria.Client
 
         private static GraphicsManager _manager;
         private IDictionary<string, Texture> _loadedTextures;
-        
+
         public static GraphicsManager GetInstance()
         {
             if (_manager == null)
@@ -65,13 +66,24 @@ namespace Ozzyria.Client
             return sfmlSprite;
         }
 
-        public Sprite CreateTileSprite(Tile tile)
+        public IGraphic CreateTileGraphic(int layer, Tile tile)
         {
-            var sfmlSprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"));
-            sfmlSprite.Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
-            sfmlSprite.TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION);
-            
-            return sfmlSprite;
+            var sprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"));
+            sprite.Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
+            sprite.TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION);
+
+            return new CompositeGraphic
+            {
+                Layer = layer,
+                X = sprite.Position.X,
+                Y = sprite.Position.Y,
+                Width = Tile.DIMENSION,
+                Height = Tile.DIMENSION,
+                Z = tile.Z,
+                drawables = new List<Drawable>() {
+                    sprite
+                }
+            };
         }
 
     }
