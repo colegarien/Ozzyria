@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game;
+﻿using Ozzyria.Client.UI;
+using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;
@@ -38,32 +39,11 @@ namespace Ozzyria.Client
                         // only show health bar for entities that are not the local player
                         if (entity.Id != localPlayerId)
                         {
-                            var offset = new Vector2f(0, 14);
+                            var statBar = new HoverStatBar { Layer = movement.Layer };
+                            statBar.Move(movement.X, movement.Y);
+                            statBar.SetMagnitude(stats.Health, stats.MaxHealth);
 
-                            var background = new RectangleShape(new Vector2f(26, 5));
-                            background.Position = new Vector2f(movement.X, movement.Y);
-                            background.Origin = new Vector2f(background.Size.X / 2 + offset.X, background.Size.Y + offset.Y);
-                            background.FillColor = Color.Red;
-
-                            var overlay = new RectangleShape(background.Size);
-                            overlay.Position = new Vector2f(movement.X, movement.Y);
-                            overlay.Size = new Vector2f(((float)stats.Health / (float)stats.MaxHealth) * background.Size.X, overlay.Size.Y);
-                            overlay.Origin = background.Origin;
-                            overlay.FillColor = Color.Green;
-
-                            graphics.Add(new Graphic
-                            {
-                                Layer = movement.Layer,
-                                X = background.Position.X - background.Origin.X,
-                                Y = background.Position.Y - background.Origin.Y,
-                                Width = background.Size.X,
-                                Height = background.Size.Y,
-                                Z = Renderable.Z_INGAME_UI,
-                                drawables = new List<Drawable>() {
-                                    background,
-                                    overlay
-                                }
-                            });
+                            graphics.Add(statBar);
                         }
                     }
 
@@ -183,80 +163,4 @@ namespace Ozzyria.Client
         }
     }
 
-
-    // TODO OZ-13 : convert these to special "Graphic" subclasses
-    class UIProgressBar
-    {
-        private const int NUM_SEGMENTS = 10;
-        private RectangleShape[] segments = new RectangleShape[NUM_SEGMENTS];
-        private Color background;
-        private Color foreground;
-
-        public UIProgressBar(float X, float Y, Color backgroundColor, Color foregroundColor)
-        {
-            background = backgroundColor;
-            foreground = foregroundColor;
-            for (var segment = 0; segment < NUM_SEGMENTS; segment++)
-            {
-                segments[segment] = new RectangleShape()
-                {
-                    Position = new Vector2f(X + (22 * segment), Y),
-                    Size = new Vector2f(20, 10),
-                };
-            }
-        }
-
-        public void SetMagnitude(int current, int max)
-        {
-            var fillToSegment = Math.Round((float)(current) / (float)(max) * NUM_SEGMENTS);
-            for (var segment = 0; segment < NUM_SEGMENTS; segment++)
-            {
-                var fillSegment = segment < fillToSegment;
-                segments[segment].FillColor = fillSegment ? foreground : background;
-            }
-        }
-
-        public void Draw(RenderWindow window)
-        {
-            foreach (var segment in segments)
-            {
-                window.Draw(segment);
-            }
-        }
-    }
-    class HoverStatBar
-    {
-        private RectangleShape background;
-        private RectangleShape overlay;
-
-        public HoverStatBar()
-        {
-            var offset = new Vector2f(0, 14);
-
-            background = new RectangleShape(new Vector2f(26, 5));
-            background.Origin = new Vector2f(background.Size.X / 2 + offset.X, background.Size.Y + offset.Y);
-            background.FillColor = Color.Red;
-
-            overlay = new RectangleShape(background.Size);
-            overlay.Origin = background.Origin;
-            overlay.FillColor = Color.Green;
-        }
-
-        public void Move(float X, float Y)
-        {
-            background.Position = new Vector2f(X, Y);
-            overlay.Position = new Vector2f(X, Y);
-        }
-
-        public void SetMagnitude(int current, int max)
-        {
-            overlay.Size = new Vector2f(((float)current / (float)max) * background.Size.X, overlay.Size.Y);
-        }
-
-        public virtual void Draw(RenderTarget window)
-        {
-            window.Draw(background);
-            window.Draw(overlay);
-        }
-    }
 }

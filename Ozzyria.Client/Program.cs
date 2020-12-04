@@ -1,10 +1,12 @@
-﻿using Ozzyria.Game;
+﻿using Ozzyria.Client.UI;
+using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Persistence;
 using SFML.Graphics;
 using SFML.Window;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Ozzyria.Client
 {
@@ -92,11 +94,19 @@ namespace Ozzyria.Client
                 ///
                 /// Render UI Overlay
                 ///
-                // TODO OZ-13 : bring back UI overlay
-                /*foreach (var uiStatBar in uiStatBars)
+                var localPlayerStats = entities.Where(e => e.Id == client.Id).FirstOrDefault()?.GetComponent<Stats>(ComponentType.Stats);
+                if (localPlayerStats != null)
                 {
-                    uiStatBar.Draw(window);
-                }*/
+                    var healthBar = new OverlayProgressBar(0, window.Size.Y - 22, Color.Magenta, Color.Green);
+                    healthBar.SetMagnitude(localPlayerStats.Health, localPlayerStats.MaxHealth);
+
+                    var experienceBar = new OverlayProgressBar(0, window.Size.Y - 10, Color.Magenta, Color.Yellow);
+                    experienceBar.SetMagnitude(localPlayerStats.Experience, localPlayerStats.MaxExperience);
+
+                    healthBar.Draw(window);
+                    experienceBar.Draw(window);
+                }
+
                 window.Display();
 
                 if (quit || !client.IsConnected())

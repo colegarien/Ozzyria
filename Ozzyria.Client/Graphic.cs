@@ -13,7 +13,7 @@ namespace Ozzyria.Client
         public int Z = 0;
         public List<Drawable> drawables = new List<Drawable>();
 
-        public void Draw(RenderTarget target)
+        public virtual void Draw(RenderTarget target)
         {
             foreach (var drawable in drawables)
             {
