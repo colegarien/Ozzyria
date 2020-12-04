@@ -12,12 +12,10 @@ namespace Ozzyria.Client
     class RenderSystem
     {
         public const bool DEBUG_SHOW_COLLISIONS = true;
-        public const bool DEBUG_SHOW_RENDER_AREA = true;
+        public const bool DEBUG_SHOW_RENDER_AREA = false;
 
 
-        // OZ-13 : have a mapping of entities and tiles to their sprites to avoid constant NEWing of sprites over and over again
-
-        // OZ-13 : actually use Game specific stuff, maybe even do ALL the rendering here
+        // TODO OZ-13 : have a mapping of entities and tiles to their sprites to avoid constant NEWing of sprites over and over again
         public void Render(RenderTarget worldRenderTexture, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
         {
             var graphicsManager = GraphicsManager.GetInstance();
@@ -27,7 +25,8 @@ namespace Ozzyria.Client
                 var movement = entity.GetComponent<Movement>(ComponentType.Movement);
                 if (entity.HasComponent(ComponentType.Renderable))
                 {
-                    var sprite = entity.GetComponent<Renderable>(ComponentType.Renderable).Sprite;
+                    var renderable = entity.GetComponent<Renderable>(ComponentType.Renderable);
+                    var sprite = renderable.Sprite;
                     var sfmlSprite = graphicsManager.CreateSprite(sprite);
                     sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
                     sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
@@ -54,12 +53,12 @@ namespace Ozzyria.Client
 
                             graphics.Add(new Graphic
                             {
-                                Layer = 1, // TODO OZ-13 : make entities on a layer?
+                                Layer = movement.Layer,
                                 X = background.Position.X - background.Origin.X,
                                 Y = background.Position.Y - background.Origin.Y,
                                 Width = background.Size.X,
                                 Height = background.Size.Y,
-                                Z = 10, // TODO OZ-13 : grab from entity... movement?
+                                Z = Renderable.Z_INGAME_UI,
                                 drawables = new List<Drawable>() {
                                     background,
                                     overlay
@@ -76,12 +75,12 @@ namespace Ozzyria.Client
                     }
                     graphics.Add(new Graphic
                     {
-                        Layer = 1, // TODO OZ-13 : make entities on a layer?
+                        Layer = movement.Layer,
                         X = sfmlSprite.Position.X - sfmlSprite.Origin.X,
                         Y = sfmlSprite.Position.Y - sfmlSprite.Origin.Y,
                         Width = sfmlSprite.TextureRect.Width,
                         Height = sfmlSprite.TextureRect.Height,
-                        Z = 5, // TODO OZ-13 : grab from entity... movement?
+                        Z = renderable.Z,
                         drawables = new List<Drawable>() { sfmlSprite }
                     });
 
@@ -98,8 +97,8 @@ namespace Ozzyria.Client
 
                     var graphic = new Graphic
                     {
-                        Layer = 1, // TODO OZ-13 : grab from entity... movement?
-                        Z = 99999, // show on top
+                        Layer = movement.Layer,
+                        Z = Renderable.Z_DEBUG,
                     };
                     Shape shape;
                     if (collision is BoundingCircle)
@@ -171,7 +170,7 @@ namespace Ozzyria.Client
             {
                 foreach (var graphic in graphicsInRenderOrder)
                 {
-                    if (graphic.Z == 0) continue; // skip rendering ground debug squares
+                    if (graphic.Z == Renderable.Z_BACKGROUND) continue; // skip rendering background to lessen noise
 
                     var shape = new RectangleShape(new Vector2f(graphic.Width, graphic.Height));
                     shape.Position = new Vector2f(graphic.X, graphic.Y);
@@ -185,7 +184,7 @@ namespace Ozzyria.Client
     }
 
 
-    // OZ-13 : convert these to special "Graphic" subclasses
+    // TODO OZ-13 : convert these to special "Graphic" subclasses
     class UIProgressBar
     {
         private const int NUM_SEGMENTS = 10;

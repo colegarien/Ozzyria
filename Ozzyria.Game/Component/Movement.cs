@@ -18,6 +18,8 @@ namespace Ozzyria.Game.Component
         [Savable]
         public float PreviousY { get; set; } = 0f;
         [Savable]
+        public int Layer { get; set; } = 1; // TODO OZ-24 experiment with things on multiple layers
+        [Savable]
         public float X { get; set; } = 0f;
         [Savable]
         public float Y { get; set; } = 0f;

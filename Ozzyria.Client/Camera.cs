@@ -6,7 +6,7 @@ namespace Ozzyria.Client
     {
         private Vector2f Position { get; set; } = new Vector2f(0, 0);
         private Vector2u ViewSize { get; set; } = new Vector2u(0, 0);
-        public uint ViewPadding = 100;
+        public uint ViewPadding = 0;
 
         private Vector2f inversePosition = new Vector2f(0, 0);
         private float halfViewWidth = 0f;

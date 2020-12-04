@@ -74,6 +74,8 @@ namespace Ozzyria.Game
                     }
                 }
 
+                // TODO OZ-24 : consider the "Layer" in movement the entities are on when doing collision and such
+
                 // Handle Collisions
                 if (entity.HasComponent(ComponentType.Collision) && entity.GetComponent<Collision>(ComponentType.Collision).IsDynamic)
                 {

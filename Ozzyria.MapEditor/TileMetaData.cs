@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using Ozzyria.Game.Component;
+using SFML.System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,10 +47,10 @@ namespace Ozzyria.MapEditor
         {
             if(type == TileType.Fence)
             {
-                return 10; // TODO OZ-13 : standardize Z-indexes
+                return Renderable.Z_FOREGROUND;
             }
 
-            return 0;
+            return Renderable.Z_BACKGROUND;
         }
 
         public Vector2i GetTextureCoordinates(TileType type, TransitionType transition, PathDirection direction)
