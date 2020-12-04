@@ -68,21 +68,35 @@ namespace Ozzyria.Client
 
         public IGraphic CreateTileGraphic(int layer, Tile tile)
         {
-            var sprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"));
-            sprite.Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION);
-            sprite.TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION);
+            var sprites = new List<Drawable>();
+            var baseSprite = new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"))
+            {
+                Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
+                TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION)
+            };
+
+            sprites.Add(baseSprite);
+            // TODO OZ-19 : pull 'decals' from Tile and create sprites
+/*            for (var i = 0; i < 32; i++)
+            {
+                sprites.Add(new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"))
+                {
+                    Position = new Vector2f(tile.X * Tile.DIMENSION + 16, tile.Y * Tile.DIMENSION + 16),
+                    Origin = new Vector2f(Tile.DIMENSION / 2f, Tile.DIMENSION / 2f),
+                    TextureRect = new IntRect(0 * Tile.DIMENSION, 0 * Tile.DIMENSION, Tile.DIMENSION / 2, Tile.DIMENSION / 2),
+                    Rotation = 45 +i
+                });
+            }*/
 
             return new CompositeGraphic
             {
                 Layer = layer,
-                X = sprite.Position.X,
-                Y = sprite.Position.Y,
+                X = baseSprite.Position.X,
+                Y = baseSprite.Position.Y,
                 Width = Tile.DIMENSION,
                 Height = Tile.DIMENSION,
                 Z = tile.Z,
-                drawables = new List<Drawable>() {
-                    sprite
-                }
+                drawables = sprites
             };
         }
 

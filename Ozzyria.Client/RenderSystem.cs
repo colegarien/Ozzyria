@@ -16,6 +16,7 @@ namespace Ozzyria.Client
         public const bool DEBUG_SHOW_COLLISIONS = true;
         public const bool DEBUG_SHOW_RENDER_AREA = true;
 
+        private List<IGraphic> cachedTileMapGraphics;
 
         // TODO OZ-15 rework this a bit so that graphics don't have to constantly be re-instantiaed, possibly tracking by Entities Ids or Tile Maps
         public void Render(RenderTarget target, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
@@ -75,14 +76,20 @@ namespace Ozzyria.Client
                 }
             }
 
-            foreach (var layer in tileMap.Layers)
+            if (cachedTileMapGraphics == null)
             {
-                foreach (var tile in layer.Value)
+                // To avoid building static graphics more than once
+                cachedTileMapGraphics = new List<IGraphic>();
+                foreach (var layer in tileMap.Layers)
                 {
-                    graphics.Add(graphicsManager.CreateTileGraphic(layer.Key, tile));
+                    foreach (var tile in layer.Value)
+                    {
+                        cachedTileMapGraphics.Add(graphicsManager.CreateTileGraphic(layer.Key, tile));
+                    }
                 }
             }
 
+            graphics.AddRange(cachedTileMapGraphics);
             RenderGraphics(target, camera, graphics.ToArray());
         }
 
