@@ -1,10 +1,11 @@
-﻿using Ozzyria.Client.UI;
+﻿using Ozzyria.Client.Graphics;
+using Ozzyria.Client.Graphics.Debug;
+using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;
 using SFML.System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,47 +14,43 @@ namespace Ozzyria.Client
     class RenderSystem
     {
         public const bool DEBUG_SHOW_COLLISIONS = true;
-        public const bool DEBUG_SHOW_RENDER_AREA = false;
+        public const bool DEBUG_SHOW_RENDER_AREA = true;
 
 
-        // TODO OZ-13 : have a mapping of entities and tiles to their sprites to avoid constant NEWing of sprites over and over again
-        public void Render(RenderTarget worldRenderTexture, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
+        // TODO OZ-15 rework this a bit so that graphics don't have to constantly be re-instantiaed, possibly tracking by Entities Ids or Tile Maps
+        public void Render(RenderTarget target, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
         {
             var graphicsManager = GraphicsManager.GetInstance();
-            var graphics = new List<Graphic>();
+            var graphics = new List<IGraphic>();
             foreach (var entity in entities)
             {
                 var movement = entity.GetComponent<Movement>(ComponentType.Movement);
                 if (entity.HasComponent(ComponentType.Renderable))
                 {
-                    var renderable = entity.GetComponent<Renderable>(ComponentType.Renderable);
-                    var sprite = renderable.Sprite;
-                    var sfmlSprite = graphicsManager.CreateSprite(sprite);
-                    sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
-                    sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
-
                     if (entity.HasComponent(ComponentType.Stats))
                     {
+                        // Show Health Bar for Entities that are not the local player
                         var stats = entity.GetComponent<Stats>(ComponentType.Stats);
-
-                        // only show health bar for entities that are not the local player
                         if (entity.Id != localPlayerId)
                         {
-                            var statBar = new HoverStatBar { Layer = movement.Layer };
-                            statBar.Move(movement.X, movement.Y);
-                            statBar.SetMagnitude(stats.Health, stats.MaxHealth);
-
-                            graphics.Add(statBar);
+                            graphics.Add(new HoverStatBar(movement.Layer, movement.X, movement.Y, stats.Health, stats.MaxHealth));
                         }
                     }
 
+                    var renderable = entity.GetComponent<Renderable>(ComponentType.Renderable);
+                    var sfmlSprite = graphicsManager.CreateSprite(renderable.Sprite);
+                    sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
+                    sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
+
+                    // OZ-23 : swich this over to be an animation instead
                     if (entity.HasComponent(ComponentType.Combat))
                     {
-                        // show as attacking for a brief period, OZ-23 : swich this over to be an animation instead
+                        // show as attacking for a brief period
                         var combat = entity.GetComponent<Combat>(ComponentType.Combat);
                         sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
                     }
-                    graphics.Add(new Graphic
+
+                    graphics.Add(new EntityGraphic
                     {
                         Layer = movement.Layer,
                         X = sfmlSprite.Position.X - sfmlSprite.Origin.X,
@@ -74,40 +71,7 @@ namespace Ozzyria.Client
                 if (DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
                 {
                     var collision = entity.GetComponent<Collision>(ComponentType.Collision);
-
-                    var graphic = new Graphic
-                    {
-                        Layer = movement.Layer,
-                        Z = Renderable.Z_DEBUG,
-                    };
-                    Shape shape;
-                    if (collision is BoundingCircle)
-                    {
-                        var radius = ((BoundingCircle)collision).Radius;
-                        shape = new CircleShape(radius);
-                        shape.Position = new Vector2f(movement.X - radius, movement.Y - radius);
-
-                        graphic.Width = radius * 2f;
-                        graphic.Height = radius * 2f;
-                    }
-                    else
-                    {
-                        var width = ((BoundingBox)collision).Width;
-                        var height = ((BoundingBox)collision).Height;
-                        shape = new RectangleShape(new Vector2f(width, height));
-                        shape.Position = new Vector2f(movement.X - (width / 2f), movement.Y - (height / 2f));
-
-                        graphic.Width = width;
-                        graphic.Height = height;
-                    }
-                    shape.FillColor = Color.Transparent;
-                    shape.OutlineColor = Color.Magenta;
-                    shape.OutlineThickness = 1;
-
-                    graphic.X = shape.Position.X;
-                    graphic.Y = shape.Position.Y;
-                    graphic.drawables = new List<Drawable>() { shape };
-                    graphics.Add(graphic);
+                    graphics.Add(new DebugCollision(movement, collision));
                 }
             }
 
@@ -116,7 +80,7 @@ namespace Ozzyria.Client
                 foreach (var tile in layer.Value)
                 {
                     var sprite = graphicsManager.CreateTileSprite(tile);
-                    graphics.Add(new Graphic
+                    graphics.Add(new EntityGraphic
                     {
                         Layer = layer.Key,
                         X = sprite.Position.X,
@@ -131,33 +95,29 @@ namespace Ozzyria.Client
                 }
             }
 
-            RenderSprites(worldRenderTexture, camera, graphics.ToArray());
+            RenderGraphics(target, camera, graphics.ToArray());
         }
 
-        private void RenderSprites(RenderTarget worldRenderTexture, Camera camera, Graphic[] graphics)
+        private void RenderGraphics(RenderTarget target, Camera camera, IGraphic[] graphics)
         {
             var graphicsInRenderOrder = graphics
-                .Where(s => camera.IsInView(s.X, s.Y, s.Width, s.Height))
-                .OrderBy(g => g.Layer)
-                .ThenBy(g => g.Z)
-                .ThenBy(g => g.Y);
+                .Where(s => camera.IsInView(s.GetLeft(), s.GetTop(), s.GetWidth(), s.GetHeight()))
+                .OrderBy(g => g.GetLayer())
+                .ThenBy(g => g.GetZOrder())
+                .ThenBy(g => g.GetTop());
             foreach (var graphic in graphicsInRenderOrder)
             {
-                graphic.Draw(worldRenderTexture);
+                graphic.Draw(target);
             }
 
             if (DEBUG_SHOW_RENDER_AREA)
             {
                 foreach (var graphic in graphicsInRenderOrder)
                 {
-                    if (graphic.Z == Renderable.Z_BACKGROUND) continue; // skip rendering background to lessen noise
+                    if (graphic.GetZOrder() == Renderable.Z_BACKGROUND) continue; // skip rendering background to lessen noise
 
-                    var shape = new RectangleShape(new Vector2f(graphic.Width, graphic.Height));
-                    shape.Position = new Vector2f(graphic.X, graphic.Y);
-                    shape.FillColor = Color.Transparent;
-                    shape.OutlineColor = Color.Blue;
-                    shape.OutlineThickness = 1;
-                    worldRenderTexture.Draw(shape);
+                    var debugGraphic = new DebugRenderArea(graphic);
+                    debugGraphic.Draw(target);
                 }
             }
         }

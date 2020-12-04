@@ -1,4 +1,4 @@
-﻿using Ozzyria.Client.UI;
+﻿using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
 using Ozzyria.Game.Component;
 using Ozzyria.Game.Persistence;
