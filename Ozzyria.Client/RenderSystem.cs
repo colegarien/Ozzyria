@@ -1,5 +1,5 @@
 ﻿using Ozzyria.Client.Graphics;
-using Ozzyria.Client.Graphics.Debug;
+using Ozzyria.Client.Graphics.DebugShape;
 using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
 using Ozzyria.Game.Component;
