@@ -46,6 +46,16 @@ namespace Ozzyria.MapEditor
                         var tileType = GetTileType(layer, x, y);
                         if (_tileMetaData.IsTransitionable(tileType))
                         {
+                            /* 
+                             * TODO OZ-19 : implement this rough pseudo-code:
+                             * 
+                             * 1. get surround tile types that support transition
+                             * 2. narrow the list down further with only tiles that will transition INTO this tile (i.e. based on transition precedence, i.e. grass can tranistion INTO teh water tile, but water tiles to not render transitions INTO the grass tile)
+                             * 3. caculate the Transition Types by each of the TileTypes that transtion INTO this tile
+                             * 4. Update SaveMap() to add all the transitions based on precendence (i.e. if multiple different tile types transition into this tile then ensure they transition stack right, for example grass transition render below a foret transition etc etc)
+                             */
+
+
                             // This works via 'bit-mask' math, the enum is very particularlly crafted
                             var leftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y));
                             var rightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y));
@@ -62,7 +72,8 @@ namespace Ozzyria.MapEditor
                                 edgeTransition += (int)EdgeTransitionType.Right;
                             _map.SetEdgeTransitionType(layer, x, y, (EdgeTransitionType)edgeTransition);
 
-                            // This works via 'bit-mask' math, the enum is very particularlly crafted
+                            // This works via 'bit-mask' math, the enum is very particularlly crafted 
+                            // TODO OZ-19 : don't redundantly add corner transitions aready covered by edges, might add 'EdgeTransition' as a param... or maybe this isnt worth bothering with?
                             var upLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y - 1));
                             var upRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y - 1));
                             var downLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y + 1));
