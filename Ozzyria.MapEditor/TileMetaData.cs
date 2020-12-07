@@ -10,14 +10,14 @@ namespace Ozzyria.MapEditor
         private Dictionary<TileType, int> baseX = new Dictionary<TileType, int> {
             { TileType.None, 0},
             { TileType.Ground, 0},
-            { TileType.Water, 2},
+            { TileType.Water, 0},
             { TileType.Fence, 4},
             { TileType.Road, 8},
         };
         private Dictionary<TileType, int> baseY = new Dictionary<TileType, int> {
             { TileType.None, 0},
-            { TileType.Ground, 5},
-            { TileType.Water, 1},
+            { TileType.Ground, 4},
+            { TileType.Water, 5},
             { TileType.Fence, 0},
             { TileType.Road, 0},
         };
