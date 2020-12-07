@@ -89,7 +89,6 @@
     class Tile
     {
         public TileType Type { get; set; } = TileType.None;
-        public TransitionType Transition { get; set; } = TransitionType.None;
         public EdgeTransitionType EdgeTransition { get; set; } = EdgeTransitionType.None;
         public CornerTransitionType CornerTransition { get; set; } = CornerTransitionType.None;
         public PathDirection Direction { get; set; } = PathDirection.None;

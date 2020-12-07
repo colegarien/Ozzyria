@@ -10,19 +10,19 @@ namespace Ozzyria.MapEditor
         private Dictionary<TileType, int> baseX = new Dictionary<TileType, int> {
             { TileType.None, 0},
             { TileType.Ground, 0},
-            { TileType.Water, 1},
+            { TileType.Water, 2},
             { TileType.Fence, 4},
             { TileType.Road, 8},
         };
         private Dictionary<TileType, int> baseY = new Dictionary<TileType, int> {
             { TileType.None, 0},
-            { TileType.Ground, 0},
-            { TileType.Water, 0},
+            { TileType.Ground, 5},
+            { TileType.Water, 1},
             { TileType.Fence, 0},
             { TileType.Road, 0},
         };
 
-        private Dictionary<TileType, bool> isTransitionable = new Dictionary<TileType, bool>
+        private Dictionary<TileType, bool> isTransitionable = new Dictionary<TileType, bool> // TODO OZ-19 : rename all this 'transitionable' stuff, maybe just have 'supported' transitions? Or maybe mark all tiles involed as 'Transitionable' then have a order so that grass transitions to water but not the other way around
         {
             { TileType.None, false},
             { TileType.Ground, false},
@@ -31,7 +31,7 @@ namespace Ozzyria.MapEditor
             { TileType.Road, false},
         };
         private Dictionary<TileType, TileType[]> supportedTransitions = new Dictionary<TileType, TileType[]> {
-            {TileType.Water, new TileType[]{TileType.Ground } }
+            {TileType.Water, new TileType[]{ TileType.Ground } }
         };
 
         private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
@@ -45,7 +45,7 @@ namespace Ozzyria.MapEditor
 
         public int GetZIndex(TileType type)
         {
-            if(type == TileType.Fence)
+            if (type == TileType.Fence)
             {
                 return Renderable.Z_FOREGROUND;
             }
@@ -53,72 +53,14 @@ namespace Ozzyria.MapEditor
             return Renderable.Z_BACKGROUND;
         }
 
-        public Vector2i GetTextureCoordinates(TileType type, TransitionType transition, PathDirection direction)
+        public Vector2i GetTextureCoordinates(TileType type, PathDirection direction)
         {
             int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
             int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
             var offsetX = 0;
             var offsetY = 0;
 
-            if (IsTransitionable(type))
-            {
-                switch (transition)
-                {
-                    case TransitionType.UpLeft:
-                        offsetX = 0;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.UpRight:
-                        offsetX = 2;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.DownLeft:
-                        offsetX = 0;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.DownRight:
-                        offsetX = 2;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.Up:
-                        offsetX = 1;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.Down:
-                        offsetX = 1;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.Left:
-                        offsetX = 0;
-                        offsetY = 1;
-                        break;
-                    case TransitionType.Right:
-                        offsetX = 2;
-                        offsetY = 1;
-                        break;
-                    case TransitionType.DownRightDiagonal:
-                        offsetX = 1;
-                        offsetY = 3;
-                        break;
-                    case TransitionType.DownLeftDiagonal:
-                        offsetX = 2;
-                        offsetY = 3;
-                        break;
-                    case TransitionType.UpLeftDiagonal:
-                        offsetX = 2;
-                        offsetY = 4;
-                        break;
-                    case TransitionType.UpRightDiagonal:
-                        offsetX = 1;
-                        offsetY = 4;
-                        break;
-                    default:
-                        offsetX = 1;
-                        offsetY = 1;
-                        break;
-                }
-            }
-            else if (isPathable.ContainsKey(type) && isPathable[type])
+            if (isPathable.ContainsKey(type) && isPathable[type])
             {
                 switch (direction)
                 {
@@ -187,6 +129,45 @@ namespace Ozzyria.MapEditor
                         offsetY = 1;
                         break;
                 }
+            }
+
+            return new Vector2i
+            {
+                X = baseTx + offsetX,
+                Y = baseTy + offsetY
+            };
+        }
+
+        public Vector2i GetEdgeTransitionTextureCoordinates(TileType type, EdgeTransitionType edgeTransition)
+        {
+            int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
+            int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (supportedTransitions.Values.Any(tileTypes => tileTypes.Any(t => t == type)))
+            {
+                offsetX = (int)edgeTransition; // cause the fancy bit-mask
+            }
+
+            return new Vector2i
+            {
+                X = baseTx + offsetX,
+                Y = baseTy + offsetY
+            };
+        }
+
+        public Vector2i GetCornerTransitionTextureCoordinates(TileType type, CornerTransitionType cornerTransition)
+        {
+            int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
+            int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (supportedTransitions.Values.Any(tileTypes => tileTypes.Any(t => t == type)))
+            {
+                offsetY = 1;
+                offsetX = (int)cornerTransition; // cause the fancy bit-mask
             }
 
             return new Vector2i

@@ -38,73 +38,45 @@ namespace Ozzyria.MapEditor
                 {
                     for (var y = 0; y < _map.Height; y++)
                     {
-                        // TODO OZ-19 : instead of all this white noise, simpify with Edge and Corner Transistion (simple math since it's binary encoded!!!)
-
                         // reset before recalculating
-                        _map.SetTransitionType(layer, x, y, TransitionType.None);
+                        _map.SetEdgeTransitionType(layer, x, y, EdgeTransitionType.None);
+                        _map.SetCornerTransitionType(layer, x, y, CornerTransitionType.None);
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
                         var tileType = GetTileType(layer, x, y);
                         if (_tileMetaData.IsTransitionable(tileType))
                         {
+                            // This works via 'bit-mask' math, the enum is very particularlly crafted
                             var leftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y));
                             var rightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y));
                             var upIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x, y - 1));
                             var downIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x, y + 1));
+                            var edgeTransition = (int)EdgeTransitionType.None;
+                            if (upIsTransitionable)
+                                edgeTransition += (int)EdgeTransitionType.Up;
+                            if (downIsTransitionable)
+                                edgeTransition += (int)EdgeTransitionType.Down;
+                            if (leftIsTransitionable)
+                                edgeTransition += (int)EdgeTransitionType.Left;
+                            if (rightIsTransitionable)
+                                edgeTransition += (int)EdgeTransitionType.Right;
+                            _map.SetEdgeTransitionType(layer, x, y, (EdgeTransitionType)edgeTransition);
 
+                            // This works via 'bit-mask' math, the enum is very particularlly crafted
                             var upLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y - 1));
                             var upRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y - 1));
                             var downLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x - 1, y + 1));
                             var downRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, GetTileType(layer, x + 1, y + 1));
-
-                            if (upIsTransitionable && leftIsTransitionable && upLeftIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.UpLeft);
-                            }
-                            else if (upIsTransitionable && rightIsTransitionable && upRightIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.UpRight);
-                            }
-                            else if (downIsTransitionable && leftIsTransitionable && downLeftIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.DownLeft);
-                            }
-                            else if (downIsTransitionable && rightIsTransitionable && downRightIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.DownRight);
-                            }
-                            else if (upIsTransitionable && (upRightIsTransitionable || upLeftIsTransitionable))
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.Up);
-                            }
-                            else if (downIsTransitionable && (downLeftIsTransitionable || downRightIsTransitionable))
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.Down);
-                            }
-                            else if (leftIsTransitionable && (upLeftIsTransitionable || downLeftIsTransitionable))
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.Left);
-                            }
-                            else if (rightIsTransitionable && (upRightIsTransitionable || downRightIsTransitionable))
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.Right);
-                            }
-                            else if (!downIsTransitionable && !rightIsTransitionable && downRightIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.DownRightDiagonal);
-                            }
-                            else if (!downIsTransitionable && !leftIsTransitionable && downLeftIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.DownLeftDiagonal);
-                            }
-                            else if (!upIsTransitionable && !leftIsTransitionable && upLeftIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.UpLeftDiagonal);
-                            }
-                            else if (!upIsTransitionable && !leftIsTransitionable && upRightIsTransitionable)
-                            {
-                                _map.SetTransitionType(layer, x, y, TransitionType.UpRightDiagonal);
-                            }
+                            var cornerTransition = (int)CornerTransitionType.None;
+                            if (upLeftIsTransitionable)
+                                cornerTransition += (int)CornerTransitionType.UpLeft;
+                            if (upRightIsTransitionable)
+                                cornerTransition += (int)CornerTransitionType.UpRight;
+                            if (downLeftIsTransitionable)
+                                cornerTransition += (int)CornerTransitionType.DownLeft;
+                            if (downRightIsTransitionable)
+                                cornerTransition += (int)CornerTransitionType.DownRight;
+                            _map.SetCornerTransitionType(layer, x, y, (CornerTransitionType)cornerTransition);
                         }
                         else if (_tileMetaData.IsPathable(tileType))
                         {
@@ -200,7 +172,6 @@ namespace Ozzyria.MapEditor
 
                         var textureCoordinates = _tileMetaData.GetTextureCoordinates(
                             tileType,
-                            GetTransitionType(layer, x, y),
                             GetPathDirection(layer, x, y)
                         );
                         var z = _tileMetaData.GetZIndex(tileType);
@@ -213,6 +184,36 @@ namespace Ozzyria.MapEditor
                             TextureCoordX = textureCoordinates.X,
                             TextureCoordY = textureCoordinates.Y
                         });
+                        
+                        // TODO OZ-19 Instead of stacking tiles on top of eachother re-work this to add a 'decals' thing to tiles
+                        var cornerTransition = GetCornerTransitionType(layer, x, y);
+                        if (cornerTransition != CornerTransitionType.None)
+                        {
+                            // TODO OZ-19 Stop hard-coding GROUND, might require storing multiple transition types for each type of material?
+                            textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(TileType.Ground, cornerTransition);
+                            layers[layer].Add(new Game.Tile
+                            {
+                                X = x,
+                                Y = y,
+                                Z = z,
+                                TextureCoordX = textureCoordinates.X,
+                                TextureCoordY = textureCoordinates.Y
+                            });
+                        }
+                        var edgeTransition = GetEdgeTransitionType(layer, x, y);
+                        if (edgeTransition != EdgeTransitionType.None)
+                        {
+                            // TODO OZ-19 Stop hard-coding GROUND, might require storing multiple transition types for each type of material?
+                            textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(TileType.Ground, edgeTransition);
+                            layers[layer].Add(new Game.Tile
+                            {
+                                X = x,
+                                Y = y,
+                                Z = z,
+                                TextureCoordX = textureCoordinates.X,
+                                TextureCoordY = textureCoordinates.Y
+                            });
+                        }
                     }
                 }
             }
@@ -348,14 +349,24 @@ namespace Ozzyria.MapEditor
             return _map.GetTileType(layer, x, y);
         }
 
-        public static TransitionType GetTransitionType(int layer, int x, int y)
+        public static EdgeTransitionType GetEdgeTransitionType(int layer, int x, int y)
         {
             if (!MapIsLoaded())
             {
-                return TransitionType.None;
+                return EdgeTransitionType.None;
             }
 
-            return _map.GetTransitionType(layer, x, y);
+            return _map.GetEdgeTransitionType(layer, x, y);
+        }
+
+        public static CornerTransitionType GetCornerTransitionType(int layer, int x, int y)
+        {
+            if (!MapIsLoaded())
+            {
+                return CornerTransitionType.None;
+            }
+
+            return _map.GetCornerTransitionType(layer, x, y);
         }
 
         public static PathDirection GetPathDirection(int layer, int x, int y)

@@ -39,16 +39,28 @@
                 tile.Type = type;
         }
 
-        public TransitionType GetTransitionType(int x, int y)
+        public EdgeTransitionType GetEdgeTransitionType(int x, int y)
         {
-            return GetTile(x, y)?.Transition ?? TransitionType.None;
+            return GetTile(x, y)?.EdgeTransition ?? EdgeTransitionType.None;
         }
 
-        public void SetTransitionType(int x, int y, TransitionType type)
+        public void SetEdgeTransitionType(int x, int y, EdgeTransitionType type)
         {
             var tile = GetTile(x, y);
             if (tile != null)
-                tile.Transition = type;
+                tile.EdgeTransition = type;
+        }
+
+        public CornerTransitionType GetCornerTransitionType(int x, int y)
+        {
+            return GetTile(x, y)?.CornerTransition ?? CornerTransitionType.None;
+        }
+
+        public void SetCornerTransitionType(int x, int y, CornerTransitionType type)
+        {
+            var tile = GetTile(x, y);
+            if (tile != null)
+                tile.CornerTransition = type;
         }
 
         public PathDirection GetPathDirection(int x, int y)

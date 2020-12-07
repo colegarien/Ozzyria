@@ -67,24 +67,44 @@ namespace Ozzyria.MapEditor
             layers[layer].SetTileType(x, y, type);
         }
 
-        public TransitionType GetTransitionType(int layer, int x, int y)
+        public EdgeTransitionType GetEdgeTransitionType(int layer, int x, int y)
         {
             if (!layers.ContainsKey(layer))
             {
-                return TransitionType.None;
+                return EdgeTransitionType.None;
             }
 
-            return layers[layer].GetTransitionType(x, y);
+            return layers[layer].GetEdgeTransitionType(x, y);
         }
 
-        public void SetTransitionType(int layer, int x, int y, TransitionType type)
+        public void SetEdgeTransitionType(int layer, int x, int y, EdgeTransitionType type)
         {
             if (!layers.ContainsKey(layer))
             {
                 return;
             }
 
-            layers[layer].SetTransitionType(x, y, type);
+            layers[layer].SetEdgeTransitionType(x, y, type);
+        }
+
+        public CornerTransitionType GetCornerTransitionType(int layer, int x, int y)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return CornerTransitionType.None;
+            }
+
+            return layers[layer].GetCornerTransitionType(x, y);
+        }
+
+        public void SetCornerTransitionType(int layer, int x, int y, CornerTransitionType type)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return;
+            }
+
+            layers[layer].SetCornerTransitionType(x, y, type);
         }
 
         public PathDirection GetPathDirection(int layer, int x, int y)

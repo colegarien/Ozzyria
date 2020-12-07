@@ -255,7 +255,7 @@ namespace Ozzyria.MapEditor
                         _renderBuffer.Draw(tileShape);
 
                         DrawPathDirection(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetPathDirection(Layer, x, y));
-                        DrawTransitionType(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetTransitionType(Layer, x, y));
+                        DrawTransitionType(tilePosition.X, tilePosition.Y, tileDimension, tileDimension, MapManager.GetEdgeTransitionType(Layer, x, y), MapManager.GetCornerTransitionType(Layer, x, y));
                     }
                 }
             }
@@ -389,7 +389,7 @@ namespace Ozzyria.MapEditor
             }
         }
 
-        private void DrawTransitionType(float x, float y, int width, int height, TransitionType type)
+        private void DrawTransitionType(float x, float y, int width, int height, EdgeTransitionType edgeType, CornerTransitionType cornerType)
         {
             var transitionDimension = 8f;
             var size = new Vector2f(transitionDimension, transitionDimension);
@@ -399,87 +399,10 @@ namespace Ozzyria.MapEditor
             var right = x + width - transitionDimension;
             var bottom = y + height - transitionDimension;
 
-            if (type != TransitionType.None)
+            if (edgeType != EdgeTransitionType.None)
             {
-
-                if (type == TransitionType.Up
-                    || type == TransitionType.UpLeft
-                    || type == TransitionType.UpRight)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(horizontalCenter, y),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.UpRightDiagonal
-                    || type == TransitionType.UpRight)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(right, y),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.Right
-                    || type == TransitionType.UpRight
-                    || type == TransitionType.DownRight)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(right, verticalCenter),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.DownRightDiagonal
-                    || type == TransitionType.DownRight)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(right, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.Down
-                    || type == TransitionType.DownLeft
-                    || type == TransitionType.DownRight)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(horizontalCenter, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.DownLeftDiagonal
-                    || type == TransitionType.DownLeft)
-                {
-                    var shape = new RectangleShape()
-                    {
-                        Position = new Vector2f(x, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
-
-                if (type == TransitionType.Left
-                    || type == TransitionType.UpLeft
-                    || type == TransitionType.DownLeft)
+                // Use the bit-mask math to see if it 'bit' is on or not
+                if (((int)edgeType & (1 << 0)) > 0)
                 {
                     var shape = new RectangleShape()
                     {
@@ -490,12 +413,83 @@ namespace Ozzyria.MapEditor
                     _renderBuffer.Draw(shape);
                 }
 
-                if (type == TransitionType.UpLeftDiagonal
-                    || type == TransitionType.UpLeft)
+                if (((int)edgeType & (1 << 1)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(horizontalCenter, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (((int)edgeType & (1 << 2)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, verticalCenter),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (((int)edgeType & (1 << 3)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(horizontalCenter, bottom),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+            }
+
+            if(cornerType != CornerTransitionType.None)
+            {
+                // Use the bit-mask math to see if it 'bit' is on or not
+                if (((int)cornerType & (1 << 0)) > 0)
                 {
                     var shape = new RectangleShape()
                     {
                         Position = new Vector2f(x, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+                if (((int)cornerType & (1 << 1)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, y),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+
+                if (((int)cornerType & (1 << 2)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(right, bottom),
+                        Size = size,
+                        FillColor = Color.White
+                    };
+                    _renderBuffer.Draw(shape);
+                }
+
+
+                if (((int)cornerType & (1 << 3)) > 0)
+                {
+                    var shape = new RectangleShape()
+                    {
+                        Position = new Vector2f(x, bottom),
                         Size = size,
                         FillColor = Color.White
                     };
