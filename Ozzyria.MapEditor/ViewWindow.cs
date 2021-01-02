@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 using System;
+using System.Collections.Generic;
 
 namespace Ozzyria.MapEditor
 {
@@ -389,7 +390,7 @@ namespace Ozzyria.MapEditor
             }
         }
 
-        private void DrawTransitionType(float x, float y, int width, int height, EdgeTransitionType edgeType, CornerTransitionType cornerType)
+        private void DrawTransitionType(float x, float y, int width, int height, IDictionary<TileType, EdgeTransitionType> edgeTransitions, IDictionary<TileType, CornerTransitionType> cornerTransitions)
         {
             var transitionDimension = 8f;
             var size = new Vector2f(transitionDimension, transitionDimension);
@@ -399,101 +400,111 @@ namespace Ozzyria.MapEditor
             var right = x + width - transitionDimension;
             var bottom = y + height - transitionDimension;
 
-            if (edgeType != EdgeTransitionType.None)
+            foreach (var kv in edgeTransitions)
             {
-                // Use the bit-mask math to see if it 'bit' is on or not
-                if (((int)edgeType & (1 << 0)) > 0)
+                var color = Color.White; // OZ-19 : base color on tile type
+                var edgeType = kv.Value;
+                if (edgeType != EdgeTransitionType.None)
                 {
-                    var shape = new RectangleShape()
+                    // Use the bit-mask math to see if it 'bit' is on or not
+                    if (((int)edgeType & (1 << 0)) > 0)
                     {
-                        Position = new Vector2f(x, verticalCenter),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(x, verticalCenter),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
-                if (((int)edgeType & (1 << 1)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)edgeType & (1 << 1)) > 0)
                     {
-                        Position = new Vector2f(horizontalCenter, y),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(horizontalCenter, y),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
-                if (((int)edgeType & (1 << 2)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)edgeType & (1 << 2)) > 0)
                     {
-                        Position = new Vector2f(right, verticalCenter),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(right, verticalCenter),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
-                if (((int)edgeType & (1 << 3)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)edgeType & (1 << 3)) > 0)
                     {
-                        Position = new Vector2f(horizontalCenter, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(horizontalCenter, bottom),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
                 }
             }
 
-            if(cornerType != CornerTransitionType.None)
+            foreach (var kv in cornerTransitions)
             {
-                // Use the bit-mask math to see if it 'bit' is on or not
-                if (((int)cornerType & (1 << 0)) > 0)
+                var color = Color.White; // OZ-19 : base color on tile type
+                var cornerType = kv.Value;
+                if (cornerType != CornerTransitionType.None)
                 {
-                    var shape = new RectangleShape()
+                    // Use the bit-mask math to see if it 'bit' is on or not
+                    if (((int)cornerType & (1 << 0)) > 0)
                     {
-                        Position = new Vector2f(x, y),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(x, y),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
-                if (((int)cornerType & (1 << 1)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)cornerType & (1 << 1)) > 0)
                     {
-                        Position = new Vector2f(right, y),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(right, y),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
 
-                if (((int)cornerType & (1 << 2)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)cornerType & (1 << 2)) > 0)
                     {
-                        Position = new Vector2f(right, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
-                }
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(right, bottom),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
 
 
-                if (((int)cornerType & (1 << 3)) > 0)
-                {
-                    var shape = new RectangleShape()
+                    if (((int)cornerType & (1 << 3)) > 0)
                     {
-                        Position = new Vector2f(x, bottom),
-                        Size = size,
-                        FillColor = Color.White
-                    };
-                    _renderBuffer.Draw(shape);
+                        var shape = new RectangleShape()
+                        {
+                            Position = new Vector2f(x, bottom),
+                            Size = size,
+                            FillColor = color
+                        };
+                        _renderBuffer.Draw(shape);
+                    }
                 }
             }
         }

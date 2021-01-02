@@ -1,4 +1,6 @@
-﻿namespace Ozzyria.MapEditor
+﻿using System.Collections.Generic;
+
+namespace Ozzyria.MapEditor
 {
     enum TileType
     {
@@ -89,8 +91,8 @@
     class Tile
     {
         public TileType Type { get; set; } = TileType.None;
-        public EdgeTransitionType EdgeTransition { get; set; } = EdgeTransitionType.None;
-        public CornerTransitionType CornerTransition { get; set; } = CornerTransitionType.None;
+        public IDictionary<TileType, EdgeTransitionType> EdgeTransition { get; set; } = new Dictionary<TileType, EdgeTransitionType>();
+        public IDictionary<TileType, CornerTransitionType> CornerTransition { get; set; } = new Dictionary<TileType, CornerTransitionType>();
         public PathDirection Direction { get; set; } = PathDirection.None;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Ozzyria.MapEditor
+﻿using System.Collections.Generic;
+
+namespace Ozzyria.MapEditor
 {
     class Layer
     {
@@ -39,28 +41,28 @@
                 tile.Type = type;
         }
 
-        public EdgeTransitionType GetEdgeTransitionType(int x, int y)
+        public IDictionary<TileType, EdgeTransitionType> GetEdgeTransitions(int x, int y)
         {
-            return GetTile(x, y)?.EdgeTransition ?? EdgeTransitionType.None;
+            return GetTile(x, y)?.EdgeTransition ?? new Dictionary<TileType, EdgeTransitionType>();
         }
 
-        public void SetEdgeTransitionType(int x, int y, EdgeTransitionType type)
+        public void SetEdgeTransitions(int x, int y, IDictionary<TileType, EdgeTransitionType> transitions)
         {
             var tile = GetTile(x, y);
             if (tile != null)
-                tile.EdgeTransition = type;
+                tile.EdgeTransition = transitions;
         }
 
-        public CornerTransitionType GetCornerTransitionType(int x, int y)
+        public IDictionary<TileType, CornerTransitionType> GetCornerTransitions(int x, int y)
         {
-            return GetTile(x, y)?.CornerTransition ?? CornerTransitionType.None;
+            return GetTile(x, y)?.CornerTransition ?? new Dictionary<TileType, CornerTransitionType>(); ;
         }
 
-        public void SetCornerTransitionType(int x, int y, CornerTransitionType type)
+        public void SetCornerTransitions(int x, int y, IDictionary<TileType, CornerTransitionType> transitions)
         {
             var tile = GetTile(x, y);
             if (tile != null)
-                tile.CornerTransition = type;
+                tile.CornerTransition = transitions;
         }
 
         public PathDirection GetPathDirection(int x, int y)
