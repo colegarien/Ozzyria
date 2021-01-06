@@ -8,7 +8,8 @@ namespace Ozzyria.MapEditor
         Ground,
         Water,
         Fence,
-        Road
+        Road,
+        Stone
     }
 
     enum TransitionType

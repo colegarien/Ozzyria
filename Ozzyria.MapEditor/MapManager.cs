@@ -206,7 +206,7 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            // TODO OZ-19 :  Update SaveMap() to add all the transitions based on precendence (i.e. if multiple different tile types transition into this tile then ensure they transition stack right, for example grass transition render below a foret transition etc etc)
+            // TODO OZ-19 : as adding tiles/decals be sure to sort by "precedence", i.e. grass to water transition renders under forest to water transition
             var layers = new Dictionary<int, List<Game.Tile>>();
             for (var layer = 0; layer < GetNumberOfLayers(); layer++)
             {

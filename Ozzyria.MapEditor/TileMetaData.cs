@@ -13,6 +13,7 @@ namespace Ozzyria.MapEditor
             { TileType.Water, 0},
             { TileType.Fence, 4},
             { TileType.Road, 8},
+            { TileType.Stone, 0},
         };
         private Dictionary<TileType, int> baseY = new Dictionary<TileType, int> {
             { TileType.None, 0},
@@ -20,6 +21,7 @@ namespace Ozzyria.MapEditor
             { TileType.Water, 5},
             { TileType.Fence, 0},
             { TileType.Road, 0},
+            { TileType.Stone, 6},
         };
 
         private Dictionary<TileType, bool> isTransitionable = new Dictionary<TileType, bool> // TODO OZ-19 : rename all this 'transitionable' stuff, maybe just have 'supported' transitions? Or maybe mark all tiles involed as 'Transitionable' then have a order so that grass transitions to water but not the other way around
@@ -29,9 +31,10 @@ namespace Ozzyria.MapEditor
             { TileType.Water, true},
             { TileType.Fence, false},
             { TileType.Road, false},
+            { TileType.Stone, false},
         };
         private Dictionary<TileType, TileType[]> supportedTransitions = new Dictionary<TileType, TileType[]> {
-            {TileType.Water, new TileType[]{ TileType.Ground } }
+            {TileType.Water, new TileType[]{ TileType.Ground, TileType.Stone } }
         };
 
         private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
@@ -41,6 +44,7 @@ namespace Ozzyria.MapEditor
             { TileType.Water, false},
             { TileType.Fence, true},
             { TileType.Road, true},
+            { TileType.Stone, false},
         };
 
         public int GetZIndex(TileType type)
