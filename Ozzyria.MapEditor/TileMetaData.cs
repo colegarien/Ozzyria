@@ -24,17 +24,11 @@ namespace Ozzyria.MapEditor
             { TileType.Stone, 6},
         };
 
-        private Dictionary<TileType, bool> isTransitionable = new Dictionary<TileType, bool> // TODO OZ-19 : rename all this 'transitionable' stuff, maybe just have 'supported' transitions? Or maybe mark all tiles involed as 'Transitionable' then have a order so that grass transitions to water but not the other way around
+        // higher in the list takes precedence
+        private List<TileType> canTransition = new List<TileType>
         {
-            { TileType.None, false},
-            { TileType.Ground, false},
-            { TileType.Water, true},
-            { TileType.Fence, false},
-            { TileType.Road, false},
-            { TileType.Stone, false},
-        };
-        private Dictionary<TileType, TileType[]> supportedTransitions = new Dictionary<TileType, TileType[]> {
-            {TileType.Water, new TileType[]{ TileType.Ground, TileType.Stone } }
+            TileType.Ground,
+            TileType.Stone, 
         };
 
         private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
@@ -149,7 +143,7 @@ namespace Ozzyria.MapEditor
             var offsetX = 0;
             var offsetY = 0;
 
-            if (supportedTransitions.Values.Any(tileTypes => tileTypes.Any(t => t == type)))
+            if (canTransition.Any(t => t == type))
             {
                 offsetX = (int)edgeTransition; // cause the fancy bit-mask
             }
@@ -168,7 +162,7 @@ namespace Ozzyria.MapEditor
             var offsetX = 0;
             var offsetY = 0;
 
-            if (supportedTransitions.Values.Any(tileTypes => tileTypes.Any(t => t == type)))
+            if (canTransition.Any(t => t == type))
             {
                 offsetY = 1;
                 offsetX = (int)cornerTransition; // cause the fancy bit-mask
@@ -181,14 +175,12 @@ namespace Ozzyria.MapEditor
             };
         }
 
-        public bool IsTransitionable(TileType type)
+        public bool CanTransition(TileType toType, TileType fromType)
         {
-            return isTransitionable.ContainsKey(type) && isTransitionable[type];
-        }
-
-        public bool IsSupportedTransition(TileType fromType, TileType toType)
-        {
-            return IsTransitionable(fromType) && supportedTransitions.ContainsKey(fromType) && supportedTransitions[fromType].Contains(toType);
+            var toIndex = canTransition.IndexOf(toType);
+            var fromIndex = canTransition.IndexOf(fromType);
+            return toType != fromType && fromIndex != -1
+                && (toIndex == -1 || toIndex < fromIndex);
         }
 
         public bool IsPathable(TileType type)

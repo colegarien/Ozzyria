@@ -3,6 +3,7 @@ using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using Ozzyria.MapEditor.EventSystem;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ozzyria.MapEditor
 {
@@ -44,86 +45,7 @@ namespace Ozzyria.MapEditor
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
                         var tileType = GetTileType(layer, x, y);
-                        if (_tileMetaData.IsTransitionable(tileType))
-                        {
-                            // This works via 'bit-mask' math, the enum is very particularlly crafted
-                            var leftTileType = GetTileType(layer, x - 1, y);
-                            var leftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, leftTileType);
-
-                            var rightTileType = GetTileType(layer, x + 1, y);
-                            var rightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, rightTileType);
-
-                            var upTileType = GetTileType(layer, x, y - 1);
-                            var upIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, upTileType);
-
-                            var downTileType = GetTileType(layer, x, y + 1);
-                            var downIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, downTileType);
-
-                            if (upIsTransitionable)
-                            {
-                                if (!edgeTransitions.ContainsKey(upTileType))
-                                    edgeTransitions[upTileType] = EdgeTransitionType.None;
-                                edgeTransitions[upTileType] = (EdgeTransitionType)((int)edgeTransitions[upTileType] + (int)EdgeTransitionType.Up);
-                            }
-                            if (downIsTransitionable)
-                            {
-                                if (!edgeTransitions.ContainsKey(downTileType))
-                                    edgeTransitions[downTileType] = EdgeTransitionType.None;
-                                edgeTransitions[downTileType] = (EdgeTransitionType)((int)edgeTransitions[downTileType] + (int)EdgeTransitionType.Down);
-                            }
-                            if (leftIsTransitionable)
-                            {
-                                if (!edgeTransitions.ContainsKey(leftTileType))
-                                    edgeTransitions[leftTileType] = EdgeTransitionType.None;
-                                edgeTransitions[leftTileType] = (EdgeTransitionType)((int)edgeTransitions[leftTileType] + (int)EdgeTransitionType.Left);
-                            }
-                            if (rightIsTransitionable)
-                            {
-                                if (!edgeTransitions.ContainsKey(rightTileType))
-                                    edgeTransitions[rightTileType] = EdgeTransitionType.None;
-                                edgeTransitions[rightTileType] = (EdgeTransitionType)((int)edgeTransitions[rightTileType] + (int)EdgeTransitionType.Right);
-                            }
-
-                            // This works via 'bit-mask' math, the enum is very particularlly crafted 
-                            // TODO OZ-19 : don't redundantly add corner transitions aready covered by edges, might add 'EdgeTransition' as a param... or maybe this isnt worth bothering with?
-                            var upLeftTileType = GetTileType(layer, x - 1, y - 1);
-                            var upLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, upLeftTileType);
-
-                            var upRightTileType = GetTileType(layer, x + 1, y - 1);
-                            var upRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, upRightTileType);
-
-                            var downLeftTileType = GetTileType(layer, x - 1, y + 1);
-                            var downLeftIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, downLeftTileType);
-
-                            var downRightTileType = GetTileType(layer, x + 1, y + 1);
-                            var downRightIsTransitionable = _tileMetaData.IsSupportedTransition(tileType, downRightTileType);
-
-                            if (upLeftIsTransitionable)
-                            {
-                                if (!cornerTransitions.ContainsKey(upLeftTileType))
-                                    cornerTransitions[upLeftTileType] = CornerTransitionType.None;
-                                cornerTransitions[upLeftTileType] = (CornerTransitionType)((int)cornerTransitions[upLeftTileType] + (int)CornerTransitionType.UpLeft);
-                            }
-                            if (upRightIsTransitionable)
-                            {
-                                if (!cornerTransitions.ContainsKey(upRightTileType))
-                                    cornerTransitions[upRightTileType] = CornerTransitionType.None;
-                                cornerTransitions[upRightTileType] = (CornerTransitionType)((int)cornerTransitions[upRightTileType] + (int)CornerTransitionType.UpRight);
-                            }
-                            if (downLeftIsTransitionable)
-                            {
-                                if (!cornerTransitions.ContainsKey(downLeftTileType))
-                                    cornerTransitions[downLeftTileType] = CornerTransitionType.None;
-                                cornerTransitions[downLeftTileType] = (CornerTransitionType)((int)cornerTransitions[downLeftTileType] + (int)CornerTransitionType.DownLeft);
-                            }
-                            if (downRightIsTransitionable)
-                            {
-                                if (!cornerTransitions.ContainsKey(downRightTileType))
-                                    cornerTransitions[downRightTileType] = CornerTransitionType.None;
-                                cornerTransitions[downRightTileType] = (CornerTransitionType)((int)cornerTransitions[downRightTileType] + (int)CornerTransitionType.DownRight);
-                            }
-                        }
-                        else if (_tileMetaData.IsPathable(tileType))
+                        if (_tileMetaData.IsPathable(tileType))
                         {
                             var leftIsPath = GetTileType(layer, x - 1, y) == tileType;
                             var rightIsPath = GetTileType(layer, x + 1, y) == tileType;
@@ -191,6 +113,85 @@ namespace Ozzyria.MapEditor
                                 _map.SetPathDirection(layer, x, y, PathDirection.All);
                             }
                         }
+                        else
+                        {
+                            // This works via 'bit-mask' math, the enum is very particularlly crafted
+                            var leftTileType = GetTileType(layer, x - 1, y);
+                            var leftIsTransitionable = _tileMetaData.CanTransition(tileType, leftTileType);
+
+                            var rightTileType = GetTileType(layer, x + 1, y);
+                            var rightIsTransitionable = _tileMetaData.CanTransition(tileType, rightTileType);
+
+                            var upTileType = GetTileType(layer, x, y - 1);
+                            var upIsTransitionable = _tileMetaData.CanTransition(tileType, upTileType);
+
+                            var downTileType = GetTileType(layer, x, y + 1);
+                            var downIsTransitionable = _tileMetaData.CanTransition(tileType, downTileType);
+
+                            if (upIsTransitionable)
+                            {
+                                if (!edgeTransitions.ContainsKey(upTileType))
+                                    edgeTransitions[upTileType] = EdgeTransitionType.None;
+                                edgeTransitions[upTileType] = (EdgeTransitionType)((int)edgeTransitions[upTileType] + (int)EdgeTransitionType.Up);
+                            }
+                            if (downIsTransitionable)
+                            {
+                                if (!edgeTransitions.ContainsKey(downTileType))
+                                    edgeTransitions[downTileType] = EdgeTransitionType.None;
+                                edgeTransitions[downTileType] = (EdgeTransitionType)((int)edgeTransitions[downTileType] + (int)EdgeTransitionType.Down);
+                            }
+                            if (leftIsTransitionable)
+                            {
+                                if (!edgeTransitions.ContainsKey(leftTileType))
+                                    edgeTransitions[leftTileType] = EdgeTransitionType.None;
+                                edgeTransitions[leftTileType] = (EdgeTransitionType)((int)edgeTransitions[leftTileType] + (int)EdgeTransitionType.Left);
+                            }
+                            if (rightIsTransitionable)
+                            {
+                                if (!edgeTransitions.ContainsKey(rightTileType))
+                                    edgeTransitions[rightTileType] = EdgeTransitionType.None;
+                                edgeTransitions[rightTileType] = (EdgeTransitionType)((int)edgeTransitions[rightTileType] + (int)EdgeTransitionType.Right);
+                            }
+
+                            // This works via 'bit-mask' math, the enum is very particularlly crafted 
+                            // TODO OZ-19 : don't redundantly add corner transitions aready covered by edges, might add 'EdgeTransition' as a param... or maybe this isnt worth bothering with?
+                            var upLeftTileType = GetTileType(layer, x - 1, y - 1);
+                            var upLeftIsTransitionable = _tileMetaData.CanTransition(tileType, upLeftTileType);
+
+                            var upRightTileType = GetTileType(layer, x + 1, y - 1);
+                            var upRightIsTransitionable = _tileMetaData.CanTransition(tileType, upRightTileType);
+
+                            var downLeftTileType = GetTileType(layer, x - 1, y + 1);
+                            var downLeftIsTransitionable = _tileMetaData.CanTransition(tileType, downLeftTileType);
+
+                            var downRightTileType = GetTileType(layer, x + 1, y + 1);
+                            var downRightIsTransitionable = _tileMetaData.CanTransition(tileType, downRightTileType);
+
+                            if (upLeftIsTransitionable)
+                            {
+                                if (!cornerTransitions.ContainsKey(upLeftTileType))
+                                    cornerTransitions[upLeftTileType] = CornerTransitionType.None;
+                                cornerTransitions[upLeftTileType] = (CornerTransitionType)((int)cornerTransitions[upLeftTileType] + (int)CornerTransitionType.UpLeft);
+                            }
+                            if (upRightIsTransitionable)
+                            {
+                                if (!cornerTransitions.ContainsKey(upRightTileType))
+                                    cornerTransitions[upRightTileType] = CornerTransitionType.None;
+                                cornerTransitions[upRightTileType] = (CornerTransitionType)((int)cornerTransitions[upRightTileType] + (int)CornerTransitionType.UpRight);
+                            }
+                            if (downLeftIsTransitionable)
+                            {
+                                if (!cornerTransitions.ContainsKey(downLeftTileType))
+                                    cornerTransitions[downLeftTileType] = CornerTransitionType.None;
+                                cornerTransitions[downLeftTileType] = (CornerTransitionType)((int)cornerTransitions[downLeftTileType] + (int)CornerTransitionType.DownLeft);
+                            }
+                            if (downRightIsTransitionable)
+                            {
+                                if (!cornerTransitions.ContainsKey(downRightTileType))
+                                    cornerTransitions[downRightTileType] = CornerTransitionType.None;
+                                cornerTransitions[downRightTileType] = (CornerTransitionType)((int)cornerTransitions[downRightTileType] + (int)CornerTransitionType.DownRight);
+                            }
+                        }
 
                         _map.SetEdgeTransitionType(layer, x, y, edgeTransitions);
                         _map.SetCornerTransitionType(layer, x, y, cornerTransitions);
@@ -235,11 +236,11 @@ namespace Ozzyria.MapEditor
                         });
 
                         // TODO OZ-19 Instead of stacking tiles on top of eachother re-work this to add a 'decals' thing to tiles
+                        // TODO OZ-19 Loop over tiletypes in TileMetaData canTransition then render corners & edges for each (this solves precedence and other werid happenings)
                         var cornerTransitions = GetCornerTransitionType(layer, x, y);
-                        foreach (var kv in cornerTransitions)
+                        foreach (var transitionTileType in cornerTransitions.Keys.OrderBy(key => (int)key)) // OZ-19 : order by precedence from TileMetaData
                         {
-                            var transitionTileType = kv.Key;
-                            var cornerTransition = kv.Value;
+                            var cornerTransition = cornerTransitions[transitionTileType];
                             if (cornerTransition != CornerTransitionType.None)
                             {
                                 textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
@@ -255,10 +256,9 @@ namespace Ozzyria.MapEditor
                         }
 
                         var edgeTransitions = GetEdgeTransitionType(layer, x, y);
-                        foreach (var kv in edgeTransitions)
+                        foreach (var transitionTileType in edgeTransitions.Keys.OrderBy(key => (int)key)) // OZ-19 : order by precedence from TileMetaData
                         {
-                            var transitionTileType = kv.Key;
-                            var edgeTransition = kv.Value;
+                            var edgeTransition = edgeTransitions[transitionTileType];
                             if (edgeTransition != EdgeTransitionType.None)
                             {
                                 textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);

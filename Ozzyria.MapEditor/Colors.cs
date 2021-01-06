@@ -12,6 +12,7 @@ namespace Ozzyria.MapEditor
                 TileType.Water => Color.Blue,
                 TileType.Fence => Color.Red,
                 TileType.Road => new Color(178,152,0,255),
+                TileType.Stone => new Color(155, 155, 155, 255),
                 _ => Color.Transparent,
             };
         }
