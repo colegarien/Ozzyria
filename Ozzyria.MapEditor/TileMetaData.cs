@@ -28,7 +28,7 @@ namespace Ozzyria.MapEditor
         private List<TileType> canTransition = new List<TileType>
         {
             TileType.Ground,
-            TileType.Stone, 
+            TileType.Stone,
         };
 
         private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
@@ -179,8 +179,18 @@ namespace Ozzyria.MapEditor
         {
             var toIndex = canTransition.IndexOf(toType);
             var fromIndex = canTransition.IndexOf(fromType);
+            /* 
+             * Is not tranistioning into self
+             *  AND the tile being transitioned from is transitionable
+             *  AND the tile being transitioned to is not transitionable OR is of lower precedence 
+             */
             return toType != fromType && fromIndex != -1
                 && (toIndex == -1 || toIndex < fromIndex);
+        }
+
+        public TileType[] GetTransitionTypesInPrecedenceOrder()
+        {
+            return canTransition.ToArray();
         }
 
         public bool IsPathable(TileType type)

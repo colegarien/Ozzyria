@@ -236,40 +236,44 @@ namespace Ozzyria.MapEditor
                         });
 
                         // TODO OZ-19 Instead of stacking tiles on top of eachother re-work this to add a 'decals' thing to tiles
-                        // TODO OZ-19 Loop over tiletypes in TileMetaData canTransition then render corners & edges for each (this solves precedence and other werid happenings)
                         var cornerTransitions = GetCornerTransitionType(layer, x, y);
-                        foreach (var transitionTileType in cornerTransitions.Keys.OrderBy(key => (int)key)) // OZ-19 : order by precedence from TileMetaData
-                        {
-                            var cornerTransition = cornerTransitions[transitionTileType];
-                            if (cornerTransition != CornerTransitionType.None)
-                            {
-                                textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
-                                layers[layer].Add(new Game.Tile
-                                {
-                                    X = x,
-                                    Y = y,
-                                    Z = z,
-                                    TextureCoordX = textureCoordinates.X,
-                                    TextureCoordY = textureCoordinates.Y
-                                });
-                            }
-                        }
-
                         var edgeTransitions = GetEdgeTransitionType(layer, x, y);
-                        foreach (var transitionTileType in edgeTransitions.Keys.OrderBy(key => (int)key)) // OZ-19 : order by precedence from TileMetaData
+
+                        var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesInPrecedenceOrder();
+                        foreach (var transitionTileType in transitionTypesByPrecedence)
                         {
-                            var edgeTransition = edgeTransitions[transitionTileType];
-                            if (edgeTransition != EdgeTransitionType.None)
+                            if (cornerTransitions.ContainsKey(transitionTileType))
                             {
-                                textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
-                                layers[layer].Add(new Game.Tile
+                                var cornerTransition = cornerTransitions[transitionTileType];
+                                if (cornerTransition != CornerTransitionType.None)
                                 {
-                                    X = x,
-                                    Y = y,
-                                    Z = z,
-                                    TextureCoordX = textureCoordinates.X,
-                                    TextureCoordY = textureCoordinates.Y
-                                });
+                                    textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
+                                    layers[layer].Add(new Game.Tile
+                                    {
+                                        X = x,
+                                        Y = y,
+                                        Z = z,
+                                        TextureCoordX = textureCoordinates.X,
+                                        TextureCoordY = textureCoordinates.Y
+                                    });
+                                }
+                            }
+
+                            if (edgeTransitions.ContainsKey(transitionTileType))
+                            {
+                                var edgeTransition = edgeTransitions[transitionTileType];
+                                if (edgeTransition != EdgeTransitionType.None)
+                                {
+                                    textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
+                                    layers[layer].Add(new Game.Tile
+                                    {
+                                        X = x,
+                                        Y = y,
+                                        Z = z,
+                                        TextureCoordX = textureCoordinates.X,
+                                        TextureCoordY = textureCoordinates.Y
+                                    });
+                                }
                             }
                         }
                     }
