@@ -24,9 +24,10 @@ namespace Ozzyria.MapEditor
             { TileType.Stone, 6},
         };
 
-        // higher in the list takes precedence
+        // ordered lowest precedence to highest precedence
         private List<TileType> canTransition = new List<TileType>
         {
+            TileType.Water, // note: lowest in the list doesn't need transition images
             TileType.Ground,
             TileType.Stone,
         };
@@ -181,14 +182,15 @@ namespace Ozzyria.MapEditor
             var fromIndex = canTransition.IndexOf(fromType);
             /* 
              * Is not tranistioning into self
-             *  AND the tile being transitioned from is transitionable
-             *  AND the tile being transitioned to is not transitionable OR is of lower precedence 
+             *  AND both tile types are transitionable
+             *  AND tile transitioned INTO is lower precedence 
              */
-            return toType != fromType && fromIndex != -1
-                && (toIndex == -1 || toIndex < fromIndex);
+            return toType != fromType
+                && fromIndex != -1 && toIndex != -1
+                && toIndex < fromIndex;
         }
 
-        public TileType[] GetTransitionTypesInPrecedenceOrder()
+        public TileType[] GetTransitionTypesPrecedenceAscending()
         {
             return canTransition.ToArray();
         }

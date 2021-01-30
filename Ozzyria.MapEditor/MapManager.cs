@@ -154,7 +154,7 @@ namespace Ozzyria.MapEditor
                             }
 
                             // This works via 'bit-mask' math, the enum is very particularlly crafted 
-                            // TODO OZ-19 : don't redundantly add corner transitions aready covered by edges, might add 'EdgeTransition' as a param... or maybe this isnt worth bothering with?
+                            // TODO : Consider adding checks for current edges transition to avoid rednundantly adding corner transitions on top of them 
                             var upLeftTileType = GetTileType(layer, x - 1, y - 1);
                             var upLeftIsTransitionable = _tileMetaData.CanTransition(tileType, upLeftTileType);
 
@@ -273,7 +273,7 @@ namespace Ozzyria.MapEditor
             var cornerTransitions = GetCornerTransitionType(layer, x, y);
             var edgeTransitions = GetEdgeTransitionType(layer, x, y);
 
-            var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesInPrecedenceOrder();
+            var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesPrecedenceAscending();
             foreach (var transitionTileType in transitionTypesByPrecedence)
             {
                 if (cornerTransitions.ContainsKey(transitionTileType))
