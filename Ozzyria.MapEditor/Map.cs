@@ -67,24 +67,49 @@ namespace Ozzyria.MapEditor
             layers[layer].SetTileType(x, y, type);
         }
 
-        public TransitionType GetTransitionType(int layer, int x, int y)
+        public IDictionary<TileType, EdgeTransitionType> GetEdgeTransitionType(int layer, int x, int y)
         {
             if (!layers.ContainsKey(layer))
             {
-                return TransitionType.None;
+                return new Dictionary<TileType, EdgeTransitionType>();
             }
 
-            return layers[layer].GetTransitionType(x, y);
+            return layers[layer].GetEdgeTransitions(x, y);
         }
 
-        public void SetTransitionType(int layer, int x, int y, TransitionType type)
+        public void SetEdgeTransitionType(int layer, int x, int y, IDictionary<TileType, EdgeTransitionType> transitions)
         {
             if (!layers.ContainsKey(layer))
             {
                 return;
             }
 
-            layers[layer].SetTransitionType(x, y, type);
+            if (transitions is null)
+            {
+                throw new System.ArgumentNullException(nameof(transitions));
+            }
+
+            layers[layer].SetEdgeTransitions(x, y, transitions);
+        }
+
+        public IDictionary<TileType, CornerTransitionType> GetCornerTransitionType(int layer, int x, int y)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return new Dictionary<TileType, CornerTransitionType>();
+            }
+
+            return layers[layer].GetCornerTransitions(x, y);
+        }
+
+        public void SetCornerTransitionType(int layer, int x, int y, IDictionary<TileType, CornerTransitionType> transitions)
+        {
+            if (!layers.ContainsKey(layer))
+            {
+                return;
+            }
+
+            layers[layer].SetCornerTransitions(x, y, transitions);
         }
 
         public PathDirection GetPathDirection(int layer, int x, int y)

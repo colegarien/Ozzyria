@@ -10,28 +10,26 @@ namespace Ozzyria.MapEditor
         private Dictionary<TileType, int> baseX = new Dictionary<TileType, int> {
             { TileType.None, 0},
             { TileType.Ground, 0},
-            { TileType.Water, 1},
+            { TileType.Water, 0},
             { TileType.Fence, 4},
             { TileType.Road, 8},
+            { TileType.Stone, 0},
         };
         private Dictionary<TileType, int> baseY = new Dictionary<TileType, int> {
             { TileType.None, 0},
-            { TileType.Ground, 0},
-            { TileType.Water, 0},
+            { TileType.Ground, 4},
+            { TileType.Water, 5},
             { TileType.Fence, 0},
             { TileType.Road, 0},
+            { TileType.Stone, 6},
         };
 
-        private Dictionary<TileType, bool> isTransitionable = new Dictionary<TileType, bool>
+        // ordered lowest precedence to highest precedence
+        private List<TileType> canTransition = new List<TileType>
         {
-            { TileType.None, false},
-            { TileType.Ground, false},
-            { TileType.Water, true},
-            { TileType.Fence, false},
-            { TileType.Road, false},
-        };
-        private Dictionary<TileType, TileType[]> supportedTransitions = new Dictionary<TileType, TileType[]> {
-            {TileType.Water, new TileType[]{TileType.Ground } }
+            TileType.Water, // note: lowest in the list doesn't need transition images
+            TileType.Ground,
+            TileType.Stone,
         };
 
         private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
@@ -41,11 +39,12 @@ namespace Ozzyria.MapEditor
             { TileType.Water, false},
             { TileType.Fence, true},
             { TileType.Road, true},
+            { TileType.Stone, false},
         };
 
         public int GetZIndex(TileType type)
         {
-            if(type == TileType.Fence)
+            if (type == TileType.Fence)
             {
                 return Renderable.Z_FOREGROUND;
             }
@@ -53,72 +52,14 @@ namespace Ozzyria.MapEditor
             return Renderable.Z_BACKGROUND;
         }
 
-        public Vector2i GetTextureCoordinates(TileType type, TransitionType transition, PathDirection direction)
+        public Vector2i GetTextureCoordinates(TileType type, PathDirection direction)
         {
             int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
             int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
             var offsetX = 0;
             var offsetY = 0;
 
-            if (IsTransitionable(type))
-            {
-                switch (transition)
-                {
-                    case TransitionType.UpLeft:
-                        offsetX = 0;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.UpRight:
-                        offsetX = 2;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.DownLeft:
-                        offsetX = 0;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.DownRight:
-                        offsetX = 2;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.Up:
-                        offsetX = 1;
-                        offsetY = 0;
-                        break;
-                    case TransitionType.Down:
-                        offsetX = 1;
-                        offsetY = 2;
-                        break;
-                    case TransitionType.Left:
-                        offsetX = 0;
-                        offsetY = 1;
-                        break;
-                    case TransitionType.Right:
-                        offsetX = 2;
-                        offsetY = 1;
-                        break;
-                    case TransitionType.DownRightDiagonal:
-                        offsetX = 1;
-                        offsetY = 3;
-                        break;
-                    case TransitionType.DownLeftDiagonal:
-                        offsetX = 2;
-                        offsetY = 3;
-                        break;
-                    case TransitionType.UpLeftDiagonal:
-                        offsetX = 2;
-                        offsetY = 4;
-                        break;
-                    case TransitionType.UpRightDiagonal:
-                        offsetX = 1;
-                        offsetY = 4;
-                        break;
-                    default:
-                        offsetX = 1;
-                        offsetY = 1;
-                        break;
-                }
-            }
-            else if (isPathable.ContainsKey(type) && isPathable[type])
+            if (isPathable.ContainsKey(type) && isPathable[type])
             {
                 switch (direction)
                 {
@@ -196,14 +137,62 @@ namespace Ozzyria.MapEditor
             };
         }
 
-        public bool IsTransitionable(TileType type)
+        public Vector2i GetEdgeTransitionTextureCoordinates(TileType type, EdgeTransitionType edgeTransition)
         {
-            return isTransitionable.ContainsKey(type) && isTransitionable[type];
+            int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
+            int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (canTransition.Any(t => t == type))
+            {
+                offsetX = (int)edgeTransition; // cause the fancy bit-mask
+            }
+
+            return new Vector2i
+            {
+                X = baseTx + offsetX,
+                Y = baseTy + offsetY
+            };
         }
 
-        public bool IsSupportedTransition(TileType fromType, TileType toType)
+        public Vector2i GetCornerTransitionTextureCoordinates(TileType type, CornerTransitionType cornerTransition)
         {
-            return IsTransitionable(fromType) && supportedTransitions.ContainsKey(fromType) && supportedTransitions[fromType].Contains(toType);
+            int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
+            int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
+            var offsetX = 0;
+            var offsetY = 0;
+
+            if (canTransition.Any(t => t == type))
+            {
+                offsetY = 1;
+                offsetX = (int)cornerTransition; // cause the fancy bit-mask
+            }
+
+            return new Vector2i
+            {
+                X = baseTx + offsetX,
+                Y = baseTy + offsetY
+            };
+        }
+
+        public bool CanTransition(TileType toType, TileType fromType)
+        {
+            var toIndex = canTransition.IndexOf(toType);
+            var fromIndex = canTransition.IndexOf(fromType);
+            /* 
+             * Is not tranistioning into self
+             *  AND both tile types are transitionable
+             *  AND tile transitioned INTO is lower precedence 
+             */
+            return toType != fromType
+                && fromIndex != -1 && toIndex != -1
+                && toIndex < fromIndex;
+        }
+
+        public TileType[] GetTransitionTypesPrecedenceAscending()
+        {
+            return canTransition.ToArray();
         }
 
         public bool IsPathable(TileType type)

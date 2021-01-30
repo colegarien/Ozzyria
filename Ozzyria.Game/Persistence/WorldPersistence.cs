@@ -25,7 +25,7 @@ namespace Ozzyria.Game.Persistence
                 while ((line = file.ReadLine().Trim()) != "" && line != "END")
                 {
                     var pieces = line.Split("|");
-                    if (pieces.Length != 6)
+                    if (pieces.Length < 7)
                     {
                         continue;
                     }
@@ -37,13 +37,24 @@ namespace Ozzyria.Game.Persistence
                     var tx = int.Parse(pieces[4]);
                     var ty = int.Parse(pieces[5]);
 
+                    var decals = new TileDecal[int.Parse(pieces[6])];
+                    for(var i = 0; i < decals.Length; i++)
+                    {
+                        decals[i] = new TileDecal
+                        {
+                            TextureCoordX = int.Parse(pieces[7 + (i*2)]),
+                            TextureCoordY = int.Parse(pieces[7 + (i*2) + 1]),
+                        };
+                    }
+
                     layers[layer].Add(new Tile
                     {
                         X = x,
                         Y = y,
                         Z = z,
                         TextureCoordX = tx,
-                        TextureCoordY = ty
+                        TextureCoordY = ty,
+                        Decals = decals
                     });
                 }
             }
@@ -73,7 +84,12 @@ namespace Ozzyria.Game.Persistence
                 {
                     foreach (var tile in map.Layers[layer])
                     {
-                        file.WriteLine($"{layer}|{tile.X}|{tile.Y}|{tile.Z}|{tile.TextureCoordX}|{tile.TextureCoordY}");
+                        var serializedTile = $"{layer}|{tile.X}|{tile.Y}|{tile.Z}|{tile.TextureCoordX}|{tile.TextureCoordY}|{tile.Decals.Length}";
+                        foreach(var decal in tile.Decals)
+                        {
+                            serializedTile += $"|{decal.TextureCoordX}|{decal.TextureCoordY}";
+                        }
+                        file.WriteLine(serializedTile);
                     }
                 }
                 file.WriteLine("END");
