@@ -207,7 +207,6 @@ namespace Ozzyria.MapEditor
                 return;
             }
 
-            // TODO OZ-19 : as adding tiles/decals be sure to sort by "precedence", i.e. grass to water transition renders under forest to water transition
             var layers = new Dictionary<int, List<Game.Tile>>();
             for (var layer = 0; layer < GetNumberOfLayers(); layer++)
             {
@@ -232,50 +231,9 @@ namespace Ozzyria.MapEditor
                             Y = y,
                             Z = z,
                             TextureCoordX = textureCoordinates.X,
-                            TextureCoordY = textureCoordinates.Y
+                            TextureCoordY = textureCoordinates.Y,
+                            Decals = BuildTileDecals(layer, x, y)
                         });
-
-                        // TODO OZ-19 Instead of stacking tiles on top of eachother re-work this to add a 'decals' thing to tiles
-                        var cornerTransitions = GetCornerTransitionType(layer, x, y);
-                        var edgeTransitions = GetEdgeTransitionType(layer, x, y);
-
-                        var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesInPrecedenceOrder();
-                        foreach (var transitionTileType in transitionTypesByPrecedence)
-                        {
-                            if (cornerTransitions.ContainsKey(transitionTileType))
-                            {
-                                var cornerTransition = cornerTransitions[transitionTileType];
-                                if (cornerTransition != CornerTransitionType.None)
-                                {
-                                    textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
-                                    layers[layer].Add(new Game.Tile
-                                    {
-                                        X = x,
-                                        Y = y,
-                                        Z = z,
-                                        TextureCoordX = textureCoordinates.X,
-                                        TextureCoordY = textureCoordinates.Y
-                                    });
-                                }
-                            }
-
-                            if (edgeTransitions.ContainsKey(transitionTileType))
-                            {
-                                var edgeTransition = edgeTransitions[transitionTileType];
-                                if (edgeTransition != EdgeTransitionType.None)
-                                {
-                                    textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
-                                    layers[layer].Add(new Game.Tile
-                                    {
-                                        X = x,
-                                        Y = y,
-                                        Z = z,
-                                        TextureCoordX = textureCoordinates.X,
-                                        TextureCoordY = textureCoordinates.Y
-                                    });
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -306,6 +264,48 @@ namespace Ozzyria.MapEditor
             entityManager.Register(EntityFactory.CreateBoxCollider(200, 300, 10, 300));
 
             worldLoader.SaveEntityManager("test_e", entityManager);
+        }
+
+        public static TileDecal[] BuildTileDecals(int layer, int x, int y)
+        {
+            var decals = new List<TileDecal>();
+
+            var cornerTransitions = GetCornerTransitionType(layer, x, y);
+            var edgeTransitions = GetEdgeTransitionType(layer, x, y);
+
+            var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesInPrecedenceOrder();
+            foreach (var transitionTileType in transitionTypesByPrecedence)
+            {
+                if (cornerTransitions.ContainsKey(transitionTileType))
+                {
+                    var cornerTransition = cornerTransitions[transitionTileType];
+                    if (cornerTransition != CornerTransitionType.None)
+                    {
+                        var textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
+                        decals.Add(new TileDecal
+                        {
+                            TextureCoordX = textureCoordinates.X,
+                            TextureCoordY = textureCoordinates.Y
+                        });
+                    }
+                }
+
+                if (edgeTransitions.ContainsKey(transitionTileType))
+                {
+                    var edgeTransition = edgeTransitions[transitionTileType];
+                    if (edgeTransition != EdgeTransitionType.None)
+                    {
+                        var textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
+                        decals.Add(new TileDecal
+                        {
+                            TextureCoordX = textureCoordinates.X,
+                            TextureCoordY = textureCoordinates.Y
+                        });
+                    }
+                }
+            }
+
+            return decals.ToArray();
         }
 
         public static void PaintTile(int layer, int x, int y, TileType type)

@@ -76,17 +76,14 @@ namespace Ozzyria.Client
             };
 
             sprites.Add(baseSprite);
-            // TODO OZ-19 : pull 'decals' from Tile and create sprites
-/*            for (var i = 0; i < 32; i++)
+            foreach (var decal in tile.Decals)
             {
                 sprites.Add(new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"))
                 {
-                    Position = new Vector2f(tile.X * Tile.DIMENSION + 16, tile.Y * Tile.DIMENSION + 16),
-                    Origin = new Vector2f(Tile.DIMENSION / 2f, Tile.DIMENSION / 2f),
-                    TextureRect = new IntRect(0 * Tile.DIMENSION, 0 * Tile.DIMENSION, Tile.DIMENSION / 2, Tile.DIMENSION / 2),
-                    Rotation = 45 +i
+                    Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
+                    TextureRect = new IntRect(decal.TextureCoordX * Tile.DIMENSION, decal.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION)
                 });
-            }*/
+            }
 
             return new CompositeGraphic
             {
