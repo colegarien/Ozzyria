@@ -5,7 +5,11 @@ using System.Linq;
 
 namespace Ozzyria.MapEditor
 {
-    class TileMetaData
+    // OZ-18 : try to get rid of hard-coded "TileType"
+    // OZ-18 : link meta-data with specific Tile Sheet graphics, maybe have 'resources' entry
+    // OZ-18 : Make a Content project to manage all this data?
+    // OZ-18 : Make a tool or stored data in JSON format for easy tweaking?
+    class TileMetaData 
     {
         private Dictionary<TileType, int> baseX = new Dictionary<TileType, int> {
             { TileType.None, 0},
