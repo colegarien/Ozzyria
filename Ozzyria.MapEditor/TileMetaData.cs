@@ -9,55 +9,27 @@ namespace Ozzyria.MapEditor
     // TODO OZ-18 : link meta-data with specific Tile Sheet graphics, maybe have 'resources' entry
     // TODO OZ-18 : Make a Content project to manage all this data?
     // TODO OZ-18 : Make a tool or stored data in JSON format for easy tweaking?
-    class TileMetaData 
+    class TileMetaData
     {
-        private Dictionary<TileType, int> baseX = new Dictionary<TileType, int> {
-            { TileType.None, 0},
-            { TileType.Ground, 0},
-            { TileType.Water, 0},
-            { TileType.Fence, 4},
-            { TileType.Road, 8},
-            { TileType.Stone, 0},
-        };
-        private Dictionary<TileType, int> baseY = new Dictionary<TileType, int> {
-            { TileType.None, 0},
-            { TileType.Ground, 4},
-            { TileType.Water, 5},
-            { TileType.Fence, 0},
-            { TileType.Road, 0},
-            { TileType.Stone, 6},
-        };
+        private Dictionary<TileType, int> baseX;
+        private Dictionary<TileType, int> baseY;
+        private Dictionary<TileType, int> baseZ;
 
         // ordered lowest precedence to highest precedence
-        private List<TileType> canTransition = new List<TileType>
-        {
-            TileType.Water, // note: lowest in the list doesn't need transition images
-            TileType.Ground,
-            TileType.Stone,
-        };
-
-        private Dictionary<TileType, bool> isPathable = new Dictionary<TileType, bool>
-        {
-            { TileType.None, false},
-            { TileType.Ground, false},
-            { TileType.Water, false},
-            { TileType.Fence, true},
-            { TileType.Road, true},
-            { TileType.Stone, false},
-        };
+        private List<TileType> canTransition;
+        private Dictionary<TileType, bool> isPathable;
 
         public int GetZIndex(TileType type)
         {
-            if (type == TileType.Fence)
-            {
-                return Renderable.Z_FOREGROUND;
-            }
-
-            return Renderable.Z_BACKGROUND;
+            InitializeMetaData();
+            return baseZ.ContainsKey(type)
+                ? baseZ[type]
+                : Renderable.Z_BACKGROUND;
         }
 
         public Vector2i GetTextureCoordinates(TileType type, PathDirection direction)
         {
+            InitializeMetaData();
             int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
             int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
             var offsetX = 0;
@@ -143,6 +115,7 @@ namespace Ozzyria.MapEditor
 
         public Vector2i GetEdgeTransitionTextureCoordinates(TileType type, EdgeTransitionType edgeTransition)
         {
+            InitializeMetaData();
             int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
             int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
             var offsetX = 0;
@@ -162,6 +135,7 @@ namespace Ozzyria.MapEditor
 
         public Vector2i GetCornerTransitionTextureCoordinates(TileType type, CornerTransitionType cornerTransition)
         {
+            InitializeMetaData();
             int baseTx = baseX.ContainsKey(type) ? baseX[type] : 0;
             int baseTy = baseY.ContainsKey(type) ? baseY[type] : 0;
             var offsetX = 0;
@@ -182,6 +156,7 @@ namespace Ozzyria.MapEditor
 
         public bool CanTransition(TileType toType, TileType fromType)
         {
+            InitializeMetaData();
             var toIndex = canTransition.IndexOf(toType);
             var fromIndex = canTransition.IndexOf(fromType);
             /* 
@@ -196,12 +171,61 @@ namespace Ozzyria.MapEditor
 
         public TileType[] GetTransitionTypesPrecedenceAscending()
         {
+            InitializeMetaData();
             return canTransition.ToArray();
         }
 
         public bool IsPathable(TileType type)
         {
+            InitializeMetaData();
             return isPathable.ContainsKey(type) && isPathable[type];
+        }
+
+
+        private void InitializeMetaData()
+        {
+            if (baseX != null && baseX.Count <= 0)
+            {
+                // if something is already initialized, don't bother re-intializing
+                return;
+            }
+
+            // TODO OZ-18 : load from relevant file
+            baseX = new Dictionary<TileType, int> {
+                { TileType.None, 0},
+                { TileType.Ground, 0},
+                { TileType.Water, 0},
+                { TileType.Fence, 4},
+                { TileType.Road, 8},
+                { TileType.Stone, 0},
+            };
+            baseY = new Dictionary<TileType, int> {
+                { TileType.None, 0},
+                { TileType.Ground, 4},
+                { TileType.Water, 5},
+                { TileType.Fence, 0},
+                { TileType.Road, 0},
+                { TileType.Stone, 6},
+            };
+
+            // ordered lowest precedence to highest precedence
+            canTransition = new List<TileType>
+            {
+                TileType.Water, // note: lowest in the list doesn't need transition images
+                TileType.Ground,
+                TileType.Stone,
+            };
+
+            isPathable = new Dictionary<TileType, bool>
+            {
+                { TileType.Fence, true},
+                { TileType.Road, true},
+            };
+
+            baseZ = new Dictionary<TileType, int>
+            {
+                {TileType.Fence,  Renderable.Z_FOREGROUND}
+            };
         }
     }
 }
