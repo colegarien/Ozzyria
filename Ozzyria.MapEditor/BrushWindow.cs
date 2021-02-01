@@ -1,12 +1,11 @@
 ﻿using Ozzyria.MapEditor.EventSystem;
 using SFML.Graphics;
-using System;
 
 namespace Ozzyria.MapEditor
 {
     class BrushWindow : GWindow
     {
-        public TileType SelectedBrush { get; set; } = TileType.Ground;
+        public int SelectedBrush { get; set; } = 1;
         private int mouseX = 0;
         private int mouseY = 0;
 
@@ -28,7 +27,7 @@ namespace Ozzyria.MapEditor
             }
 
             var i = 0;
-            foreach (TileType type in Enum.GetValues(typeof(TileType)))
+            foreach (int type in MapManager.GetTileTypes())
             {
                 var left = GetILeft() + (i * 37);
                 var top = GetITop();
@@ -66,7 +65,7 @@ namespace Ozzyria.MapEditor
         protected override void RenderWindowContents(RenderTarget buffer)
         {
             var i = 0;
-            foreach(TileType type in Enum.GetValues(typeof(TileType)))
+            foreach(int type in MapManager.GetTileTypes())
             {
                 var left = GetILeft() + (i * 37);
                 var top = GetITop();

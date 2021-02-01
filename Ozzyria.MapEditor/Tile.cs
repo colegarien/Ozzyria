@@ -2,16 +2,6 @@
 
 namespace Ozzyria.MapEditor
 {
-    enum TileType
-    {
-        None,
-        Ground,
-        Water,
-        Fence,
-        Road,
-        Stone
-    }
-
     enum TransitionType
     {
         None,
@@ -91,9 +81,9 @@ namespace Ozzyria.MapEditor
 
     class Tile
     {
-        public TileType Type { get; set; } = TileType.None;
-        public IDictionary<TileType, EdgeTransitionType> EdgeTransition { get; set; } = new Dictionary<TileType, EdgeTransitionType>();
-        public IDictionary<TileType, CornerTransitionType> CornerTransition { get; set; } = new Dictionary<TileType, CornerTransitionType>();
+        public int Type { get; set; } = 0;
+        public IDictionary<int, EdgeTransitionType> EdgeTransition { get; set; } = new Dictionary<int, EdgeTransitionType>();
+        public IDictionary<int, CornerTransitionType> CornerTransition { get; set; } = new Dictionary<int, CornerTransitionType>();
         public PathDirection Direction { get; set; } = PathDirection.None;
     }
 }

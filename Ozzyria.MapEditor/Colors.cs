@@ -4,15 +4,16 @@ namespace Ozzyria.MapEditor
 {
     class Colors
     {
-        public static Color TileColor(TileType type)
+        public static Color TileColor(int type)
         {
+            // TODO OZ-18 : move to tile metadata!! (or randomly assign colors based on int
             return type switch
             {
-                TileType.Ground => Color.Green,
-                TileType.Water => Color.Blue,
-                TileType.Fence => Color.Red,
-                TileType.Road => new Color(178,152,0,255),
-                TileType.Stone => new Color(155, 155, 155, 255),
+                1 => Color.Green,
+                2 => Color.Blue,
+                3 => Color.Red,
+                4 => new Color(178,152,0,255),
+                5 => new Color(155, 155, 155, 255),
                 _ => Color.Transparent,
             };
         }

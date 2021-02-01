@@ -21,7 +21,7 @@ namespace Ozzyria.MapEditor
         private float cursorScreenX = 0;
         private float cursorScreenY = 0;
         public int Layer { get; set; } = 0;
-        public TileType SelectedBrush { get; set; }
+        public int SelectedBrush { get; set; }
         public ToolType SelectedTool { get; set; }
 
         public ViewWindow(int x, int y, uint width, uint height, uint screenWidth, uint screenHeight, int margin, int padding) : base(x, y, width, height, screenWidth, screenHeight, margin, padding)
@@ -246,7 +246,7 @@ namespace Ozzyria.MapEditor
                         }
                     }
 
-                    if (tileType != TileType.None)
+                    if (tileType != 0)
                     {
                         var tileShape = new RectangleShape(tileSize)
                         {
@@ -390,7 +390,7 @@ namespace Ozzyria.MapEditor
             }
         }
 
-        private void DrawTransitionType(float x, float y, int width, int height, IDictionary<TileType, EdgeTransitionType> edgeTransitions, IDictionary<TileType, CornerTransitionType> cornerTransitions)
+        private void DrawTransitionType(float x, float y, int width, int height, IDictionary<int, EdgeTransitionType> edgeTransitions, IDictionary<int, CornerTransitionType> cornerTransitions)
         {
             var transitionDimension = 8f;
             var size = new Vector2f(transitionDimension, transitionDimension);

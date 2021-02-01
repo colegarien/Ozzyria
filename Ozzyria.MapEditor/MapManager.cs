@@ -3,7 +3,6 @@ using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using Ozzyria.MapEditor.EventSystem;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ozzyria.MapEditor
 {
@@ -40,8 +39,8 @@ namespace Ozzyria.MapEditor
                     for (var y = 0; y < _map.Height; y++)
                     {
                         // reset before recalculating
-                        var edgeTransitions = new Dictionary<TileType, EdgeTransitionType>();
-                        var cornerTransitions = new Dictionary<TileType, CornerTransitionType>();
+                        var edgeTransitions = new Dictionary<int, EdgeTransitionType>();
+                        var cornerTransitions = new Dictionary<int, CornerTransitionType>();
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
                         var tileType = GetTileType(layer, x, y);
@@ -216,7 +215,7 @@ namespace Ozzyria.MapEditor
                     for (var y = 0; y < _map.Height; y++)
                     {
                         var tileType = GetTileType(layer, x, y);
-                        if (tileType == TileType.None)
+                        if (tileType == 0)
                             continue;
 
                         var textureCoordinates = _tileMetaData.GetTextureCoordinates(
@@ -308,7 +307,7 @@ namespace Ozzyria.MapEditor
             return decals.ToArray();
         }
 
-        public static void PaintTile(int layer, int x, int y, TileType type)
+        public static void PaintTile(int layer, int x, int y, int type)
         {
             if (!MapIsLoaded())
             {
@@ -319,7 +318,7 @@ namespace Ozzyria.MapEditor
             BakeMap();
         }
 
-        public static void FillTile(int layer, int x, int y, TileType type)
+        public static void FillTile(int layer, int x, int y, int type)
         {
             if (!MapIsLoaded())
             {
@@ -336,7 +335,7 @@ namespace Ozzyria.MapEditor
             BakeMap();
         }
 
-        private static void FillRecursive(int layer, int x, int y, TileType type, TileType toFill)
+        private static void FillRecursive(int layer, int x, int y, int type, int toFill)
         {
             var currentTileType = _map.GetTileType(layer, x, y);
             if (x < 0 || x >= GetWidth() || y < 0 || y >= GetHeight() || currentTileType != toFill || currentTileType == type)
@@ -401,31 +400,31 @@ namespace Ozzyria.MapEditor
             return _map.Height;
         }
 
-        public static TileType GetTileType(int layer, int x, int y)
+        public static int GetTileType(int layer, int x, int y)
         {
             if (!MapIsLoaded())
             {
-                return TileType.None;
+                return 0;
             }
 
             return _map.GetTileType(layer, x, y);
         }
 
-        public static IDictionary<TileType, EdgeTransitionType> GetEdgeTransitionType(int layer, int x, int y)
+        public static IDictionary<int, EdgeTransitionType> GetEdgeTransitionType(int layer, int x, int y)
         {
             if (!MapIsLoaded())
             {
-                return new Dictionary<TileType, EdgeTransitionType>();
+                return new Dictionary<int, EdgeTransitionType>();
             }
 
             return _map.GetEdgeTransitionType(layer, x, y);
         }
 
-        public static IDictionary<TileType, CornerTransitionType> GetCornerTransitionType(int layer, int x, int y)
+        public static IDictionary<int, CornerTransitionType> GetCornerTransitionType(int layer, int x, int y)
         {
             if (!MapIsLoaded())
             {
-                return new Dictionary<TileType, CornerTransitionType>();
+                return new Dictionary<int, CornerTransitionType>();
             }
 
             return _map.GetCornerTransitionType(layer, x, y);
@@ -451,5 +450,14 @@ namespace Ozzyria.MapEditor
             return _map.layers.Count;
         }
 
+        public static int[] GetTileTypes()
+        {
+            if (!MapIsLoaded())
+            {
+                return new int[] { 0 };
+            }
+
+            return _tileMetaData.GetTypes();
+        }
     }
 }

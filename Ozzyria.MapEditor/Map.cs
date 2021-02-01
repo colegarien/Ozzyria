@@ -47,17 +47,17 @@ namespace Ozzyria.MapEditor
             }
         }
 
-        public TileType GetTileType(int layer, int x, int y)
+        public int GetTileType(int layer, int x, int y)
         {
             if (!layers.ContainsKey(layer))
             {
-                return TileType.None;
+                return 0;
             }
 
             return layers[layer].GetTileType(x, y);
         }
 
-        public void SetTileType(int layer, int x, int y, TileType type)
+        public void SetTileType(int layer, int x, int y, int type)
         {
             if (!layers.ContainsKey(layer))
             {
@@ -67,17 +67,17 @@ namespace Ozzyria.MapEditor
             layers[layer].SetTileType(x, y, type);
         }
 
-        public IDictionary<TileType, EdgeTransitionType> GetEdgeTransitionType(int layer, int x, int y)
+        public IDictionary<int, EdgeTransitionType> GetEdgeTransitionType(int layer, int x, int y)
         {
             if (!layers.ContainsKey(layer))
             {
-                return new Dictionary<TileType, EdgeTransitionType>();
+                return new Dictionary<int, EdgeTransitionType>();
             }
 
             return layers[layer].GetEdgeTransitions(x, y);
         }
 
-        public void SetEdgeTransitionType(int layer, int x, int y, IDictionary<TileType, EdgeTransitionType> transitions)
+        public void SetEdgeTransitionType(int layer, int x, int y, IDictionary<int, EdgeTransitionType> transitions)
         {
             if (!layers.ContainsKey(layer))
             {
@@ -92,17 +92,17 @@ namespace Ozzyria.MapEditor
             layers[layer].SetEdgeTransitions(x, y, transitions);
         }
 
-        public IDictionary<TileType, CornerTransitionType> GetCornerTransitionType(int layer, int x, int y)
+        public IDictionary<int, CornerTransitionType> GetCornerTransitionType(int layer, int x, int y)
         {
             if (!layers.ContainsKey(layer))
             {
-                return new Dictionary<TileType, CornerTransitionType>();
+                return new Dictionary<int, CornerTransitionType>();
             }
 
             return layers[layer].GetCornerTransitions(x, y);
         }
 
-        public void SetCornerTransitionType(int layer, int x, int y, IDictionary<TileType, CornerTransitionType> transitions)
+        public void SetCornerTransitionType(int layer, int x, int y, IDictionary<int, CornerTransitionType> transitions)
         {
             if (!layers.ContainsKey(layer))
             {

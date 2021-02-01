@@ -29,36 +29,36 @@ namespace Ozzyria.MapEditor
             return tiles[(y * width) + x];
         }
 
-        public TileType GetTileType(int x, int y)
+        public int GetTileType(int x, int y)
         {
-            return GetTile(x, y)?.Type ?? TileType.None;
+            return GetTile(x, y)?.Type ?? 0;
         }
 
-        public void SetTileType(int x, int y, TileType type)
+        public void SetTileType(int x, int y, int type)
         {
             var tile = GetTile(x, y);
             if (tile != null)
                 tile.Type = type;
         }
 
-        public IDictionary<TileType, EdgeTransitionType> GetEdgeTransitions(int x, int y)
+        public IDictionary<int, EdgeTransitionType> GetEdgeTransitions(int x, int y)
         {
-            return GetTile(x, y)?.EdgeTransition ?? new Dictionary<TileType, EdgeTransitionType>();
+            return GetTile(x, y)?.EdgeTransition ?? new Dictionary<int, EdgeTransitionType>();
         }
 
-        public void SetEdgeTransitions(int x, int y, IDictionary<TileType, EdgeTransitionType> transitions)
+        public void SetEdgeTransitions(int x, int y, IDictionary<int, EdgeTransitionType> transitions)
         {
             var tile = GetTile(x, y);
             if (tile != null)
                 tile.EdgeTransition = transitions;
         }
 
-        public IDictionary<TileType, CornerTransitionType> GetCornerTransitions(int x, int y)
+        public IDictionary<int, CornerTransitionType> GetCornerTransitions(int x, int y)
         {
-            return GetTile(x, y)?.CornerTransition ?? new Dictionary<TileType, CornerTransitionType>(); ;
+            return GetTile(x, y)?.CornerTransition ?? new Dictionary<int, CornerTransitionType>(); ;
         }
 
-        public void SetCornerTransitions(int x, int y, IDictionary<TileType, CornerTransitionType> transitions)
+        public void SetCornerTransitions(int x, int y, IDictionary<int, CornerTransitionType> transitions)
         {
             var tile = GetTile(x, y);
             if (tile != null)

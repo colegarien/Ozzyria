@@ -9,6 +9,7 @@ namespace Ozzyria.MapEditor
     {
         public string TileSetName { get; set; }
         public List<int> TileTypes { get; set; }
+        public IDictionary<int, string> TileNames { get; set; }
         public IDictionary<int, int> BaseTileX { get; set; }
         public IDictionary<int, int> BaseTileY { get; set; }
         public IDictionary<int, int> BaseTileZ { get; set; }
@@ -19,7 +20,6 @@ namespace Ozzyria.MapEditor
     }
 
 
-    // TODO OZ-18 : try to get rid of hard-coded "TileType"
     // TODO OZ-18 : link meta-data with specific Tile Sheet graphics, maybe have 'resources' entry
     // TODO OZ-18 : Make a Content project to manage all this data?
     // TODO OZ-18 : Make a tool or stored data in JSON format for easy tweaking?
@@ -27,19 +27,25 @@ namespace Ozzyria.MapEditor
     {
         private TileMetaData currentMetadata;
 
-        public int GetZIndex(TileType type)
+        public int[] GetTypes()
         {
             InitializeMetaData();
-            return currentMetadata.BaseTileZ.ContainsKey((int)type)
-                ? currentMetadata.BaseTileZ[(int)type]
+            return currentMetadata.TileTypes.ToArray();
+        }
+
+        public int GetZIndex(int type)
+        {
+            InitializeMetaData();
+            return currentMetadata.BaseTileZ.ContainsKey(type)
+                ? currentMetadata.BaseTileZ[type]
                 : Renderable.Z_BACKGROUND;
         }
 
-        public Vector2i GetTextureCoordinates(TileType type, PathDirection direction)
+        public Vector2i GetTextureCoordinates(int type, PathDirection direction)
         {
             InitializeMetaData();
-            int baseTx = currentMetadata.BaseTileX.ContainsKey((int)type) ? currentMetadata.BaseTileX[(int)type] : 0;
-            int baseTy = currentMetadata.BaseTileY.ContainsKey((int)type) ? currentMetadata.BaseTileY[(int)type] : 0;
+            int baseTx = currentMetadata.BaseTileX.ContainsKey(type) ? currentMetadata.BaseTileX[type] : 0;
+            int baseTy = currentMetadata.BaseTileY.ContainsKey(type) ? currentMetadata.BaseTileY[type] : 0;
             var offsetX = 0;
             var offsetY = 0;
 
@@ -121,15 +127,15 @@ namespace Ozzyria.MapEditor
             };
         }
 
-        public Vector2i GetEdgeTransitionTextureCoordinates(TileType type, EdgeTransitionType edgeTransition)
+        public Vector2i GetEdgeTransitionTextureCoordinates(int type, EdgeTransitionType edgeTransition)
         {
             InitializeMetaData();
-            int baseTx = currentMetadata.BaseTileX.ContainsKey((int)type) ? currentMetadata.BaseTileX[(int)type] : 0;
-            int baseTy = currentMetadata.BaseTileY.ContainsKey((int)type) ? currentMetadata.BaseTileY[(int)type] : 0;
+            int baseTx = currentMetadata.BaseTileX.ContainsKey(type) ? currentMetadata.BaseTileX[type] : 0;
+            int baseTy = currentMetadata.BaseTileY.ContainsKey(type) ? currentMetadata.BaseTileY[type] : 0;
             var offsetX = 0;
             var offsetY = 0;
 
-            if (currentMetadata.TilesThatSupportTransitions.Any(t => t == (int)type))
+            if (currentMetadata.TilesThatSupportTransitions.Any(t => t == type))
             {
                 offsetX = (int)edgeTransition; // cause the fancy bit-mask
             }
@@ -141,15 +147,15 @@ namespace Ozzyria.MapEditor
             };
         }
 
-        public Vector2i GetCornerTransitionTextureCoordinates(TileType type, CornerTransitionType cornerTransition)
+        public Vector2i GetCornerTransitionTextureCoordinates(int type, CornerTransitionType cornerTransition)
         {
             InitializeMetaData();
-            int baseTx = currentMetadata.BaseTileX.ContainsKey((int)type) ? currentMetadata.BaseTileX[(int)type] : 0;
-            int baseTy = currentMetadata.BaseTileY.ContainsKey((int)type) ? currentMetadata.BaseTileY[(int)type] : 0;
+            int baseTx = currentMetadata.BaseTileX.ContainsKey(type) ? currentMetadata.BaseTileX[type] : 0;
+            int baseTy = currentMetadata.BaseTileY.ContainsKey(type) ? currentMetadata.BaseTileY[type] : 0;
             var offsetX = 0;
             var offsetY = 0;
 
-            if (currentMetadata.TilesThatSupportTransitions.Any(t => t == (int)type))
+            if (currentMetadata.TilesThatSupportTransitions.Any(t => t == type))
             {
                 offsetY = 1;
                 offsetX = (int)cornerTransition; // cause the fancy bit-mask
@@ -162,11 +168,11 @@ namespace Ozzyria.MapEditor
             };
         }
 
-        public bool CanTransition(TileType toType, TileType fromType)
+        public bool CanTransition(int toType, int fromType)
         {
             InitializeMetaData();
-            var toIndex = currentMetadata.TilesThatSupportTransitions.IndexOf((int)toType);
-            var fromIndex = currentMetadata.TilesThatSupportTransitions.IndexOf((int)fromType);
+            var toIndex = currentMetadata.TilesThatSupportTransitions.IndexOf(toType);
+            var fromIndex = currentMetadata.TilesThatSupportTransitions.IndexOf(fromType);
             /* 
              * Is not tranistioning into self
              *  AND both tile types are transitionable
@@ -177,16 +183,16 @@ namespace Ozzyria.MapEditor
                 && toIndex < fromIndex;
         }
 
-        public TileType[] GetTransitionTypesPrecedenceAscending()
+        public int[] GetTransitionTypesPrecedenceAscending()
         {
             InitializeMetaData();
-            return currentMetadata.TilesThatSupportTransitions.Select(t => (TileType)t).ToArray();
+            return currentMetadata.TilesThatSupportTransitions.Select(t => t).ToArray();
         }
 
-        public bool IsPathable(TileType type)
+        public bool IsPathable(int type)
         {
             InitializeMetaData();
-            return currentMetadata.TilesThatSupportPathing.Any(t => t == (int)type);
+            return currentMetadata.TilesThatSupportPathing.Any(t => t == type);
         }
 
 
@@ -200,39 +206,57 @@ namespace Ozzyria.MapEditor
 
             // TODO OZ-18 : load from relevant file
             currentMetadata = new TileMetaData();
+            currentMetadata.TileTypes = new List<int>
+            {
+                0, // TODO OZ-18 : make "0" an unexplicit reserved type for "none" universally
+                1,
+                2,
+                3,
+                4,
+                5
+            };
+            currentMetadata.TileNames = new Dictionary<int, string>
+            {
+                { 0, "None" },
+                { 1,  "Ground" },
+                { 2, "Water" },
+                { 3, "Fence" },
+                { 4,  "Road" },
+                { 5,  "Stone" }
+            };
             currentMetadata.BaseTileX = new Dictionary<int, int> {
-                { (int)TileType.None, 0},
-                { (int)TileType.Ground, 0},
-                { (int)TileType.Water, 0},
-                { (int)TileType.Fence, 4},
-                { (int)TileType.Road, 8},
-                { (int)TileType.Stone, 0},
+                { 0, 0},
+                { 1, 0},
+                { 2, 0},
+                { 3, 4},
+                { 4, 8},
+                { 5, 0},
             };
             currentMetadata.BaseTileY = new Dictionary<int, int> {
-                { (int)TileType.None, 0},
-                { (int)TileType.Ground, 4},
-                { (int)TileType.Water, 5},
-                { (int)TileType.Fence, 0},
-                { (int)TileType.Road, 0},
-                { (int)TileType.Stone, 6},
+                { 0, 0},
+                { 1, 4},
+                { 2, 5},
+                { 3, 0},
+                { 4, 0},
+                { 5, 6},
             };
             currentMetadata.BaseTileZ = new Dictionary<int, int>
             {
-                { (int)TileType.Fence,  Renderable.Z_FOREGROUND }
+                { 3,  Renderable.Z_FOREGROUND }
             };
 
             // ordered lowest precedence to highest precedence
             currentMetadata.TilesThatSupportTransitions = new List<int>
             {
-                (int)TileType.Water, // note: lowest in the list doesn't need transition images
-                (int)TileType.Ground,
-                (int)TileType.Stone,
+                2, // note: lowest in the list doesn't need transition images
+                1,
+                5,
             };
 
             currentMetadata.TilesThatSupportPathing = new List<int>
             {
-                (int)TileType.Fence,
-                (int)TileType.Road
+                3,
+                4
             };
         }
     }
