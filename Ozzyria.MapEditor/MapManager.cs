@@ -10,7 +10,7 @@ namespace Ozzyria.MapEditor
     class MapManager
     {
         protected static Map _map;
-        protected static TileMetaData _tileMetaData;
+        protected static TileMetaDataFactory _tileMetaData;
 
         public static bool MapIsLoaded()
         {
@@ -20,7 +20,7 @@ namespace Ozzyria.MapEditor
         public static void LoadMap(Map map)
         {
             _map = map;
-            _tileMetaData = new TileMetaData(); // TODO OZ-18 load from file
+            _tileMetaData = new TileMetaDataFactory(); // TODO OZ-18 load from file
 
             EventQueue.Queue(new MapLoadedEvent
             {
