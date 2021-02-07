@@ -1,13 +1,15 @@
 ﻿using Ozzyria.Game.Component;
 using SFML.System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Ozzyria.MapEditor
 {
     class TileMetaData
     {
-        public string TileSetName { get; set; }
         public List<int> TileTypes { get; set; }
         public IDictionary<int, string> TileNames { get; set; }
         public IDictionary<int, int> BaseTileX { get; set; }
@@ -22,9 +24,11 @@ namespace Ozzyria.MapEditor
 
     // TODO OZ-18 : link meta-data with specific Tile Sheet graphics, maybe have 'resources' entry
     // TODO OZ-18 : Make a Content project to manage all this data?
-    // TODO OZ-18 : Make a tool or stored data in JSON format for easy tweaking?
     class TileMetaDataFactory
     {
+        private IDictionary<string, TileMetaData> tileMetaDatas;
+
+        private string currentTileSet = "outside_tileset_001";
         private TileMetaData currentMetadata;
 
         public int[] GetTypes()
@@ -198,66 +202,113 @@ namespace Ozzyria.MapEditor
 
         private void InitializeMetaData()
         {
-            if (currentMetadata != null)
+            if (tileMetaDatas != null)
             {
                 // if something is already initialized, don't bother re-intializing
                 return;
             }
 
-            // TODO OZ-18 : load from relevant file
-            currentMetadata = new TileMetaData();
-            currentMetadata.TileTypes = new List<int>
-            {
-                0, // TODO OZ-18 : make "0" an unexplicit reserved type for "none" universally
-                1,
-                2,
-                3,
-                4,
-                5
-            };
-            currentMetadata.TileNames = new Dictionary<int, string>
-            {
-                { 0, "None" },
-                { 1,  "Ground" },
-                { 2, "Water" },
-                { 3, "Fence" },
-                { 4,  "Road" },
-                { 5,  "Stone" }
-            };
-            currentMetadata.BaseTileX = new Dictionary<int, int> {
-                { 0, 0},
-                { 1, 0},
-                { 2, 0},
-                { 3, 4},
-                { 4, 8},
-                { 5, 0},
-            };
-            currentMetadata.BaseTileY = new Dictionary<int, int> {
-                { 0, 0},
-                { 1, 4},
-                { 2, 5},
-                { 3, 0},
-                { 4, 0},
-                { 5, 6},
-            };
-            currentMetadata.BaseTileZ = new Dictionary<int, int>
-            {
-                { 3,  Renderable.Z_FOREGROUND }
-            };
+            // TODO OZ-18 : create utility just for reading MetaData (include custom converters there!)
+            var serializeOptions = new JsonSerializerOptions();
+            serializeOptions.Converters.Add(new DictionaryInt32Converter());
+            serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            // ordered lowest precedence to highest precedence
-            currentMetadata.TilesThatSupportTransitions = new List<int>
-            {
-                2, // note: lowest in the list doesn't need transition images
-                1,
-                5,
-            };
+            tileMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileMetaData>>(File.ReadAllText("tileset_metadata.json"), serializeOptions);
+            currentMetadata = tileMetaDatas[currentTileSet];
+        }
+    }
 
-            currentMetadata.TilesThatSupportPathing = new List<int>
+    public class DictionaryInt32Converter : JsonConverter<IDictionary<int, string>>
+    {
+        public override IDictionary<int, string> Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.StartObject)
             {
-                3,
-                4
-            };
+                throw new JsonException();
+            }
+
+            var value = new Dictionary<int, string>();
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    return value;
+                }
+
+                string keyString = reader.GetString();
+
+                if (!int.TryParse(keyString, out int keyAsInt32))
+                {
+                    throw new JsonException($"Unable to convert \"{keyString}\" to System.Int32.");
+                }
+
+                reader.Read();
+
+                string itemValue = reader.GetString();
+
+                value.Add(keyAsInt32, itemValue);
+            }
+
+            throw new JsonException("Error Occured");
+        }
+
+        public override void Write(Utf8JsonWriter writer, IDictionary<int, string> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            foreach (KeyValuePair<int, string> item in value)
+            {
+                writer.WriteString(item.Key.ToString(), item.Value);
+            }
+
+            writer.WriteEndObject();
+        }
+    }
+    public class DictionaryInt32Int32Converter : JsonConverter<IDictionary<int, int>>
+    {
+        public override IDictionary<int, int> Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new JsonException();
+            }
+
+            var value = new Dictionary<int, int>();
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    return value;
+                }
+
+                string keyString = reader.GetString();
+
+                if (!int.TryParse(keyString, out int keyAsInt32))
+                {
+                    throw new JsonException($"Unable to convert \"{keyString}\" to System.Int32.");
+                }
+
+                reader.Read();
+
+                int valueAsInt32 = reader.GetInt32();
+                value.Add(keyAsInt32, valueAsInt32);
+            }
+
+            throw new JsonException("Error Occured");
+        }
+
+        public override void Write(Utf8JsonWriter writer, IDictionary<int, int> value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            foreach (KeyValuePair<int, int> item in value)
+            {
+                writer.WriteString(item.Key.ToString(), item.Value.ToString());
+            }
+
+            writer.WriteEndObject();
         }
     }
 }

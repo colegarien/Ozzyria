@@ -2,12 +2,6 @@
 
 namespace Ozzyria.Game
 {
-    public class TileDecal
-    {
-        public int TextureCoordX { get; set; } = 0;
-        public int TextureCoordY { get; set; } = 0;
-    }
-
     public class Tile
     {
         public const int DIMENSION = 32;
@@ -17,6 +11,12 @@ namespace Ozzyria.Game
         public int TextureCoordX { get; set; } = 0;
         public int TextureCoordY { get; set; } = 0;
         public TileDecal[] Decals { get; set; }
+    }
+
+    public class TileDecal
+    {
+        public int TextureCoordX { get; set; } = 0;
+        public int TextureCoordY { get; set; } = 0;
     }
 
     public class TileMap

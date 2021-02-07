@@ -1,0 +1,48 @@
+{
+  "outside_tileset_001": {
+    "TileTypes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "TileNames": {
+      "0": "None",
+      "1": "Ground",
+      "2": "Water",
+      "3": "Fence",
+      "4": "Road",
+      "5": "Stone"
+    },
+    "BaseTileX": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 4,
+      "4": 8,
+      "5": 0
+    },
+    "BaseTileY": {
+      "0": 0,
+      "1": 4,
+      "2": 5,
+      "3": 0,
+      "4": 0,
+      "5": 6
+    },
+    "BaseTileZ": {
+      "3": 50
+    },
+    "TilesThatSupportTransitions": [
+      2,
+      1,
+      5
+    ],
+    "TilesThatSupportPathing": [
+      3,
+      4
+    ]
+  }
+}
