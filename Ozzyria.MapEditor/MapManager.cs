@@ -9,7 +9,7 @@ namespace Ozzyria.MapEditor
     class MapManager
     {
         protected static Map _map;
-        protected static TileMetaDataFactory _tileMetaData;
+        protected static TileSetMetaDataFactory _tileSetMetaData;
 
         public static bool MapIsLoaded()
         {
@@ -19,7 +19,8 @@ namespace Ozzyria.MapEditor
         public static void LoadMap(Map map)
         {
             _map = map;
-            _tileMetaData = new TileMetaDataFactory(); // TODO OZ-18 load from file
+            _tileSetMetaData = new TileSetMetaDataFactory();
+            _tileSetMetaData.SetCurrentTileSet(map.TileSet);
 
             EventQueue.Queue(new MapLoadedEvent
             {
@@ -44,7 +45,7 @@ namespace Ozzyria.MapEditor
                         _map.SetPathDirection(layer, x, y, PathDirection.None);
 
                         var tileType = GetTileType(layer, x, y);
-                        if (_tileMetaData.IsPathable(tileType))
+                        if (_tileSetMetaData.IsPathable(tileType))
                         {
                             var leftIsPath = GetTileType(layer, x - 1, y) == tileType;
                             var rightIsPath = GetTileType(layer, x + 1, y) == tileType;
@@ -116,16 +117,16 @@ namespace Ozzyria.MapEditor
                         {
                             // This works via 'bit-mask' math, the enum is very particularlly crafted
                             var leftTileType = GetTileType(layer, x - 1, y);
-                            var leftIsTransitionable = _tileMetaData.CanTransition(tileType, leftTileType);
+                            var leftIsTransitionable = _tileSetMetaData.CanTransition(tileType, leftTileType);
 
                             var rightTileType = GetTileType(layer, x + 1, y);
-                            var rightIsTransitionable = _tileMetaData.CanTransition(tileType, rightTileType);
+                            var rightIsTransitionable = _tileSetMetaData.CanTransition(tileType, rightTileType);
 
                             var upTileType = GetTileType(layer, x, y - 1);
-                            var upIsTransitionable = _tileMetaData.CanTransition(tileType, upTileType);
+                            var upIsTransitionable = _tileSetMetaData.CanTransition(tileType, upTileType);
 
                             var downTileType = GetTileType(layer, x, y + 1);
-                            var downIsTransitionable = _tileMetaData.CanTransition(tileType, downTileType);
+                            var downIsTransitionable = _tileSetMetaData.CanTransition(tileType, downTileType);
 
                             if (upIsTransitionable)
                             {
@@ -155,16 +156,16 @@ namespace Ozzyria.MapEditor
                             // This works via 'bit-mask' math, the enum is very particularlly crafted 
                             // TODO : Consider adding checks for current edges transition to avoid rednundantly adding corner transitions on top of them 
                             var upLeftTileType = GetTileType(layer, x - 1, y - 1);
-                            var upLeftIsTransitionable = _tileMetaData.CanTransition(tileType, upLeftTileType);
+                            var upLeftIsTransitionable = _tileSetMetaData.CanTransition(tileType, upLeftTileType);
 
                             var upRightTileType = GetTileType(layer, x + 1, y - 1);
-                            var upRightIsTransitionable = _tileMetaData.CanTransition(tileType, upRightTileType);
+                            var upRightIsTransitionable = _tileSetMetaData.CanTransition(tileType, upRightTileType);
 
                             var downLeftTileType = GetTileType(layer, x - 1, y + 1);
-                            var downLeftIsTransitionable = _tileMetaData.CanTransition(tileType, downLeftTileType);
+                            var downLeftIsTransitionable = _tileSetMetaData.CanTransition(tileType, downLeftTileType);
 
                             var downRightTileType = GetTileType(layer, x + 1, y + 1);
-                            var downRightIsTransitionable = _tileMetaData.CanTransition(tileType, downRightTileType);
+                            var downRightIsTransitionable = _tileSetMetaData.CanTransition(tileType, downRightTileType);
 
                             if (upLeftIsTransitionable)
                             {
@@ -218,11 +219,11 @@ namespace Ozzyria.MapEditor
                         if (tileType == 0)
                             continue;
 
-                        var textureCoordinates = _tileMetaData.GetTextureCoordinates(
+                        var textureCoordinates = _tileSetMetaData.GetTextureCoordinates(
                             tileType,
                             GetPathDirection(layer, x, y)
                         );
-                        var z = _tileMetaData.GetZIndex(tileType);
+                        var z = _tileSetMetaData.GetZIndex(tileType);
 
                         layers[layer].Add(new Game.Tile
                         {
@@ -239,6 +240,7 @@ namespace Ozzyria.MapEditor
 
             var tileMap = new TileMap
             {
+                TileSet = _map.TileSet,
                 Width = _map.Width,
                 Height = _map.Height,
                 Layers = layers
@@ -272,7 +274,7 @@ namespace Ozzyria.MapEditor
             var cornerTransitions = GetCornerTransitionType(layer, x, y);
             var edgeTransitions = GetEdgeTransitionType(layer, x, y);
 
-            var transitionTypesByPrecedence = _tileMetaData.GetTransitionTypesPrecedenceAscending();
+            var transitionTypesByPrecedence = _tileSetMetaData.GetTransitionTypesPrecedenceAscending();
             foreach (var transitionTileType in transitionTypesByPrecedence)
             {
                 if (cornerTransitions.ContainsKey(transitionTileType))
@@ -280,7 +282,7 @@ namespace Ozzyria.MapEditor
                     var cornerTransition = cornerTransitions[transitionTileType];
                     if (cornerTransition != CornerTransitionType.None)
                     {
-                        var textureCoordinates = _tileMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
+                        var textureCoordinates = _tileSetMetaData.GetCornerTransitionTextureCoordinates(transitionTileType, cornerTransition);
                         decals.Add(new TileDecal
                         {
                             TextureCoordX = textureCoordinates.X,
@@ -294,7 +296,7 @@ namespace Ozzyria.MapEditor
                     var edgeTransition = edgeTransitions[transitionTileType];
                     if (edgeTransition != EdgeTransitionType.None)
                     {
-                        var textureCoordinates = _tileMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
+                        var textureCoordinates = _tileSetMetaData.GetEdgeTransitionTextureCoordinates(transitionTileType, edgeTransition);
                         decals.Add(new TileDecal
                         {
                             TextureCoordX = textureCoordinates.X,
@@ -457,7 +459,7 @@ namespace Ozzyria.MapEditor
                 return new int[] { 0 };
             }
 
-            return _tileMetaData.GetTypes();
+            return _tileSetMetaData.GetTypes();
         }
     }
 }

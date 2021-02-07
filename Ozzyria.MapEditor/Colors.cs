@@ -6,7 +6,7 @@ namespace Ozzyria.MapEditor
     {
         public static Color TileColor(int type)
         {
-            // TODO OZ-18 : move to tile metadata!! (or randomly assign colors based on int
+            // TODO OZ-5 : Render the actual tiles used in the game
             return type switch
             {
                 1 => Color.Green,

@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace Ozzyria.MapEditor
 {
-    class TileMetaData
+    class TileSetMetaData
     {
         public List<int> TileTypes { get; set; }
         public IDictionary<int, string> TileNames { get; set; }
@@ -21,15 +21,20 @@ namespace Ozzyria.MapEditor
         public IList<int> TilesThatSupportPathing { get; set; }
     }
 
-
-    // TODO OZ-18 : link meta-data with specific Tile Sheet graphics, maybe have 'resources' entry
-    // TODO OZ-18 : Make a Content project to manage all this data?
-    class TileMetaDataFactory
+    // TODO OZ-18 : Make a Content project to manage all this data? TileSets -> MetaData & Sprites folders in content project
+    class TileSetMetaDataFactory
     {
-        private IDictionary<string, TileMetaData> tileMetaDatas;
+        private IDictionary<string, TileSetMetaData> tileSetMetaDatas;
 
         private string currentTileSet = "outside_tileset_001";
-        private TileMetaData currentMetadata;
+        private TileSetMetaData currentMetadata;
+
+        public void SetCurrentTileSet(string tileSet)
+        {
+            InitializeMetaData();
+            currentTileSet = tileSet;
+            currentMetadata = tileSetMetaDatas[currentTileSet];
+        }
 
         public int[] GetTypes()
         {
@@ -202,19 +207,22 @@ namespace Ozzyria.MapEditor
 
         private void InitializeMetaData()
         {
-            if (tileMetaDatas != null)
+            if (tileSetMetaDatas != null)
             {
                 // if something is already initialized, don't bother re-intializing
                 return;
             }
 
-            // TODO OZ-18 : create utility just for reading MetaData (include custom converters there!)
+            // TODO consider wrapping this up in json reader/writer with all the custom converters
             var serializeOptions = new JsonSerializerOptions();
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            tileMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileMetaData>>(File.ReadAllText("tileset_metadata.json"), serializeOptions);
-            currentMetadata = tileMetaDatas[currentTileSet];
+            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("tileset_metadata.json"), serializeOptions);
+            if (tileSetMetaDatas.ContainsKey(currentTileSet))
+            {
+                currentMetadata = tileSetMetaDatas[currentTileSet];
+            }
         }
     }
 
