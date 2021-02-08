@@ -2,6 +2,6 @@
 {
     class BrushTypeChangeEvent : IEvent
     {
-        public TileType SelectedBrush { get; set; }
+        public int SelectedBrush { get; set; }
     }
 }

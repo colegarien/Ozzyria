@@ -84,7 +84,7 @@ namespace Ozzyria.Client
                 {
                     foreach (var tile in layer.Value)
                     {
-                        cachedTileMapGraphics.Add(graphicsManager.CreateTileGraphic(layer.Key, tile));
+                        cachedTileMapGraphics.Add(graphicsManager.CreateTileGraphic(tileMap.TileSet, layer.Key, tile));
                     }
                 }
             }

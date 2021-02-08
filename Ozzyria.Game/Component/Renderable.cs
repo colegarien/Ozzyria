@@ -14,6 +14,7 @@ namespace Ozzyria.Game.Component
     [Options(Name = "Renderable")]
     public class Renderable : Component
     {
+        // TODO find a better way, maybe once entity prefabs are a thing build this into the tooling?
         public const int Z_BACKGROUND = 0;
         public const int Z_ITEMS = 10;
         public const int Z_MIDDLEGROUND = 25;
