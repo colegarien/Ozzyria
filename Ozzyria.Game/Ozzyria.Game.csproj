@@ -5,12 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Maps\test_e.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Maps\test_m.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Ozzyria.Content\Ozzyria.Content.csproj" />
   </ItemGroup>
 
 </Project>

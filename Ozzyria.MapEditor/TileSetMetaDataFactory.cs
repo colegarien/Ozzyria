@@ -21,7 +21,6 @@ namespace Ozzyria.MapEditor
         public IList<int> TilesThatSupportPathing { get; set; }
     }
 
-    // TODO OZ-18 : Make a Content project to manage all this data? TileSets -> MetaData & Sprites folders in content project
     class TileSetMetaDataFactory
     {
         private IDictionary<string, TileSetMetaData> tileSetMetaDatas;
@@ -218,7 +217,7 @@ namespace Ozzyria.MapEditor
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("tileset_metadata.json"), serializeOptions);
+            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("TileSets/tileset_metadata.json"), serializeOptions);
             if (tileSetMetaDatas.ContainsKey(currentTileSet))
             {
                 currentMetadata = tileSetMetaDatas[currentTileSet];

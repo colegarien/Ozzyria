@@ -42,7 +42,7 @@ namespace Ozzyria.Client
 
         public Sprite CreateSprite(SpriteType spriteType)
         {
-            var sfmlSprite = new Sprite(GetTexture("Resources/Sprites/entity_set_001.png"));
+            var sfmlSprite = new Sprite(GetTexture("Entities/Sprites/entity_set_001.png"));
             switch (spriteType)
             {
                 case SpriteType.Particle:
@@ -69,7 +69,7 @@ namespace Ozzyria.Client
         public IGraphic CreateTileGraphic(string tileSet, int layer, Tile tile)
         {
             var sprites = new List<Drawable>();
-            var baseSprite = new Sprite(GetTexture("Resources/Sprites/"+ tileSet + ".png"))
+            var baseSprite = new Sprite(GetTexture("TileSets/Sprites/" + tileSet + ".png"))
             {
                 Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
                 TextureRect = new IntRect(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION)
@@ -78,7 +78,7 @@ namespace Ozzyria.Client
             sprites.Add(baseSprite);
             foreach (var decal in tile.Decals)
             {
-                sprites.Add(new Sprite(GetTexture("Resources/Sprites/outside_tileset_001.png"))
+                sprites.Add(new Sprite(GetTexture("TileSets/Sprites/" + tileSet + ".png"))
                 {
                     Position = new Vector2f(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
                     TextureRect = new IntRect(decal.TextureCoordX * Tile.DIMENSION, decal.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION)

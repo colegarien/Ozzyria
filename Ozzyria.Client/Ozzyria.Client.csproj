@@ -13,17 +13,4 @@
     <ProjectReference Include="..\Ozzyria.Networking\Ozzyria.Networking.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources\Sprites\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\Sprites\entity_set_001.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Sprites\outside_tileset_001.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
