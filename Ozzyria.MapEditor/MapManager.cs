@@ -261,6 +261,7 @@ namespace Ozzyria.MapEditor
                 layers[layer] = new List<Game.Tile>();
                 for (var x = 0; x < _map.Width; x++)
                 {
+                    // build vertical collisions
                     for (var y = 0; y < _map.Height; y++)
                     {
                         var tileType = GetTileType(layer, x, y);
@@ -269,10 +270,27 @@ namespace Ozzyria.MapEditor
                             var direction = GetPathDirection(layer, x, y);
 
                             // TODO OZ-11 : be smarter, combine colliders together to reduce map complexity
-                            var postBoxWidth = 6;
-                            var middleX = (x * GetTileDimension()) + (GetTileDimension() / 2f);
-                            var middleY = (y * GetTileDimension()) + (GetTileDimension() / 2f);
-                            entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5, postBoxWidth, postBoxWidth));
+                            // TODO OZ-11 : pull these 3 from tile metadata for tiletype
+                            var centerXOffset = 0;
+                            var centerYOffset = 5;
+                            var colliderDimension = 6;
+
+                            var left = x * GetTileDimension();
+                            var top = y * GetTileDimension();
+                            var right = left + GetTileDimension();
+                            var bottom = top + GetTileDimension();
+                            var tileCenterX = left + (GetTileDimension() / 2);
+                            var tileCenterY = top + (GetTileDimension() / 2);
+
+                            var centerLeft = tileCenterX + centerXOffset - (colliderDimension / 2);
+                            var centerTop = tileCenterY + centerYOffset - (colliderDimension / 2);
+                            var centerRight = centerLeft + colliderDimension;
+                            var centerBottom = centerTop + colliderDimension;
+
+                            if (direction == PathDirection.None)
+                            {
+                                entityManager.Register(EntityFactory.CreateBoxColliderArea(centerLeft, centerTop, centerRight, centerBottom));
+                            }
 
                             if (direction == PathDirection.All
                                 || direction == PathDirection.Down
@@ -283,7 +301,7 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.RightT
                                 || direction == PathDirection.UpDown)
                             {
-                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5 + 3 + 4, postBoxWidth, 8));
+                                entityManager.Register(EntityFactory.CreateBoxColliderArea(centerLeft, centerTop, centerRight, bottom));
                             }
 
 
@@ -296,7 +314,7 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.RightT
                                 || direction == PathDirection.UpDown)
                             {
-                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5 - 3 - 9, postBoxWidth, 18));
+                                entityManager.Register(EntityFactory.CreateBoxColliderArea(centerLeft, top, centerRight, centerBottom));
                             }
 
                             if (direction == PathDirection.All
@@ -308,7 +326,7 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.LeftT
                                 || direction == PathDirection.LeftRight)
                             {
-                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX-3-7, middleY + 5, 14, postBoxWidth));
+                                entityManager.Register(EntityFactory.CreateBoxColliderArea(left, centerTop, centerRight, centerBottom));
                             }
 
                             if (direction == PathDirection.All
@@ -320,7 +338,7 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.RightT
                                 || direction == PathDirection.LeftRight)
                             {
-                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX + 3 + 7, middleY + 5, 14, postBoxWidth));
+                                entityManager.Register(EntityFactory.CreateBoxColliderArea(centerLeft, centerTop, right, centerBottom));
                             }
                         }
                     }
