@@ -59,7 +59,7 @@ namespace Ozzyria.Game.Utility
             return orb;
         }
 
-        public static Entity CreateBoxCollider(float x, float y, int w, int h)
+        public static Entity CreateBoxCollider(float x, float y, int w, int h) // TODO OZ-11 : change x & y to be left & top (right now they are center)
         {
             var box = new Entity();
             box.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });

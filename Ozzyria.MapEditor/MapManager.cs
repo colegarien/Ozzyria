@@ -256,14 +256,76 @@ namespace Ozzyria.MapEditor
             entityManager.Register(EntityFactory.CreateCircleCollider(60, 60, 10));
 
             // wrap screen in border
-            entityManager.Register(EntityFactory.CreateBoxCollider(400, 20, 900, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(400, 510, 900, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(20, 300, 10, 700));
-            entityManager.Register(EntityFactory.CreateBoxCollider(780, 300, 10, 700));
+            for (var layer = 0; layer < GetNumberOfLayers(); layer++)
+            {
+                layers[layer] = new List<Game.Tile>();
+                for (var x = 0; x < _map.Width; x++)
+                {
+                    for (var y = 0; y < _map.Height; y++)
+                    {
+                        var tileType = GetTileType(layer, x, y);
+                        if (tileType == 3) // TODO OZ-11 : don't hard code this add something like "isWall" or "collisionType" to the tileset metadata
+                        {
+                            var direction = GetPathDirection(layer, x, y);
 
-            entityManager.Register(EntityFactory.CreateBoxCollider(150, 300, 400, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(200, 300, 10, 300));
+                            // TODO OZ-11 : be smarter, combine colliders together to reduce map complexity
+                            var postBoxWidth = 6;
+                            var middleX = (x * GetTileDimension()) + (GetTileDimension() / 2f);
+                            var middleY = (y * GetTileDimension()) + (GetTileDimension() / 2f);
+                            entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5, postBoxWidth, postBoxWidth));
 
+                            if (direction == PathDirection.All
+                                || direction == PathDirection.Down
+                                || direction == PathDirection.DownLeft
+                                || direction == PathDirection.DownRight
+                                || direction == PathDirection.DownT
+                                || direction == PathDirection.LeftT
+                                || direction == PathDirection.RightT
+                                || direction == PathDirection.UpDown)
+                            {
+                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5 + 3 + 4, postBoxWidth, 8));
+                            }
+
+
+                            if (direction == PathDirection.All
+                                || direction == PathDirection.Up
+                                || direction == PathDirection.UpLeft
+                                || direction == PathDirection.UpRight
+                                || direction == PathDirection.UpT
+                                || direction == PathDirection.LeftT
+                                || direction == PathDirection.RightT
+                                || direction == PathDirection.UpDown)
+                            {
+                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX, middleY + 5 - 3 - 9, postBoxWidth, 18));
+                            }
+
+                            if (direction == PathDirection.All
+                                || direction == PathDirection.Left
+                                || direction == PathDirection.UpLeft
+                                || direction == PathDirection.DownLeft
+                                || direction == PathDirection.UpT
+                                || direction == PathDirection.DownT
+                                || direction == PathDirection.LeftT
+                                || direction == PathDirection.LeftRight)
+                            {
+                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX-3-7, middleY + 5, 14, postBoxWidth));
+                            }
+
+                            if (direction == PathDirection.All
+                                || direction == PathDirection.Right
+                                || direction == PathDirection.UpRight
+                                || direction == PathDirection.DownRight
+                                || direction == PathDirection.UpT
+                                || direction == PathDirection.DownT
+                                || direction == PathDirection.RightT
+                                || direction == PathDirection.LeftRight)
+                            {
+                                entityManager.Register(EntityFactory.CreateBoxCollider(middleX + 3 + 7, middleY + 5, 14, postBoxWidth));
+                            }
+                        }
+                    }
+                }
+            }
             worldLoader.SaveEntityManager("test_e", entityManager);
         }
 
