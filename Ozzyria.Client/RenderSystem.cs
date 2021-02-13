@@ -14,7 +14,7 @@ namespace Ozzyria.Client
     class RenderSystem
     {
         public const bool DEBUG_SHOW_COLLISIONS = true;
-        public const bool DEBUG_SHOW_RENDER_AREA = true;
+        public const bool DEBUG_SHOW_RENDER_AREA = false;
 
         private List<IGraphic> cachedTileMapGraphics;
 
