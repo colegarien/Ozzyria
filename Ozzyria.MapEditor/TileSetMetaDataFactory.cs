@@ -19,6 +19,11 @@ namespace Ozzyria.MapEditor
         // ordered lowest precedence to highest precedence
         public IList<int> TilesThatSupportTransitions { get; set; }
         public IList<int> TilesThatSupportPathing { get; set; }
+
+        public IList<int> TilesThatSupportWalling { get; set; }
+        public IDictionary<int, int> WallingCenterXOffset { get; set; }
+        public IDictionary<int, int> WallingCenterYOffset { get; set; }
+        public IDictionary<int, int> WallingThickness { get; set; }
     }
 
     class TileSetMetaDataFactory
@@ -201,6 +206,36 @@ namespace Ozzyria.MapEditor
         {
             InitializeMetaData();
             return currentMetadata.TilesThatSupportPathing.Any(t => t == type);
+        }
+
+        public bool IsWallable(int type)
+        {
+            InitializeMetaData();
+            return currentMetadata.TilesThatSupportWalling.Any(t => t == type);
+        }
+
+        public int GetWallableCenterXOffset(int type)
+        {
+            InitializeMetaData();
+            return currentMetadata.WallingCenterXOffset.ContainsKey(type)
+                ? currentMetadata.WallingCenterXOffset[type]
+                : 0;
+        }
+
+        public int GetWallableCenterYOffset(int type)
+        {
+            InitializeMetaData();
+            return currentMetadata.WallingCenterYOffset.ContainsKey(type)
+                ? currentMetadata.WallingCenterYOffset[type]
+                : 0;
+        }
+
+        public int GetWallableThickness(int type)
+        {
+            InitializeMetaData();
+            return currentMetadata.WallingThickness.ContainsKey(type)
+                ? currentMetadata.WallingThickness[type]
+                : 32;
         }
 
 

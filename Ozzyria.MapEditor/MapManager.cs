@@ -263,12 +263,13 @@ namespace Ozzyria.MapEditor
                 // build vertical collisions
                 for (var x = 0; x < _map.Width; x++)
                 {
+                    int startType = -1;
                     int startY = -1;
                     int endY = -1;
                     for (var y = 0; y < _map.Height; y++)
                     {
                         var tileType = GetTileType(layer, x, y);
-                        if (tileType == 3) // TODO OZ-11 : don't hard code this add something like "isWall" or "collisionType" to the tileset metadata, also need to do something to change between two different wall types
+                        if (_tileSetMetaData.IsWallable(tileType))
                         {
                             var direction = GetPathDirection(layer, x, y);
                             if (direction == PathDirection.All
@@ -284,13 +285,26 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.UpLeft
                                 || direction == PathDirection.UpRight)
                             {
+                                if(tileType != startType && startY != -1 && endY != -1)
+                                {
+                                    // starting new string of wall types (collision could be a different size)
+                                    entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                                    startType = -1;
+                                    startY = -1;
+                                    endY = -1;
+                                }
+
                                 if (startY == -1)
+                                {
+                                    startType = tileType;
                                     startY = y;
+                                }
                                 endY = y;
                             }
                             else if (startY != -1 && endY != -1)
                             {
-                                entityManager.Register(CreateVerticalBoxCollider(x, startY, endY));
+                                entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                                startType = -1;
                                 startY = -1;
                                 endY = -1;
                             }
@@ -299,9 +313,10 @@ namespace Ozzyria.MapEditor
                         {
                             if (startY != -1 && endY != -1)
                             {
-                                entityManager.Register(CreateVerticalBoxCollider(x, startY, endY));
+                                entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
                             }
 
+                            startType = -1;
                             startY = -1;
                             endY = -1;
                         }
@@ -309,19 +324,20 @@ namespace Ozzyria.MapEditor
 
                     if (startY != -1 && endY != -1)
                     {
-                        entityManager.Register(CreateVerticalBoxCollider(x, startY, endY));
+                        entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
                     }
                 }
 
                 // build horizontal collisions
                 for (var y = 0; y < _map.Height; y++)
                 {
+                    int startType = -1;
                     int startX = -1;
                     int endX = -1;
                     for (var x = 0; x < _map.Width; x++)
                     {
                         var tileType = GetTileType(layer, x, y);
-                        if (tileType == 3)
+                        if (tileType == 3 || tileType == 6)
                         {
                             var direction = GetPathDirection(layer, x, y);
                             if (direction == PathDirection.None
@@ -338,13 +354,26 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.UpLeft
                                 || direction == PathDirection.UpRight)
                             {
+                                if (tileType != startType && startX != -1 && endX != -1)
+                                {
+                                    // starting new string of wall types (collision could be a different size)
+                                    entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                                    startType = -1;
+                                    startX = -1;
+                                    endX = -1;
+                                }
+
                                 if (startX == -1)
+                                {
+                                    startType = tileType;
                                     startX = x;
+                                }
                                 endX = x;
                             }
                             else if (startX != -1 && endX != -1)
                             {
-                                entityManager.Register(CreateHorizontalBoxCollider(y, startX, endX));
+                                entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                                startType = -1;
                                 startX = -1;
                                 endX = -1;
                             }
@@ -353,9 +382,10 @@ namespace Ozzyria.MapEditor
                         {
                             if (startX != -1 && endX != -1)
                             {
-                                entityManager.Register(CreateHorizontalBoxCollider(y, startX, endX));
+                                entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
                             }
 
+                            startType = -1;
                             startX = -1;
                             endX = -1;
                         }
@@ -363,21 +393,19 @@ namespace Ozzyria.MapEditor
 
                     if (startX != -1 && endX != -1)
                     {
-                        entityManager.Register(CreateHorizontalBoxCollider(y, startX, endX));
+                        entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
                     }
                 }
             }
             worldLoader.SaveEntityManager("test_e", entityManager);
         }
 
-        private static Entity CreateVerticalBoxCollider(int x, int startY, int endY)
+        private static Entity CreateVerticalBoxCollider(int tileType, int x, int startY, int endY)
         {
             var tileDimension = GetTileDimension();
-
-            // TODO OZ-11 : pull these 3 from tile metadata for tiletype
-            var centerXOffset = 0;
-            var centerYOffset = 5;
-            var colliderDimension = 6;
+            var centerXOffset = _tileSetMetaData.GetWallableCenterXOffset(tileType);
+            var centerYOffset = _tileSetMetaData.GetWallableCenterYOffset(tileType);
+            var colliderDimension = _tileSetMetaData.GetWallableThickness(tileType);
 
             var left = x * tileDimension;
             var tileCenterX = left + (tileDimension / 2);
@@ -390,14 +418,12 @@ namespace Ozzyria.MapEditor
             return EntityFactory.CreateBoxColliderArea(centerLeft, startTop, centerRight, endBottom);
         }
 
-        private static Entity CreateHorizontalBoxCollider(int y, int startX, int endX)
+        private static Entity CreateHorizontalBoxCollider(int tileType, int y, int startX, int endX)
         {
             var tileDimension = GetTileDimension();
-
-            // TODO OZ-11 : pull these 3 from tile metadata for tiletype
-            var centerXOffset = 0;
-            var centerYOffset = 5;
-            var colliderDimension = 6;
+            var centerXOffset = _tileSetMetaData.GetWallableCenterXOffset(tileType);
+            var centerYOffset = _tileSetMetaData.GetWallableCenterYOffset(tileType);
+            var colliderDimension = _tileSetMetaData.GetWallableThickness(tileType);
 
             var top = y * tileDimension;
             var tileCenterY = top + (tileDimension / 2);
