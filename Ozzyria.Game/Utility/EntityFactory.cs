@@ -59,11 +59,17 @@ namespace Ozzyria.Game.Utility
             return orb;
         }
 
-        public static Entity CreateBoxCollider(float x, float y, int w, int h)
+        public static Entity CreateBoxColliderArea(float left, float top, float right, float bottom)
         {
+            var width = (int)(right - left);
+            var height = (int)(bottom - top);
+
+            var centerX = left + (width / 2f);
+            var centerY = top + (height / 2f);
+
             var box = new Entity();
-            box.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
-            box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = w, Height = h });
+            box.AttachComponent(new Movement() { X = centerX, Y = centerY, PreviousX = centerX, PreviousY = centerY });
+            box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = width, Height = height });
 
             return box;
         }

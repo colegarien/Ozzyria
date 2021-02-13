@@ -255,16 +255,185 @@ namespace Ozzyria.MapEditor
             entityManager.Register(EntityFactory.CreateSlimeSpawner(500, 400));
             entityManager.Register(EntityFactory.CreateCircleCollider(60, 60, 10));
 
-            // wrap screen in border
-            entityManager.Register(EntityFactory.CreateBoxCollider(400, 20, 900, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(400, 510, 900, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(20, 300, 10, 700));
-            entityManager.Register(EntityFactory.CreateBoxCollider(780, 300, 10, 700));
+            // build colliders for collideable tiles
+            for (var layer = 0; layer < GetNumberOfLayers(); layer++)
+            {
+                layers[layer] = new List<Game.Tile>();
 
-            entityManager.Register(EntityFactory.CreateBoxCollider(150, 300, 400, 10));
-            entityManager.Register(EntityFactory.CreateBoxCollider(200, 300, 10, 300));
+                // build vertical collisions
+                for (var x = 0; x < _map.Width; x++)
+                {
+                    int startType = -1;
+                    int startY = -1;
+                    int endY = -1;
+                    for (var y = 0; y < _map.Height; y++)
+                    {
+                        var tileType = GetTileType(layer, x, y);
+                        if (_tileSetMetaData.IsWallable(tileType))
+                        {
+                            var direction = GetPathDirection(layer, x, y);
+                            if (direction == PathDirection.All
+                                || direction == PathDirection.Down
+                                || direction == PathDirection.DownLeft
+                                || direction == PathDirection.DownRight
+                                || direction == PathDirection.DownT
+                                || direction == PathDirection.UpT
+                                || direction == PathDirection.LeftT
+                                || direction == PathDirection.RightT
+                                || direction == PathDirection.Up
+                                || direction == PathDirection.UpDown
+                                || direction == PathDirection.UpLeft
+                                || direction == PathDirection.UpRight)
+                            {
+                                if(tileType != startType && startY != -1 && endY != -1)
+                                {
+                                    // starting new string of wall types (collision could be a different size)
+                                    entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                                    startType = -1;
+                                    startY = -1;
+                                    endY = -1;
+                                }
 
+                                if (startY == -1)
+                                {
+                                    startType = tileType;
+                                    startY = y;
+                                }
+                                endY = y;
+                            }
+                            else if (startY != -1 && endY != -1)
+                            {
+                                entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                                startType = -1;
+                                startY = -1;
+                                endY = -1;
+                            }
+                        }
+                        else
+                        {
+                            if (startY != -1 && endY != -1)
+                            {
+                                entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                            }
+
+                            startType = -1;
+                            startY = -1;
+                            endY = -1;
+                        }
+                    }
+
+                    if (startY != -1 && endY != -1)
+                    {
+                        entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
+                    }
+                }
+
+                // build horizontal collisions
+                for (var y = 0; y < _map.Height; y++)
+                {
+                    int startType = -1;
+                    int startX = -1;
+                    int endX = -1;
+                    for (var x = 0; x < _map.Width; x++)
+                    {
+                        var tileType = GetTileType(layer, x, y);
+                        if (tileType == 3 || tileType == 6)
+                        {
+                            var direction = GetPathDirection(layer, x, y);
+                            if (direction == PathDirection.None
+                                || direction == PathDirection.All
+                                || direction == PathDirection.Left
+                                || direction == PathDirection.DownLeft
+                                || direction == PathDirection.DownRight
+                                || direction == PathDirection.DownT
+                                || direction == PathDirection.UpT
+                                || direction == PathDirection.LeftT
+                                || direction == PathDirection.RightT
+                                || direction == PathDirection.Right
+                                || direction == PathDirection.LeftRight
+                                || direction == PathDirection.UpLeft
+                                || direction == PathDirection.UpRight)
+                            {
+                                if (tileType != startType && startX != -1 && endX != -1)
+                                {
+                                    // starting new string of wall types (collision could be a different size)
+                                    entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                                    startType = -1;
+                                    startX = -1;
+                                    endX = -1;
+                                }
+
+                                if (startX == -1)
+                                {
+                                    startType = tileType;
+                                    startX = x;
+                                }
+                                endX = x;
+                            }
+                            else if (startX != -1 && endX != -1)
+                            {
+                                entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                                startType = -1;
+                                startX = -1;
+                                endX = -1;
+                            }
+                        }
+                        else
+                        {
+                            if (startX != -1 && endX != -1)
+                            {
+                                entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                            }
+
+                            startType = -1;
+                            startX = -1;
+                            endX = -1;
+                        }
+                    }
+
+                    if (startX != -1 && endX != -1)
+                    {
+                        entityManager.Register(CreateHorizontalBoxCollider(startType, y, startX, endX));
+                    }
+                }
+            }
             worldLoader.SaveEntityManager("test_e", entityManager);
+        }
+
+        private static Entity CreateVerticalBoxCollider(int tileType, int x, int startY, int endY)
+        {
+            var tileDimension = GetTileDimension();
+            var centerXOffset = _tileSetMetaData.GetWallableCenterXOffset(tileType);
+            var centerYOffset = _tileSetMetaData.GetWallableCenterYOffset(tileType);
+            var colliderDimension = _tileSetMetaData.GetWallableThickness(tileType);
+
+            var left = x * tileDimension;
+            var tileCenterX = left + (tileDimension / 2);
+            var centerLeft = tileCenterX + centerXOffset - (colliderDimension / 2);
+            var centerRight = centerLeft + colliderDimension;
+
+            var startTop = ((startY * tileDimension) + (tileDimension / 2)) + centerYOffset - (colliderDimension / 2);
+            var endBottom = (((endY * tileDimension) + (tileDimension / 2)) + centerYOffset - (colliderDimension / 2)) + colliderDimension;
+
+            return EntityFactory.CreateBoxColliderArea(centerLeft, startTop, centerRight, endBottom);
+        }
+
+        private static Entity CreateHorizontalBoxCollider(int tileType, int y, int startX, int endX)
+        {
+            var tileDimension = GetTileDimension();
+            var centerXOffset = _tileSetMetaData.GetWallableCenterXOffset(tileType);
+            var centerYOffset = _tileSetMetaData.GetWallableCenterYOffset(tileType);
+            var colliderDimension = _tileSetMetaData.GetWallableThickness(tileType);
+
+            var top = y * tileDimension;
+            var tileCenterY = top + (tileDimension / 2);
+            var centerTop = tileCenterY + centerYOffset - (colliderDimension / 2);
+            var centerBottom = centerTop + colliderDimension;
+
+            var startLeft = (((startX * tileDimension) + (tileDimension / 2)) + centerXOffset - (colliderDimension / 2));
+            var endRight = (((endX * tileDimension) + (tileDimension / 2)) + centerXOffset - (colliderDimension / 2)) + colliderDimension;
+
+            return EntityFactory.CreateBoxColliderArea(startLeft, centerTop, endRight, centerBottom);
         }
 
         public static TileDecal[] BuildTileDecals(int layer, int x, int y)
