@@ -36,8 +36,11 @@ namespace Ozzyria.MapEditor
         public void SetCurrentTileSet(string tileSet)
         {
             InitializeMetaData();
-            currentTileSet = tileSet;
-            currentMetadata = tileSetMetaDatas[currentTileSet];
+            if (tileSetMetaDatas.ContainsKey(tileSet))
+            {
+                currentTileSet = tileSet;
+                currentMetadata = tileSetMetaDatas[currentTileSet];
+            }
         }
 
         public int[] GetTypes()
@@ -62,6 +65,7 @@ namespace Ozzyria.MapEditor
             var offsetX = 0;
             var offsetY = 0;
 
+            // OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!!
             if (IsPathable(type))
             {
                 switch (direction)
@@ -236,6 +240,49 @@ namespace Ozzyria.MapEditor
             return currentMetadata.WallingThickness.ContainsKey(type)
                 ? currentMetadata.WallingThickness[type]
                 : 32;
+        }
+
+
+        public int GetTileType(int textureCoordinateX, int textureCoordinateY)
+        {
+            InitializeMetaData();
+            var possibleXTypes = new List<int>();
+            foreach(var kv in currentMetadata.BaseTileX)
+            {
+                if(textureCoordinateX == kv.Value)
+                {
+                    possibleXTypes.Add(kv.Key);
+                }
+            }
+
+            foreach (var kv in currentMetadata.BaseTileY)
+            {
+                if (textureCoordinateY == kv.Value && possibleXTypes.Contains(kv.Key))
+                {
+                    return kv.Key;
+                }
+            }
+
+
+            // try for nasty pathables
+            possibleXTypes = new List<int>();
+            foreach (var kv in currentMetadata.BaseTileX)
+            {
+                if (kv.Value <= textureCoordinateX && textureCoordinateX <= kv.Value + 3)
+                {
+                    possibleXTypes.Add(kv.Key);
+                }
+            }
+
+            foreach (var kv in currentMetadata.BaseTileY)
+            {
+                if (kv.Value <= textureCoordinateY && textureCoordinateY <= kv.Value + 3 && possibleXTypes.Contains(kv.Key))
+                {
+                    return kv.Key;
+                }
+            }
+
+            return 0;
         }
 
 

@@ -16,10 +16,18 @@ namespace Ozzyria.MapEditor
             return _map != null;
         }
 
+        public static void LoadMetaData()
+        {
+            if (_tileSetMetaData == null)
+            {
+                _tileSetMetaData = new TileSetMetaDataFactory();
+            }
+        }
+
         public static void LoadMap(Map map)
         {
             _map = map;
-            _tileSetMetaData = new TileSetMetaDataFactory();
+            LoadMetaData();
             _tileSetMetaData.SetCurrentTileSet(map.TileSet);
 
             EventQueue.Queue(new MapLoadedEvent
@@ -286,7 +294,7 @@ namespace Ozzyria.MapEditor
                                 || direction == PathDirection.UpLeft
                                 || direction == PathDirection.UpRight)
                             {
-                                if(tileType != startType && startY != -1 && endY != -1)
+                                if (tileType != startType && startY != -1 && endY != -1)
                                 {
                                     // starting new string of wall types (collision could be a different size)
                                     entityManager.Register(CreateVerticalBoxCollider(startType, x, startY, endY));
@@ -624,12 +632,15 @@ namespace Ozzyria.MapEditor
 
         public static int[] GetTileTypes()
         {
-            if (!MapIsLoaded())
-            {
-                return new int[] { 0 };
-            }
-
+            LoadMetaData();
             return _tileSetMetaData.GetTypes();
+        }
+
+        public static TileSetMetaDataFactory GetTileSetMetaDataFactory(string tileSet)
+        {
+            LoadMetaData();
+            _tileSetMetaData.SetCurrentTileSet(tileSet);
+            return _tileSetMetaData;
         }
     }
 }

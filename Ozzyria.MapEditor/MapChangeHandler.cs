@@ -31,6 +31,7 @@ namespace Ozzyria.MapEditor
                 var tileMap = worldPersistence.LoadMap(mapChangeEvent.MapName.Trim());
 
                 var map = new Map(tileMap.MapName, tileMap.TileSet, tileMap.Width, tileMap.Height);
+                var tileSetMetaDataFactory = MapManager.GetTileSetMetaDataFactory(tileMap.TileSet);
                 foreach (var kv in tileMap.Layers)
                 {
                     var layer = kv.Key;
@@ -40,13 +41,14 @@ namespace Ozzyria.MapEditor
                     foreach (var tile in tiles)
                     {
                         // TODO OZ-17 aw crap, this aint gonna scale well (and needs to actually be finsihed up)
-                        map.layers[layer].SetTileType(tile.X, tile.Y, 1);
+                        map.layers[layer].SetTileType(tile.X, tile.Y, tileSetMetaDataFactory.GetTileType(tile.TextureCoordX, tile.TextureCoordY));
                         map.layers[layer].SetEdgeTransitions(tile.X, tile.Y, new Dictionary<int, EdgeTransitionType>());
                         map.layers[layer].SetCornerTransitions(tile.X, tile.Y, new Dictionary<int, CornerTransitionType>());
                         map.layers[layer].SetPathDirection(tile.X, tile.Y, PathDirection.None);
                     }
                 }
                 MapManager.LoadMap(map);
+                MapManager.BakeMap(); // TODO OZ-17 remove this lazy hack just to get tranistions working
             }
         }
     }
