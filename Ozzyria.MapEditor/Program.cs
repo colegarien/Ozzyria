@@ -20,12 +20,20 @@ namespace Ozzyria.MapEditor
             ToolWindow toolWindow = new ToolWindow(0, (int)(window.Size.Y * 0.6) + 72, (uint)(window.Size.X * 0.6), 72, window.Size.X, window.Size.Y, 10, 10);
             LayerWindow layerWindow = new LayerWindow((int)(window.Size.X * 0.6), 0, (uint)(window.Size.X * 0.4), (uint)(window.Size.Y * 0.6), window.Size.X, window.Size.Y, 10, 10);
 
+            EventQueue.AttachObserver(new MapChangeHandler());
             EventQueue.AttachObserver(viewWindow);
             EventQueue.AttachObserver(brushWindow);
             EventQueue.AttachObserver(toolWindow);
             EventQueue.AttachObserver(layerWindow);
 
-            MapManager.LoadMap(new Map("outside_tileset_001", 32, 32)); // TODO allow save/load from file
+            EventQueue.Queue(new MapChangeEvent
+            {
+                MapName = "test_m",
+                //IsNewMap = true,
+                //NewMapTileSet = "outside_tileset_001",
+                //NewMapWidth = 32,
+                //NewMapHeight = 32
+            });
 
             window.Resized += (sender, e) =>
             {

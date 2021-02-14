@@ -5,6 +5,7 @@ namespace Ozzyria.MapEditor
 {
     class Map
     {
+        public string Name { get; set; }
         public string TileSet { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -12,8 +13,9 @@ namespace Ozzyria.MapEditor
 
         public Dictionary<int, Layer> layers;
 
-        public Map(string tileSet, int width, int height)
+        public Map(string name, string tileSet, int width, int height)
         {
+            Name = name;
             TileSet = tileSet;
             Width = width;
             Height = height;

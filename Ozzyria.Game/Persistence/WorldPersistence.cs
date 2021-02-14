@@ -7,12 +7,12 @@ namespace Ozzyria.Game.Persistence
     public class WorldPersistence
     {
 
-        public TileMap LoadMap(string resource)
+        public TileMap LoadMap(string mapName)
         {
             string tileSet = "";
             int width = 0, height = 0;
             var layers = new Dictionary<int, List<Tile>>();
-            using (StreamReader file = new StreamReader("Maps/" + resource + ".ozz"))
+            using (StreamReader file = new StreamReader("Maps/" + mapName + ".ozz"))
             {
                 tileSet = file.ReadLine().Trim();
                 width = int.Parse(file.ReadLine());
@@ -63,6 +63,7 @@ namespace Ozzyria.Game.Persistence
 
             return new TileMap
             {
+                MapName = mapName,
                 TileSet = tileSet,
                 Width = width,
                 Height = height,

@@ -240,6 +240,7 @@ namespace Ozzyria.MapEditor
 
             var tileMap = new TileMap
             {
+                MapName = _map.Name,
                 TileSet = _map.TileSet,
                 Width = _map.Width,
                 Height = _map.Height,
@@ -247,7 +248,7 @@ namespace Ozzyria.MapEditor
             };
 
             var worldLoader = new WorldPersistence();
-            worldLoader.SaveMap("test_m", tileMap);
+            worldLoader.SaveMap(_map.Name, tileMap);
 
             var entityManager = new EntityManager();
 
