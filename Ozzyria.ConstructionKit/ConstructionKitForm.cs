@@ -15,6 +15,7 @@ namespace Ozzyria.ConstructionKit
         public ConstructionKitForm()
         {
             InitializeComponent();
+            TileSetMetaDataFactory.InitializeMetaData();
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
