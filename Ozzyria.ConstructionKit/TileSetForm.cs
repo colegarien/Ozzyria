@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 namespace Ozzyria.ConstructionKit
 {
+
     public partial class TileSetForm : Form
     {
 
@@ -14,6 +15,17 @@ namespace Ozzyria.ConstructionKit
 
             var tileSetNames = metaData.Keys;
             comboBoxTileSet.Items.AddRange(tileSetNames.ToArray());
+
+            // TODO be better about this, maybe specify somewhere (see Renderable.cs constants)
+            dropDownZDepth.Items.AddRange(new ComboBoxItem[]
+            {
+                new ComboBoxItem{ Id = 0, Name = "Background"},
+                new ComboBoxItem{ Id = 10, Name = "Items"},
+                new ComboBoxItem{ Id = 25, Name = "Middleground"},
+                new ComboBoxItem{ Id = 50, Name = "Foreground"},
+                new ComboBoxItem{ Id = 255, Name = "In-Game UI"},
+                new ComboBoxItem{ Id = 99999, Name = "Debug"},
+            });
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -70,6 +82,13 @@ namespace Ozzyria.ConstructionKit
 
         private void buttonNewTileType_Click(object sender, EventArgs e)
         {
+            var tileSetId = (string)comboBoxTileSet.SelectedItem ?? "";
+            if (!TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(tileSetId))
+            {
+                MessageBox.Show("Must First Select a Tile Set!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var prompt = new SimplePrompt("New Tile Type");
             var result = prompt.ShowDialog();
 
@@ -97,23 +116,164 @@ namespace Ozzyria.ConstructionKit
                 }
                 else
                 {
-                    // TODO verify that it's fine that the item index is being assumed as the tile type (scared some dumb re-ordering could throw crap off
-                    listTileTypes.Items.Add(newTileTypeName);
-                    listTileTypes.SelectedItem = newTileTypeName;
-                    TileSetMetaDataFactory.AddNewTileType((string)comboBoxTileSet.SelectedItem, listTileTypes.SelectedIndex, newTileTypeName);
+                    var existingTileTypeIds = TileSetMetaDataFactory.tileSetMetaDatas[tileSetId].TileTypes;
+                    var newTileTypeId = existingTileTypeIds.Count > 0 ? (existingTileTypeIds.Max() + 1) : 0;
+                    var newTileTypeItem = new ComboBoxItem
+                    {
+                        Id = newTileTypeId,
+                        Name = newTileTypeName
+                    };
+                    listTileTypes.Items.Add(newTileTypeItem);
+                    listTileTypes.SelectedItem = newTileTypeItem;
+                    TileSetMetaDataFactory.AddNewTileType(tileSetId, newTileTypeItem.Id, newTileTypeItem.Name);
                 }
             }
         }
 
         private bool isTileTypeNameInUse(string name)
         {
-            // TODO verify that it's fine that the item index is being assumed as the tile type (scared some dumb re-ordering could throw crap off
-            return listTileTypes.Items.Contains(name);
+            var tileSetId = (string)comboBoxTileSet.SelectedItem ?? "";
+            return TileSetMetaDataFactory.tileSetMetaDatas[tileSetId].TileNames.Values.Any(n => n == name);
         }
 
         private void comboBoxTileSet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // TODO clear out form then re-fill form based on current active tileset id
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+
+                // TODO avoid double clearing and loading if tileset is already been selected
+                listTileTypes.Items.Clear();
+                foreach(var tileTypeIdNamePair in metaData.TileNames)
+                {
+                    listTileTypes.Items.Add(new ComboBoxItem
+                    {
+                        Id = tileTypeIdNamePair.Key,
+                        Name = tileTypeIdNamePair.Value,
+                    });
+                }
+            }
+        }
+
+        private void listTileTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO move into re-usabler function! (RefreshTileTypeForm or something?)
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                dropDownZDepth.SelectedItem = dropDownZDepth.Items.Cast<ComboBoxItem>()
+                    .FirstOrDefault(i =>
+                        (metaData.BaseTileZ.ContainsKey(tileTypeId) && i.Id == metaData.BaseTileZ[tileTypeId])
+                        || (!metaData.BaseTileZ.ContainsKey(tileTypeId) && i.Id == 0)
+                    );
+
+
+                if (metaData.TilesThatSupportTransitions.Any(i => i == tileTypeId))
+                    radTranistionableYes.Checked = true;
+                else
+                    radTranistionableNo.Checked = true;
+                if (metaData.TilesThatSupportPathing.Any(i => i == tileTypeId))
+                    radPathableYes.Checked = true;
+                else
+                    radPathableNo.Checked = true;
+                if (metaData.TilesThatSupportWalling.Any(i => i == tileTypeId))
+                    radWallYes.Checked = true;
+                else
+                    radWallNo.Checked = true;
+
+                // TODO tileset image component for picking X and Y cooridnates
+                    // - add higlight for current tile type
+                    // - add pathing arrows for pathing
+                    // - add offset and thickness indication for walls
+                // TODO wall tiles offset and thickness adjustments
+            }
+        }
+
+        private void radTranistionableYes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (radTranistionableYes.Checked && !metaData.TilesThatSupportTransitions.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportTransitions.Add(tileTypeId);
+                }
+                else if (!radTranistionableYes.Checked && metaData.TilesThatSupportTransitions.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportTransitions.Remove(tileTypeId);
+                }
+            }
+        }
+
+        private void radPathableYes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (radPathableYes.Checked && !metaData.TilesThatSupportPathing.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportPathing.Add(tileTypeId);
+                }
+                else if (!radPathableYes.Checked && metaData.TilesThatSupportPathing.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportPathing.Remove(tileTypeId);
+                }
+            }
+        }
+
+        private void radWallYes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (radWallYes.Checked && !metaData.TilesThatSupportWalling.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportWalling.Add(tileTypeId);
+                }
+                else if (!radWallYes.Checked && metaData.TilesThatSupportWalling.Contains(tileTypeId))
+                {
+                    metaData.TilesThatSupportWalling.Remove(tileTypeId);
+                }
+            }
+        }
+
+        private void dropDownZDepth_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                var item = dropDownZDepth.SelectedItem as ComboBoxItem;
+
+                if (item.Id == 0 && metaData.BaseTileZ.ContainsKey(tileTypeId))
+                {
+                    metaData.BaseTileZ.Remove(tileTypeId);
+                }
+                else if(item.Id != 0)
+                {
+                    metaData.BaseTileZ[tileTypeId] = item.Id;
+                }
+            }
+        }
+    }
+
+    class ComboBoxItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

@@ -36,9 +36,10 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(221, 58);
+            this.buttonOk.Location = new System.Drawing.Point(193, 44);
+            this.buttonOk.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(94, 29);
+            this.buttonOk.Size = new System.Drawing.Size(82, 22);
             this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
@@ -46,9 +47,10 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(121, 58);
+            this.buttonCancel.Location = new System.Drawing.Point(106, 44);
+            this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(94, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(82, 22);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -57,22 +59,24 @@ namespace Ozzyria.ConstructionKit
             // textBoxPromptInput
             // 
             this.textBoxPromptInput.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
-            this.textBoxPromptInput.Location = new System.Drawing.Point(13, 13);
+            this.textBoxPromptInput.Location = new System.Drawing.Point(11, 10);
+            this.textBoxPromptInput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBoxPromptInput.MaxLength = 255;
             this.textBoxPromptInput.Name = "textBoxPromptInput";
-            this.textBoxPromptInput.Size = new System.Drawing.Size(302, 27);
+            this.textBoxPromptInput.Size = new System.Drawing.Size(265, 23);
             this.textBoxPromptInput.TabIndex = 0;
             // 
             // SimplePrompt
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 102);
+            this.ClientSize = new System.Drawing.Size(283, 80);
             this.ControlBox = false;
             this.Controls.Add(this.textBoxPromptInput);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SimplePrompt";

@@ -58,17 +58,19 @@ namespace Ozzyria.ConstructionKit
             // comboBoxTileSet
             // 
             this.comboBoxTileSet.FormattingEnabled = true;
-            this.comboBoxTileSet.Location = new System.Drawing.Point(13, 13);
+            this.comboBoxTileSet.Location = new System.Drawing.Point(11, 10);
+            this.comboBoxTileSet.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxTileSet.Name = "comboBoxTileSet";
-            this.comboBoxTileSet.Size = new System.Drawing.Size(195, 28);
+            this.comboBoxTileSet.Size = new System.Drawing.Size(171, 23);
             this.comboBoxTileSet.TabIndex = 0;
             this.comboBoxTileSet.SelectedIndexChanged += new System.EventHandler(this.comboBoxTileSet_SelectedIndexChanged);
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(14, 308);
+            this.buttonSave.Location = new System.Drawing.Point(12, 231);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(94, 29);
+            this.buttonSave.Size = new System.Drawing.Size(82, 22);
             this.buttonSave.TabIndex = 1;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
@@ -76,9 +78,10 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(114, 308);
+            this.buttonClose.Location = new System.Drawing.Point(100, 231);
+            this.buttonClose.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(94, 29);
+            this.buttonClose.Size = new System.Drawing.Size(82, 22);
             this.buttonClose.TabIndex = 2;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
@@ -86,9 +89,10 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonNew
             // 
-            this.buttonNew.Location = new System.Drawing.Point(13, 48);
+            this.buttonNew.Location = new System.Drawing.Point(11, 36);
+            this.buttonNew.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonNew.Name = "buttonNew";
-            this.buttonNew.Size = new System.Drawing.Size(94, 29);
+            this.buttonNew.Size = new System.Drawing.Size(82, 22);
             this.buttonNew.TabIndex = 3;
             this.buttonNew.Text = "New";
             this.buttonNew.UseVisualStyleBackColor = true;
@@ -97,17 +101,20 @@ namespace Ozzyria.ConstructionKit
             // listTileTypes
             // 
             this.listTileTypes.FormattingEnabled = true;
-            this.listTileTypes.ItemHeight = 20;
-            this.listTileTypes.Location = new System.Drawing.Point(13, 83);
+            this.listTileTypes.ItemHeight = 15;
+            this.listTileTypes.Location = new System.Drawing.Point(11, 62);
+            this.listTileTypes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listTileTypes.Name = "listTileTypes";
-            this.listTileTypes.Size = new System.Drawing.Size(195, 184);
+            this.listTileTypes.Size = new System.Drawing.Size(171, 139);
             this.listTileTypes.TabIndex = 4;
+            this.listTileTypes.SelectedIndexChanged += new System.EventHandler(this.listTileTypes_SelectedIndexChanged);
             // 
             // buttonNewTileType
             // 
-            this.buttonNewTileType.Location = new System.Drawing.Point(13, 270);
+            this.buttonNewTileType.Location = new System.Drawing.Point(11, 202);
+            this.buttonNewTileType.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonNewTileType.Name = "buttonNewTileType";
-            this.buttonNewTileType.Size = new System.Drawing.Size(94, 29);
+            this.buttonNewTileType.Size = new System.Drawing.Size(82, 22);
             this.buttonNewTileType.TabIndex = 5;
             this.buttonNewTileType.Text = "New...";
             this.buttonNewTileType.UseVisualStyleBackColor = true;
@@ -120,9 +127,11 @@ namespace Ozzyria.ConstructionKit
             this.groupTileTypeSettings.Controls.Add(this.grpIsTransitionable);
             this.groupTileTypeSettings.Controls.Add(this.labelZDepth);
             this.groupTileTypeSettings.Controls.Add(this.dropDownZDepth);
-            this.groupTileTypeSettings.Location = new System.Drawing.Point(214, 13);
+            this.groupTileTypeSettings.Location = new System.Drawing.Point(187, 10);
+            this.groupTileTypeSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupTileTypeSettings.Name = "groupTileTypeSettings";
-            this.groupTileTypeSettings.Size = new System.Drawing.Size(209, 324);
+            this.groupTileTypeSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupTileTypeSettings.Size = new System.Drawing.Size(183, 243);
             this.groupTileTypeSettings.TabIndex = 6;
             this.groupTileTypeSettings.TabStop = false;
             this.groupTileTypeSettings.Text = "Tile Type";
@@ -131,9 +140,11 @@ namespace Ozzyria.ConstructionKit
             // 
             this.grpIsWall.Controls.Add(this.radWallNo);
             this.grpIsWall.Controls.Add(this.radWallYes);
-            this.grpIsWall.Location = new System.Drawing.Point(7, 191);
+            this.grpIsWall.Location = new System.Drawing.Point(6, 143);
+            this.grpIsWall.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpIsWall.Name = "grpIsWall";
-            this.grpIsWall.Size = new System.Drawing.Size(196, 49);
+            this.grpIsWall.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.grpIsWall.Size = new System.Drawing.Size(172, 37);
             this.grpIsWall.TabIndex = 4;
             this.grpIsWall.TabStop = false;
             this.grpIsWall.Text = "Is Wall?";
@@ -141,9 +152,10 @@ namespace Ozzyria.ConstructionKit
             // radWallNo
             // 
             this.radWallNo.AutoSize = true;
-            this.radWallNo.Location = new System.Drawing.Point(64, 21);
+            this.radWallNo.Location = new System.Drawing.Point(56, 16);
+            this.radWallNo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radWallNo.Name = "radWallNo";
-            this.radWallNo.Size = new System.Drawing.Size(50, 24);
+            this.radWallNo.Size = new System.Drawing.Size(41, 19);
             this.radWallNo.TabIndex = 1;
             this.radWallNo.TabStop = true;
             this.radWallNo.Text = "No";
@@ -152,21 +164,25 @@ namespace Ozzyria.ConstructionKit
             // radWallYes
             // 
             this.radWallYes.AutoSize = true;
-            this.radWallYes.Location = new System.Drawing.Point(7, 21);
+            this.radWallYes.Location = new System.Drawing.Point(6, 16);
+            this.radWallYes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radWallYes.Name = "radWallYes";
-            this.radWallYes.Size = new System.Drawing.Size(51, 24);
+            this.radWallYes.Size = new System.Drawing.Size(42, 19);
             this.radWallYes.TabIndex = 0;
             this.radWallYes.TabStop = true;
             this.radWallYes.Text = "Yes";
             this.radWallYes.UseVisualStyleBackColor = true;
+            this.radWallYes.CheckedChanged += new System.EventHandler(this.radWallYes_CheckedChanged);
             // 
             // grpIsPathable
             // 
             this.grpIsPathable.Controls.Add(this.radPathableNo);
             this.grpIsPathable.Controls.Add(this.radPathableYes);
-            this.grpIsPathable.Location = new System.Drawing.Point(7, 136);
+            this.grpIsPathable.Location = new System.Drawing.Point(6, 102);
+            this.grpIsPathable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpIsPathable.Name = "grpIsPathable";
-            this.grpIsPathable.Size = new System.Drawing.Size(196, 49);
+            this.grpIsPathable.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.grpIsPathable.Size = new System.Drawing.Size(172, 37);
             this.grpIsPathable.TabIndex = 3;
             this.grpIsPathable.TabStop = false;
             this.grpIsPathable.Text = "Is Pathable?";
@@ -174,9 +190,10 @@ namespace Ozzyria.ConstructionKit
             // radPathableNo
             // 
             this.radPathableNo.AutoSize = true;
-            this.radPathableNo.Location = new System.Drawing.Point(64, 21);
+            this.radPathableNo.Location = new System.Drawing.Point(56, 16);
+            this.radPathableNo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radPathableNo.Name = "radPathableNo";
-            this.radPathableNo.Size = new System.Drawing.Size(50, 24);
+            this.radPathableNo.Size = new System.Drawing.Size(41, 19);
             this.radPathableNo.TabIndex = 1;
             this.radPathableNo.TabStop = true;
             this.radPathableNo.Text = "No";
@@ -185,21 +202,25 @@ namespace Ozzyria.ConstructionKit
             // radPathableYes
             // 
             this.radPathableYes.AutoSize = true;
-            this.radPathableYes.Location = new System.Drawing.Point(7, 21);
+            this.radPathableYes.Location = new System.Drawing.Point(6, 16);
+            this.radPathableYes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radPathableYes.Name = "radPathableYes";
-            this.radPathableYes.Size = new System.Drawing.Size(51, 24);
+            this.radPathableYes.Size = new System.Drawing.Size(42, 19);
             this.radPathableYes.TabIndex = 0;
             this.radPathableYes.TabStop = true;
             this.radPathableYes.Text = "Yes";
             this.radPathableYes.UseVisualStyleBackColor = true;
+            this.radPathableYes.CheckedChanged += new System.EventHandler(this.radPathableYes_CheckedChanged);
             // 
             // grpIsTransitionable
             // 
             this.grpIsTransitionable.Controls.Add(this.radTranistionableNo);
             this.grpIsTransitionable.Controls.Add(this.radTranistionableYes);
-            this.grpIsTransitionable.Location = new System.Drawing.Point(7, 85);
+            this.grpIsTransitionable.Location = new System.Drawing.Point(6, 64);
+            this.grpIsTransitionable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpIsTransitionable.Name = "grpIsTransitionable";
-            this.grpIsTransitionable.Size = new System.Drawing.Size(196, 49);
+            this.grpIsTransitionable.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.grpIsTransitionable.Size = new System.Drawing.Size(172, 37);
             this.grpIsTransitionable.TabIndex = 2;
             this.grpIsTransitionable.TabStop = false;
             this.grpIsTransitionable.Text = "Is Transitionable?";
@@ -207,9 +228,10 @@ namespace Ozzyria.ConstructionKit
             // radTranistionableNo
             // 
             this.radTranistionableNo.AutoSize = true;
-            this.radTranistionableNo.Location = new System.Drawing.Point(64, 21);
+            this.radTranistionableNo.Location = new System.Drawing.Point(56, 16);
+            this.radTranistionableNo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radTranistionableNo.Name = "radTranistionableNo";
-            this.radTranistionableNo.Size = new System.Drawing.Size(50, 24);
+            this.radTranistionableNo.Size = new System.Drawing.Size(41, 19);
             this.radTranistionableNo.TabIndex = 1;
             this.radTranistionableNo.TabStop = true;
             this.radTranistionableNo.Text = "No";
@@ -218,44 +240,49 @@ namespace Ozzyria.ConstructionKit
             // radTranistionableYes
             // 
             this.radTranistionableYes.AutoSize = true;
-            this.radTranistionableYes.Location = new System.Drawing.Point(7, 21);
+            this.radTranistionableYes.Location = new System.Drawing.Point(6, 16);
+            this.radTranistionableYes.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radTranistionableYes.Name = "radTranistionableYes";
-            this.radTranistionableYes.Size = new System.Drawing.Size(51, 24);
+            this.radTranistionableYes.Size = new System.Drawing.Size(42, 19);
             this.radTranistionableYes.TabIndex = 0;
             this.radTranistionableYes.TabStop = true;
             this.radTranistionableYes.Text = "Yes";
             this.radTranistionableYes.UseVisualStyleBackColor = true;
+            this.radTranistionableYes.CheckedChanged += new System.EventHandler(this.radTranistionableYes_CheckedChanged);
             // 
             // labelZDepth
             // 
             this.labelZDepth.AutoSize = true;
-            this.labelZDepth.Location = new System.Drawing.Point(7, 27);
+            this.labelZDepth.Location = new System.Drawing.Point(6, 20);
             this.labelZDepth.Name = "labelZDepth";
-            this.labelZDepth.Size = new System.Drawing.Size(63, 20);
+            this.labelZDepth.Size = new System.Drawing.Size(49, 15);
             this.labelZDepth.TabIndex = 1;
             this.labelZDepth.Text = "Z Depth";
             // 
             // dropDownZDepth
             // 
             this.dropDownZDepth.FormattingEnabled = true;
-            this.dropDownZDepth.Location = new System.Drawing.Point(7, 50);
+            this.dropDownZDepth.Location = new System.Drawing.Point(6, 38);
+            this.dropDownZDepth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dropDownZDepth.Name = "dropDownZDepth";
-            this.dropDownZDepth.Size = new System.Drawing.Size(196, 28);
+            this.dropDownZDepth.Size = new System.Drawing.Size(172, 23);
             this.dropDownZDepth.TabIndex = 0;
+            this.dropDownZDepth.SelectedIndexChanged += new System.EventHandler(this.dropDownZDepth_SelectedIndexChanged);
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(435, 13);
+            this.pictureBox1.Location = new System.Drawing.Point(381, 10);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(318, 324);
+            this.pictureBox1.Size = new System.Drawing.Size(278, 243);
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 
             // TileSetForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 342);
+            this.ClientSize = new System.Drawing.Size(646, 267);
             this.ControlBox = false;
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupTileTypeSettings);
@@ -266,6 +293,7 @@ namespace Ozzyria.ConstructionKit
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.comboBoxTileSet);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "TileSetForm";
