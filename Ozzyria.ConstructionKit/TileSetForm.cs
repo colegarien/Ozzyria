@@ -29,6 +29,9 @@ namespace Ozzyria.ConstructionKit
                 new ComboBoxItem{ Id = 255, Name = "In-Game UI"},
                 new ComboBoxItem{ Id = 99999, Name = "Debug"},
             });
+
+            // TODO add a title to the window to signify "Unsaved Changes"
+            // TODO OZ-17 need to be able to re-order transitioning precedence! (I think it's just the order we save them in?)
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -229,6 +232,7 @@ namespace Ozzyria.ConstructionKit
                 else if (!radPathableYes.Checked && metaData.TilesThatSupportPathing.Contains(tileTypeId))
                 {
                     metaData.TilesThatSupportPathing.Remove(tileTypeId);
+                    radWallNo.Checked = true;
                 }
             }
         }
@@ -239,6 +243,12 @@ namespace Ozzyria.ConstructionKit
             {
                 var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (!radPathableYes.Checked && radWallYes.Checked)
+                {
+                    radWallNo.Checked = true; // walling tile needs to be pathable
+                    return;
+                }
 
                 if (radWallYes.Checked && !metaData.TilesThatSupportWalling.Contains(tileTypeId))
                 {
@@ -280,12 +290,15 @@ namespace Ozzyria.ConstructionKit
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
                 if (tileTypeId == -1)
                     return;
-                var redPen = new Pen(Color.Red, 2);
+
+                var highlightPen = new Pen(Color.Red, 2);
+                var pathingPen = new Pen(Color.Red, 2);
+                var wallingPen = new Pen(Color.Magenta, 2);
 
                 var imageWidth = _tileSetImage.Width;
                 var imageHeight = _tileSetImage.Height;
                 var tileWidth = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Width / (float)imageWidth);
-                var tileHeight = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Height / (float)imageHeight); ;
+                var tileHeight = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Height / (float)imageHeight);
 
                 var textureCoordX = metaData.BaseTileX[tileTypeId];
                 var textureCoordY = metaData.BaseTileY[tileTypeId];
@@ -293,12 +306,147 @@ namespace Ozzyria.ConstructionKit
                 var x = textureCoordX * tileWidth;
                 var y = textureCoordY * tileHeight;
 
-                e.Graphics.DrawRectangle(redPen, x, y, tileWidth, tileHeight);
+                e.Graphics.DrawRectangle(highlightPen, x, y, tileWidth, tileHeight);
 
-                // TODO tileset image component for picking X and Y cooridnates
-                // - add pathing arrows for pathing
-                // - add offset and thickness indication for walls
+                if (radPathableYes.Checked)
+                {
+                    DrawPathLayout(pathingPen, e.Graphics, x, y, tileWidth, tileHeight);
+                }
+
+                if (radWallYes.Checked)
+                {
+                    var xOffset = metaData.WallingCenterXOffset.ContainsKey(tileTypeId)
+                        ? metaData.WallingCenterXOffset[tileTypeId] : 0;
+                    var yOffset = metaData.WallingCenterYOffset.ContainsKey(tileTypeId)
+                        ? metaData.WallingCenterYOffset[tileTypeId] : 0;
+                    var thickness = metaData.WallingThickness.ContainsKey(tileTypeId)
+                        ? metaData.WallingThickness[tileTypeId] : 0;
+
+                    // TODO might be a small rounding error in wall drawing
+                    DrawPathLayout(wallingPen, e.Graphics, x, y, tileWidth, tileHeight, xOffset, yOffset, thickness);
+                }
+
+                // TODO allow selecting baseX and baseY by clicking on picture box
             }
+        }
+
+        private void DrawPathLayout(Pen pen, Graphics g, float baseX, float baseY, float tileWidth, float tileHeight, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            // OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!! (see metadatafactory)
+
+            //case PathDirection.Left:
+            DrawLeft(pen, g, baseX + (2 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.Right:
+            DrawRight(pen, g, baseX + (3 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.Up:
+            DrawUp(pen, g, baseX + (0 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.Down:
+            DrawDown(pen, g, baseX + (1 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.LeftRight:
+            DrawHorizontal(pen, g, baseX + (1 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.UpT:
+            DrawUp(pen, g, baseX + (3 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawHorizontal(pen, g, baseX + (3 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.DownT:
+            DrawDown(pen, g, baseX + (2 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawHorizontal(pen, g, baseX + (2 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.UpDown:
+            DrawVertical(pen, g, baseX + (2 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.LeftT:
+            DrawLeft(pen, g, baseX + (3 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawVertical(pen, g, baseX + (3 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.RightT:
+            DrawRight(pen, g, baseX + (3 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawVertical(pen, g, baseX + (3 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.UpLeft:
+            DrawUp(pen, g, baseX + (1 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawLeft(pen, g, baseX + (1 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.UpRight:
+            DrawUp(pen, g, baseX + (0 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawRight(pen, g, baseX + (0 * tileWidth), baseY + (2 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.DownRight:
+            DrawDown(pen, g, baseX + (0 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawRight(pen, g, baseX + (0 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.DownLeft:
+            DrawDown(pen, g, baseX + (1 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawLeft(pen, g, baseX + (1 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            //case PathDirection.All:
+            DrawVertical(pen, g, baseX + (0 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+            DrawHorizontal(pen, g, baseX + (0 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+            // center:
+            DrawCenter(pen, g, baseX + (2 * tileWidth), baseY + (1 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
+
+        }
+
+        private TileSetForm DrawHorizontal(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset=0, float cyOffset=0, float thickness=0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), width, Math.Max(thickness, 1));
+            return this;
+        }
+
+        private TileSetForm DrawVertical(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), height);
+            return this;
+        }
+
+        private TileSetForm DrawLeft(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), centerX-left, Math.Max(thickness, 1));
+            return this;
+        }
+
+        private TileSetForm DrawRight(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, centerX, centerY - (thickness * 0.5f), width - (centerX - left), Math.Max(thickness, 1));
+            return this;
+        }
+
+        private TileSetForm DrawUp(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), centerY-top);
+            return this;
+        }
+
+        private TileSetForm DrawDown(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY, Math.Max(thickness, 1), height - (centerY - top));
+            return this;
+        }
+
+        private TileSetForm DrawCenter(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        {
+            var centerX = left + (width * 0.5f) + cxOffset;
+            var centerY = top + (height * 0.5f) + cyOffset;
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), Math.Max(thickness, 1));
+            return this;
         }
     }
 
