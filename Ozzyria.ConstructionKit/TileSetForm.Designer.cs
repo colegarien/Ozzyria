@@ -56,9 +56,11 @@ namespace Ozzyria.ConstructionKit
             this.listTransitionPrecedence = new System.Windows.Forms.ListBox();
             this.lblTransitionPrecedence = new System.Windows.Forms.Label();
             this.grpTileSetViewControls = new System.Windows.Forms.GroupBox();
-            this.chkShowTransitions = new System.Windows.Forms.CheckBox();
-            this.chkShowPaths = new System.Windows.Forms.CheckBox();
             this.chkShowWalls = new System.Windows.Forms.CheckBox();
+            this.chkShowPaths = new System.Windows.Forms.CheckBox();
+            this.chkShowTransitions = new System.Windows.Forms.CheckBox();
+            this.pnlPrecedencePreview = new System.Windows.Forms.Panel();
+            this.lblPrecedencePreview = new System.Windows.Forms.Label();
             this.groupTileTypeSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).BeginInit();
@@ -82,7 +84,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(12, 492);
+            this.buttonSave.Location = new System.Drawing.Point(11, 541);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(82, 22);
@@ -93,7 +95,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(100, 492);
+            this.buttonClose.Location = new System.Drawing.Point(99, 541);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(82, 22);
@@ -151,7 +153,7 @@ namespace Ozzyria.ConstructionKit
             this.groupTileTypeSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupTileTypeSettings.Name = "groupTileTypeSettings";
             this.groupTileTypeSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupTileTypeSettings.Size = new System.Drawing.Size(183, 288);
+            this.groupTileTypeSettings.Size = new System.Drawing.Size(183, 332);
             this.groupTileTypeSettings.TabIndex = 6;
             this.groupTileTypeSettings.TabStop = false;
             this.groupTileTypeSettings.Text = "Tile Type";
@@ -374,7 +376,7 @@ namespace Ozzyria.ConstructionKit
             this.listTransitionPrecedence.AllowDrop = true;
             this.listTransitionPrecedence.FormattingEnabled = true;
             this.listTransitionPrecedence.ItemHeight = 15;
-            this.listTransitionPrecedence.Location = new System.Drawing.Point(11, 298);
+            this.listTransitionPrecedence.Location = new System.Drawing.Point(10, 248);
             this.listTransitionPrecedence.Name = "listTransitionPrecedence";
             this.listTransitionPrecedence.Size = new System.Drawing.Size(171, 94);
             this.listTransitionPrecedence.TabIndex = 8;
@@ -385,7 +387,7 @@ namespace Ozzyria.ConstructionKit
             // lblTransitionPrecedence
             // 
             this.lblTransitionPrecedence.AutoSize = true;
-            this.lblTransitionPrecedence.Location = new System.Drawing.Point(12, 280);
+            this.lblTransitionPrecedence.Location = new System.Drawing.Point(11, 230);
             this.lblTransitionPrecedence.Name = "lblTransitionPrecedence";
             this.lblTransitionPrecedence.Size = new System.Drawing.Size(139, 15);
             this.lblTransitionPrecedence.TabIndex = 9;
@@ -402,18 +404,18 @@ namespace Ozzyria.ConstructionKit
             this.grpTileSetViewControls.TabIndex = 10;
             this.grpTileSetViewControls.TabStop = false;
             // 
-            // chkShowTransitions
+            // chkShowWalls
             // 
-            this.chkShowTransitions.AutoSize = true;
-            this.chkShowTransitions.Checked = true;
-            this.chkShowTransitions.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkShowTransitions.Location = new System.Drawing.Point(6, 17);
-            this.chkShowTransitions.Name = "chkShowTransitions";
-            this.chkShowTransitions.Size = new System.Drawing.Size(114, 19);
-            this.chkShowTransitions.TabIndex = 0;
-            this.chkShowTransitions.Text = "Show Transitions";
-            this.chkShowTransitions.UseVisualStyleBackColor = true;
-            this.chkShowTransitions.CheckedChanged += new System.EventHandler(this.chkShowTransitions_CheckedChanged);
+            this.chkShowWalls.AutoSize = true;
+            this.chkShowWalls.Checked = true;
+            this.chkShowWalls.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowWalls.Location = new System.Drawing.Point(219, 17);
+            this.chkShowWalls.Name = "chkShowWalls";
+            this.chkShowWalls.Size = new System.Drawing.Size(86, 19);
+            this.chkShowWalls.TabIndex = 2;
+            this.chkShowWalls.Text = "Show Walls";
+            this.chkShowWalls.UseVisualStyleBackColor = true;
+            this.chkShowWalls.CheckedChanged += new System.EventHandler(this.chkShowWalls_CheckedChanged);
             // 
             // chkShowPaths
             // 
@@ -428,25 +430,48 @@ namespace Ozzyria.ConstructionKit
             this.chkShowPaths.UseVisualStyleBackColor = true;
             this.chkShowPaths.CheckedChanged += new System.EventHandler(this.chkShowPaths_CheckedChanged);
             // 
-            // chkShowWalls
+            // chkShowTransitions
             // 
-            this.chkShowWalls.AutoSize = true;
-            this.chkShowWalls.Checked = true;
-            this.chkShowWalls.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkShowWalls.Location = new System.Drawing.Point(219, 17);
-            this.chkShowWalls.Name = "chkShowWalls";
-            this.chkShowWalls.Size = new System.Drawing.Size(86, 19);
-            this.chkShowWalls.TabIndex = 2;
-            this.chkShowWalls.Text = "Show Walls";
-            this.chkShowWalls.UseVisualStyleBackColor = true;
-            this.chkShowWalls.CheckedChanged += new System.EventHandler(this.chkShowWalls_CheckedChanged);
+            this.chkShowTransitions.AutoSize = true;
+            this.chkShowTransitions.Checked = true;
+            this.chkShowTransitions.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowTransitions.Location = new System.Drawing.Point(6, 17);
+            this.chkShowTransitions.Name = "chkShowTransitions";
+            this.chkShowTransitions.Size = new System.Drawing.Size(114, 19);
+            this.chkShowTransitions.TabIndex = 0;
+            this.chkShowTransitions.Text = "Show Transitions";
+            this.chkShowTransitions.UseVisualStyleBackColor = true;
+            this.chkShowTransitions.CheckedChanged += new System.EventHandler(this.chkShowTransitions_CheckedChanged);
+            // 
+            // pnlPrecedencePreview
+            // 
+            this.pnlPrecedencePreview.AutoScroll = true;
+            this.pnlPrecedencePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pnlPrecedencePreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlPrecedencePreview.Location = new System.Drawing.Point(10, 371);
+            this.pnlPrecedencePreview.Name = "pnlPrecedencePreview";
+            this.pnlPrecedencePreview.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.pnlPrecedencePreview.Size = new System.Drawing.Size(360, 100);
+            this.pnlPrecedencePreview.TabIndex = 11;
+            this.pnlPrecedencePreview.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlPrecedencePreview_Paint);
+            // 
+            // lblPrecedencePreview
+            // 
+            this.lblPrecedencePreview.AutoSize = true;
+            this.lblPrecedencePreview.Location = new System.Drawing.Point(10, 353);
+            this.lblPrecedencePreview.Name = "lblPrecedencePreview";
+            this.lblPrecedencePreview.Size = new System.Drawing.Size(112, 15);
+            this.lblPrecedencePreview.TabIndex = 12;
+            this.lblPrecedencePreview.Text = "Precedence Preview";
             // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(901, 580);
+            this.ClientSize = new System.Drawing.Size(893, 572);
             this.ControlBox = false;
+            this.Controls.Add(this.lblPrecedencePreview);
+            this.Controls.Add(this.pnlPrecedencePreview);
             this.Controls.Add(this.grpTileSetViewControls);
             this.Controls.Add(this.lblTransitionPrecedence);
             this.Controls.Add(this.listTransitionPrecedence);
@@ -518,5 +543,7 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.CheckBox chkShowWalls;
         private System.Windows.Forms.CheckBox chkShowPaths;
         private System.Windows.Forms.CheckBox chkShowTransitions;
+        private System.Windows.Forms.Panel pnlPrecedencePreview;
+        private System.Windows.Forms.Label lblPrecedencePreview;
     }
 }

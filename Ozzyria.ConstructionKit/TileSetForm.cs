@@ -31,8 +31,6 @@ namespace Ozzyria.ConstructionKit
             });
 
             // TODO OZ-17 add a title to the window to signify "Unsaved Changes"
-            // TODO OZ-17 add visibility toggle for pathing, walling, and transitioning overlays
-            // TODO OZ-17 add a "precedence preview" box that shows how the tiles will overlay
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -173,10 +171,11 @@ namespace Ozzyria.ConstructionKit
                     }
                 }
 
-
                 _tileSetImage = Image.FromFile("TileSets/Sprites/" + tileSetName + ".png");
                 if (picTileSet.Image != null) picTileSet.Image.Dispose();
                 picTileSet.Image = _tileSetImage;
+
+                pnlPrecedencePreview.Refresh();
             }
         }
 
@@ -240,6 +239,7 @@ namespace Ozzyria.ConstructionKit
             }
 
             picTileSet.Refresh();
+            pnlPrecedencePreview.Refresh();
         }
 
         private void radPathableYes_CheckedChanged(object sender, EventArgs e)
@@ -417,6 +417,7 @@ namespace Ozzyria.ConstructionKit
                 metaData.TilesThatSupportTransitions = listTransitionPrecedence.Items.OfType<ComboBoxItem>().Select(i => i.Id).ToList();
 
                 picTileSet.Refresh();
+                pnlPrecedencePreview.Refresh();
             }
         }
 
@@ -758,6 +759,49 @@ namespace Ozzyria.ConstructionKit
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), Math.Max(thickness, 1));
+        }
+
+        private void pnlPrecedencePreview_Paint(object sender, PaintEventArgs e)
+        {
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                if (metaData.TilesThatSupportTransitions.Count == 0)
+                    return;
+
+                var gridPen = new Pen(Color.Black);
+                var tileWidth = pnlPrecedencePreview.ClientSize.Width / metaData.TilesThatSupportTransitions.Count;
+                var tileHeight = tileWidth;
+
+                var i = 0;
+                int previousType = -1;
+                foreach(var tileTypeId in metaData.TilesThatSupportTransitions.Reverse())
+                {
+                    var x = i * tileWidth;
+                    var y = (int)((pnlPrecedencePreview.ClientSize.Height - tileHeight) * 0.5f);
+
+                    var textureCoordX = metaData.BaseTileX[tileTypeId] * Game.Tile.DIMENSION;
+                    var textureCoordY = metaData.BaseTileY[tileTypeId] * Game.Tile.DIMENSION;
+
+                    e.Graphics.DrawImage(_tileSetImage, new Rectangle(x, y, tileWidth, tileHeight), textureCoordX, textureCoordY, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
+
+                    if(previousType != -1)
+                    {
+                        var prevTextureCoordX = (metaData.BaseTileX[previousType] * Game.Tile.DIMENSION) + (1 * Game.Tile.DIMENSION);
+                        var prevTextureCoordY = (metaData.BaseTileY[previousType] * Game.Tile.DIMENSION);
+                        e.Graphics.DrawImage(_tileSetImage, new Rectangle(x, y, tileWidth, tileHeight), prevTextureCoordX, prevTextureCoordY, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
+                    }
+
+                    if (i != 0)
+                    {
+                        // draw separator
+                        e.Graphics.DrawLine(gridPen, x, y, x, tileHeight);
+                    }
+
+                    i++;
+                    previousType = tileTypeId;
+                }
+            }
         }
     }
 
