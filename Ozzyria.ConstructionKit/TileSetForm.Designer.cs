@@ -47,12 +47,12 @@ namespace Ozzyria.ConstructionKit
             this.radTranistionableYes = new System.Windows.Forms.RadioButton();
             this.labelZDepth = new System.Windows.Forms.Label();
             this.dropDownZDepth = new System.Windows.Forms.ComboBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.picTileSet = new System.Windows.Forms.PictureBox();
             this.groupTileTypeSettings.SuspendLayout();
             this.grpIsWall.SuspendLayout();
             this.grpIsPathable.SuspendLayout();
             this.grpIsTransitionable.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileSet)).BeginInit();
             this.SuspendLayout();
             // 
             // comboBoxTileSet
@@ -269,22 +269,24 @@ namespace Ozzyria.ConstructionKit
             this.dropDownZDepth.TabIndex = 0;
             this.dropDownZDepth.SelectedIndexChanged += new System.EventHandler(this.dropDownZDepth_SelectedIndexChanged);
             // 
-            // pictureBox1
+            // picTileSet
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(381, 10);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(278, 243);
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
+            this.picTileSet.Location = new System.Drawing.Point(381, 10);
+            this.picTileSet.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.picTileSet.Name = "picTileSet";
+            this.picTileSet.Size = new System.Drawing.Size(278, 243);
+            this.picTileSet.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picTileSet.TabIndex = 7;
+            this.picTileSet.TabStop = false;
+            this.picTileSet.Paint += new System.Windows.Forms.PaintEventHandler(this.picTileSet_Paint);
             // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 267);
+            this.ClientSize = new System.Drawing.Size(663, 255);
             this.ControlBox = false;
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.picTileSet);
             this.Controls.Add(this.groupTileTypeSettings);
             this.Controls.Add(this.buttonNewTileType);
             this.Controls.Add(this.listTileTypes);
@@ -309,7 +311,7 @@ namespace Ozzyria.ConstructionKit
             this.grpIsPathable.PerformLayout();
             this.grpIsTransitionable.ResumeLayout(false);
             this.grpIsTransitionable.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileSet)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -325,7 +327,7 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.GroupBox groupTileTypeSettings;
         private System.Windows.Forms.Label labelZDepth;
         private System.Windows.Forms.ComboBox dropDownZDepth;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox picTileSet;
         private System.Windows.Forms.GroupBox grpIsTransitionable;
         private System.Windows.Forms.RadioButton radTranistionableNo;
         private System.Windows.Forms.RadioButton radTranistionableYes;

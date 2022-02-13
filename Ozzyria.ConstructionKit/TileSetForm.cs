@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -7,6 +8,8 @@ namespace Ozzyria.ConstructionKit
 
     public partial class TileSetForm : Form
     {
+
+        private Image _tileSetImage;
 
         public TileSetForm()
         {
@@ -138,9 +141,10 @@ namespace Ozzyria.ConstructionKit
 
         private void comboBoxTileSet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            var tileSetName = (string)comboBoxTileSet.SelectedItem ?? "";
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(tileSetName))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[tileSetName];
 
                 // TODO avoid double clearing and loading if tileset is already been selected
                 listTileTypes.Items.Clear();
@@ -152,6 +156,11 @@ namespace Ozzyria.ConstructionKit
                         Name = tileTypeIdNamePair.Value,
                     });
                 }
+
+
+                _tileSetImage = Image.FromFile("TileSets/Sprites/" + tileSetName + ".png");
+                if (picTileSet.Image != null) picTileSet.Image.Dispose();
+                picTileSet.Image = _tileSetImage;
             }
         }
 
@@ -183,10 +192,7 @@ namespace Ozzyria.ConstructionKit
                 else
                     radWallNo.Checked = true;
 
-                // TODO tileset image component for picking X and Y cooridnates
-                    // - add higlight for current tile type
-                    // - add pathing arrows for pathing
-                    // - add offset and thickness indication for walls
+                picTileSet.Refresh();
                 // TODO wall tiles offset and thickness adjustments
             }
         }
@@ -262,6 +268,36 @@ namespace Ozzyria.ConstructionKit
                 {
                     metaData.BaseTileZ[tileTypeId] = item.Id;
                 }
+            }
+        }
+
+        // TODO make a custom thing that extends picturebox to hide all this
+        private void picTileSet_Paint(object sender, PaintEventArgs e)
+        {
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
+                if (tileTypeId == -1)
+                    return;
+                var redPen = new Pen(Color.Red, 2);
+
+                var imageWidth = _tileSetImage.Width;
+                var imageHeight = _tileSetImage.Height;
+                var tileWidth = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Width / (float)imageWidth);
+                var tileHeight = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Height / (float)imageHeight); ;
+
+                var textureCoordX = metaData.BaseTileX[tileTypeId];
+                var textureCoordY = metaData.BaseTileY[tileTypeId];
+
+                var x = textureCoordX * tileWidth;
+                var y = textureCoordY * tileHeight;
+
+                e.Graphics.DrawRectangle(redPen, x, y, tileWidth, tileHeight);
+
+                // TODO tileset image component for picking X and Y cooridnates
+                // - add pathing arrows for pathing
+                // - add offset and thickness indication for walls
             }
         }
     }
