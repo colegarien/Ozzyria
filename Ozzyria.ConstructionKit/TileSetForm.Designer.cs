@@ -353,6 +353,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // picTileSet
             // 
+            this.picTileSet.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picTileSet.Location = new System.Drawing.Point(381, 10);
             this.picTileSet.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.picTileSet.Name = "picTileSet";
@@ -361,6 +362,7 @@ namespace Ozzyria.ConstructionKit
             this.picTileSet.TabIndex = 7;
             this.picTileSet.TabStop = false;
             this.picTileSet.Paint += new System.Windows.Forms.PaintEventHandler(this.picTileSet_Paint);
+            this.picTileSet.DoubleClick += new System.EventHandler(this.picTileSet_DoubleClick);
             // 
             // listTransitionPrecedence
             // 
@@ -388,7 +390,7 @@ namespace Ozzyria.ConstructionKit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(890, 525);
+            this.ClientSize = new System.Drawing.Size(905, 529);
             this.ControlBox = false;
             this.Controls.Add(this.lblTransitionPrecedence);
             this.Controls.Add(this.listTransitionPrecedence);

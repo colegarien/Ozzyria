@@ -420,6 +420,32 @@ namespace Ozzyria.ConstructionKit
         }
 
         // TODO make a custom thing that extends picturebox to hide all this
+        private void picTileSet_DoubleClick(object sender, EventArgs e)
+        {
+            MouseEventArgs me = e as MouseEventArgs;
+
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
+                if (tileTypeId == -1)
+                    return;
+
+                var imageWidth = _tileSetImage.Width;
+                var imageHeight = _tileSetImage.Height;
+                var tileWidth = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Width / (float)imageWidth);
+                var tileHeight = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Height / (float)imageHeight);
+
+                var textureCoordX = (int)Math.Floor(me.X / tileWidth);
+                var textureCoordY = (int)Math.Floor(me.Y / tileHeight);
+
+                metaData.BaseTileX[tileTypeId] = textureCoordX;
+                metaData.BaseTileY[tileTypeId] = textureCoordY;
+
+                picTileSet.Refresh();
+            }
+        }
+
         private void picTileSet_Paint(object sender, PaintEventArgs e)
         {
             if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
@@ -446,7 +472,6 @@ namespace Ozzyria.ConstructionKit
 
                 e.Graphics.DrawRectangle(highlightPen, x, y, tileWidth, tileHeight);
 
-                // TODO allow selecting baseX and baseY by clicking on picture box
                 if (radTranistionableYes.Checked)
                 {
                     // TODO OZ-17 draw transitions
@@ -582,6 +607,7 @@ namespace Ozzyria.ConstructionKit
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), Math.Max(thickness, 1));
         }
+
     }
 
     class ComboBoxItem
