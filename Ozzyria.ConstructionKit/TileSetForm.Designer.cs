@@ -274,7 +274,7 @@ namespace Ozzyria.ConstructionKit
             this.picTileSet.Location = new System.Drawing.Point(381, 10);
             this.picTileSet.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.picTileSet.Name = "picTileSet";
-            this.picTileSet.Size = new System.Drawing.Size(278, 243);
+            this.picTileSet.Size = new System.Drawing.Size(512, 512);
             this.picTileSet.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picTileSet.TabIndex = 7;
             this.picTileSet.TabStop = false;
@@ -284,7 +284,7 @@ namespace Ozzyria.ConstructionKit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(663, 255);
+            this.ClientSize = new System.Drawing.Size(902, 537);
             this.ControlBox = false;
             this.Controls.Add(this.picTileSet);
             this.Controls.Add(this.groupTileTypeSettings);

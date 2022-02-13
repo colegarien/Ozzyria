@@ -32,6 +32,8 @@ namespace Ozzyria.ConstructionKit
 
             // TODO add a title to the window to signify "Unsaved Changes"
             // TODO OZ-17 need to be able to re-order transitioning precedence! (I think it's just the order we save them in?)
+            // TODO OZ-17 draw transition piece overlay
+            // TODO OZ-17 add visibility toggle for pathing, walling, and transitioning overlays
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -413,7 +415,7 @@ namespace Ozzyria.ConstructionKit
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
-            g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), centerX-left, Math.Max(thickness, 1));
+            g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), centerX-left + (thickness*0.5f), Math.Max(thickness, 1));
             return this;
         }
 
@@ -421,7 +423,7 @@ namespace Ozzyria.ConstructionKit
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
-            g.DrawRectangle(pen, centerX, centerY - (thickness * 0.5f), width - (centerX - left), Math.Max(thickness, 1));
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), width - (centerX - left) + (thickness * 0.5f), Math.Max(thickness, 1));
             return this;
         }
 
@@ -429,7 +431,7 @@ namespace Ozzyria.ConstructionKit
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
-            g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), centerY-top);
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), centerY- top + (thickness * 0.5f));
             return this;
         }
 
@@ -437,7 +439,7 @@ namespace Ozzyria.ConstructionKit
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
-            g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY, Math.Max(thickness, 1), height - (centerY - top));
+            g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), height - (centerY - top) + (thickness * 0.5f));
             return this;
         }
 
