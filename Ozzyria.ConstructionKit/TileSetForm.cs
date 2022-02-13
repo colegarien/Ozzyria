@@ -31,7 +31,6 @@ namespace Ozzyria.ConstructionKit
             });
 
             // TODO OZ-17 add a title to the window to signify "Unsaved Changes"
-            // TODO OZ-17 draw transition piece overlay (lowest precedence items shouldn't have transition pieces!!
             // TODO OZ-17 add visibility toggle for pathing, walling, and transitioning overlays
             // TODO OZ-17 add a "precedence preview" box that shows how the tiles will overlay
         }
@@ -448,6 +447,21 @@ namespace Ozzyria.ConstructionKit
             }
         }
 
+        private void chkShowTransitions_CheckedChanged(object sender, EventArgs e)
+        {
+            picTileSet.Refresh();
+        }
+
+        private void chkShowPaths_CheckedChanged(object sender, EventArgs e)
+        {
+            picTileSet.Refresh();
+        }
+
+        private void chkShowWalls_CheckedChanged(object sender, EventArgs e)
+        {
+            picTileSet.Refresh();
+        }
+
         private void picTileSet_Paint(object sender, PaintEventArgs e)
         {
             if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
@@ -475,17 +489,17 @@ namespace Ozzyria.ConstructionKit
 
                 e.Graphics.DrawRectangle(highlightPen, x, y, tileWidth, tileHeight);
 
-                if (radTranistionableYes.Checked && tileTypeId != metaData.TilesThatSupportTransitions.FirstOrDefault())
+                if (radTranistionableYes.Checked && chkShowTransitions.Checked && tileTypeId != metaData.TilesThatSupportTransitions.FirstOrDefault())
                 {
                     DrawTransitionLayout(tranistionPen, e.Graphics, x, y, tileWidth, tileHeight, 4);
                 }
 
-                if (radPathableYes.Checked)
+                if (radPathableYes.Checked && chkShowPaths.Checked)
                 {
                     DrawPathLayout(pathingPen, e.Graphics, x, y, tileWidth, tileHeight);
                 }
 
-                if (radWallYes.Checked)
+                if (radWallYes.Checked && chkShowWalls.Checked)
                 {
                     var xOffset = metaData.WallingCenterXOffset.ContainsKey(tileTypeId)
                         ? metaData.WallingCenterXOffset[tileTypeId] : 0;
@@ -745,7 +759,6 @@ namespace Ozzyria.ConstructionKit
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), Math.Max(thickness, 1));
         }
-
     }
 
     class ComboBoxItem

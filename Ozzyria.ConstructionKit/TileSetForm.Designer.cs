@@ -55,6 +55,10 @@ namespace Ozzyria.ConstructionKit
             this.picTileSet = new System.Windows.Forms.PictureBox();
             this.listTransitionPrecedence = new System.Windows.Forms.ListBox();
             this.lblTransitionPrecedence = new System.Windows.Forms.Label();
+            this.grpTileSetViewControls = new System.Windows.Forms.GroupBox();
+            this.chkShowTransitions = new System.Windows.Forms.CheckBox();
+            this.chkShowPaths = new System.Windows.Forms.CheckBox();
+            this.chkShowWalls = new System.Windows.Forms.CheckBox();
             this.groupTileTypeSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).BeginInit();
@@ -63,6 +67,7 @@ namespace Ozzyria.ConstructionKit
             this.grpIsPathable.SuspendLayout();
             this.grpIsTransitionable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileSet)).BeginInit();
+            this.grpTileSetViewControls.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxTileSet
@@ -386,12 +391,63 @@ namespace Ozzyria.ConstructionKit
             this.lblTransitionPrecedence.TabIndex = 9;
             this.lblTransitionPrecedence.Text = "Precedence (low to high)";
             // 
+            // grpTileSetViewControls
+            // 
+            this.grpTileSetViewControls.Controls.Add(this.chkShowWalls);
+            this.grpTileSetViewControls.Controls.Add(this.chkShowPaths);
+            this.grpTileSetViewControls.Controls.Add(this.chkShowTransitions);
+            this.grpTileSetViewControls.Location = new System.Drawing.Point(381, 527);
+            this.grpTileSetViewControls.Name = "grpTileSetViewControls";
+            this.grpTileSetViewControls.Size = new System.Drawing.Size(508, 42);
+            this.grpTileSetViewControls.TabIndex = 10;
+            this.grpTileSetViewControls.TabStop = false;
+            // 
+            // chkShowTransitions
+            // 
+            this.chkShowTransitions.AutoSize = true;
+            this.chkShowTransitions.Checked = true;
+            this.chkShowTransitions.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowTransitions.Location = new System.Drawing.Point(6, 17);
+            this.chkShowTransitions.Name = "chkShowTransitions";
+            this.chkShowTransitions.Size = new System.Drawing.Size(114, 19);
+            this.chkShowTransitions.TabIndex = 0;
+            this.chkShowTransitions.Text = "Show Transitions";
+            this.chkShowTransitions.UseVisualStyleBackColor = true;
+            this.chkShowTransitions.CheckedChanged += new System.EventHandler(this.chkShowTransitions_CheckedChanged);
+            // 
+            // chkShowPaths
+            // 
+            this.chkShowPaths.AutoSize = true;
+            this.chkShowPaths.Checked = true;
+            this.chkShowPaths.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowPaths.Location = new System.Drawing.Point(126, 17);
+            this.chkShowPaths.Name = "chkShowPaths";
+            this.chkShowPaths.Size = new System.Drawing.Size(87, 19);
+            this.chkShowPaths.TabIndex = 1;
+            this.chkShowPaths.Text = "Show Paths";
+            this.chkShowPaths.UseVisualStyleBackColor = true;
+            this.chkShowPaths.CheckedChanged += new System.EventHandler(this.chkShowPaths_CheckedChanged);
+            // 
+            // chkShowWalls
+            // 
+            this.chkShowWalls.AutoSize = true;
+            this.chkShowWalls.Checked = true;
+            this.chkShowWalls.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowWalls.Location = new System.Drawing.Point(219, 17);
+            this.chkShowWalls.Name = "chkShowWalls";
+            this.chkShowWalls.Size = new System.Drawing.Size(86, 19);
+            this.chkShowWalls.TabIndex = 2;
+            this.chkShowWalls.Text = "Show Walls";
+            this.chkShowWalls.UseVisualStyleBackColor = true;
+            this.chkShowWalls.CheckedChanged += new System.EventHandler(this.chkShowWalls_CheckedChanged);
+            // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(905, 529);
+            this.ClientSize = new System.Drawing.Size(901, 580);
             this.ControlBox = false;
+            this.Controls.Add(this.grpTileSetViewControls);
             this.Controls.Add(this.lblTransitionPrecedence);
             this.Controls.Add(this.listTransitionPrecedence);
             this.Controls.Add(this.picTileSet);
@@ -423,6 +479,8 @@ namespace Ozzyria.ConstructionKit
             this.grpIsTransitionable.ResumeLayout(false);
             this.grpIsTransitionable.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileSet)).EndInit();
+            this.grpTileSetViewControls.ResumeLayout(false);
+            this.grpTileSetViewControls.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -456,5 +514,9 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.Label lblWallOffset;
         private System.Windows.Forms.ListBox listTransitionPrecedence;
         private System.Windows.Forms.Label lblTransitionPrecedence;
+        private System.Windows.Forms.GroupBox grpTileSetViewControls;
+        private System.Windows.Forms.CheckBox chkShowWalls;
+        private System.Windows.Forms.CheckBox chkShowPaths;
+        private System.Windows.Forms.CheckBox chkShowTransitions;
     }
 }
