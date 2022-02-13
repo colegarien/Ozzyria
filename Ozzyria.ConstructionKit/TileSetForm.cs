@@ -416,6 +416,8 @@ namespace Ozzyria.ConstructionKit
             {
                 var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
                 metaData.TilesThatSupportTransitions = listTransitionPrecedence.Items.OfType<ComboBoxItem>().Select(i => i.Id).ToList();
+
+                picTileSet.Refresh();
             }
         }
 
@@ -456,6 +458,7 @@ namespace Ozzyria.ConstructionKit
                     return;
 
                 var highlightPen = new Pen(Color.Red, 2);
+                var tranistionPen = new Pen(Color.Blue, 2);
                 var pathingPen = new Pen(Color.Red, 2);
                 var wallingPen = new Pen(Color.Magenta, 2);
 
@@ -472,9 +475,9 @@ namespace Ozzyria.ConstructionKit
 
                 e.Graphics.DrawRectangle(highlightPen, x, y, tileWidth, tileHeight);
 
-                if (radTranistionableYes.Checked)
+                if (radTranistionableYes.Checked && tileTypeId != metaData.TilesThatSupportTransitions.FirstOrDefault())
                 {
-                    // TODO OZ-17 draw transitions
+                    DrawTransitionLayout(tranistionPen, e.Graphics, x, y, tileWidth, tileHeight, 4);
                 }
 
                 if (radPathableYes.Checked)
@@ -494,6 +497,141 @@ namespace Ozzyria.ConstructionKit
                     DrawPathLayout(wallingPen, e.Graphics, x, y, tileWidth, tileHeight, xOffset, yOffset, thickness);
                 }
             }
+        }
+        private void DrawTransitionLayout(Pen pen, Graphics g, float baseX, float baseY, float tileWidth, float tileHeight, float size)
+        {
+            var centerX = baseX + (tileWidth * 0.5f);
+            var centerY = baseY + (tileHeight * 0.5f);
+
+            // left - 1,0
+            DrawLeft(pen, g, baseX + (1 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // up - 2,0
+            DrawUp(pen, g, baseX + (2 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // leftup - 3,0
+            DrawLeft(pen, g, baseX + (3 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawUp(pen, g, baseX + (3 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // right - 4,0
+            DrawRight(pen, g, baseX + (4 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // rightleft - 5,0
+            DrawLeft(pen, g, baseX + (5 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (5 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // rightup - 6,0
+            DrawUp(pen, g, baseX + (6 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (6 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // leftrightup - 7,0
+            DrawLeft(pen, g, baseX + (7 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawUp(pen, g, baseX + (7 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (7 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // down - 8,0
+            DrawDown(pen, g, baseX + (8 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downleft - 9,0
+            DrawLeft(pen, g, baseX + (9 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (9 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downup - 10,0
+            DrawUp(pen, g, baseX + (10 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (10 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downleftup - 11,0
+            DrawLeft(pen, g, baseX + (11 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawUp(pen, g, baseX + (11 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (11 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downright - 12,0
+            DrawRight(pen, g, baseX + (12 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (12 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downrightleft - 13,0
+            DrawLeft(pen, g, baseX + (13 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (13 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (13 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downrightup - 14,0
+            DrawUp(pen, g, baseX + (14 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (14 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (14 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+            // downleftrightup - 15,0
+            DrawLeft(pen, g, baseX + (15 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawUp(pen, g, baseX + (15 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawRight(pen, g, baseX + (15 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+            DrawDown(pen, g, baseX + (15 * tileWidth), baseY + (0 * tileHeight), tileWidth, tileHeight);
+
+
+            var originalWidth = pen.Width;
+            pen.Width = 3;
+            // upleft - 1,1
+            g.DrawLine(pen, baseX + (1 * tileWidth), baseY + (1 * tileHeight), centerX + (1 * tileWidth), centerY + (1 * tileHeight));
+
+            // upright - 2,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (2 * tileWidth), baseY + (1 * tileHeight), centerX + (2 * tileWidth), centerY + (1 * tileHeight));
+
+            // upleft,upright - 3,1
+            g.DrawLine(pen, baseX + (3 * tileWidth), baseY + (1 * tileHeight), centerX + (3 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (3 * tileWidth), baseY + (1 * tileHeight), centerX + (3 * tileWidth), centerY + (1 * tileHeight));
+
+            // downright - 4,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (4 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (4 * tileWidth), centerY + (1 * tileHeight));
+
+            // downright,upleft - 5,1
+            g.DrawLine(pen, baseX + (5 * tileWidth), baseY + (1 * tileHeight), centerX + (5 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (5 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (5 * tileWidth), centerY + (1 * tileHeight));
+
+            // downright,upright - 6,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (6 * tileWidth), baseY + (1 * tileHeight), centerX + (6 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (6 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (6 * tileWidth), centerY + (1 * tileHeight));
+
+            // downright,upleft,upright - 7,1
+            g.DrawLine(pen, baseX + (7 * tileWidth), baseY + (1 * tileHeight), centerX + (7 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (7 * tileWidth), baseY + (1 * tileHeight), centerX + (7 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (7 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (7 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft - 8,1
+            g.DrawLine(pen, baseX + (8 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (8 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,upleft - 9,1
+            g.DrawLine(pen, baseX + (9 * tileWidth), baseY + (1 * tileHeight), centerX + (9 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (9 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (9 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,upright - 10,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (10 * tileWidth), baseY + (1 * tileHeight), centerX + (10 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (10 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (10 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,upleft,upright - 11,1
+            g.DrawLine(pen, baseX + (11 * tileWidth), baseY + (1 * tileHeight), centerX + (11 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (11 * tileWidth), baseY + (1 * tileHeight), centerX + (11 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (11 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (11 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,downright - 12,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (12 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (12 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (12 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (12 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,downright,upleft - 13,1
+            g.DrawLine(pen, baseX + (13 * tileWidth), baseY + (1 * tileHeight), centerX + (13 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (13 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (13 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (13 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (13 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,downright,upright - 14,1
+            g.DrawLine(pen, baseX + tileWidth - 1 + (14 * tileWidth), baseY + (1 * tileHeight), centerX + (14 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (14 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (14 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (14 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (14 * tileWidth), centerY + (1 * tileHeight));
+
+            // downleft,downright,upleft,upright - 15,1
+            g.DrawLine(pen, baseX + (15 * tileWidth), baseY + (1 * tileHeight), centerX + (15 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (15 * tileWidth), baseY + (1 * tileHeight), centerX + (15 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + tileWidth - 1 + (15 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (15 * tileWidth), centerY + (1 * tileHeight));
+            g.DrawLine(pen, baseX + (15 * tileWidth), baseY + tileHeight - 1 + (1 * tileHeight), centerX + (15 * tileWidth), centerY + (1 * tileHeight));
+
+
+            pen.Width = originalWidth;
         }
 
         private void DrawPathLayout(Pen pen, Graphics g, float baseX, float baseY, float tileWidth, float tileHeight, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
