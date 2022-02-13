@@ -30,10 +30,10 @@ namespace Ozzyria.ConstructionKit
                 new ComboBoxItem{ Id = 99999, Name = "Debug"},
             });
 
-            // TODO add a title to the window to signify "Unsaved Changes"
-            // TODO OZ-17 need to be able to re-order transitioning precedence! (I think it's just the order we save them in?)
-            // TODO OZ-17 draw transition piece overlay
+            // TODO OZ-17 add a title to the window to signify "Unsaved Changes"
+            // TODO OZ-17 draw transition piece overlay (lowest precedence items shouldn't have transition pieces!!
             // TODO OZ-17 add visibility toggle for pathing, walling, and transitioning overlays
+            // TODO OZ-17 add a "precedence preview" box that shows how the tiles will overlay
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -162,6 +162,18 @@ namespace Ozzyria.ConstructionKit
                     });
                 }
 
+                listTransitionPrecedence.Items.Clear();
+                foreach(var tileTypeId in metaData.TilesThatSupportTransitions)
+                {
+                    if (metaData.TileNames.ContainsKey(tileTypeId)) {
+                        listTransitionPrecedence.Items.Add(new ComboBoxItem
+                        {
+                            Id = tileTypeId,
+                            Name = metaData.TileNames[tileTypeId]
+                        });
+                    }
+                }
+
 
                 _tileSetImage = Image.FromFile("TileSets/Sprites/" + tileSetName + ".png");
                 if (picTileSet.Image != null) picTileSet.Image.Dispose();
@@ -197,8 +209,11 @@ namespace Ozzyria.ConstructionKit
                 else
                     radWallNo.Checked = true;
 
+                numWallOffsetX.Value = metaData.WallingCenterXOffset.ContainsKey(tileTypeId) ? metaData.WallingCenterXOffset[tileTypeId] : 0;
+                numWallOffsetY.Value = metaData.WallingCenterYOffset.ContainsKey(tileTypeId) ? metaData.WallingCenterYOffset[tileTypeId] : 0;
+                numWallThickness.Value = metaData.WallingThickness.ContainsKey(tileTypeId) ? metaData.WallingThickness[tileTypeId] : 0;
+
                 picTileSet.Refresh();
-                // TODO wall tiles offset and thickness adjustments
             }
         }
 
@@ -212,12 +227,20 @@ namespace Ozzyria.ConstructionKit
                 if (radTranistionableYes.Checked && !metaData.TilesThatSupportTransitions.Contains(tileTypeId))
                 {
                     metaData.TilesThatSupportTransitions.Add(tileTypeId);
+                    listTransitionPrecedence.Items.Add(new ComboBoxItem
+                    {
+                        Id = tileTypeId,
+                        Name = metaData.TileNames[tileTypeId]
+                    });
                 }
                 else if (!radTranistionableYes.Checked && metaData.TilesThatSupportTransitions.Contains(tileTypeId))
                 {
                     metaData.TilesThatSupportTransitions.Remove(tileTypeId);
+                    listTransitionPrecedence.Items.Remove(listTransitionPrecedence.Items.OfType<ComboBoxItem>().FirstOrDefault(i => i.Id == tileTypeId));
                 }
             }
+
+            picTileSet.Refresh();
         }
 
         private void radPathableYes_CheckedChanged(object sender, EventArgs e)
@@ -237,6 +260,8 @@ namespace Ozzyria.ConstructionKit
                     radWallNo.Checked = true;
                 }
             }
+
+            picTileSet.Refresh();
         }
 
         private void radWallYes_CheckedChanged(object sender, EventArgs e)
@@ -249,7 +274,6 @@ namespace Ozzyria.ConstructionKit
                 if (!radPathableYes.Checked && radWallYes.Checked)
                 {
                     radWallNo.Checked = true; // walling tile needs to be pathable
-                    return;
                 }
 
                 if (radWallYes.Checked && !metaData.TilesThatSupportWalling.Contains(tileTypeId))
@@ -260,7 +284,91 @@ namespace Ozzyria.ConstructionKit
                 {
                     metaData.TilesThatSupportWalling.Remove(tileTypeId);
                 }
+
+                if (radWallNo.Checked)
+                {
+                    numWallOffsetX.Value = 0;
+                    numWallOffsetY.Value = 0;
+                    numWallThickness.Value = 0;
+                }
             }
+
+            picTileSet.Refresh();
+        }
+
+        private void numWallOffsetX_ValueChanged(object sender, EventArgs e)
+        {
+            if (radWallNo.Checked)
+            {
+                numWallOffsetX.Value = 0;
+            }
+
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (numWallOffsetX.Value == 0 && metaData.WallingCenterXOffset.ContainsKey(tileTypeId))
+                {
+                    metaData.WallingCenterXOffset.Remove(tileTypeId);
+                }
+                else if (numWallOffsetX.Value != 0)
+                {
+                    metaData.WallingCenterXOffset[tileTypeId] = (int)numWallOffsetX.Value;
+                }
+            }
+
+            picTileSet.Refresh();
+        }
+
+        private void numWallOffsetY_ValueChanged(object sender, EventArgs e)
+        {
+            if (radWallNo.Checked)
+            {
+                numWallOffsetY.Value = 0;
+            }
+
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (numWallOffsetY.Value == 0 && metaData.WallingCenterYOffset.ContainsKey(tileTypeId))
+                {
+                    metaData.WallingCenterYOffset.Remove(tileTypeId);
+                }
+                else if (numWallOffsetY.Value != 0)
+                {
+                    metaData.WallingCenterYOffset[tileTypeId] = (int)numWallOffsetY.Value;
+                }
+            }
+
+            picTileSet.Refresh();
+        }
+
+        private void numWallThickness_ValueChanged(object sender, EventArgs e)
+        {
+            if (radWallNo.Checked)
+            {
+                numWallThickness.Value = 0;
+            }
+
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
+
+                if (numWallThickness.Value == 0 && metaData.WallingThickness.ContainsKey(tileTypeId))
+                {
+                    metaData.WallingThickness.Remove(tileTypeId);
+                }
+                else if (numWallThickness.Value != 0)
+                {
+                    metaData.WallingThickness[tileTypeId] = (int)numWallThickness.Value;
+                }
+            }
+
+            picTileSet.Refresh();
         }
 
         private void dropDownZDepth_SelectedIndexChanged(object sender, EventArgs e)
@@ -280,6 +388,34 @@ namespace Ozzyria.ConstructionKit
                 {
                     metaData.BaseTileZ[tileTypeId] = item.Id;
                 }
+            }
+        }
+
+        private void listTransitionPrecedence_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (listTransitionPrecedence.SelectedItem == null) return;
+            listTransitionPrecedence.DoDragDrop(listTransitionPrecedence.SelectedItem, DragDropEffects.Move);
+        }
+
+        private void listTransitionPrecedence_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void listTransitionPrecedence_DragDrop(object sender, DragEventArgs e)
+        {
+            Point point = listTransitionPrecedence.PointToClient(new Point(e.X, e.Y));
+            int index = listTransitionPrecedence.IndexFromPoint(point);
+            if (index < 0) index = listTransitionPrecedence.Items.Count - 1;
+            object data = listTransitionPrecedence.SelectedItem;
+            listTransitionPrecedence.Items.Remove(data);
+            listTransitionPrecedence.Items.Insert(index, data);
+
+
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            {
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                metaData.TilesThatSupportTransitions = listTransitionPrecedence.Items.OfType<ComboBoxItem>().Select(i => i.Id).ToList();
             }
         }
 
@@ -310,6 +446,12 @@ namespace Ozzyria.ConstructionKit
 
                 e.Graphics.DrawRectangle(highlightPen, x, y, tileWidth, tileHeight);
 
+                // TODO allow selecting baseX and baseY by clicking on picture box
+                if (radTranistionableYes.Checked)
+                {
+                    // TODO OZ-17 draw transitions
+                }
+
                 if (radPathableYes.Checked)
                 {
                     DrawPathLayout(pathingPen, e.Graphics, x, y, tileWidth, tileHeight);
@@ -324,11 +466,8 @@ namespace Ozzyria.ConstructionKit
                     var thickness = metaData.WallingThickness.ContainsKey(tileTypeId)
                         ? metaData.WallingThickness[tileTypeId] : 0;
 
-                    // TODO might be a small rounding error in wall drawing
                     DrawPathLayout(wallingPen, e.Graphics, x, y, tileWidth, tileHeight, xOffset, yOffset, thickness);
                 }
-
-                // TODO allow selecting baseX and baseY by clicking on picture box
             }
         }
 
@@ -395,60 +534,53 @@ namespace Ozzyria.ConstructionKit
 
         }
 
-        private TileSetForm DrawHorizontal(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset=0, float cyOffset=0, float thickness=0)
+        private void DrawHorizontal(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset=0, float cyOffset=0, float thickness=0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), width, Math.Max(thickness, 1));
-            return this;
         }
 
-        private TileSetForm DrawVertical(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawVertical(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), height);
-            return this;
         }
 
-        private TileSetForm DrawLeft(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawLeft(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, left, centerY - (thickness * 0.5f), centerX-left + (thickness*0.5f), Math.Max(thickness, 1));
-            return this;
         }
 
-        private TileSetForm DrawRight(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawRight(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), width - (centerX - left) + (thickness * 0.5f), Math.Max(thickness, 1));
-            return this;
         }
 
-        private TileSetForm DrawUp(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawUp(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), top, Math.Max(thickness, 1), centerY- top + (thickness * 0.5f));
-            return this;
         }
 
-        private TileSetForm DrawDown(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawDown(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), height - (centerY - top) + (thickness * 0.5f));
-            return this;
         }
 
-        private TileSetForm DrawCenter(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
+        private void DrawCenter(Pen pen, Graphics g, float left, float top, float width, float height, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
             var centerX = left + (width * 0.5f) + cxOffset;
             var centerY = top + (height * 0.5f) + cyOffset;
             g.DrawRectangle(pen, centerX - (thickness * 0.5f), centerY - (thickness * 0.5f), Math.Max(thickness, 1), Math.Max(thickness, 1));
-            return this;
         }
     }
 

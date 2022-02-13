@@ -36,6 +36,11 @@ namespace Ozzyria.ConstructionKit
             this.listTileTypes = new System.Windows.Forms.ListBox();
             this.buttonNewTileType = new System.Windows.Forms.Button();
             this.groupTileTypeSettings = new System.Windows.Forms.GroupBox();
+            this.numWallThickness = new System.Windows.Forms.NumericUpDown();
+            this.lblWallThickness = new System.Windows.Forms.Label();
+            this.numWallOffsetY = new System.Windows.Forms.NumericUpDown();
+            this.numWallOffsetX = new System.Windows.Forms.NumericUpDown();
+            this.lblWallOffset = new System.Windows.Forms.Label();
             this.grpIsWall = new System.Windows.Forms.GroupBox();
             this.radWallNo = new System.Windows.Forms.RadioButton();
             this.radWallYes = new System.Windows.Forms.RadioButton();
@@ -48,7 +53,12 @@ namespace Ozzyria.ConstructionKit
             this.labelZDepth = new System.Windows.Forms.Label();
             this.dropDownZDepth = new System.Windows.Forms.ComboBox();
             this.picTileSet = new System.Windows.Forms.PictureBox();
+            this.listTransitionPrecedence = new System.Windows.Forms.ListBox();
+            this.lblTransitionPrecedence = new System.Windows.Forms.Label();
             this.groupTileTypeSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetX)).BeginInit();
             this.grpIsWall.SuspendLayout();
             this.grpIsPathable.SuspendLayout();
             this.grpIsTransitionable.SuspendLayout();
@@ -67,7 +77,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(12, 231);
+            this.buttonSave.Location = new System.Drawing.Point(12, 492);
             this.buttonSave.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(82, 22);
@@ -78,7 +88,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(100, 231);
+            this.buttonClose.Location = new System.Drawing.Point(100, 492);
             this.buttonClose.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(82, 22);
@@ -122,6 +132,11 @@ namespace Ozzyria.ConstructionKit
             // 
             // groupTileTypeSettings
             // 
+            this.groupTileTypeSettings.Controls.Add(this.numWallThickness);
+            this.groupTileTypeSettings.Controls.Add(this.lblWallThickness);
+            this.groupTileTypeSettings.Controls.Add(this.numWallOffsetY);
+            this.groupTileTypeSettings.Controls.Add(this.numWallOffsetX);
+            this.groupTileTypeSettings.Controls.Add(this.lblWallOffset);
             this.groupTileTypeSettings.Controls.Add(this.grpIsWall);
             this.groupTileTypeSettings.Controls.Add(this.grpIsPathable);
             this.groupTileTypeSettings.Controls.Add(this.grpIsTransitionable);
@@ -131,10 +146,77 @@ namespace Ozzyria.ConstructionKit
             this.groupTileTypeSettings.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupTileTypeSettings.Name = "groupTileTypeSettings";
             this.groupTileTypeSettings.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupTileTypeSettings.Size = new System.Drawing.Size(183, 243);
+            this.groupTileTypeSettings.Size = new System.Drawing.Size(183, 288);
             this.groupTileTypeSettings.TabIndex = 6;
             this.groupTileTypeSettings.TabStop = false;
             this.groupTileTypeSettings.Text = "Tile Type";
+            // 
+            // numWallThickness
+            // 
+            this.numWallThickness.Location = new System.Drawing.Point(6, 254);
+            this.numWallThickness.Maximum = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.numWallThickness.Name = "numWallThickness";
+            this.numWallThickness.Size = new System.Drawing.Size(48, 23);
+            this.numWallThickness.TabIndex = 10;
+            this.numWallThickness.ValueChanged += new System.EventHandler(this.numWallThickness_ValueChanged);
+            // 
+            // lblWallThickness
+            // 
+            this.lblWallThickness.AutoSize = true;
+            this.lblWallThickness.Location = new System.Drawing.Point(6, 236);
+            this.lblWallThickness.Name = "lblWallThickness";
+            this.lblWallThickness.Size = new System.Drawing.Size(84, 15);
+            this.lblWallThickness.TabIndex = 9;
+            this.lblWallThickness.Text = "Wall Thickness";
+            // 
+            // numWallOffsetY
+            // 
+            this.numWallOffsetY.Location = new System.Drawing.Point(61, 210);
+            this.numWallOffsetY.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numWallOffsetY.Minimum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            -2147483648});
+            this.numWallOffsetY.Name = "numWallOffsetY";
+            this.numWallOffsetY.Size = new System.Drawing.Size(49, 23);
+            this.numWallOffsetY.TabIndex = 8;
+            this.numWallOffsetY.ValueChanged += new System.EventHandler(this.numWallOffsetY_ValueChanged);
+            // 
+            // numWallOffsetX
+            // 
+            this.numWallOffsetX.Location = new System.Drawing.Point(6, 210);
+            this.numWallOffsetX.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numWallOffsetX.Minimum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            -2147483648});
+            this.numWallOffsetX.Name = "numWallOffsetX";
+            this.numWallOffsetX.Size = new System.Drawing.Size(49, 23);
+            this.numWallOffsetX.TabIndex = 6;
+            this.numWallOffsetX.ValueChanged += new System.EventHandler(this.numWallOffsetX_ValueChanged);
+            // 
+            // lblWallOffset
+            // 
+            this.lblWallOffset.AutoSize = true;
+            this.lblWallOffset.Location = new System.Drawing.Point(6, 192);
+            this.lblWallOffset.Name = "lblWallOffset";
+            this.lblWallOffset.Size = new System.Drawing.Size(65, 15);
+            this.lblWallOffset.TabIndex = 5;
+            this.lblWallOffset.Text = "Wall Offset";
             // 
             // grpIsWall
             // 
@@ -280,12 +362,36 @@ namespace Ozzyria.ConstructionKit
             this.picTileSet.TabStop = false;
             this.picTileSet.Paint += new System.Windows.Forms.PaintEventHandler(this.picTileSet_Paint);
             // 
+            // listTransitionPrecedence
+            // 
+            this.listTransitionPrecedence.AllowDrop = true;
+            this.listTransitionPrecedence.FormattingEnabled = true;
+            this.listTransitionPrecedence.ItemHeight = 15;
+            this.listTransitionPrecedence.Location = new System.Drawing.Point(11, 298);
+            this.listTransitionPrecedence.Name = "listTransitionPrecedence";
+            this.listTransitionPrecedence.Size = new System.Drawing.Size(171, 94);
+            this.listTransitionPrecedence.TabIndex = 8;
+            this.listTransitionPrecedence.DragDrop += new System.Windows.Forms.DragEventHandler(this.listTransitionPrecedence_DragDrop);
+            this.listTransitionPrecedence.DragOver += new System.Windows.Forms.DragEventHandler(this.listTransitionPrecedence_DragOver);
+            this.listTransitionPrecedence.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listTransitionPrecedence_MouseDown);
+            // 
+            // lblTransitionPrecedence
+            // 
+            this.lblTransitionPrecedence.AutoSize = true;
+            this.lblTransitionPrecedence.Location = new System.Drawing.Point(12, 280);
+            this.lblTransitionPrecedence.Name = "lblTransitionPrecedence";
+            this.lblTransitionPrecedence.Size = new System.Drawing.Size(139, 15);
+            this.lblTransitionPrecedence.TabIndex = 9;
+            this.lblTransitionPrecedence.Text = "Precedence (low to high)";
+            // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(902, 537);
+            this.ClientSize = new System.Drawing.Size(890, 525);
             this.ControlBox = false;
+            this.Controls.Add(this.lblTransitionPrecedence);
+            this.Controls.Add(this.listTransitionPrecedence);
             this.Controls.Add(this.picTileSet);
             this.Controls.Add(this.groupTileTypeSettings);
             this.Controls.Add(this.buttonNewTileType);
@@ -305,6 +411,9 @@ namespace Ozzyria.ConstructionKit
             this.Text = "Tile Set";
             this.groupTileTypeSettings.ResumeLayout(false);
             this.groupTileTypeSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetX)).EndInit();
             this.grpIsWall.ResumeLayout(false);
             this.grpIsWall.PerformLayout();
             this.grpIsPathable.ResumeLayout(false);
@@ -313,6 +422,7 @@ namespace Ozzyria.ConstructionKit
             this.grpIsTransitionable.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileSet)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -337,5 +447,12 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.GroupBox grpIsWall;
         private System.Windows.Forms.RadioButton radWallNo;
         private System.Windows.Forms.RadioButton radWallYes;
+        private System.Windows.Forms.NumericUpDown numWallThickness;
+        private System.Windows.Forms.Label lblWallThickness;
+        private System.Windows.Forms.NumericUpDown numWallOffsetY;
+        private System.Windows.Forms.NumericUpDown numWallOffsetX;
+        private System.Windows.Forms.Label lblWallOffset;
+        private System.Windows.Forms.ListBox listTransitionPrecedence;
+        private System.Windows.Forms.Label lblTransitionPrecedence;
     }
 }
