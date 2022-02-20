@@ -2,13 +2,13 @@
   "outside_tileset_001": {
     "TileTypes": [ 0, 1, 2, 3, 4, 5, 6 ],
     "TileNames": {
-      "0": "None",
-      "1": "Ground",
-      "2": "Water",
-      "3": "Fence",
-      "4": "Road",
-      "5": "Stone",
-      "6": "Wall"
+      "0": "none",
+      "1": "ground",
+      "2": "water",
+      "3": "fence",
+      "4": "road",
+      "5": "stone",
+      "6": "wall"
     },
     "BaseTileX": {
       "0": "0",

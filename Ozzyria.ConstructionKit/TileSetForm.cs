@@ -79,7 +79,7 @@ namespace Ozzyria.ConstructionKit
                 else
                 {
                     TileSetMetaDataFactory.AddNewTileSet(newTileSetId);
-                    // TODO save meta to file
+
                     comboBoxTileSet.Items.Add(newTileSetId);
                     comboBoxTileSet.SelectedItem = newTileSetId;
                 }
@@ -177,6 +177,7 @@ namespace Ozzyria.ConstructionKit
                     }
                 }
 
+                // TODO OZ-17 allow picking from from system and copying it into project files
                 _tileSetImage = Image.FromFile("TileSets/Sprites/" + tileSetName + ".png");
                 if (picTileSet.Image != null) picTileSet.Image.Dispose();
                 picTileSet.Image = _tileSetImage;
@@ -488,8 +489,8 @@ namespace Ozzyria.ConstructionKit
                 var tileWidth = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Width / (float)imageWidth);
                 var tileHeight = Game.Tile.DIMENSION * ((float)picTileSet.ClientSize.Height / (float)imageHeight);
 
-                var textureCoordX = metaData.BaseTileX[tileTypeId];
-                var textureCoordY = metaData.BaseTileY[tileTypeId];
+                var textureCoordX = metaData.BaseTileX.ContainsKey(tileTypeId) ? metaData.BaseTileX[tileTypeId] : 0;
+                var textureCoordY = metaData.BaseTileY.ContainsKey(tileTypeId) ? metaData.BaseTileY[tileTypeId] : 0;
 
                 var x = textureCoordX * tileWidth;
                 var y = textureCoordY * tileHeight;
@@ -786,15 +787,15 @@ namespace Ozzyria.ConstructionKit
                     var x = i * tileWidth;
                     var y = (int)((pnlPrecedencePreview.ClientSize.Height - tileHeight) * 0.5f);
 
-                    var textureCoordX = metaData.BaseTileX[tileTypeId] * Game.Tile.DIMENSION;
-                    var textureCoordY = metaData.BaseTileY[tileTypeId] * Game.Tile.DIMENSION;
+                    var textureCoordX = (metaData.BaseTileX.ContainsKey(tileTypeId) ? metaData.BaseTileX[tileTypeId] : 0) * Game.Tile.DIMENSION;
+                    var textureCoordY = (metaData.BaseTileY.ContainsKey(tileTypeId) ? metaData.BaseTileY[tileTypeId] : 0) * Game.Tile.DIMENSION;
 
                     e.Graphics.DrawImage(_tileSetImage, new Rectangle(x, y, tileWidth, tileHeight), textureCoordX, textureCoordY, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
 
                     if(previousType != -1)
                     {
-                        var prevTextureCoordX = (metaData.BaseTileX[previousType] * Game.Tile.DIMENSION) + (1 * Game.Tile.DIMENSION);
-                        var prevTextureCoordY = (metaData.BaseTileY[previousType] * Game.Tile.DIMENSION);
+                        var prevTextureCoordX = ((metaData.BaseTileX.ContainsKey(previousType) ? metaData.BaseTileX[previousType] : 0) * Game.Tile.DIMENSION) + (1 * Game.Tile.DIMENSION);
+                        var prevTextureCoordY = ((metaData.BaseTileY.ContainsKey(previousType) ? metaData.BaseTileY[previousType] : 0) * Game.Tile.DIMENSION);
                         e.Graphics.DrawImage(_tileSetImage, new Rectangle(x, y, tileWidth, tileHeight), prevTextureCoordX, prevTextureCoordY, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
                     }
 
