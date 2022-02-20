@@ -30,41 +30,97 @@ namespace Ozzyria.ConstructionKit
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConstructionKitForm));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuTopBar = new System.Windows.Forms.MenuStrip();
             this.menuItemTileSet = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1.SuspendLayout();
+            this.spltTopLevel = new System.Windows.Forms.SplitContainer();
+            this.spltRight = new System.Windows.Forms.SplitContainer();
+            this.menuTopBar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).BeginInit();
+            this.spltTopLevel.Panel2.SuspendLayout();
+            this.spltTopLevel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spltRight)).BeginInit();
+            this.spltRight.SuspendLayout();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // menuTopBar
             // 
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTopBar.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuTopBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemTileSet});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 28);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip_ItemClicked);
+            this.menuTopBar.Location = new System.Drawing.Point(0, 0);
+            this.menuTopBar.Name = "menuTopBar";
+            this.menuTopBar.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
+            this.menuTopBar.Size = new System.Drawing.Size(1232, 24);
+            this.menuTopBar.TabIndex = 0;
+            this.menuTopBar.Text = "menuStrip";
+            this.menuTopBar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip_ItemClicked);
             // 
             // menuItemTileSet
             // 
             this.menuItemTileSet.Name = "menuItemTileSet";
-            this.menuItemTileSet.Size = new System.Drawing.Size(81, 24);
+            this.menuItemTileSet.Size = new System.Drawing.Size(65, 20);
             this.menuItemTileSet.Text = "Tile Set...";
+            // 
+            // spltTopLevel
+            // 
+            this.spltTopLevel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.spltTopLevel.Cursor = System.Windows.Forms.Cursors.VSplit;
+            this.spltTopLevel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.spltTopLevel.Location = new System.Drawing.Point(0, 24);
+            this.spltTopLevel.Name = "spltTopLevel";
+            // 
+            // spltTopLevel.Panel1
+            // 
+            this.spltTopLevel.Panel1.Cursor = System.Windows.Forms.Cursors.Default;
+            // 
+            // spltTopLevel.Panel2
+            // 
+            this.spltTopLevel.Panel2.Controls.Add(this.spltRight);
+            this.spltTopLevel.Panel2.Cursor = System.Windows.Forms.Cursors.Default;
+            this.spltTopLevel.Size = new System.Drawing.Size(1232, 793);
+            this.spltTopLevel.SplitterDistance = 409;
+            this.spltTopLevel.TabIndex = 1;
+            // 
+            // spltRight
+            // 
+            this.spltRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.spltRight.Cursor = System.Windows.Forms.Cursors.HSplit;
+            this.spltRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.spltRight.Location = new System.Drawing.Point(0, 0);
+            this.spltRight.Name = "spltRight";
+            this.spltRight.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // spltRight.Panel1
+            // 
+            this.spltRight.Panel1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.spltRight.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.spltRight_Panel1_Paint);
+            // 
+            // spltRight.Panel2
+            // 
+            this.spltRight.Panel2.Cursor = System.Windows.Forms.Cursors.Default;
+            this.spltRight.Size = new System.Drawing.Size(819, 793);
+            this.spltRight.SplitterDistance = 529;
+            this.spltRight.TabIndex = 0;
             // 
             // ConstructionKitForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.menuStrip1);
+            this.ClientSize = new System.Drawing.Size(1232, 817);
+            this.Controls.Add(this.spltTopLevel);
+            this.Controls.Add(this.menuTopBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuTopBar;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "ConstructionKitForm";
             this.Text = "Ozzyria Construction Kit";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuTopBar.ResumeLayout(false);
+            this.menuTopBar.PerformLayout();
+            this.spltTopLevel.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).EndInit();
+            this.spltTopLevel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spltRight)).EndInit();
+            this.spltRight.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -72,8 +128,10 @@ namespace Ozzyria.ConstructionKit
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuTopBar;
         private System.Windows.Forms.ToolStripMenuItem menuItemTileSet;
+        private System.Windows.Forms.SplitContainer spltTopLevel;
+        private System.Windows.Forms.SplitContainer spltRight;
     }
 }
 

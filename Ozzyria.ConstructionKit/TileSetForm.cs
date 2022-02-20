@@ -21,7 +21,7 @@ namespace Ozzyria.ConstructionKit
             var tileSetNames = metaData.Keys;
             comboBoxTileSet.Items.AddRange(tileSetNames.ToArray());
 
-            // TODO be better about this, maybe specify somewhere (see Renderable.cs constants)
+            // TODO OZ-17 be better about this, maybe specify somewhere (see Renderable.cs constants)
             dropDownZDepth.Items.AddRange(new ComboBoxItem[]
             {
                 new ComboBoxItem{ Id = 0, Name = "Background"},

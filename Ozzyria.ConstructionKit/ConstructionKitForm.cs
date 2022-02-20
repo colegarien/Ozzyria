@@ -18,5 +18,10 @@ namespace Ozzyria.ConstructionKit
                 tileSetForm.ShowDialog();
             }
         }
+
+        private void spltRight_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+            // TODO OZ-17 draw currently open map or object or whatever preview here!!
+        }
     }
 }
