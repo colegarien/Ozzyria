@@ -11,6 +11,8 @@ namespace Ozzyria.ConstructionKit
 
         private Image _tileSetImage;
 
+        private string _currentTileSet = "";
+
         public TileSetForm()
         {
             InitializeComponent();
@@ -30,7 +32,7 @@ namespace Ozzyria.ConstructionKit
                 new ComboBoxItem{ Id = 99999, Name = "Debug"},
             });
 
-            // TODO OZ-17 add a title to the window to signify "Unsaved Changes"
+            comboBoxTileSet.SelectedIndex = 0;
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -71,6 +73,18 @@ namespace Ozzyria.ConstructionKit
                     errorCaption = "ID In Use";
                     errorMessage = "Supplied ID \"" + newTileSetId + "\" is already in use!";
                 }
+                else if (!System.IO.File.Exists(Content.Loader.Root() + "/TileSets/Sprites/" + newTileSetId + ".png"))
+                {
+                    if (diaTileSetFile.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.Copy(diaTileSetFile.FileName, Content.Loader.Root() + "/TileSets/Sprites/" + newTileSetId + ".png", true);
+                    }
+                    else
+                    {
+                        errorCaption = "Missing Tile Set Image";
+                        errorMessage = "You must select a image to use for the tileset!";
+                    }
+                }
 
                 if (!errorMessage.Equals(""))
                 {
@@ -93,7 +107,7 @@ namespace Ozzyria.ConstructionKit
 
         private void buttonNewTileType_Click(object sender, EventArgs e)
         {
-            var tileSetId = (string)comboBoxTileSet.SelectedItem ?? "";
+            var tileSetId = _currentTileSet;
             if (!TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(tileSetId))
             {
                 MessageBox.Show("Must First Select a Tile Set!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -143,18 +157,17 @@ namespace Ozzyria.ConstructionKit
 
         private bool isTileTypeNameInUse(string name)
         {
-            var tileSetId = (string)comboBoxTileSet.SelectedItem ?? "";
-            return TileSetMetaDataFactory.tileSetMetaDatas[tileSetId].TileNames.Values.Any(n => n == name);
+            return TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet].TileNames.Values.Any(n => n == name);
         }
 
         private void comboBoxTileSet_SelectedIndexChanged(object sender, EventArgs e)
         {
             var tileSetName = (string)comboBoxTileSet.SelectedItem ?? "";
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(tileSetName))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(tileSetName) && tileSetName != _currentTileSet)
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[tileSetName];
+                _currentTileSet = tileSetName;
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
 
-                // TODO avoid double clearing and loading if tileset is already been selected
                 listTileTypes.Items.Clear();
                 foreach(var tileTypeIdNamePair in metaData.TileNames)
                 {
@@ -177,10 +190,12 @@ namespace Ozzyria.ConstructionKit
                     }
                 }
 
-                // TODO OZ-17 allow picking from from system and copying it into project files
-                _tileSetImage = Image.FromFile("TileSets/Sprites/" + tileSetName + ".png");
+                _tileSetImage = Image.FromFile(Content.Loader.Root() + "/TileSets/Sprites/" + _currentTileSet + ".png");
                 if (picTileSet.Image != null) picTileSet.Image.Dispose();
                 picTileSet.Image = _tileSetImage;
+
+                if(listTileTypes.Items.Count > 0)
+                    listTileTypes.SelectedIndex = 0;
 
                 pnlPrecedencePreview.Refresh();
             }
@@ -188,10 +203,9 @@ namespace Ozzyria.ConstructionKit
 
         private void listTileTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // TODO move into re-usabler function! (RefreshTileTypeForm or something?)
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 dropDownZDepth.SelectedItem = dropDownZDepth.Items.Cast<ComboBoxItem>()
@@ -219,14 +233,15 @@ namespace Ozzyria.ConstructionKit
                 numWallThickness.Value = metaData.WallingThickness.ContainsKey(tileTypeId) ? metaData.WallingThickness[tileTypeId] : 0;
 
                 picTileSet.Refresh();
+                pnlPrecedencePreview.Refresh();
             }
         }
 
         private void radTranistionableYes_CheckedChanged(object sender, EventArgs e)
         {
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (radTranistionableYes.Checked && !metaData.TilesThatSupportTransitions.Contains(tileTypeId))
@@ -251,9 +266,9 @@ namespace Ozzyria.ConstructionKit
 
         private void radPathableYes_CheckedChanged(object sender, EventArgs e)
         {
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (radPathableYes.Checked && !metaData.TilesThatSupportPathing.Contains(tileTypeId))
@@ -272,9 +287,9 @@ namespace Ozzyria.ConstructionKit
 
         private void radWallYes_CheckedChanged(object sender, EventArgs e)
         {
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (!radPathableYes.Checked && radWallYes.Checked)
@@ -309,9 +324,9 @@ namespace Ozzyria.ConstructionKit
                 numWallOffsetX.Value = 0;
             }
 
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (numWallOffsetX.Value == 0 && metaData.WallingCenterXOffset.ContainsKey(tileTypeId))
@@ -334,9 +349,9 @@ namespace Ozzyria.ConstructionKit
                 numWallOffsetY.Value = 0;
             }
 
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (numWallOffsetY.Value == 0 && metaData.WallingCenterYOffset.ContainsKey(tileTypeId))
@@ -359,9 +374,9 @@ namespace Ozzyria.ConstructionKit
                 numWallThickness.Value = 0;
             }
 
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 if (numWallThickness.Value == 0 && metaData.WallingThickness.ContainsKey(tileTypeId))
@@ -379,9 +394,9 @@ namespace Ozzyria.ConstructionKit
 
         private void dropDownZDepth_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? 0;
 
                 var item = dropDownZDepth.SelectedItem as ComboBoxItem;
@@ -418,9 +433,9 @@ namespace Ozzyria.ConstructionKit
             listTransitionPrecedence.Items.Insert(index, data);
 
 
-            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 metaData.TilesThatSupportTransitions = listTransitionPrecedence.Items.OfType<ComboBoxItem>().Select(i => i.Id).ToList();
 
                 picTileSet.Refresh();
@@ -428,14 +443,13 @@ namespace Ozzyria.ConstructionKit
             }
         }
 
-        // TODO make a custom thing that extends picturebox to hide all this
         private void picTileSet_DoubleClick(object sender, EventArgs e)
         {
             MouseEventArgs me = e as MouseEventArgs;
 
-            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
                 if (tileTypeId == -1)
                     return;
@@ -472,9 +486,9 @@ namespace Ozzyria.ConstructionKit
 
         private void picTileSet_Paint(object sender, PaintEventArgs e)
         {
-            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
                 if (tileTypeId == -1)
                     return;
@@ -658,7 +672,7 @@ namespace Ozzyria.ConstructionKit
 
         private void DrawPathLayout(Pen pen, Graphics g, float baseX, float baseY, float tileWidth, float tileHeight, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
-            // OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!! (see metadatafactory)
+            // TODO OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!! (see metadatafactory)
 
             //case PathDirection.Left:
             DrawLeft(pen, g, baseX + (2 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
@@ -770,9 +784,9 @@ namespace Ozzyria.ConstructionKit
 
         private void pnlPrecedencePreview_Paint(object sender, PaintEventArgs e)
         {
-            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey((string)comboBoxTileSet.SelectedItem ?? ""))
+            if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
-                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[(string)comboBoxTileSet.SelectedItem];
+                var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 if (metaData.TilesThatSupportTransitions.Count == 0)
                     return;
 

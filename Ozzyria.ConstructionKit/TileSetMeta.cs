@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -66,6 +64,7 @@ namespace Ozzyria.ConstructionKit
 
             InitializeMetaData();
         }
+
         public static void InitializeMetaData()
         {
             // TODO consider wrapping this up in json reader/writer with all the custom converters
@@ -73,7 +72,7 @@ namespace Ozzyria.ConstructionKit
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("TileSets/tileset_metadata.json"), serializeOptions);
+            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText(Content.Loader.Root() + "/TileSets/tileset_metadata.json"), serializeOptions);
         }
 
         public static void SaveMetaData()
@@ -90,7 +89,7 @@ namespace Ozzyria.ConstructionKit
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            File.WriteAllText("TileSets/tileset_metadata.json", JsonSerializer.Serialize(tileSetMetaDatas, serializeOptions));
+            File.WriteAllText(Content.Loader.Root() + "/TileSets/tileset_metadata.json", JsonSerializer.Serialize(tileSetMetaDatas, serializeOptions));
         }
     }
 

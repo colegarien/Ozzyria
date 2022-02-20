@@ -12,7 +12,7 @@ namespace Ozzyria.Game.Persistence
             string tileSet = "";
             int width = 0, height = 0;
             var layers = new Dictionary<int, List<Tile>>();
-            using (StreamReader file = new StreamReader("Maps/" + mapName + ".ozz"))
+            using (StreamReader file = new StreamReader(Content.Loader.Root() + "/Maps/" + mapName + ".ozz"))
             {
                 tileSet = file.ReadLine().Trim();
                 width = int.Parse(file.ReadLine());
@@ -73,13 +73,13 @@ namespace Ozzyria.Game.Persistence
 
         public void SaveMap(string resource, TileMap map)
         {
-            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Content\Maps"; // TODO this is just to make debuggery easier for now
+            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
             if (!Directory.Exists(baseMapsDirectory))
             {
                 Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (StreamWriter file = new StreamWriter(baseMapsDirectory + "\\" + resource + ".ozz"))
+            using (StreamWriter file = new StreamWriter(baseMapsDirectory + "/" + resource + ".ozz"))
             {
                 file.WriteLine(map.TileSet);
                 file.WriteLine(map.Width);
@@ -104,7 +104,7 @@ namespace Ozzyria.Game.Persistence
         public EntityManager LoadEntityManager(string resource)
         {
             var entityManager = new EntityManager();
-            using (BinaryReader reader = new BinaryReader(File.OpenRead("Maps/" + resource + ".ozz")))
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(Content.Loader.Root() + "/Maps/" + resource + ".ozz")))
             {
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
@@ -117,13 +117,13 @@ namespace Ozzyria.Game.Persistence
 
         public void SaveEntityManager(string resource, EntityManager entityManager)
         {
-            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Content\Maps"; // TODO this is just to make debuggery easier for now
+            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
             if (!Directory.Exists(baseMapsDirectory))
             {
                 Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "\\" + resource + ".ozz", FileMode.Create)))
+            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "/" + resource + ".ozz", FileMode.Create)))
             {
                 foreach (var entity in entityManager.GetEntities())
                 {

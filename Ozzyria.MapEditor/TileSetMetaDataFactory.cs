@@ -299,7 +299,7 @@ namespace Ozzyria.MapEditor
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
-            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("TileSets/tileset_metadata.json"), serializeOptions);
+            tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText(Content.Loader.Root() + "/TileSets/tileset_metadata.json"), serializeOptions);
             if (tileSetMetaDatas.ContainsKey(currentTileSet))
             {
                 currentMetadata = tileSetMetaDatas[currentTileSet];
@@ -381,7 +381,8 @@ namespace Ozzyria.MapEditor
 
                 reader.Read();
 
-                int valueAsInt32 = reader.GetInt32();
+                string valueString = reader.GetString();
+                int valueAsInt32 = int.Parse(valueString);
                 value.Add(keyAsInt32, valueAsInt32);
             }
 

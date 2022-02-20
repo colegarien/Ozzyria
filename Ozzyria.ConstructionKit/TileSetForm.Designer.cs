@@ -62,6 +62,7 @@ namespace Ozzyria.ConstructionKit
             this.pnlPrecedencePreview = new System.Windows.Forms.Panel();
             this.lblPrecedencePreview = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.diaTileSetFile = new System.Windows.Forms.OpenFileDialog();
             this.groupTileTypeSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).BeginInit();
@@ -476,11 +477,18 @@ namespace Ozzyria.ConstructionKit
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // diaTileSetFile
+            // 
+            this.diaTileSetFile.DefaultExt = "png";
+            this.diaTileSetFile.Filter = "Tile Set|*.png";
+            this.diaTileSetFile.ReadOnlyChecked = true;
+            this.diaTileSetFile.Title = "Select Tile Set Image";
+            // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(891, 583);
+            this.ClientSize = new System.Drawing.Size(887, 579);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lblPrecedencePreview);
@@ -559,5 +567,6 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.Panel pnlPrecedencePreview;
         private System.Windows.Forms.Label lblPrecedencePreview;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.OpenFileDialog diaTileSetFile;
     }
 }
