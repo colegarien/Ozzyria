@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Ozzyria.ConstructionKit
 {
@@ -15,7 +7,7 @@ namespace Ozzyria.ConstructionKit
         public ConstructionKitForm()
         {
             InitializeComponent();
-            TileSetMetaDataFactory.InitializeMetaData();
+            TileSetMetaDataFactory.EnsureInitializedMetaData();
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

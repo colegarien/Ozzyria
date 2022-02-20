@@ -61,6 +61,7 @@ namespace Ozzyria.ConstructionKit
             this.chkShowTransitions = new System.Windows.Forms.CheckBox();
             this.pnlPrecedencePreview = new System.Windows.Forms.Panel();
             this.lblPrecedencePreview = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.groupTileTypeSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numWallThickness)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numWallOffsetY)).BeginInit();
@@ -464,12 +465,24 @@ namespace Ozzyria.ConstructionKit
             this.lblPrecedencePreview.TabIndex = 12;
             this.lblPrecedencePreview.Text = "Precedence Preview";
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(187, 541);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(82, 22);
+            this.btnCancel.TabIndex = 13;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // TileSetForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(893, 572);
+            this.ClientSize = new System.Drawing.Size(891, 583);
             this.ControlBox = false;
+            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lblPrecedencePreview);
             this.Controls.Add(this.pnlPrecedencePreview);
             this.Controls.Add(this.grpTileSetViewControls);
@@ -545,5 +558,6 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.CheckBox chkShowTransitions;
         private System.Windows.Forms.Panel pnlPrecedencePreview;
         private System.Windows.Forms.Label lblPrecedencePreview;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

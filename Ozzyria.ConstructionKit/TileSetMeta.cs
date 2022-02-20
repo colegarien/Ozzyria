@@ -56,7 +56,7 @@ namespace Ozzyria.ConstructionKit
             tileSetMetaDatas[tileSetId].TileNames[type] = name;
         }
 
-        public static void InitializeMetaData()
+        public static void EnsureInitializedMetaData()
         {
             if (tileSetMetaDatas != null)
             {
@@ -64,12 +64,33 @@ namespace Ozzyria.ConstructionKit
                 return;
             }
 
+            InitializeMetaData();
+        }
+        public static void InitializeMetaData()
+        {
             // TODO consider wrapping this up in json reader/writer with all the custom converters
             var serializeOptions = new JsonSerializerOptions();
             serializeOptions.Converters.Add(new DictionaryInt32Converter());
             serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
 
             tileSetMetaDatas = JsonSerializer.Deserialize<IDictionary<string, TileSetMetaData>>(File.ReadAllText("TileSets/tileset_metadata.json"), serializeOptions);
+        }
+
+        public static void SaveMetaData()
+        {
+            if (tileSetMetaDatas == null)
+            {
+                // if nothing is already initialized, don't bother saving
+                return;
+            }
+
+
+            // TODO consider wrapping this up in json reader/writer with all the custom converters
+            var serializeOptions = new JsonSerializerOptions();
+            serializeOptions.Converters.Add(new DictionaryInt32Converter());
+            serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
+
+            File.WriteAllText("TileSets/tileset_metadata.json", JsonSerializer.Serialize(tileSetMetaDatas, serializeOptions));
         }
     }
 
@@ -148,7 +169,20 @@ namespace Ozzyria.ConstructionKit
 
                 reader.Read();
 
-                int valueAsInt32 = reader.GetInt32();
+
+                int valueAsInt32;
+                if (reader.TokenType == JsonTokenType.String) { 
+                    string valueString = reader.GetString();
+                    if (!int.TryParse(valueString, out valueAsInt32))
+                    {
+                        throw new JsonException($"Unable to convert \"{valueString}\" to System.Int32.");
+                    }
+                }
+                else if(!reader.TryGetInt32(out valueAsInt32))
+                {
+                    valueAsInt32 = 0;
+                }
+
                 value.Add(keyAsInt32, valueAsInt32);
             }
 

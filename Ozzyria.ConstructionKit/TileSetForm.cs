@@ -35,12 +35,18 @@ namespace Ozzyria.ConstructionKit
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            this.Close(); // TODO save stuff and don't close;
+            TileSetMetaDataFactory.SaveMetaData();
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
         {
-            this.Close(); // TODO save stuff and close
+            TileSetMetaDataFactory.SaveMetaData();
+            this.Close();
+        }
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            TileSetMetaDataFactory.InitializeMetaData();
+            this.Close();
         }
 
         private void buttonNew_Click(object sender, EventArgs e)
@@ -803,6 +809,7 @@ namespace Ozzyria.ConstructionKit
                 }
             }
         }
+
     }
 
     class ComboBoxItem
