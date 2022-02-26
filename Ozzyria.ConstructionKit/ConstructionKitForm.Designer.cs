@@ -32,6 +32,7 @@ namespace Ozzyria.ConstructionKit
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConstructionKitForm));
             this.menuTopBar = new System.Windows.Forms.MenuStrip();
             this.menuItemTileSet = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemMap = new System.Windows.Forms.ToolStripMenuItem();
             this.spltTopLevel = new System.Windows.Forms.SplitContainer();
             this.spltRight = new System.Windows.Forms.SplitContainer();
             this.menuTopBar.SuspendLayout();
@@ -46,7 +47,8 @@ namespace Ozzyria.ConstructionKit
             // 
             this.menuTopBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuTopBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemTileSet});
+            this.menuItemTileSet,
+            this.menuItemMap});
             this.menuTopBar.Location = new System.Drawing.Point(0, 0);
             this.menuTopBar.Name = "menuTopBar";
             this.menuTopBar.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
@@ -60,6 +62,12 @@ namespace Ozzyria.ConstructionKit
             this.menuItemTileSet.Name = "menuItemTileSet";
             this.menuItemTileSet.Size = new System.Drawing.Size(65, 20);
             this.menuItemTileSet.Text = "Tile Set...";
+            // 
+            // menuItemMap
+            // 
+            this.menuItemMap.Name = "menuItemMap";
+            this.menuItemMap.Size = new System.Drawing.Size(52, 20);
+            this.menuItemMap.Text = "Map...";
             // 
             // spltTopLevel
             // 
@@ -132,6 +140,7 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.ToolStripMenuItem menuItemTileSet;
         private System.Windows.Forms.SplitContainer spltTopLevel;
         private System.Windows.Forms.SplitContainer spltRight;
+        private System.Windows.Forms.ToolStripMenuItem menuItemMap;
     }
 }
 

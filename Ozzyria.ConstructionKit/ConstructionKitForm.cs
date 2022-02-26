@@ -8,6 +8,7 @@ namespace Ozzyria.ConstructionKit
         {
             InitializeComponent();
             TileSetMetaDataFactory.EnsureInitializedMetaData();
+            MapMetaDataFactory.EnsureInitializedMetaData();
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -16,6 +17,11 @@ namespace Ozzyria.ConstructionKit
             {
                 var tileSetForm = new TileSetForm();
                 tileSetForm.ShowDialog();
+            }
+            else if(e.ClickedItem == menuItemMap)
+            {
+                var mapForm = new MapForm();
+                mapForm.ShowDialog();
             }
         }
 
