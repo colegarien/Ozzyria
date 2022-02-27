@@ -35,11 +35,15 @@ namespace Ozzyria.ConstructionKit
             this.menuItemMap = new System.Windows.Forms.ToolStripMenuItem();
             this.spltTopLevel = new System.Windows.Forms.SplitContainer();
             this.spltRight = new System.Windows.Forms.SplitContainer();
+            this.panelMapEditor = new System.Windows.Forms.Panel();
+            this.listMap = new System.Windows.Forms.ListBox();
             this.menuTopBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).BeginInit();
             this.spltTopLevel.Panel2.SuspendLayout();
             this.spltTopLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltRight)).BeginInit();
+            this.spltRight.Panel1.SuspendLayout();
+            this.spltRight.Panel2.SuspendLayout();
             this.spltRight.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -100,15 +104,34 @@ namespace Ozzyria.ConstructionKit
             // 
             // spltRight.Panel1
             // 
+            this.spltRight.Panel1.Controls.Add(this.panelMapEditor);
             this.spltRight.Panel1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.spltRight.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.spltRight_Panel1_Paint);
             // 
             // spltRight.Panel2
             // 
+            this.spltRight.Panel2.Controls.Add(this.listMap);
             this.spltRight.Panel2.Cursor = System.Windows.Forms.Cursors.Default;
             this.spltRight.Size = new System.Drawing.Size(819, 793);
             this.spltRight.SplitterDistance = 529;
             this.spltRight.TabIndex = 0;
+            // 
+            // panelMapEditor
+            // 
+            this.panelMapEditor.Location = new System.Drawing.Point(3, 3);
+            this.panelMapEditor.Name = "panelMapEditor";
+            this.panelMapEditor.Size = new System.Drawing.Size(811, 521);
+            this.panelMapEditor.TabIndex = 0;
+            this.panelMapEditor.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMapEditor_Paint);
+            // 
+            // listMap
+            // 
+            this.listMap.FormattingEnabled = true;
+            this.listMap.ItemHeight = 15;
+            this.listMap.Location = new System.Drawing.Point(3, 3);
+            this.listMap.Name = "listMap";
+            this.listMap.Size = new System.Drawing.Size(224, 229);
+            this.listMap.TabIndex = 0;
+            this.listMap.SelectedIndexChanged += new System.EventHandler(this.listMap_SelectedIndexChanged);
             // 
             // ConstructionKitForm
             // 
@@ -127,6 +150,8 @@ namespace Ozzyria.ConstructionKit
             this.spltTopLevel.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).EndInit();
             this.spltTopLevel.ResumeLayout(false);
+            this.spltRight.Panel1.ResumeLayout(false);
+            this.spltRight.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spltRight)).EndInit();
             this.spltRight.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -141,6 +166,8 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.SplitContainer spltTopLevel;
         private System.Windows.Forms.SplitContainer spltRight;
         private System.Windows.Forms.ToolStripMenuItem menuItemMap;
+        private System.Windows.Forms.ListBox listMap;
+        private System.Windows.Forms.Panel panelMapEditor;
     }
 }
 
