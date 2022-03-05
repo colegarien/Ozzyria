@@ -122,6 +122,10 @@ namespace Ozzyria.ConstructionKit
             this.panelMapEditor.Size = new System.Drawing.Size(811, 521);
             this.panelMapEditor.TabIndex = 0;
             this.panelMapEditor.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMapEditor_Paint);
+            this.panelMapEditor.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseDown);
+            this.panelMapEditor.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseMove);
+            this.panelMapEditor.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseUp);
+            this.panelMapEditor.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseWheel);
             // 
             // listMap
             // 

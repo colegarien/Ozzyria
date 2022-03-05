@@ -488,6 +488,9 @@ namespace Ozzyria.ConstructionKit
         {
             if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
+                e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
                 var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 var tileTypeId = (listTileTypes.SelectedItem as ComboBoxItem)?.Id ?? -1;
                 if (tileTypeId == -1)
@@ -786,6 +789,9 @@ namespace Ozzyria.ConstructionKit
         {
             if (_tileSetImage != null && TileSetMetaDataFactory.tileSetMetaDatas.ContainsKey(_currentTileSet))
             {
+                e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
                 var metaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
                 if (metaData.TilesThatSupportTransitions.Count == 0)
                     return;
