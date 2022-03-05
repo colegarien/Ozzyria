@@ -22,6 +22,9 @@ namespace Ozzyria.ConstructionKit
         private float mapEditorStartY = 0;
         private bool middleMousePressed = false;
 
+        // for paint tools
+        private Point currentMousePosition;
+
         public ConstructionKitForm()
         {
             InitializeComponent();
@@ -78,6 +81,7 @@ namespace Ozzyria.ConstructionKit
                     var worldPersistence = new WorldPersistence();
                     var tileMap = worldPersistence.LoadMap(_currentMap);
 
+                    buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX, (int)mapEditorY, tileMap.Width * Game.Tile.DIMENSION, tileMap.Height * Game.Tile.DIMENSION));
                     foreach (var layer in tileMap.Layers)
                     {
                         foreach (var tile in layer.Value)
@@ -85,6 +89,17 @@ namespace Ozzyria.ConstructionKit
                             buffer.Graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
                         }
                     }
+
+                    var mouseMapX = (currentMousePosition.X / zoom);
+                    var mouseMapY = (currentMousePosition.Y / zoom);
+                    buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX-10, mouseMapY, mouseMapX+10, mouseMapY);
+                    buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX, mouseMapY-10, mouseMapX, mouseMapY+10);
+
+                    // TODO OZ-17 calculate what tile mouseToTileX/Y is in and highlight it
+                    var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
+                    var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
+                    if(tileX >= 0 && tileX < tileMap.Width && tileY >= 0 && tileY < tileMap.Height)
+                        buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX + tileX * Game.Tile.DIMENSION, (int)mapEditorY + tileY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION));
 
                     buffer.Render();
                 }
@@ -166,16 +181,18 @@ namespace Ozzyria.ConstructionKit
 
         private void panelMapEditor_MouseMove(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Middle && middleMousePressed)
+            currentMousePosition = e.Location;
+
+            if (e.Button == MouseButtons.Middle && middleMousePressed)
             {
                 int deltaX = e.Location.X - mousePanStart.X;
                 int deltaY = e.Location.Y - mousePanStart.Y;
 
                 mapEditorX = (int)(mapEditorStartX + (deltaX / zoom));
                 mapEditorY = (int)(mapEditorStartY + (deltaY / zoom));
-
-                panelMapEditor.Refresh();
             }
+
+            panelMapEditor.Refresh();
         }
 
         private void panelMapEditor_MouseUp(object sender, MouseEventArgs e)
