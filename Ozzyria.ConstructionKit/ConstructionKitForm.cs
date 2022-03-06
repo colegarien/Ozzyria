@@ -1,4 +1,6 @@
-﻿using Ozzyria.Game.Persistence;
+﻿using Ozzyria.Game;
+using Ozzyria.Game.Persistence;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -40,7 +42,7 @@ namespace Ozzyria.ConstructionKit
                [X] ability to pan around map
                [X] ability to zoom in and out
                [X] ability to change "active layer"
-               [] add/remove layers 
+               [X] add/remove layers 
                [] ability to paint/erase tiles from layers
                [] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
                [] ability to save map tile edits
@@ -124,8 +126,9 @@ namespace Ozzyria.ConstructionKit
                 dataLayers.Rows.Clear();
                 for(int layer = 0; layer < metaData.Layers; layer++)
                 {
-                    dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (layer+1) });
+                    dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (layer+1), "Delete" });
                 }
+                dataLayers.Columns["deleteLayer"].Visible = metaData.Layers > 1;
 
                 if (metaData.TileSet != _currentTileSet)
                 {
@@ -232,6 +235,52 @@ namespace Ozzyria.ConstructionKit
         {
             // so changes in the layer window happen immediately
             dataLayers.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+
+            if (e.ColumnIndex == 3 && MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
+            {
+                var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
+                if (metaData.Layers <= 1 || MessageBox.Show("Are you sure you want to remove Layer " + (e.RowIndex+1) + "?", "Confirm Delete", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                    return;
+
+                metaData.Layers--;
+                dataLayers.Columns[e.ColumnIndex].Visible = metaData.Layers > 1;
+
+                var worldPersistence = new WorldPersistence();
+                var tileMap = worldPersistence.LoadMap(_currentMap); // TODO OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
+
+                tileMap.Layers.Remove(e.RowIndex);
+                var reIndexedLayers = new Dictionary<int, List<Tile>>();
+                int layerIndex = 0;
+                foreach(var layerGroup in tileMap.Layers)
+                {
+                    reIndexedLayers[layerIndex] = layerGroup.Value;
+                    layerIndex++;
+                }
+                tileMap.Layers = reIndexedLayers;
+
+                worldPersistence.SaveMap(_currentMap, tileMap);
+                MapMetaDataFactory.SaveMetaData(); // TODO OZ-17 : ehhhhhhhs
+
+                dataLayers.Rows.RemoveAt(e.RowIndex);
+            }
+        }
+
+        private void btnAddLayer_Click(object sender, System.EventArgs e)
+        {
+            if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
+            {
+                var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
+                if (metaData.Layers == 256)
+                {
+                    MessageBox.Show("At layer max of 256 already!", "Layer Max", MessageBoxButtons.OK);
+                    return;
+                }
+
+                metaData.Layers++;
+                dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (metaData.Layers), "Delete" });
+                MapMetaDataFactory.SaveMetaData(); // TODO OZ-17 : ehhhhhhhs
+            }
         }
 
         private bool layerIsVisible(int layer)
@@ -253,6 +302,10 @@ namespace Ozzyria.ConstructionKit
                     e.Value = SystemIcons.Error;
                     e.CellStyle.ForeColor = Color.Red;
                 }
+            }
+            else if(e.ColumnIndex == 2)
+            {
+                e.Value = "Layer " + (e.RowIndex + 1);
             }
         }
 
@@ -295,9 +348,10 @@ namespace Ozzyria.ConstructionKit
             Point clientPoint = dataLayers.PointToClient(new Point(e.X, e.Y));
             layerIndexDropEnd = dataLayers.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
-            if (e.Effect == DragDropEffects.Move)
+            if (e.Effect == DragDropEffects.Move && layerIndexDropEnd >= 0 && layerIndexDragStart >= 0 && layerIndexDragStart != layerIndexDropEnd)
             {
                 DataGridViewRow rowToMove = e.Data.GetData(typeof(DataGridViewRow)) as DataGridViewRow;
+
                 dataLayers.Rows.RemoveAt(layerIndexDragStart);
                 dataLayers.Rows.Insert(layerIndexDropEnd, rowToMove);
 
