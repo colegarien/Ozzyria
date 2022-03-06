@@ -11,6 +11,7 @@ namespace Ozzyria.ConstructionKit
     public partial class ConstructionKitForm : Form
     {
         private string _currentMap = "";
+        private TileMap _currentTileMap;
         private string _currentTileSet = "";
         private Image _currentTileSetImage;
 
@@ -47,7 +48,7 @@ namespace Ozzyria.ConstructionKit
                [X] add/remove layers 
                [] ability to paint/erase tiles from layers
                [] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
-               [] ability to save map tile edits
+               [X] ability to save map tile edits
             */
         }
 
@@ -60,6 +61,29 @@ namespace Ozzyria.ConstructionKit
             }
             else if(e.ClickedItem == menuItemMap)
             {
+                if(_currentMap != "")
+                {
+                    var result = MessageBox.Show("Would you like to discard any pending map changes?", "Discard Changes", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Yes)
+                    {
+                        // reset meta data
+                        MapMetaDataFactory.InitializeMetaData();
+                    }
+                    else if(result == DialogResult.No)
+                    {
+                        // TODO OZ-17 : dry some of this copy+pasta up!!
+                        var worldPersistence = new WorldPersistence();
+                        worldPersistence.SaveMap(_currentMap, _currentTileMap);
+                        MapMetaDataFactory.SaveMetaData();
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    listMap.ClearSelected();
+                }
+
                 var mapForm = new MapForm();
                 if (mapForm.ShowDialog() == DialogResult.OK)
                 {
@@ -83,11 +107,8 @@ namespace Ozzyria.ConstructionKit
                     buffer.Graphics.Clear(SystemColors.ControlDark);
                     buffer.Graphics.ScaleTransform(zoom, zoom);
 
-                    var worldPersistence = new WorldPersistence(); // OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
-                    var tileMap = worldPersistence.LoadMap(_currentMap);
-
-                    buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX, (int)mapEditorY, tileMap.Width * Game.Tile.DIMENSION, tileMap.Height * Game.Tile.DIMENSION));
-                    foreach (var layer in tileMap.Layers)
+                    buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX, (int)mapEditorY, _currentTileMap.Width * Game.Tile.DIMENSION, _currentTileMap.Height * Game.Tile.DIMENSION));
+                    foreach (var layer in _currentTileMap.Layers)
                     {
                         if (!layerIsVisible(layer.Key))
                             continue;
@@ -105,7 +126,7 @@ namespace Ozzyria.ConstructionKit
 
                     var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
                     var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
-                    if(tileX >= 0 && tileX < tileMap.Width && tileY >= 0 && tileY < tileMap.Height)
+                    if(tileX >= 0 && tileX < _currentTileMap.Width && tileY >= 0 && tileY < _currentTileMap.Height)
                         buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX + tileX * Game.Tile.DIMENSION, (int)mapEditorY + tileY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION));
 
                     buffer.Render();
@@ -124,6 +145,9 @@ namespace Ozzyria.ConstructionKit
             {
                 _currentMap = mapName;
                 var metaData = MapMetaDataFactory.mapMetaDatas[mapName];
+
+                var worldPersistence = new WorldPersistence();
+                _currentTileMap = worldPersistence.LoadMap(_currentMap);
 
                 dataLayers.Rows.Clear();
                 for(int layer = 0; layer < metaData.Layers; layer++)
@@ -155,7 +179,14 @@ namespace Ozzyria.ConstructionKit
                 }
 
                 ZoomTo((int)(panelMapEditor.DisplayRectangle.Width * 0.5f), (int)(panelMapEditor.DisplayRectangle.Height * 0.5f), newZoom);
-                
+
+                panelMapEditor.Refresh();
+            }
+            else if(mapName == "")
+            {
+                _currentMap = mapName;
+                _currentTileMap = null;
+                dataLayers.Rows.Clear();
                 panelMapEditor.Refresh();
             }
         }
@@ -251,7 +282,6 @@ namespace Ozzyria.ConstructionKit
             // so changes in the layer window happen immediately
             dataLayers.CommitEdit(DataGridViewDataErrorContexts.Commit);
 
-
             if (e.ColumnIndex == 3 && MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
             {
                 var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
@@ -261,23 +291,18 @@ namespace Ozzyria.ConstructionKit
                 metaData.Layers--;
                 dataLayers.Columns[e.ColumnIndex].Visible = metaData.Layers > 1;
 
-                var worldPersistence = new WorldPersistence();
-                var tileMap = worldPersistence.LoadMap(_currentMap); // TODO OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
-
-                tileMap.Layers.Remove(e.RowIndex);
+                _currentTileMap.Layers.Remove(e.RowIndex);
                 var reIndexedLayers = new Dictionary<int, List<Tile>>();
                 int layerIndex = 0;
-                foreach(var layerGroup in tileMap.Layers)
+                foreach(var layerGroup in _currentTileMap.Layers)
                 {
                     reIndexedLayers[layerIndex] = layerGroup.Value;
                     layerIndex++;
                 }
-                tileMap.Layers = reIndexedLayers;
-
-                worldPersistence.SaveMap(_currentMap, tileMap);
-                MapMetaDataFactory.SaveMetaData(); // TODO OZ-17 : ehhhhhhhs
+                _currentTileMap.Layers = reIndexedLayers;
 
                 dataLayers.Rows.RemoveAt(e.RowIndex);
+                panelMapEditor.Refresh();
             }
         }
 
@@ -294,7 +319,6 @@ namespace Ozzyria.ConstructionKit
 
                 metaData.Layers++;
                 dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (metaData.Layers), "Delete" });
-                MapMetaDataFactory.SaveMetaData(); // TODO OZ-17 : ehhhhhhhs
             }
         }
 
@@ -373,14 +397,13 @@ namespace Ozzyria.ConstructionKit
                 if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap)) {
                     var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
 
-                    var worldPersistence = new WorldPersistence();
-                    var tileMap = worldPersistence.LoadMap(_currentMap); // OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
-
-                    var tempLayer = tileMap.Layers[layerIndexDropEnd];
-                    tileMap.Layers[layerIndexDropEnd] = tileMap.Layers[layerIndexDragStart];
-                    tileMap.Layers[layerIndexDragStart] = tempLayer;
-
-                    worldPersistence.SaveMap(_currentMap, tileMap);
+                    var tempLayer = _currentTileMap.Layers.ContainsKey(layerIndexDropEnd)
+                        ? _currentTileMap.Layers[layerIndexDropEnd]
+                        : new List<Tile>();
+                    _currentTileMap.Layers[layerIndexDropEnd] = _currentTileMap.Layers.ContainsKey(layerIndexDragStart)
+                        ? _currentTileMap.Layers[layerIndexDragStart]
+                        : new List<Tile>();
+                    _currentTileMap.Layers[layerIndexDragStart] = tempLayer;
                 }
 
                 panelMapEditor.Refresh();
@@ -416,7 +439,9 @@ namespace Ozzyria.ConstructionKit
 
         private void btnMapSave_Click(object sender, System.EventArgs e)
         {
-            // TODO OZ-17 : re work how this is saving TileMaps and MetaData to make this button actually useful!
+            var worldPersistence = new WorldPersistence();
+            worldPersistence.SaveMap(_currentMap, _currentTileMap);
+            MapMetaDataFactory.SaveMetaData();
         }
     }
 }
