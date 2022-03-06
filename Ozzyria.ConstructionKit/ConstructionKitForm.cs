@@ -39,7 +39,8 @@ namespace Ozzyria.ConstructionKit
             /* TODO OZ-17 missing features:
                [X] ability to pan around map
                [X] ability to zoom in and out
-               [] ability to change "active layer"
+               [X] ability to change "active layer"
+               [] add/remove layers 
                [] ability to paint/erase tiles from layers
                [] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
                [] ability to save map tile edits
@@ -75,15 +76,18 @@ namespace Ozzyria.ConstructionKit
                     var buffer = context.Allocate(e.Graphics, panelMapEditor.DisplayRectangle);
                     buffer.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
                     buffer.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    buffer.Graphics.Clear(Color.Gray);
+                    buffer.Graphics.Clear(SystemColors.ControlDark);
                     buffer.Graphics.ScaleTransform(zoom, zoom);
 
-                    var worldPersistence = new WorldPersistence();
+                    var worldPersistence = new WorldPersistence(); // OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
                     var tileMap = worldPersistence.LoadMap(_currentMap);
 
                     buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX, (int)mapEditorY, tileMap.Width * Game.Tile.DIMENSION, tileMap.Height * Game.Tile.DIMENSION));
                     foreach (var layer in tileMap.Layers)
                     {
+                        if (!layerIsVisible(layer.Key))
+                            continue;
+
                         foreach (var tile in layer.Value)
                         {
                             buffer.Graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
@@ -95,7 +99,6 @@ namespace Ozzyria.ConstructionKit
                     buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX-10, mouseMapY, mouseMapX+10, mouseMapY);
                     buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX, mouseMapY-10, mouseMapX, mouseMapY+10);
 
-                    // TODO OZ-17 calculate what tile mouseToTileX/Y is in and highlight it
                     var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
                     var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
                     if(tileX >= 0 && tileX < tileMap.Width && tileY >= 0 && tileY < tileMap.Height)
@@ -112,11 +115,17 @@ namespace Ozzyria.ConstructionKit
 
         private void listMap_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            var mapName = listMap.SelectedItem as string;
+            var mapName = listMap?.SelectedItem as string ?? "";
             if (MapMetaDataFactory.mapMetaDatas.ContainsKey(mapName) && mapName != _currentMap)
             {
                 _currentMap = mapName;
                 var metaData = MapMetaDataFactory.mapMetaDatas[mapName];
+
+                dataLayers.Rows.Clear();
+                for(int layer = 0; layer < metaData.Layers; layer++)
+                {
+                    dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (layer+1) });
+                }
 
                 if (metaData.TileSet != _currentTileSet)
                 {
@@ -212,6 +221,101 @@ namespace Ozzyria.ConstructionKit
 
             ZoomTo(e.X, e.Y, targetZoomPercent);
             panelMapEditor.Refresh();
+        }
+
+        private void dataLayers_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            panelMapEditor.Refresh();
+        }
+
+        private void dataLayers_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // so changes in the layer window happen immediately
+            dataLayers.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private bool layerIsVisible(int layer)
+        {
+            return layer < dataLayers.Rows.Count && (bool)dataLayers.Rows[layer].Cells["showLayer"].Value;
+        }
+
+        private void dataLayers_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                if (dataLayers.Rows[e.RowIndex].Selected)
+                {
+                    e.Value = SystemIcons.Information;
+                    e.CellStyle.ForeColor = Color.Green;
+                }
+                else
+                {
+                    e.Value = SystemIcons.Error;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            }
+        }
+
+        private Rectangle dragBoxForLayerControl;
+        private int layerIndexDragStart;
+        private int layerIndexDropEnd;
+        private void dataLayers_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                if (dragBoxForLayerControl != Rectangle.Empty &&
+                    !dragBoxForLayerControl.Contains(e.X, e.Y))
+                {                  
+                    DragDropEffects dropEffect = dataLayers.DoDragDrop(
+                    dataLayers.Rows[layerIndexDragStart],
+                    DragDropEffects.Move);
+                }
+            }
+        }
+
+        private void dataLayers_MouseDown(object sender, MouseEventArgs e)
+        {
+            layerIndexDragStart = dataLayers.HitTest(e.X, e.Y).RowIndex;
+            if (layerIndexDragStart != -1) {        
+                Size dragSize = SystemInformation.DragSize;
+                dragBoxForLayerControl = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+            }
+            else {
+                dragBoxForLayerControl = Rectangle.Empty;
+            }
+        }
+
+        private void dataLayers_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void dataLayers_DragDrop(object sender, DragEventArgs e)
+        {
+            Point clientPoint = dataLayers.PointToClient(new Point(e.X, e.Y));
+            layerIndexDropEnd = dataLayers.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+
+            if (e.Effect == DragDropEffects.Move)
+            {
+                DataGridViewRow rowToMove = e.Data.GetData(typeof(DataGridViewRow)) as DataGridViewRow;
+                dataLayers.Rows.RemoveAt(layerIndexDragStart);
+                dataLayers.Rows.Insert(layerIndexDropEnd, rowToMove);
+
+                if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap)) {
+                    var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
+
+                    var worldPersistence = new WorldPersistence();
+                    var tileMap = worldPersistence.LoadMap(_currentMap); // OZ-17 : ehhhhhhhhhhhhhhhhhhhhh
+
+                    var tempLayer = tileMap.Layers[layerIndexDropEnd];
+                    tileMap.Layers[layerIndexDropEnd] = tileMap.Layers[layerIndexDragStart];
+                    tileMap.Layers[layerIndexDragStart] = tempLayer;
+
+                    worldPersistence.SaveMap(_currentMap, tileMap);
+                }
+
+                panelMapEditor.Refresh();
+            }
         }
     }
 }

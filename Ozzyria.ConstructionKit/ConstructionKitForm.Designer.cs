@@ -36,7 +36,11 @@ namespace Ozzyria.ConstructionKit
             this.spltTopLevel = new System.Windows.Forms.SplitContainer();
             this.spltRight = new System.Windows.Forms.SplitContainer();
             this.panelMapEditor = new System.Windows.Forms.Panel();
+            this.dataLayers = new System.Windows.Forms.DataGridView();
             this.listMap = new System.Windows.Forms.ListBox();
+            this.showLayer = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.activeLayer = new System.Windows.Forms.DataGridViewImageColumn();
+            this.layerNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuTopBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).BeginInit();
             this.spltTopLevel.Panel2.SuspendLayout();
@@ -45,6 +49,7 @@ namespace Ozzyria.ConstructionKit
             this.spltRight.Panel1.SuspendLayout();
             this.spltRight.Panel2.SuspendLayout();
             this.spltRight.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataLayers)).BeginInit();
             this.SuspendLayout();
             // 
             // menuTopBar
@@ -109,6 +114,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // spltRight.Panel2
             // 
+            this.spltRight.Panel2.Controls.Add(this.dataLayers);
             this.spltRight.Panel2.Controls.Add(this.listMap);
             this.spltRight.Panel2.Cursor = System.Windows.Forms.Cursors.Default;
             this.spltRight.Size = new System.Drawing.Size(819, 793);
@@ -127,6 +133,36 @@ namespace Ozzyria.ConstructionKit
             this.panelMapEditor.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseUp);
             this.panelMapEditor.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseWheel);
             // 
+            // dataLayers
+            // 
+            this.dataLayers.AllowDrop = true;
+            this.dataLayers.AllowUserToAddRows = false;
+            this.dataLayers.AllowUserToDeleteRows = false;
+            this.dataLayers.AllowUserToResizeColumns = false;
+            this.dataLayers.AllowUserToResizeRows = false;
+            this.dataLayers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataLayers.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.showLayer,
+            this.activeLayer,
+            this.layerNumber});
+            this.dataLayers.Location = new System.Drawing.Point(233, 3);
+            this.dataLayers.Name = "dataLayers";
+            this.dataLayers.RowHeadersVisible = false;
+            this.dataLayers.RowTemplate.Height = 25;
+            this.dataLayers.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dataLayers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataLayers.ShowCellToolTips = false;
+            this.dataLayers.ShowEditingIcon = false;
+            this.dataLayers.Size = new System.Drawing.Size(192, 229);
+            this.dataLayers.TabIndex = 1;
+            this.dataLayers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataLayers_CellContentClick);
+            this.dataLayers.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataLayers_CellFormatting);
+            this.dataLayers.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataLayers_CellValueChanged);
+            this.dataLayers.DragDrop += new System.Windows.Forms.DragEventHandler(this.dataLayers_DragDrop);
+            this.dataLayers.DragOver += new System.Windows.Forms.DragEventHandler(this.dataLayers_DragOver);
+            this.dataLayers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataLayers_MouseDown);
+            this.dataLayers.MouseMove += new System.Windows.Forms.MouseEventHandler(this.dataLayers_MouseMove);
+            // 
             // listMap
             // 
             this.listMap.FormattingEnabled = true;
@@ -136,6 +172,28 @@ namespace Ozzyria.ConstructionKit
             this.listMap.Size = new System.Drawing.Size(224, 229);
             this.listMap.TabIndex = 0;
             this.listMap.SelectedIndexChanged += new System.EventHandler(this.listMap_SelectedIndexChanged);
+            // 
+            // showLayer
+            // 
+            this.showLayer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.showLayer.HeaderText = "Show";
+            this.showLayer.Name = "showLayer";
+            this.showLayer.Width = 42;
+            // 
+            // activeLayer
+            // 
+            this.activeLayer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.activeLayer.HeaderText = "Active";
+            this.activeLayer.Name = "activeLayer";
+            this.activeLayer.Width = 46;
+            // 
+            // layerNumber
+            // 
+            this.layerNumber.HeaderText = "Layer";
+            this.layerNumber.MaxInputLength = 255;
+            this.layerNumber.Name = "layerNumber";
+            this.layerNumber.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.layerNumber.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // ConstructionKitForm
             // 
@@ -158,6 +216,7 @@ namespace Ozzyria.ConstructionKit
             this.spltRight.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spltRight)).EndInit();
             this.spltRight.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataLayers)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,6 +231,10 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.ToolStripMenuItem menuItemMap;
         private System.Windows.Forms.ListBox listMap;
         private System.Windows.Forms.Panel panelMapEditor;
+        private System.Windows.Forms.DataGridView dataLayers;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn showLayer;
+        private System.Windows.Forms.DataGridViewImageColumn activeLayer;
+        private System.Windows.Forms.DataGridViewTextBoxColumn layerNumber;
     }
 }
 
