@@ -26,6 +26,8 @@ namespace Ozzyria.ConstructionKit
 
         // for paint tools
         private Point currentMousePosition;
+        private Point mouseDrawStart;
+        private bool leftMousePressed = false;
 
         public ConstructionKitForm()
         {
@@ -189,6 +191,11 @@ namespace Ozzyria.ConstructionKit
                 mapEditorStartY = mapEditorY;
                 middleMousePressed = true;
             }
+            else if(e.Button == MouseButtons.Left && !leftMousePressed)
+            {
+                mouseDrawStart = e.Location;
+                leftMousePressed = true;
+            }
         }
 
         private void panelMapEditor_MouseMove(object sender, MouseEventArgs e)
@@ -203,6 +210,10 @@ namespace Ozzyria.ConstructionKit
                 mapEditorX = (int)(mapEditorStartX + (deltaX / zoom));
                 mapEditorY = (int)(mapEditorStartY + (deltaY / zoom));
             }
+            else if(e.Button == MouseButtons.Left && leftMousePressed)
+            {
+                // TODO OZ-17 draw/erase/use-tool (need to work how the current "tileMap" get's manipulate and how saving works)
+            }
 
             panelMapEditor.Refresh();
         }
@@ -212,6 +223,10 @@ namespace Ozzyria.ConstructionKit
             if (e.Button == MouseButtons.Middle && middleMousePressed)
             {
                 middleMousePressed = false;
+            }
+            else if (e.Button == MouseButtons.Left && leftMousePressed)
+            {
+                leftMousePressed = false;
             }
         }
 
@@ -370,6 +385,38 @@ namespace Ozzyria.ConstructionKit
 
                 panelMapEditor.Refresh();
             }
+        }
+
+        private void toolPaint_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (toolPaint.Checked)
+            {
+                toolFill.Checked = false;
+                toolErase.Checked = false;
+            }
+        }
+
+        private void toolFill_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (toolFill.Checked)
+            {
+                toolPaint.Checked = false;
+                toolErase.Checked = false;
+            }
+        }
+
+        private void toolErase_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (toolErase.Checked)
+            {
+                toolFill.Checked = false;
+                toolPaint.Checked = false;
+            }
+        }
+
+        private void btnMapSave_Click(object sender, System.EventArgs e)
+        {
+            // TODO OZ-17 : re work how this is saving TileMaps and MetaData to make this button actually useful!
         }
     }
 }

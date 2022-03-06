@@ -36,13 +36,18 @@ namespace Ozzyria.ConstructionKit
             this.spltTopLevel = new System.Windows.Forms.SplitContainer();
             this.spltRight = new System.Windows.Forms.SplitContainer();
             this.panelMapEditor = new System.Windows.Forms.Panel();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolPaint = new System.Windows.Forms.ToolStripButton();
+            this.toolErase = new System.Windows.Forms.ToolStripButton();
+            this.btnMapSave = new System.Windows.Forms.ToolStripButton();
+            this.btnAddLayer = new System.Windows.Forms.Button();
             this.dataLayers = new System.Windows.Forms.DataGridView();
             this.showLayer = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.activeLayer = new System.Windows.Forms.DataGridViewImageColumn();
             this.layerNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.deleteLayer = new System.Windows.Forms.DataGridViewButtonColumn();
             this.listMap = new System.Windows.Forms.ListBox();
-            this.btnAddLayer = new System.Windows.Forms.Button();
+            this.toolFill = new System.Windows.Forms.ToolStripButton();
             this.menuTopBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).BeginInit();
             this.spltTopLevel.Panel2.SuspendLayout();
@@ -51,6 +56,7 @@ namespace Ozzyria.ConstructionKit
             this.spltRight.Panel1.SuspendLayout();
             this.spltRight.Panel2.SuspendLayout();
             this.spltRight.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataLayers)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,6 +122,7 @@ namespace Ozzyria.ConstructionKit
             // 
             // spltRight.Panel2
             // 
+            this.spltRight.Panel2.Controls.Add(this.toolStrip1);
             this.spltRight.Panel2.Controls.Add(this.btnAddLayer);
             this.spltRight.Panel2.Controls.Add(this.dataLayers);
             this.spltRight.Panel2.Controls.Add(this.listMap);
@@ -136,6 +143,63 @@ namespace Ozzyria.ConstructionKit
             this.panelMapEditor.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseUp);
             this.panelMapEditor.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.panelMapEditor_MouseWheel);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolPaint,
+            this.toolFill,
+            this.toolErase,
+            this.btnMapSave});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip1.Size = new System.Drawing.Size(817, 25);
+            this.toolStrip1.TabIndex = 3;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolPaint
+            // 
+            this.toolPaint.CheckOnClick = true;
+            this.toolPaint.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolPaint.Image = ((System.Drawing.Image)(resources.GetObject("toolPaint.Image")));
+            this.toolPaint.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolPaint.Name = "toolPaint";
+            this.toolPaint.Size = new System.Drawing.Size(23, 22);
+            this.toolPaint.Text = "&Paint";
+            this.toolPaint.CheckedChanged += new System.EventHandler(this.toolPaint_CheckedChanged);
+            // 
+            // toolErase
+            // 
+            this.toolErase.CheckOnClick = true;
+            this.toolErase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolErase.Image = ((System.Drawing.Image)(resources.GetObject("toolErase.Image")));
+            this.toolErase.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolErase.Name = "toolErase";
+            this.toolErase.Size = new System.Drawing.Size(23, 22);
+            this.toolErase.Text = "&Erase";
+            this.toolErase.CheckedChanged += new System.EventHandler(this.toolErase_CheckedChanged);
+            // 
+            // btnMapSave
+            // 
+            this.btnMapSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnMapSave.Image = ((System.Drawing.Image)(resources.GetObject("btnMapSave.Image")));
+            this.btnMapSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMapSave.Name = "btnMapSave";
+            this.btnMapSave.Size = new System.Drawing.Size(23, 22);
+            this.btnMapSave.Text = "&Save";
+            this.btnMapSave.Click += new System.EventHandler(this.btnMapSave_Click);
+            // 
+            // btnAddLayer
+            // 
+            this.btnAddLayer.Location = new System.Drawing.Point(233, 209);
+            this.btnAddLayer.Name = "btnAddLayer";
+            this.btnAddLayer.Size = new System.Drawing.Size(75, 23);
+            this.btnAddLayer.TabIndex = 2;
+            this.btnAddLayer.Text = "Add Layer";
+            this.btnAddLayer.UseVisualStyleBackColor = true;
+            this.btnAddLayer.Click += new System.EventHandler(this.btnAddLayer_Click);
+            // 
             // dataLayers
             // 
             this.dataLayers.AllowDrop = true;
@@ -149,7 +213,7 @@ namespace Ozzyria.ConstructionKit
             this.activeLayer,
             this.layerNumber,
             this.deleteLayer});
-            this.dataLayers.Location = new System.Drawing.Point(233, 3);
+            this.dataLayers.Location = new System.Drawing.Point(233, 33);
             this.dataLayers.Name = "dataLayers";
             this.dataLayers.RowHeadersVisible = false;
             this.dataLayers.RowTemplate.Height = 25;
@@ -157,7 +221,7 @@ namespace Ozzyria.ConstructionKit
             this.dataLayers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataLayers.ShowCellToolTips = false;
             this.dataLayers.ShowEditingIcon = false;
-            this.dataLayers.Size = new System.Drawing.Size(256, 203);
+            this.dataLayers.Size = new System.Drawing.Size(256, 173);
             this.dataLayers.TabIndex = 1;
             this.dataLayers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataLayers_CellContentClick);
             this.dataLayers.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataLayers_CellFormatting);
@@ -204,21 +268,22 @@ namespace Ozzyria.ConstructionKit
             // 
             this.listMap.FormattingEnabled = true;
             this.listMap.ItemHeight = 15;
-            this.listMap.Location = new System.Drawing.Point(3, 3);
+            this.listMap.Location = new System.Drawing.Point(3, 33);
             this.listMap.Name = "listMap";
-            this.listMap.Size = new System.Drawing.Size(224, 229);
+            this.listMap.Size = new System.Drawing.Size(224, 199);
             this.listMap.TabIndex = 0;
             this.listMap.SelectedIndexChanged += new System.EventHandler(this.listMap_SelectedIndexChanged);
             // 
-            // btnAddLayer
+            // toolFill
             // 
-            this.btnAddLayer.Location = new System.Drawing.Point(233, 209);
-            this.btnAddLayer.Name = "btnAddLayer";
-            this.btnAddLayer.Size = new System.Drawing.Size(75, 23);
-            this.btnAddLayer.TabIndex = 2;
-            this.btnAddLayer.Text = "Add Layer";
-            this.btnAddLayer.UseVisualStyleBackColor = true;
-            this.btnAddLayer.Click += new System.EventHandler(this.btnAddLayer_Click);
+            this.toolFill.CheckOnClick = true;
+            this.toolFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolFill.Image = ((System.Drawing.Image)(resources.GetObject("toolFill.Image")));
+            this.toolFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolFill.Name = "toolFill";
+            this.toolFill.Size = new System.Drawing.Size(23, 22);
+            this.toolFill.Text = "Fill";
+            this.toolFill.CheckedChanged += new System.EventHandler(this.toolFill_CheckedChanged);
             // 
             // ConstructionKitForm
             // 
@@ -239,8 +304,11 @@ namespace Ozzyria.ConstructionKit
             this.spltTopLevel.ResumeLayout(false);
             this.spltRight.Panel1.ResumeLayout(false);
             this.spltRight.Panel2.ResumeLayout(false);
+            this.spltRight.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltRight)).EndInit();
             this.spltRight.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataLayers)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -262,6 +330,11 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.DataGridViewTextBoxColumn layerNumber;
         private System.Windows.Forms.DataGridViewButtonColumn deleteLayer;
         private System.Windows.Forms.Button btnAddLayer;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolPaint;
+        private System.Windows.Forms.ToolStripButton toolErase;
+        private System.Windows.Forms.ToolStripButton btnMapSave;
+        private System.Windows.Forms.ToolStripButton toolFill;
     }
 }
 
