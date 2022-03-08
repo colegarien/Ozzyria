@@ -68,22 +68,20 @@ namespace Ozzyria.ConstructionKit
                 var metaData = mapMetaData.Value;
 
                 // TODO OZ-17 this will be a bottle-neck... could be smarter and only save/add the ones changed
-                var persistence = new WorldPersistence();
-                var mapFile = Content.Loader.Root() + "/Maps/" + mapName + ".ozz";
-                if (File.Exists(mapFile))
+                if (MapFactory.MapExists(mapName))
                 {
-                    var tileMap = persistence.LoadMap(mapName);
-                    tileMap.TileSet = metaData.TileSet;
-                    tileMap.Width = metaData.Width;
-                    tileMap.Height = metaData.Height;
+                    var map = MapFactory.LoadMap(mapName);
+                    map.TileSet = metaData.TileSet;
+                    map.Width = metaData.Width;
+                    map.Height = metaData.Height;
 
                     var newLayers = new Dictionary<int, List<Tile>>();
                     for (var i = 0; i < metaData.Layers; i++)
                     {
-                        if (tileMap.HasLayer(i))
+                        if (map.Layers.ContainsKey(i))
                         {
                             // remove any tiles that shouldn't exist anymore
-                            newLayers[i] = tileMap.Layers[i].Where(t => t.X < tileMap.Width && t.Y < tileMap.Height).ToList();
+                            newLayers[i] = map.Layers[i].Where(t => t.X < map.Width && t.Y < map.Height).ToList();
                         }
                         else
                         {
@@ -91,26 +89,19 @@ namespace Ozzyria.ConstructionKit
                             newLayers[i] = new List<Tile>();
                         }
                     }
-                    tileMap.Layers = newLayers;
-
-                    persistence.SaveMap(mapName, tileMap);
+                    map.Layers = newLayers;
                 }
                 else
                 {
-                    var newMap = new TileMap
-                    {
-                        MapName = mapName,
-                        TileSet = metaData.TileSet,
-                        Width = metaData.Width,
-                        Height = metaData.Height
-                    };
-
-                    for(var i = 0; i < metaData.Layers; i++)
-                        newMap.Layers[i] = new List<Tile>();
-
-                    persistence.SaveMap(mapName, newMap);
+                    MapFactory.NewMap(mapName);
+                    MapFactory.loadedMaps[mapName].TileSet = metaData.TileSet;
+                    MapFactory.loadedMaps[mapName].Width = metaData.Width;
+                    MapFactory.loadedMaps[mapName].Height = metaData.Height;
+                    for (var i = 0; i < metaData.Layers; i++)
+                        MapFactory.loadedMaps[mapName].Layers[i] = new List<Tile>();
                 }
             }
+            MapFactory.SaveMaps();
 
             // TODO OZ-17 consider wrapping this up in json reader/writer with all the custom converters
             var serializeOptions = new JsonSerializerOptions();

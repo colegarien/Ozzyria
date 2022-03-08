@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Ozzyria.ConstructionKit
     public partial class ConstructionKitForm : Form
     {
         private string _currentMap = "";
-        private TileMap _currentTileMap;
+        private Map _currentTileMap; // TODO OZ-17 stop using tile map, making custom data-structure!!
         private string _currentTileSet = "";
         private Image _currentTileSetImage;
 
@@ -29,6 +28,10 @@ namespace Ozzyria.ConstructionKit
         private Point currentMousePosition;
         private Point mouseDrawStart;
         private bool leftMousePressed = false;
+
+        // pens
+        private Pen redPen = new Pen(Color.Red);
+        private Pen bluePen = new Pen(Color.CornflowerBlue);
 
         public ConstructionKitForm()
         {
@@ -67,13 +70,12 @@ namespace Ozzyria.ConstructionKit
                     if (result == DialogResult.Yes)
                     {
                         // reset meta data
+                        MapFactory.Reinitialize();
                         MapMetaDataFactory.InitializeMetaData();
                     }
                     else if(result == DialogResult.No)
                     {
-                        // TODO OZ-17 : dry some of this copy+pasta up!!
-                        var worldPersistence = new WorldPersistence();
-                        worldPersistence.SaveMap(_currentMap, _currentTileMap);
+                        MapFactory.SaveMaps();
                         MapMetaDataFactory.SaveMetaData();
                     }
                     else
@@ -89,6 +91,7 @@ namespace Ozzyria.ConstructionKit
                 {
                     listMap.Items.Clear();
                     _currentMap = "";
+                    MapFactory.Reinitialize();
                     listMap.Items.AddRange(MapMetaDataFactory.mapMetaDatas.Keys.ToArray());
                     panelMapEditor.Refresh();
                 }
@@ -97,44 +100,39 @@ namespace Ozzyria.ConstructionKit
 
         private void panelMapEditor_Paint(object sender, PaintEventArgs e)
         {
+            var graphics = e.Graphics;
             if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
             {
-                using (var context = new BufferedGraphicsContext())
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.Clear(SystemColors.ControlDark);
+                graphics.ScaleTransform(zoom, zoom);
+
+                graphics.DrawRectangle(bluePen, new Rectangle((int)mapEditorX, (int)mapEditorY, _currentTileMap.Width * Game.Tile.DIMENSION, _currentTileMap.Height * Game.Tile.DIMENSION));
+                foreach (var layer in _currentTileMap.Layers)
                 {
-                    var buffer = context.Allocate(e.Graphics, panelMapEditor.DisplayRectangle);
-                    buffer.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-                    buffer.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    buffer.Graphics.Clear(SystemColors.ControlDark);
-                    buffer.Graphics.ScaleTransform(zoom, zoom);
+                    if (!layerIsVisible(layer.Key))
+                        continue;
 
-                    buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX, (int)mapEditorY, _currentTileMap.Width * Game.Tile.DIMENSION, _currentTileMap.Height * Game.Tile.DIMENSION));
-                    foreach (var layer in _currentTileMap.Layers)
+                    foreach (var tile in layer.Value)
                     {
-                        if (!layerIsVisible(layer.Key))
-                            continue;
-
-                        foreach (var tile in layer.Value)
-                        {
-                            buffer.Graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
-                        }
+                        graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
                     }
-
-                    var mouseMapX = (currentMousePosition.X / zoom);
-                    var mouseMapY = (currentMousePosition.Y / zoom);
-                    buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX-10, mouseMapY, mouseMapX+10, mouseMapY);
-                    buffer.Graphics.DrawLine(new Pen(Color.Red), mouseMapX, mouseMapY-10, mouseMapX, mouseMapY+10);
-
-                    var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
-                    var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
-                    if(tileX >= 0 && tileX < _currentTileMap.Width && tileY >= 0 && tileY < _currentTileMap.Height)
-                        buffer.Graphics.DrawRectangle(new Pen(Color.CornflowerBlue), new Rectangle((int)mapEditorX + tileX * Game.Tile.DIMENSION, (int)mapEditorY + tileY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION));
-
-                    buffer.Render();
                 }
+
+                var mouseMapX = (currentMousePosition.X / zoom);
+                var mouseMapY = (currentMousePosition.Y / zoom);
+                graphics.DrawLine(redPen, mouseMapX-10, mouseMapY, mouseMapX+10, mouseMapY);
+                graphics.DrawLine(redPen, mouseMapX, mouseMapY-10, mouseMapX, mouseMapY+10);
+
+                var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
+                var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
+                if(tileX >= 0 && tileX < _currentTileMap.Width && tileY >= 0 && tileY < _currentTileMap.Height)
+                    graphics.DrawRectangle(bluePen, new Rectangle((int)mapEditorX + tileX * Game.Tile.DIMENSION, (int)mapEditorY + tileY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION));
             }
             else
             {
-                e.Graphics.Clear(Color.Gray);
+                graphics.Clear(SystemColors.ControlDark);
             }
         }
 
@@ -145,9 +143,7 @@ namespace Ozzyria.ConstructionKit
             {
                 _currentMap = mapName;
                 var metaData = MapMetaDataFactory.mapMetaDatas[mapName];
-
-                var worldPersistence = new WorldPersistence();
-                _currentTileMap = worldPersistence.LoadMap(_currentMap);
+                _currentTileMap = MapFactory.LoadMap(_currentMap);
 
                 dataLayers.Rows.Clear();
                 for(int layer = 0; layer < metaData.Layers; layer++)
@@ -439,8 +435,7 @@ namespace Ozzyria.ConstructionKit
 
         private void btnMapSave_Click(object sender, System.EventArgs e)
         {
-            var worldPersistence = new WorldPersistence();
-            worldPersistence.SaveMap(_currentMap, _currentTileMap);
+            MapFactory.SaveMaps();
             MapMetaDataFactory.SaveMetaData();
         }
     }
