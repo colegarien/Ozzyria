@@ -2,22 +2,6 @@
 
 namespace Ozzyria.MapEditor
 {
-    enum TransitionType
-    {
-        None,
-        Up,
-        Down,
-        Left,
-        Right,
-        UpLeft,
-        UpRight,
-        DownLeft,
-        DownRight,
-        UpLeftDiagonal,
-        UpRightDiagonal,
-        DownLeftDiagonal,
-        DownRightDiagonal,
-    }
 
     enum EdgeTransitionType
     {

@@ -45,12 +45,7 @@ namespace Ozzyria.ConstructionKit
 
         public static void InitializeMetaData()
         {
-            // TODO OZ-17 consider wrapping this up in json reader/writer with all the custom converters
-            var serializeOptions = new JsonSerializerOptions();
-            serializeOptions.Converters.Add(new DictionaryInt32Converter());
-            serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
-
-            mapMetaDatas = JsonSerializer.Deserialize<IDictionary<string, MapMetaData>>(File.ReadAllText(Content.Loader.Root() + "/Maps/map_metadata.json"), serializeOptions);
+            mapMetaDatas = JsonSerializer.Deserialize<IDictionary<string, MapMetaData>>(File.ReadAllText(Content.Loader.Root() + "/Maps/map_metadata.json"), JsonOptionsFactory.GetOptions());
         }
 
         public static void SaveMetaData()
@@ -103,12 +98,7 @@ namespace Ozzyria.ConstructionKit
             }
             MapFactory.SaveMaps();
 
-            // TODO OZ-17 consider wrapping this up in json reader/writer with all the custom converters
-            var serializeOptions = new JsonSerializerOptions();
-            serializeOptions.Converters.Add(new DictionaryInt32Converter());
-            serializeOptions.Converters.Add(new DictionaryInt32Int32Converter());
-
-            File.WriteAllText(Content.Loader.Root() + "/Maps/map_metadata.json", JsonSerializer.Serialize(mapMetaDatas, serializeOptions));
+            File.WriteAllText(Content.Loader.Root() + "/Maps/map_metadata.json", JsonSerializer.Serialize(mapMetaDatas, JsonOptionsFactory.GetOptions()));
         }
     }
 }

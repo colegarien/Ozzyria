@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace Ozzyria.Game.Persistence
 {
@@ -9,66 +10,7 @@ namespace Ozzyria.Game.Persistence
 
         public TileMap LoadMap(string mapName)
         {
-            string tileSet = "";
-            int width = 0, height = 0;
-            var layers = new Dictionary<int, List<Tile>>();
-            using (StreamReader file = new StreamReader(Content.Loader.Root() + "/Maps/" + mapName + ".ozz"))
-            {
-                tileSet = file.ReadLine().Trim();
-                width = int.Parse(file.ReadLine());
-                height = int.Parse(file.ReadLine());
-                var numberOfLayers = int.Parse(file.ReadLine());
-                for (var i = 0; i < numberOfLayers; i++)
-                {
-                    layers[i] = new List<Tile>();
-                }
-
-                string line;
-                while ((line = file.ReadLine().Trim()) != "" && line != "END")
-                {
-                    var pieces = line.Split("|");
-                    if (pieces.Length < 7)
-                    {
-                        continue;
-                    }
-
-                    var layer = int.Parse(pieces[0]);
-                    var x = int.Parse(pieces[1]);
-                    var y = int.Parse(pieces[2]);
-                    var z = int.Parse(pieces[3]);
-                    var tx = int.Parse(pieces[4]);
-                    var ty = int.Parse(pieces[5]);
-
-                    var decals = new TileDecal[int.Parse(pieces[6])];
-                    for(var i = 0; i < decals.Length; i++)
-                    {
-                        decals[i] = new TileDecal
-                        {
-                            TextureCoordX = int.Parse(pieces[7 + (i*2)]),
-                            TextureCoordY = int.Parse(pieces[7 + (i*2) + 1]),
-                        };
-                    }
-
-                    layers[layer].Add(new Tile
-                    {
-                        X = x,
-                        Y = y,
-                        Z = z,
-                        TextureCoordX = tx,
-                        TextureCoordY = ty,
-                        Decals = decals
-                    });
-                }
-            }
-
-            return new TileMap
-            {
-                MapName = mapName,
-                TileSet = tileSet,
-                Width = width,
-                Height = height,
-                Layers = layers
-            };
+            return JsonSerializer.Deserialize<TileMap>(File.ReadAllText(Content.Loader.Root() + "/Maps/" + mapName + ".ozz"), JsonOptionsFactory.GetOptions());
         }
 
         public void SaveMap(string resource, TileMap map)
@@ -79,26 +21,7 @@ namespace Ozzyria.Game.Persistence
                 Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (StreamWriter file = new StreamWriter(baseMapsDirectory + "/" + resource + ".ozz"))
-            {
-                file.WriteLine(map.TileSet);
-                file.WriteLine(map.Width);
-                file.WriteLine(map.Height);
-                file.WriteLine(map.Layers.Keys.Count);
-                for (var layer = 0; layer < map.Layers.Keys.Count; layer++)
-                {
-                    foreach (var tile in map.Layers[layer])
-                    {
-                        var serializedTile = $"{layer}|{tile.X}|{tile.Y}|{tile.Z}|{tile.TextureCoordX}|{tile.TextureCoordY}|{tile.Decals.Length}";
-                        foreach(var decal in tile.Decals)
-                        {
-                            serializedTile += $"|{decal.TextureCoordX}|{decal.TextureCoordY}";
-                        }
-                        file.WriteLine(serializedTile);
-                    }
-                }
-                file.WriteLine("END");
-            }
+            File.WriteAllText(baseMapsDirectory + "/" + resource + ".ozz", JsonSerializer.Serialize(map, JsonOptionsFactory.GetOptions()));
         }
 
         public EntityManager LoadEntityManager(string resource)

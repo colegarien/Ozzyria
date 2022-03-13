@@ -1,5 +1,4 @@
-﻿using Ozzyria.Game;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +9,7 @@ namespace Ozzyria.ConstructionKit
     public partial class ConstructionKitForm : Form
     {
         private string _currentMap = "";
-        private Map _currentTileMap; // TODO OZ-17 stop using tile map, making custom data-structure!!
+        private Map _currentTileMap;
         private string _currentTileSet = "";
         private Image _currentTileSetImage;
 
@@ -41,7 +40,7 @@ namespace Ozzyria.ConstructionKit
 
             listMap.Items.AddRange(MapMetaDataFactory.mapMetaDatas.Keys.ToArray());
 
-            // TODO OZ-17 just make a panel subclass to avoid this hack
+            // hackity hack to override DoubleBuffered without making custom class
             typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, panelMapEditor, new object[] { true });
 
             /* TODO OZ-17 missing features:
@@ -288,7 +287,7 @@ namespace Ozzyria.ConstructionKit
                 dataLayers.Columns[e.ColumnIndex].Visible = metaData.Layers > 1;
 
                 _currentTileMap.Layers.Remove(e.RowIndex);
-                var reIndexedLayers = new Dictionary<int, List<Tile>>();
+                var reIndexedLayers = new Dictionary<int, List<Game.Tile>>();
                 int layerIndex = 0;
                 foreach(var layerGroup in _currentTileMap.Layers)
                 {
@@ -395,10 +394,10 @@ namespace Ozzyria.ConstructionKit
 
                     var tempLayer = _currentTileMap.Layers.ContainsKey(layerIndexDropEnd)
                         ? _currentTileMap.Layers[layerIndexDropEnd]
-                        : new List<Tile>();
+                        : new List<Game.Tile>();
                     _currentTileMap.Layers[layerIndexDropEnd] = _currentTileMap.Layers.ContainsKey(layerIndexDragStart)
                         ? _currentTileMap.Layers[layerIndexDragStart]
-                        : new List<Tile>();
+                        : new List<Game.Tile>();
                     _currentTileMap.Layers[layerIndexDragStart] = tempLayer;
                 }
 

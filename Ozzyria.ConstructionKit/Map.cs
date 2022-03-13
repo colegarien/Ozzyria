@@ -13,7 +13,7 @@ namespace Ozzyria.ConstructionKit
         public string TileSet { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public IDictionary<int, List<Tile>> Layers { get; set; } // TODO OZ-17 make custom Tile class?? (or just add extra stuff to normal Tile?)
+        public IDictionary<int, List<Tile>> Layers { get; set; }
 
         public Map(string name, string tileSet, int width, int height, int layers=1)
         {
@@ -90,7 +90,6 @@ namespace Ozzyria.ConstructionKit
             loadedMaps[mapName] = new Map(mapName, tileMap.TileSet, tileMap.Width, tileMap.Height, tileMap.Layers.Keys.Max()+1);
             loadedMaps[mapName].Layers = tileMap.Layers;
 
-            lastUsedMap = mapName;
             return loadedMaps[mapName];
         }
 

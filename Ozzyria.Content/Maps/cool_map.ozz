@@ -1,5 +1,1 @@
-outside_tileset_001
-50
-40
-3
-END
+{"MapName":"cool_map","TileSet":"outside_tileset_001","Width":40,"Height":40,"Layers":{"0":[],"1":[],"2":[]}}

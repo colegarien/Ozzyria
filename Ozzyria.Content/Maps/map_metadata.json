@@ -1,1 +1,1 @@
-{"test_m":{"TileSet":"outside_tileset_001","EntityTemplate":"test_e","Width":32,"Height":32,"Layers":2},"cool_map":{"TileSet":"outside_tileset_001","EntityTemplate":"cool_map_template","Width":50,"Height":40,"Layers":3}}
+{"test_m":{"TileSet":"outside_tileset_001","EntityTemplate":"test_e","Width":32,"Height":32,"Layers":2},"cool_map":{"TileSet":"outside_tileset_001","EntityTemplate":"cool_map_template","Width":40,"Height":40,"Layers":3}}
