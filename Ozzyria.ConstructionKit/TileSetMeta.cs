@@ -25,6 +25,25 @@ namespace Ozzyria.ConstructionKit
         public IDictionary<int, int> WallingCenterYOffset { get; set; }
         public IDictionary<int, int> WallingThickness { get; set; }
 
+
+        public Tile CreateTile(int tileType)
+        {
+            return new Tile
+            {
+                X = 0,
+                Y = 0,
+                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : Renderable.Z_BACKGROUND,
+                TextureCoordX = BaseTileX[tileType],
+                TextureCoordY = BaseTileY[tileType],
+                Decals = new TileDecal[] { },
+
+                Type = tileType,
+                EdgeTransition = new Dictionary<int, EdgeTransitionType>(),
+                CornerTransition = new Dictionary<int, CornerTransitionType>(),
+                Direction = PathDirection.None,
+            };
+        }
+
         public bool CanTransition(int toType, int fromType)
         {
             var toIndex = TilesThatSupportTransitions.IndexOf(toType);
@@ -38,7 +57,6 @@ namespace Ozzyria.ConstructionKit
                 && fromIndex != -1 && toIndex != -1
                 && toIndex < fromIndex;
         }
-
 
         public TileDecal CreateEdgeTransitionDecal(int type, EdgeTransitionType edgeTransition)
         {
@@ -78,7 +96,6 @@ namespace Ozzyria.ConstructionKit
                 TextureCoordY = baseTy + offsetY
             };
         }
-
 
         public void NormalizeTextureCoordinates(Tile tile)
         {
@@ -163,22 +180,25 @@ namespace Ozzyria.ConstructionKit
             tile.TextureCoordY = baseTy + offsetY;
         }
 
-        public Tile CreateTile(int tileType)
+        public int GetWallableCenterXOffset(int type)
         {
-            return new Tile
-            {
-                X = 0,
-                Y = 0,
-                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : Renderable.Z_BACKGROUND,
-                TextureCoordX = BaseTileX[tileType],
-                TextureCoordY = BaseTileY[tileType],
-                Decals = new TileDecal[] { },
+            return WallingCenterXOffset.ContainsKey(type)
+                ? WallingCenterXOffset[type]
+                : 0;
+        }
 
-                Type = tileType,
-                EdgeTransition = new Dictionary<int, EdgeTransitionType>(),
-                CornerTransition = new Dictionary<int, CornerTransitionType>(),
-                Direction = PathDirection.None,
-            };
+        public int GetWallableCenterYOffset(int type)
+        {
+            return WallingCenterYOffset.ContainsKey(type)
+                ? WallingCenterYOffset[type]
+                : 0;
+        }
+
+        public int GetWallableThickness(int type)
+        {
+            return WallingThickness.ContainsKey(type)
+                ? WallingThickness[type]
+                : 32;
         }
     }
 

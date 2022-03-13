@@ -43,17 +43,6 @@ namespace Ozzyria.ConstructionKit
 
             // hackity hack to override DoubleBuffered without making custom class
             typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, panelMapEditor, new object[] { true });
-
-            /* TODO OZ-17 missing features:
-               [X] ability to pan around map
-               [X] ability to zoom in and out
-               [X] ability to change "active layer"
-               [X] add/remove layers 
-               [X] ability to paint/erase tiles from layers
-               [X] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
-               [] saving entity walls file
-               [X] ability to save map tile edits
-            */
         }
 
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
