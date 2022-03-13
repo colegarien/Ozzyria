@@ -46,31 +46,8 @@ namespace Ozzyria.Game.Persistence
                     throw new JsonException($"Unable to convert \"{keyString}\" to System.Int32.");
                 }
 
-                if(typeof(T).IsEquivalentTo(typeof(int))) {
-                    // sometimes Ints are get pushed in as a string in JSON, this handles that
-                    reader.Read();
-                    int valueAsInt32;
-                    if (reader.TokenType == JsonTokenType.String)
-                    {
-                        string valueString = reader.GetString();
-                        if (!int.TryParse(valueString, out valueAsInt32))
-                        {
-                            throw new JsonException($"Unable to convert \"{valueString}\" to System.Int32.");
-                        }
-                    }
-                    else if (!reader.TryGetInt32(out valueAsInt32))
-                    {
-                        valueAsInt32 = 0;
-                    }
-
-                    value.Add(keyAsInt32, (T)Convert.ChangeType(valueAsInt32, typeof(T)));
-                }
-                else
-                {
-                    var itemValue = JsonSerializer.Deserialize<T>(ref reader, options);
-                    value.Add(keyAsInt32, itemValue);
-                }
-
+                var itemValue = JsonSerializer.Deserialize<T>(ref reader, options);
+                value.Add(keyAsInt32, itemValue);
             }
 
             throw new JsonException("Error Occured");
