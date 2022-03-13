@@ -10,18 +10,18 @@ namespace Ozzyria.Game.Persistence
         public static JsonSerializerOptions GetOptions()
         {
             var serializeOptions = new JsonSerializerOptions();
-            serializeOptions.Converters.Add(new DictionaryInt32ListConverter<EdgeTransitionType>());
-            serializeOptions.Converters.Add(new DictionaryInt32ListConverter<CornerTransitionType>());
-            serializeOptions.Converters.Add(new DictionaryInt32ListConverter<List<Tile>>());
-            serializeOptions.Converters.Add(new DictionaryInt32ListConverter<int>());
-            serializeOptions.Converters.Add(new DictionaryInt32ListConverter<string>());
+            serializeOptions.Converters.Add(new DictionaryInt32Converter<EdgeTransitionType>());
+            serializeOptions.Converters.Add(new DictionaryInt32Converter<CornerTransitionType>());
+            serializeOptions.Converters.Add(new DictionaryInt32Converter<List<Tile>>());
+            serializeOptions.Converters.Add(new DictionaryInt32Converter<int>());
+            serializeOptions.Converters.Add(new DictionaryInt32Converter<string>());
 
             return serializeOptions;
         }
     }
 
     // OZ-17 : make a factory so no more need for "T" explicitly - https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-core-3-1
-    public class DictionaryInt32ListConverter<T> : JsonConverter<IDictionary<int, T>>
+    public class DictionaryInt32Converter<T> : JsonConverter<IDictionary<int, T>>
     {
         public override IDictionary<int, T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

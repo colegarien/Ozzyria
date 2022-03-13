@@ -116,6 +116,9 @@ namespace Ozzyria.ConstructionKit
                     foreach (var tile in layer.Value)
                     {
                         graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
+                        if(tile.Decals != null)
+                            foreach(var decal in tile.Decals)
+                                graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), decal.TextureCoordX * Game.Tile.DIMENSION, decal.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
                     }
                 }
 
@@ -147,7 +150,7 @@ namespace Ozzyria.ConstructionKit
                 dataLayers.Rows.Clear();
                 for(int layer = 0; layer < metaData.Layers; layer++)
                 {
-                    dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (layer+1), "Delete" });
+                    dataLayers.Rows.Add(new object[] { true, null, "Layer " + (layer+1), "Delete" });
                 }
                 dataLayers.Columns["deleteLayer"].Visible = metaData.Layers > 1;
 
@@ -313,7 +316,8 @@ namespace Ozzyria.ConstructionKit
                 }
 
                 metaData.Layers++;
-                dataLayers.Rows.Add(new object[] { true, SystemIcons.WinLogo, "Layer " + (metaData.Layers), "Delete" });
+                dataLayers.Rows.Add(new object[] { true, null, "Layer " + (metaData.Layers), "Delete" });
+                dataLayers.Columns["deleteLayer"].Visible = metaData.Layers > 1;
             }
         }
 
