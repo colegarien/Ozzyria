@@ -49,7 +49,7 @@ namespace Ozzyria.ConstructionKit
                [X] ability to zoom in and out
                [X] ability to change "active layer"
                [X] add/remove layers 
-               [] ability to paint/erase tiles from layers
+               [X] ability to paint/erase tiles from layers
                [] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
                [X] ability to save map tile edits
             */
@@ -162,6 +162,18 @@ namespace Ozzyria.ConstructionKit
                     _currentTileSetImage = Image.FromFile(Content.Loader.Root() + "/TileSets/Sprites/" + _currentTileSet + ".png");
                 }
 
+                var tileSetMetaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];
+                toolTileType.Items.Clear();
+                foreach (var tileTypeIdNamePair in tileSetMetaData.TileNames)
+                {
+                    toolTileType.Items.Add(new ComboBoxItem
+                    {
+                        Id = tileTypeIdNamePair.Key,
+                        Name = tileTypeIdNamePair.Value,
+                    });
+                }
+                toolTileType.SelectedIndex = 0;
+
                 var mapWidth = (float)(metaData.Width * Game.Tile.DIMENSION);
                 var mapHeight = (float)(metaData.Height * Game.Tile.DIMENSION);
 
@@ -242,8 +254,6 @@ namespace Ozzyria.ConstructionKit
             }
             else if(e.Button == MouseButtons.Left && leftMousePressed && _currentTileMap != null)
             {
-                // TODO OZ-17 draw/erase/use-tool (need to work how the current "tileMap" get's manipulate and how saving works)
-
                 var mouseMapX = (currentMousePosition.X / zoom);
                 var mouseMapY = (currentMousePosition.Y / zoom);
                 var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
@@ -254,6 +264,15 @@ namespace Ozzyria.ConstructionKit
                     foreach (DataGridViewRow layer in dataLayers.SelectedRows)
                     {
                         _currentTileMap.RemoveTile(layer.Index, tileX, tileY);
+                    }
+                }
+                else if (toolPaint.Checked)
+                {
+                    foreach (DataGridViewRow layer in dataLayers.SelectedRows)
+                    {
+                        // TODO OZ-17 add ability to pick tileytype... also do mouse up draw
+                        var tileType = (toolTileType.SelectedItem as ComboBoxItem).Id;
+                        _currentTileMap.PaintTile(MapMetaDataFactory.mapMetaDatas[_currentMap], TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet], layer.Index, tileX, tileY, tileType);
                     }
                 }
             }
@@ -270,6 +289,20 @@ namespace Ozzyria.ConstructionKit
             else if (e.Button == MouseButtons.Left && leftMousePressed)
             {
                 leftMousePressed = false;
+                if(toolFill.Checked && _currentTileMap != null)
+                {
+                    var mouseMapX = (currentMousePosition.X / zoom);
+                    var mouseMapY = (currentMousePosition.Y / zoom);
+                    var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
+                    var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
+
+                    foreach (DataGridViewRow layer in dataLayers.SelectedRows)
+                    {
+                        // TODO OZ-17 add ability to pick tileytype
+                        var tileType = (toolTileType.SelectedItem as ComboBoxItem).Id;
+                        _currentTileMap.FillTile(MapMetaDataFactory.mapMetaDatas[_currentMap], TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet], layer.Index, tileX, tileY, tileType);
+                    }
+                }
             }
         }
 

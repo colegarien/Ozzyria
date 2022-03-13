@@ -38,6 +38,7 @@ namespace Ozzyria.ConstructionKit
             this.panelMapEditor = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolPaint = new System.Windows.Forms.ToolStripButton();
+            this.toolFill = new System.Windows.Forms.ToolStripButton();
             this.toolErase = new System.Windows.Forms.ToolStripButton();
             this.btnMapSave = new System.Windows.Forms.ToolStripButton();
             this.btnAddLayer = new System.Windows.Forms.Button();
@@ -47,7 +48,7 @@ namespace Ozzyria.ConstructionKit
             this.layerNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.deleteLayer = new System.Windows.Forms.DataGridViewButtonColumn();
             this.listMap = new System.Windows.Forms.ListBox();
-            this.toolFill = new System.Windows.Forms.ToolStripButton();
+            this.toolTileType = new System.Windows.Forms.ToolStripComboBox();
             this.menuTopBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spltTopLevel)).BeginInit();
             this.spltTopLevel.Panel2.SuspendLayout();
@@ -150,7 +151,8 @@ namespace Ozzyria.ConstructionKit
             this.toolPaint,
             this.toolFill,
             this.toolErase,
-            this.btnMapSave});
+            this.btnMapSave,
+            this.toolTileType});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -168,6 +170,17 @@ namespace Ozzyria.ConstructionKit
             this.toolPaint.Size = new System.Drawing.Size(23, 22);
             this.toolPaint.Text = "&Paint";
             this.toolPaint.CheckedChanged += new System.EventHandler(this.toolPaint_CheckedChanged);
+            // 
+            // toolFill
+            // 
+            this.toolFill.CheckOnClick = true;
+            this.toolFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolFill.Image = ((System.Drawing.Image)(resources.GetObject("toolFill.Image")));
+            this.toolFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolFill.Name = "toolFill";
+            this.toolFill.Size = new System.Drawing.Size(23, 22);
+            this.toolFill.Text = "Fill";
+            this.toolFill.CheckedChanged += new System.EventHandler(this.toolFill_CheckedChanged);
             // 
             // toolErase
             // 
@@ -274,16 +287,11 @@ namespace Ozzyria.ConstructionKit
             this.listMap.TabIndex = 0;
             this.listMap.SelectedIndexChanged += new System.EventHandler(this.listMap_SelectedIndexChanged);
             // 
-            // toolFill
+            // toolTileType
             // 
-            this.toolFill.CheckOnClick = true;
-            this.toolFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolFill.Image = ((System.Drawing.Image)(resources.GetObject("toolFill.Image")));
-            this.toolFill.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolFill.Name = "toolFill";
-            this.toolFill.Size = new System.Drawing.Size(23, 22);
-            this.toolFill.Text = "Fill";
-            this.toolFill.CheckedChanged += new System.EventHandler(this.toolFill_CheckedChanged);
+            this.toolTileType.MaxDropDownItems = 100;
+            this.toolTileType.Name = "toolTileType";
+            this.toolTileType.Size = new System.Drawing.Size(121, 25);
             // 
             // ConstructionKitForm
             // 
@@ -335,6 +343,7 @@ namespace Ozzyria.ConstructionKit
         private System.Windows.Forms.ToolStripButton toolErase;
         private System.Windows.Forms.ToolStripButton btnMapSave;
         private System.Windows.Forms.ToolStripButton toolFill;
+        private System.Windows.Forms.ToolStripComboBox toolTileType;
     }
 }
 

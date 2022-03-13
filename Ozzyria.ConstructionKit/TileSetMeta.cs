@@ -1,4 +1,6 @@
-﻿using Ozzyria.Game.Persistence;
+﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
+using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -21,6 +23,25 @@ namespace Ozzyria.ConstructionKit
         public IDictionary<int, int> WallingCenterXOffset { get; set; }
         public IDictionary<int, int> WallingCenterYOffset { get; set; }
         public IDictionary<int, int> WallingThickness { get; set; }
+
+
+        public Tile CreateTile(int tileType)
+        {
+            return new Tile
+            {
+                X = 0,
+                Y = 0,
+                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : Renderable.Z_BACKGROUND,
+                TextureCoordX = BaseTileX[tileType],
+                TextureCoordY = BaseTileY[tileType],
+                Decals = new TileDecal[] { },
+
+                Type = tileType,
+                EdgeTransition = new Dictionary<int, EdgeTransitionType>(),
+                CornerTransition = new Dictionary<int, CornerTransitionType>(),
+                Direction = PathDirection.None,
+            };
+        }
     }
 
     class TileSetMetaDataFactory
