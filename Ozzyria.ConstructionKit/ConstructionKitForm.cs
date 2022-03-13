@@ -50,7 +50,8 @@ namespace Ozzyria.ConstructionKit
                [X] ability to change "active layer"
                [X] add/remove layers 
                [X] ability to paint/erase tiles from layers
-               [] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
+               [X] ability to specify or calculate or whatever the transition tiles, pathing, and walling when saving the map
+               [] saving entity walls file
                [X] ability to save map tile edits
             */
         }
@@ -270,7 +271,6 @@ namespace Ozzyria.ConstructionKit
                 {
                     foreach (DataGridViewRow layer in dataLayers.SelectedRows)
                     {
-                        // TODO OZ-17 add ability to pick tileytype... also do mouse up draw
                         var tileType = (toolTileType.SelectedItem as ComboBoxItem).Id;
                         _currentTileMap.PaintTile(MapMetaDataFactory.mapMetaDatas[_currentMap], TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet], layer.Index, tileX, tileY, tileType);
                     }
@@ -298,11 +298,12 @@ namespace Ozzyria.ConstructionKit
 
                     foreach (DataGridViewRow layer in dataLayers.SelectedRows)
                     {
-                        // TODO OZ-17 add ability to pick tileytype
                         var tileType = (toolTileType.SelectedItem as ComboBoxItem).Id;
                         _currentTileMap.FillTile(MapMetaDataFactory.mapMetaDatas[_currentMap], TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet], layer.Index, tileX, tileY, tileType);
                     }
                 }
+
+                _currentTileMap.Bake(MapMetaDataFactory.mapMetaDatas[_currentMap], TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet]);
             }
         }
 

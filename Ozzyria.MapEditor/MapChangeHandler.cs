@@ -1,7 +1,6 @@
 ﻿using Ozzyria.Game.Persistence;
 using Ozzyria.MapEditor.EventSystem;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Ozzyria.MapEditor
 {
