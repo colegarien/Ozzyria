@@ -30,7 +30,7 @@ namespace Ozzyria.MapEditor
 
                 var tileMap = worldPersistence.LoadMap(mapChangeEvent.MapName.Trim());
 
-                var map = new Map(tileMap.MapName, tileMap.TileSet, tileMap.Width, tileMap.Height);
+                var map = new Map(tileMap.Name, tileMap.TileSet, tileMap.Width, tileMap.Height);
                 var tileSetMetaDataFactory = MapManager.GetTileSetMetaDataFactory(tileMap.TileSet);
                 foreach (var kv in tileMap.Layers)
                 {

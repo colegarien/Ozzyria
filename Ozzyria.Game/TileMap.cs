@@ -87,7 +87,7 @@ namespace Ozzyria.Game
 
     public class TileMap
     {
-        public string MapName { get; set; } = "";
+        public string Name { get; set; } = "";
         public string TileSet { get; set; } = "";
         public int Width { get; set; } = 32;
         public int Height { get; set; } = 32;

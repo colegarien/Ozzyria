@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Ozzyria.Game;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace Ozzyria.ConstructionKit
     public partial class ConstructionKitForm : Form
     {
         private string _currentMap = "";
-        private Map _currentTileMap;
+        private TileMap _currentTileMap;
         private string _currentTileSet = "";
         private Image _currentTileSetImage;
 
@@ -239,9 +240,22 @@ namespace Ozzyria.ConstructionKit
                 mapEditorX = (int)(mapEditorStartX + (deltaX / zoom));
                 mapEditorY = (int)(mapEditorStartY + (deltaY / zoom));
             }
-            else if(e.Button == MouseButtons.Left && leftMousePressed)
+            else if(e.Button == MouseButtons.Left && leftMousePressed && _currentTileMap != null)
             {
                 // TODO OZ-17 draw/erase/use-tool (need to work how the current "tileMap" get's manipulate and how saving works)
+
+                var mouseMapX = (currentMousePosition.X / zoom);
+                var mouseMapY = (currentMousePosition.Y / zoom);
+                var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
+                var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
+
+                if (toolErase.Checked)
+                {
+                    foreach (DataGridViewRow layer in dataLayers.SelectedRows)
+                    {
+                        _currentTileMap.RemoveTile(layer.Index, tileX, tileY);
+                    }
+                }
             }
 
             panelMapEditor.Refresh();

@@ -6,63 +6,52 @@ using System.Linq;
 
 namespace Ozzyria.ConstructionKit
 {
-    class Map
+    static class MapExtensions
     {
-        // TODO OZ-17 what functionaality do I need from a map?
-        public string Name { get; set; }
-        public string TileSet { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public IDictionary<int, List<Tile>> Layers { get; set; }
-
-        public Map(string name, string tileSet, int width, int height, int layers=1)
-        {
-            Name = name;
-            TileSet = tileSet;
-            Width = width;
-            Height = height;
-            Layers = new Dictionary<int, List<Tile>>();
-
-            for(int i = 0; i < layers; i++)
-                AddLayer();
-        }
-
-        public void AddLayer()
+        public static void AddLayer(this TileMap map)
         {
             var newLayer = 0;
-            if (Layers.Keys.Count != 0)
-                newLayer = Layers.Keys.Max() + 1;
+            if (map.Layers.Keys.Count != 0)
+                newLayer = map.Layers.Keys.Max() + 1;
 
             if (newLayer >= 256)
                 return;
 
-            Layers[newLayer] = new List<Tile>();
+            map.Layers[newLayer] = new List<Tile>();
         }
 
-        public void RemoveLayer(int layer)
+        public static void RemoveLayer(this TileMap map, int layer)
         {
-            if (!Layers.ContainsKey(layer) || Layers.Keys.Count <= 1)
+            if (!map.Layers.ContainsKey(layer) || map.Layers.Keys.Count <= 1)
                 return;
 
-            var lastLayer = Layers.Keys.Max();
-            Layers.Remove(layer);
+            var lastLayer = map.Layers.Keys.Max();
+            map.Layers.Remove(layer);
             for (var i = layer + 1; i <= lastLayer; i++)
             {
-                var currentLayer = Layers[i];
-                Layers[i - 1] = currentLayer;
-                Layers.Remove(i);
+                var currentLayer = map.Layers[i];
+                map.Layers[i - 1] = currentLayer;
+                map.Layers.Remove(i);
             }
+        }
+
+        public static void RemoveTile(this TileMap map, int layer, int x, int y)
+        {
+            if (map.HasLayer(layer))
+                map.Layers[layer].RemoveAll(t => t.X == x && t.Y == y);
         }
     }
 
     class MapFactory
     {
-        public static IDictionary<string, Map> loadedMaps = new Dictionary<string, Map>();
+        public static IDictionary<string, TileMap> loadedMaps = new Dictionary<string, TileMap>();
         public static string lastUsedMap = "";
 
-        public static Map NewMap(string mapName)
+        public static TileMap NewMap(string mapName)
         {
-            loadedMaps[mapName] = new Map(mapName, "", 32, 32);
+            loadedMaps[mapName] = new TileMap{ Name = mapName, };
+            loadedMaps[mapName].AddLayer();
+
             lastUsedMap = mapName;
             return loadedMaps[mapName];
         }
@@ -77,7 +66,7 @@ namespace Ozzyria.ConstructionKit
             loadedMaps.Clear();
         }
 
-        public static Map LoadMap(string mapName)
+        public static TileMap LoadMap(string mapName)
         {
             if (loadedMaps.ContainsKey(mapName))
             {
@@ -85,10 +74,7 @@ namespace Ozzyria.ConstructionKit
             }
 
             var persistence = new WorldPersistence();
-            var tileMap = persistence.LoadMap(mapName);
-
-            loadedMaps[mapName] = new Map(mapName, tileMap.TileSet, tileMap.Width, tileMap.Height, tileMap.Layers.Keys.Max()+1);
-            loadedMaps[mapName].Layers = tileMap.Layers;
+            loadedMaps[mapName] = persistence.LoadMap(mapName);
 
             return loadedMaps[mapName];
         }
@@ -99,28 +85,7 @@ namespace Ozzyria.ConstructionKit
 
             foreach(var mapGroup in loadedMaps)
             {
-                var map = mapGroup.Value;
-                var tileMap = new TileMap
-                {
-                    MapName = map.Name,
-                    TileSet = map.TileSet,
-                    Width = map.Width,
-                    Height = map.Height
-                };
-
-                foreach(var layerGroup in map.Layers)
-                {
-                    tileMap.Layers[layerGroup.Key] = new List<Tile>();
-                    foreach (var tile in layerGroup.Value)
-                    {
-                        if (tile.Decals == null)
-                            continue;
-
-                        tileMap.Layers[layerGroup.Key].Add(tile);
-                    }
-                }
-
-                persistence.SaveMap(tileMap.MapName, tileMap);
+                persistence.SaveMap(mapGroup.Key, mapGroup.Value);
             }
 
             // TODO OZ-17 remove saved maps other than the last loaded one
