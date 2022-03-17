@@ -20,7 +20,7 @@ namespace Ozzyria.Game.Persistence
         }
     }
 
-    // OZ-17 : make a factory so no more need for "T" explicitly - https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-core-3-1
+    // Consider a JSON Converter factory if this because a problem - https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-core-3-1
     public class DictionaryInt32Converter<T> : JsonConverter<IDictionary<int, T>>
     {
         public override IDictionary<int, T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,16 +22,7 @@ namespace Ozzyria.ConstructionKit
             var tileSetNames = metaData.Keys;
             comboBoxTileSet.Items.AddRange(tileSetNames.ToArray());
 
-            // TODO OZ-17 be better about this, maybe specify somewhere (see Renderable.cs constants)
-            dropDownZDepth.Items.AddRange(new ComboBoxItem[]
-            {
-                new ComboBoxItem{ Id = 0, Name = "Background"},
-                new ComboBoxItem{ Id = 10, Name = "Items"},
-                new ComboBoxItem{ Id = 25, Name = "Middleground"},
-                new ComboBoxItem{ Id = 50, Name = "Foreground"},
-                new ComboBoxItem{ Id = 255, Name = "In-Game UI"},
-                new ComboBoxItem{ Id = 99999, Name = "Debug"},
-            });
+            dropDownZDepth.Items.AddRange(Enum.GetValues(typeof(ZLayer)).Cast<ZLayer>().Select(z => new ComboBoxItem { Id = (int)z, Name = z.ToString() }).ToArray());
 
             comboBoxTileSet.SelectedIndex = 0;
         }
@@ -675,8 +667,6 @@ namespace Ozzyria.ConstructionKit
 
         private void DrawPathLayout(Pen pen, Graphics g, float baseX, float baseY, float tileWidth, float tileHeight, float cxOffset = 0, float cyOffset = 0, float thickness = 0)
         {
-            // TODO OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!! (see metadatafactory)
-
             //case PathDirection.Left:
             DrawLeft(pen, g, baseX + (2 * tileWidth), baseY + (3 * tileHeight), tileWidth, tileHeight, cxOffset, cyOffset, thickness);
 

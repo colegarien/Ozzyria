@@ -23,7 +23,6 @@ namespace Ozzyria.ConstructionKit
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // TODO OZ-17 pull in all the for fields and update the meta-datas for the current item (this will help with brand-new maps saving all the values)
             MapMetaDataFactory.SaveMetaData();
             this.DialogResult = DialogResult.OK;
         }

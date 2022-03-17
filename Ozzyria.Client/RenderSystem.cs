@@ -109,7 +109,7 @@ namespace Ozzyria.Client
             {
                 foreach (var graphic in graphicsInRenderOrder)
                 {
-                    if (graphic.GetZOrder() == Renderable.Z_BACKGROUND) continue; // skip rendering background to lessen noise
+                    if (graphic.GetZOrder() == (int)ZLayer.Background) continue; // skip rendering background to lessen noise
 
                     var debugGraphic = new DebugRenderArea(graphic);
                     debugGraphic.Draw(target);

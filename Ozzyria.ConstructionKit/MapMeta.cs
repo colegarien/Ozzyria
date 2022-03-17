@@ -24,7 +24,7 @@ namespace Ozzyria.ConstructionKit
         {
             mapMetaDatas.Add(id, new MapMetaData
             {
-                TileSet = "",
+                TileSet = TileSetMetaDataFactory.tileSetMetaDatas.Keys.First(),
                 EntityTemplate = id + "_template",
                 Width = 32,
                 Height = 32,
@@ -62,7 +62,6 @@ namespace Ozzyria.ConstructionKit
                 var mapName = mapMetaData.Key;
                 var metaData = mapMetaData.Value;
 
-                // TODO OZ-17 this will be a bottle-neck... could be smarter and only save/add the ones changed
                 if (MapFactory.MapExists(mapName))
                 {
                     var map = MapFactory.LoadMap(mapName);

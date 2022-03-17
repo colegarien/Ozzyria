@@ -32,7 +32,7 @@ namespace Ozzyria.ConstructionKit
             {
                 X = 0,
                 Y = 0,
-                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : Renderable.Z_BACKGROUND,
+                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : (int)ZLayer.Background,
                 TextureCoordX = BaseTileX[tileType],
                 TextureCoordY = BaseTileY[tileType],
                 Decals = new TileDecal[] { },
@@ -104,7 +104,6 @@ namespace Ozzyria.ConstructionKit
             var offsetX = 0;
             var offsetY = 0;
 
-            // OZ-17 : move these text coordinates (and cooridnates for transtions) into the meta data!!!!!!
             if (TilesThatSupportPathing.Contains(tile.Type))
             {
                 switch (tile.Direction)

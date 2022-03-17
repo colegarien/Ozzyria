@@ -2,6 +2,16 @@
 
 namespace Ozzyria.Game
 {
+    public enum ZLayer
+    {
+        Background = 0,
+        Items = 10,
+        Middleground = 25,
+        Foreground = 50,
+        InGameUi = 255,
+        Debug = 99999,
+    }
+
     public enum EdgeTransitionType
     {
         None = 0,

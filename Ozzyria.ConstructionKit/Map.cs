@@ -77,9 +77,8 @@ namespace Ozzyria.ConstructionKit
             tile.Type = tileType;
             tile.TextureCoordX = tileSetMeta.BaseTileX[tileType];
             tile.TextureCoordY = tileSetMeta.BaseTileY[tileType];
-            tile.Z = tileSetMeta.BaseTileZ.ContainsKey(tileType) ? tileSetMeta.BaseTileZ[tileType] : Renderable.Z_BACKGROUND;
+            tile.Z = tileSetMeta.BaseTileZ.ContainsKey(tileType) ? tileSetMeta.BaseTileZ[tileType] : (int)ZLayer.Background;
             
-            // TODO OZ-17 baking map / calcing transition
             tile.Decals = new TileDecal[] { };
             tile.EdgeTransition = new Dictionary<int, EdgeTransitionType>();
             tile.CornerTransition = new Dictionary<int, CornerTransitionType>();
@@ -536,8 +535,6 @@ namespace Ozzyria.ConstructionKit
                 }
                 persistence.SaveEntityManager(mapMeta.EntityTemplate, entityManager);
             }
-
-            // TODO OZ-17 remove saved maps other than the last loaded one
         }
 
         private static Entity CreateVerticalBoxCollider(TileSetMetaData tileSetMeta, int tileType, int x, int startY, int endY)
