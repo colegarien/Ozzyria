@@ -1,109 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace Ozzyria.Game.Persistence
 {
     public class WorldPersistence
     {
 
-        public TileMap LoadMap(string resource)
+        public TileMap LoadMap(string mapName)
         {
-            string tileSet = "";
-            int width = 0, height = 0;
-            var layers = new Dictionary<int, List<Tile>>();
-            using (StreamReader file = new StreamReader("Maps/" + resource + ".ozz"))
-            {
-                tileSet = file.ReadLine().Trim();
-                width = int.Parse(file.ReadLine());
-                height = int.Parse(file.ReadLine());
-                var numberOfLayers = int.Parse(file.ReadLine());
-                for (var i = 0; i < numberOfLayers; i++)
-                {
-                    layers[i] = new List<Tile>();
-                }
-
-                string line;
-                while ((line = file.ReadLine().Trim()) != "" && line != "END")
-                {
-                    var pieces = line.Split("|");
-                    if (pieces.Length < 7)
-                    {
-                        continue;
-                    }
-
-                    var layer = int.Parse(pieces[0]);
-                    var x = int.Parse(pieces[1]);
-                    var y = int.Parse(pieces[2]);
-                    var z = int.Parse(pieces[3]);
-                    var tx = int.Parse(pieces[4]);
-                    var ty = int.Parse(pieces[5]);
-
-                    var decals = new TileDecal[int.Parse(pieces[6])];
-                    for(var i = 0; i < decals.Length; i++)
-                    {
-                        decals[i] = new TileDecal
-                        {
-                            TextureCoordX = int.Parse(pieces[7 + (i*2)]),
-                            TextureCoordY = int.Parse(pieces[7 + (i*2) + 1]),
-                        };
-                    }
-
-                    layers[layer].Add(new Tile
-                    {
-                        X = x,
-                        Y = y,
-                        Z = z,
-                        TextureCoordX = tx,
-                        TextureCoordY = ty,
-                        Decals = decals
-                    });
-                }
-            }
-
-            return new TileMap
-            {
-                TileSet = tileSet,
-                Width = width,
-                Height = height,
-                Layers = layers
-            };
+            return JsonSerializer.Deserialize<TileMap>(File.ReadAllText(Content.Loader.Root() + "/Maps/" + mapName + ".ozz"), JsonOptionsFactory.GetOptions());
         }
 
         public void SaveMap(string resource, TileMap map)
         {
-            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Content\Maps"; // TODO this is just to make debuggery easier for now
+            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
             if (!Directory.Exists(baseMapsDirectory))
             {
                 Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (StreamWriter file = new StreamWriter(baseMapsDirectory + "\\" + resource + ".ozz"))
-            {
-                file.WriteLine(map.TileSet);
-                file.WriteLine(map.Width);
-                file.WriteLine(map.Height);
-                file.WriteLine(map.Layers.Keys.Count);
-                for (var layer = 0; layer < map.Layers.Keys.Count; layer++)
-                {
-                    foreach (var tile in map.Layers[layer])
-                    {
-                        var serializedTile = $"{layer}|{tile.X}|{tile.Y}|{tile.Z}|{tile.TextureCoordX}|{tile.TextureCoordY}|{tile.Decals.Length}";
-                        foreach(var decal in tile.Decals)
-                        {
-                            serializedTile += $"|{decal.TextureCoordX}|{decal.TextureCoordY}";
-                        }
-                        file.WriteLine(serializedTile);
-                    }
-                }
-                file.WriteLine("END");
-            }
+            File.WriteAllText(baseMapsDirectory + "/" + resource + ".ozz", JsonSerializer.Serialize(map, JsonOptionsFactory.GetOptions()));
         }
 
         public EntityManager LoadEntityManager(string resource)
         {
             var entityManager = new EntityManager();
-            using (BinaryReader reader = new BinaryReader(File.OpenRead("Maps/" + resource + ".ozz")))
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(Content.Loader.Root() + "/Maps/" + resource + ".ozz")))
             {
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
@@ -116,13 +40,13 @@ namespace Ozzyria.Game.Persistence
 
         public void SaveEntityManager(string resource, EntityManager entityManager)
         {
-            var baseMapsDirectory = @"C:\Users\cgari\source\repos\Ozzyria\Ozzyria.Content\Maps"; // TODO this is just to make debuggery easier for now
+            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
             if (!Directory.Exists(baseMapsDirectory))
             {
                 Directory.CreateDirectory(baseMapsDirectory);
             }
 
-            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "\\" + resource + ".ozz", FileMode.Create)))
+            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "/" + resource + ".ozz", FileMode.Create)))
             {
                 foreach (var entity in entityManager.GetEntities())
                 {

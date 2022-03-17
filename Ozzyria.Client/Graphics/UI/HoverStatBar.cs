@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.System;
 
@@ -72,7 +73,7 @@ namespace Ozzyria.Client.Graphics.UI
 
         public int GetZOrder()
         {
-            return Renderable.Z_INGAME_UI;
+            return (int)ZLayer.InGameUi;
         }
     }
 }

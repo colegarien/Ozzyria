@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game;
+using Ozzyria.Game.Component;
 using SFML.Graphics;
 using SFML.System;
 
@@ -74,7 +75,7 @@ namespace Ozzyria.Client.Graphics.DebugShape
 
         public int GetZOrder()
         {
-            return Renderable.Z_DEBUG;
+            return (int)ZLayer.Debug;
         }
     }
 }

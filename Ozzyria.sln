@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Server", "Ozzyria.Server\Ozzyria.Server.csproj", "{D53A48F7-94BF-4EC6-9EC2-C35CB963D8F6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -20,12 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Game", "Ozzyria.Gam
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2} = {16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.MapEditor", "Ozzyria.MapEditor\Ozzyria.MapEditor.csproj", "{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D} = {CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Content", "Ozzyria.Content\Ozzyria.Content.csproj", "{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.ConstructionKit", "Ozzyria.ConstructionKit\Ozzyria.ConstructionKit.csproj", "{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,14 +46,14 @@ Global
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73BC16E8-A6D5-4AAE-9154-8F3703B6350F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

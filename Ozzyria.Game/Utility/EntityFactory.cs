@@ -8,7 +8,7 @@ namespace Ozzyria.Game.Utility
         public static Entity CreatePlayer(int id)
         {
             var player = new Entity { Id = id };
-            player.AttachComponent(new Renderable { Sprite = SpriteType.Player, Z = Renderable.Z_MIDDLEGROUND });
+            player.AttachComponent(new Renderable { Sprite = SpriteType.Player, Z = (int)ZLayer.Middleground });
             player.AttachComponent(new PlayerThought());
             player.AttachComponent(new Movement() { X = 140, Y = 140 });
             player.AttachComponent(new Stats());
@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Utility
         public static Entity CreateSlime(float x, float y)
         {
             var slime = new Entity();
-            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime, Z = Renderable.Z_MIDDLEGROUND });
+            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime, Z = (int)ZLayer.Middleground });
             slime.AttachComponent(new SlimeThought());
             slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
             slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
@@ -51,7 +51,7 @@ namespace Ozzyria.Game.Utility
         public static Entity CreateExperienceOrb(float x, float y, int value)
         {
             var orb = new Entity();
-            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle, Z = Renderable.Z_ITEMS });
+            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle, Z = (int)ZLayer.Items });
             orb.AttachComponent(new ExperienceOrbThought());
             orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
             orb.AttachComponent(new ExperienceBoost { Experience = value });
