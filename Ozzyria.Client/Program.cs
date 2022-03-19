@@ -23,19 +23,21 @@ namespace Ozzyria.Client
 
 
             var client = new Networking.Client();
-            RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Ozzyria");
-            var camera = new Camera(window.Size.X, window.Size.Y);
+
+            var videoMode = new VideoMode(1280, 720);
+            //var videoMode = new VideoMode((uint)Math.Max(VideoMode.DesktopMode.Width, Camera.RENDER_RESOLUTION_W), (uint)Math.Max(VideoMode.DesktopMode.Height, Camera.RENDER_RESOLUTION_H));
+            RenderWindow window = new RenderWindow(videoMode, "Ozzyria", Styles.None | Styles.Close);
+            window.SetView(new View(new FloatRect(0, 0, Camera.RENDER_RESOLUTION_W, Camera.RENDER_RESOLUTION_H)));
+            var camera = new Camera(Camera.RENDER_RESOLUTION_W, Camera.RENDER_RESOLUTION_H);
+
             var renderSystem = new RenderSystem();
+
+            Console.WriteLine($"Window Size {window.Size.X}x{window.Size.Y} - View Size {window.GetView().Size.X}x{window.GetView().Size.Y}");
 
             window.Closed += (sender, e) =>
             {
                 client.Disconnect();
                 ((Window)sender).Close();
-            };
-            window.Resized += (sender, e) =>
-            {
-                window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
-                camera.ResizeView(e.Width, e.Height);
             };
 
             if (!client.Connect("127.0.0.1", 13000))
