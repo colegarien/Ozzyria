@@ -99,10 +99,10 @@ namespace Ozzyria.Client
                 var localPlayerStats = entities.Where(e => e.Id == client.Id).FirstOrDefault()?.GetComponent<Stats>(ComponentType.Stats);
                 if (localPlayerStats != null)
                 {
-                    var healthBar = new OverlayProgressBar(0, window.Size.Y - 22, Color.Magenta, Color.Green);
+                    var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);
                     healthBar.SetMagnitude(localPlayerStats.Health, localPlayerStats.MaxHealth);
 
-                    var experienceBar = new OverlayProgressBar(0, window.Size.Y - 10, Color.Magenta, Color.Yellow);
+                    var experienceBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 10, Color.Magenta, Color.Yellow);
                     experienceBar.SetMagnitude(localPlayerStats.Experience, localPlayerStats.MaxExperience);
 
                     healthBar.Draw(window);
