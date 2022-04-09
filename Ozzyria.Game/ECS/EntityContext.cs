@@ -17,7 +17,7 @@ namespace Ozzyria.Game.ECS
         public Entity[] GetEntities(EntityQuery query)
         {
             if (query.IsEmpty())
-                return new Entity[] { };
+                return Array.Empty<Entity>();
 
             bool applyAnd = query.ands.Count > 0;
             var andEntityIds = entities.Keys.ToList();

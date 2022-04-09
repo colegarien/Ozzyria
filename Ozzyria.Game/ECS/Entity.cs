@@ -27,7 +27,7 @@ namespace Ozzyria.Game.ECS
                 OnComponentAdded(this, component);
         }
 
-        public void RemoveComponent(IComponent component)
+        public Entity RemoveComponent(IComponent component)
         {
             var type = component.GetType();
             if (HasComponent(type))
@@ -35,6 +35,8 @@ namespace Ozzyria.Game.ECS
 
             if(OnComponentRemoved != null)
                 OnComponentRemoved(this, component);
+
+            return this;
         }
 
         public void RemoveAllComponents()

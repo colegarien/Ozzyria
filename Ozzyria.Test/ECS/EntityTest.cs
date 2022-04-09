@@ -9,8 +9,8 @@ namespace Ozzyria.Test.ECS
         private readonly EntityContext _context;
         private readonly Entity _entity;
 
-        private Entity lastEventEntity;
-        private IComponent lastEventComponent;
+        private Entity? lastEventEntity;
+        private IComponent? lastEventComponent;
 
         public EntityTest()
         {
@@ -21,14 +21,14 @@ namespace Ozzyria.Test.ECS
             lastEventComponent = null;
         }
 
-        public void HandleComponentEvent(Entity entity, IComponent component)
+        internal void HandleComponentEvent(Entity entity, IComponent component)
         {
             lastEventEntity = entity;
             lastEventComponent = component;
         }
 
         [Fact]
-        public void createComponentTest()
+        public void CreateComponentTest()
         {
             var one = _entity.CreateComponent<ComponentA>();
             var two = _entity.CreateComponent(typeof(ComponentA));
@@ -37,7 +37,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void addComponentTest()
+        public void AddComponentTest()
         {
             var component = _entity.CreateComponent<ComponentA>();
             _entity.AddComponent(component);
@@ -47,7 +47,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void addComponent_MultipleTest()
+        public void AddComponent_MultipleTest()
         {
             var componentA = _entity.CreateComponent<ComponentA>();
             var componentB = _entity.CreateComponent<ComponentB>();
@@ -59,7 +59,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void removeComponentTest()
+        public void RemoveComponentTest()
         {
             var componentA = _entity.CreateComponent<ComponentA>();
             var componentB = _entity.CreateComponent<ComponentB>();
@@ -74,7 +74,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void removeAllComponents()
+        public void RemoveAllComponents()
         {
             var componentA = _entity.CreateComponent<ComponentA>();
             var componentB = _entity.CreateComponent<ComponentB>();
@@ -88,7 +88,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void testComponetAddedEvent()
+        public void TestComponetAddedEvent()
         {
             _entity.OnComponentAdded += HandleComponentEvent;
             var componentA = _entity.CreateComponent<ComponentA>();
@@ -100,7 +100,7 @@ namespace Ozzyria.Test.ECS
         }
 
         [Fact]
-        public void testComponetRemovedEvent()
+        public void TestComponetRemovedEvent()
         {
             _entity.OnComponentRemoved += HandleComponentEvent;
             var componentA = _entity.CreateComponent<ComponentA>();
