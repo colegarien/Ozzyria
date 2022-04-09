@@ -67,7 +67,7 @@ namespace Ozzyria.Game
                 {
                     entity.GetComponent<Thought>(ComponentType.Thought).Update(deltaTime, entityManager);
 
-                    // TODO likey move this to collision thang (when it exists)
+                    // TODO OZ-14 : likey move this to collision thang (when it exists)
                     if (entity.HasComponent(ComponentType.ExperienceBoost) && entity.GetComponent<ExperienceBoost>(ComponentType.ExperienceBoost).HasBeenAbsorbed)
                     {
                         entityManager.DeRegister(entity.Id);
@@ -171,7 +171,7 @@ namespace Ozzyria.Game
                     if (entity.HasComponent(ComponentType.Thought) && entity.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
                     {
                         // kick player out
-                        OnPlayerLeave(entity.Id);
+                        OnPlayerLeave(entity.Id);// TODO OZ-14 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
                     }
                 }
 
