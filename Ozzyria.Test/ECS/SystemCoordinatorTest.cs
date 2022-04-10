@@ -15,7 +15,6 @@ namespace Ozzyria.Test.ECS
             _coordinator = new SystemCoordinator();
         }
 
-        // TODO OZ-14 test trigger systems 
         [Fact]
         public void TickSystemOrdering()
         {
@@ -136,5 +135,50 @@ namespace Ozzyria.Test.ECS
             Assert.Equal(3, _context.GetEntities(queryB).Length);
         }
 
+        [Fact]
+        public void TriggerSystemNotTriggered()
+        {
+            var system = new CountingTriggerSystem(_context);
+            _coordinator.Add(system);
+
+            _coordinator.Execute(_context);
+
+            Assert.Equal(0, system.TriggerCount);
+        }
+
+        [Fact]
+        public void TriggerSystemSimpleTrigger()
+        {
+            var entity = _context.CreateEntity();
+            var system = new CountingTriggerSystem(_context);
+            _coordinator.Add(system);
+
+
+            entity.AddComponent(entity.CreateComponent(typeof(ComponentA)));
+            _coordinator.Execute(_context);
+            // no changes to any entities
+            _coordinator.Execute(_context);
+
+            Assert.Equal(1, system.TriggerCount);
+        }
+
+        [Fact]
+        public void TriggerSystemOrdering()
+        {
+            var entity = _context.CreateEntity();
+            var systemA = new CountingTriggerSystem(_context);
+            var systemB = new CountingTriggerSystem(_context);
+            var systemC = new CountingTriggerSystem(_context);
+
+            _coordinator.Add(systemA)
+                .Add(systemB)
+                .Add(systemC);
+
+            entity.AddComponent(entity.CreateComponent(typeof(ComponentA)));
+            _coordinator.Execute(_context);
+
+            Assert.True(systemA.InstanceCount < systemB.InstanceCount);
+            Assert.True(systemB.InstanceCount < systemC.InstanceCount);
+        }
     }
 }

@@ -1,10 +1,28 @@
-﻿namespace Ozzyria.Game.ECS
+﻿using System.Linq;
+
+namespace Ozzyria.Game.ECS
 {
     public abstract class TriggerSystem
     {
-        // TODO OZ-14 components should be immutable to make this work better (i.e. every update is just replacing the componet)?
-        public abstract QueryListener GetQuery(EntityContext context);
-        public abstract bool Filter(Entity entity);
-        public abstract void Execute(EntityContext context);
+        protected abstract QueryListener GetListener(EntityContext context);
+        protected abstract bool Filter(Entity entity);
+        public abstract void Execute(EntityContext context, Entity[] entities);
+
+        protected QueryListener _listener;
+        
+        public TriggerSystem(EntityContext context)
+        {
+            _listener = GetListener(context);
+        }
+
+        public void Execute(EntityContext context)
+        {
+            var entities = _listener.Gather()
+                .Where(e => Filter(e))
+                .ToArray();
+
+            if (entities.Length > 0)
+                Execute(context, entities);
+        }
     }
 }
