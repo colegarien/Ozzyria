@@ -9,6 +9,17 @@ namespace Ozzyria.Game.ECS
         protected IDictionary<uint, Entity> entities = new Dictionary<uint, Entity>();
         protected IDictionary<Type, List<uint>> entityComponents = new Dictionary<Type, List<uint>>();
 
+        protected List<QueryListener> _queryListeners = new List<QueryListener>();
+
+        protected readonly ComponentEvent OnComponentAdded;
+        protected readonly ComponentEvent OnComponentRemoved;
+
+        public EntityContext()
+        {
+            OnComponentAdded = HandleOnComponentAdded;
+            OnComponentRemoved = HandleOnComponentRemoved;
+        }
+
         public Entity[] GetEntities()
         {
             return entities.Values.ToArray();
@@ -62,8 +73,8 @@ namespace Ozzyria.Game.ECS
 
             entities[newId] = new Entity();
             entities[newId].id = newId;
-            entities[newId].OnComponentAdded += HandleOnComponentAdded;
-            entities[newId].OnComponentRemoved += HandleOnComponentRemoved;
+            entities[newId].OnComponentAdded += OnComponentAdded;
+            entities[newId].OnComponentRemoved += OnComponentRemoved;
 
             return entities[newId];
         }
@@ -74,18 +85,34 @@ namespace Ozzyria.Game.ECS
             entities.Remove(entity.id);
         }
 
+        public QueryListener CreateListener(EntityQuery query)
+        {
+            var listener = new QueryListener(query);
+            _queryListeners.Add(listener);
+            return listener;
+        }
 
         public void HandleOnComponentAdded(Entity entity, IComponent component)
         {
             if(!entityComponents.ContainsKey(component.GetType()))
                 entityComponents[component.GetType()] = new List<uint>();
             entityComponents[component.GetType()].Add(entity.id);
+
+            UpdateListeners(entity);
         }
 
         public void HandleOnComponentRemoved(Entity entity, IComponent component)
         {
             if(entityComponents.ContainsKey(component.GetType()))
                 entityComponents[component.GetType()].Remove(entity.id);
+
+            UpdateListeners(entity);
+        }
+
+        protected void UpdateListeners(Entity entity)
+        {
+            foreach (var listener in _queryListeners)
+                listener.HandleEntityChangeEvent(entity);
         }
     }
 }

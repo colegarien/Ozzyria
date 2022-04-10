@@ -172,5 +172,98 @@ namespace Ozzyria.Test.ECS
 
             Assert.Single(actual);
         }
+
+        [Fact]
+        public void MatchesEmptyTest()
+        {
+            var query = new EntityQuery();
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.False(actualA);
+            Assert.False(actualB);
+            Assert.False(actualAB);
+        }
+
+        [Fact]
+        public void MatchesOrTest()
+        {
+            var query = new EntityQuery()
+                .Or(typeof(ComponentA), typeof(ComponentC));
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.True(actualA);
+            Assert.False(actualB);
+            Assert.True(actualAB);
+        }
+
+        [Fact]
+        public void MatchesAndTest()
+        {
+            var query = new EntityQuery()
+                .And(typeof(ComponentA), typeof(ComponentB));
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.False(actualA);
+            Assert.False(actualB);
+            Assert.True(actualAB);
+        }
+
+        [Fact]
+        public void MatchesOrNoneTest()
+        {
+            var query = new EntityQuery()
+                .Or(typeof(ComponentA), typeof(ComponentB))
+                .None(typeof(ComponentB));
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.True(actualA);
+            Assert.False(actualB);
+            Assert.False(actualAB);
+        }
+
+        [Fact]
+        public void MatchesAndNoneTest()
+        {
+            var query = new EntityQuery()
+                .And(typeof(ComponentA), typeof(ComponentB))
+                .None(typeof(ComponentA));
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.False(actualA);
+            Assert.False(actualB);
+            Assert.False(actualAB);
+        }
+
+        [Fact]
+        public void MatchesAndOrTest()
+        {
+            var query = new EntityQuery()
+                .And(typeof(ComponentA))
+                .Or(typeof(ComponentB))
+                .None(typeof(ComponentC));
+
+            var actualA = query.Matches(_entityA);
+            var actualB = query.Matches(_entityB);
+            var actualAB = query.Matches(_entityAB);
+
+            Assert.False(actualA);
+            Assert.False(actualB);
+            Assert.True(actualAB);
+        }
     }
 }

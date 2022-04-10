@@ -15,6 +15,26 @@ namespace Ozzyria.Game.ECS
                 && ors.Count == 0;
         }
 
+        public bool Matches(Entity entity)
+        {
+            if (IsEmpty())
+                return false;
+
+            var hasAllAnds = true;
+            foreach (var type in ands)
+                hasAllAnds = hasAllAnds && entity.HasComponent(type);
+
+            var hasAnyOr = ors.Count == 0;
+            foreach (var type in ors)
+                hasAnyOr = hasAnyOr || entity.HasComponent(type);
+
+            var hasNoNones = true;
+            foreach(var type in nones)
+                hasNoNones = hasNoNones && !entity.HasComponent(type);
+
+            return hasAllAnds && hasAnyOr && hasNoNones;
+        }
+
         /// <summary>
         /// Add criteria that all entities must meet
         /// </summary>

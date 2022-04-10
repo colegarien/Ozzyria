@@ -15,7 +15,7 @@ namespace Ozzyria.Test.ECS
             _coordinator = new SystemCoordinator();
         }
 
-        // TODO OZ-14 test trigger systems
+        // TODO OZ-14 test trigger systems 
         [Fact]
         public void TickSystemOrdering()
         {
