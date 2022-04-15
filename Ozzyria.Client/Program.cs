@@ -35,6 +35,9 @@ namespace Ozzyria.Client
 
             var renderSystem = new RenderSystem();
 
+            var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);
+            var experienceBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 10, Color.Magenta, Color.Yellow);
+
             Console.WriteLine($"Window Size {window.Size.X}x{window.Size.Y} - View Size {window.GetView().Size.X}x{window.GetView().Size.Y}");
 
             window.Closed += (sender, e) =>
@@ -80,8 +83,8 @@ namespace Ozzyria.Client
                 client.SendInput(input);
                 client.HandleIncomingMessages(context);
 
-                var entities = context.GetEntities();
-                var playerEntityId = entities.FirstOrDefault(e => e.HasComponent(typeof(Player)) && ((Player)e.GetComponent(typeof(Player))).PlayerId == client.Id)?.id ?? 0;
+                var localPlayer = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == client.Id);
+                var playerEntityId = localPlayer?.id ?? 0;
 
                 ///
                 /// DRAWING HERE
@@ -100,13 +103,10 @@ namespace Ozzyria.Client
                 ///
                 /// Render UI Overlay
                 ///
-                var localPlayerStats = (Stats)entities.Where(e => e.id == playerEntityId).FirstOrDefault()?.GetComponent(typeof(Stats));
+                var localPlayerStats = (Stats)localPlayer?.GetComponent(typeof(Stats));
                 if (localPlayerStats != null)
                 {
-                    var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);
                     healthBar.SetMagnitude(localPlayerStats.Health, localPlayerStats.MaxHealth);
-
-                    var experienceBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 10, Color.Magenta, Color.Yellow);
                     experienceBar.SetMagnitude(localPlayerStats.Experience, localPlayerStats.MaxExperience);
 
                     healthBar.Draw(window);
