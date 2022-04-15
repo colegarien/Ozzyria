@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.ECS;
 using System.Linq;
 
 namespace Ozzyria.Game.Component
@@ -9,19 +10,19 @@ namespace Ozzyria.Game.Component
         const float MAX_FOLLOW_DISTANCE = 200;
         const float ABSORBTION_DISTANCE = 4;
 
-        public override void Update(float deltaTime, EntityManager entityManager)
+        public override void Update(float deltaTime, EntityContext context)
         {
-            var movement = Owner.GetComponent<Movement>(ComponentType.Movement);
-            var boost = Owner.GetComponent<ExperienceBoost>(ComponentType.ExperienceBoost);
+            var movement = (Movement)Owner.GetComponent(typeof(Movement));
+            var boost = (ExperienceBoost)Owner.GetComponent(typeof(ExperienceBoost));
 
             if (boost.HasBeenAbsorbed)
             {
                 return;
             }
 
-            var closestPlayer = entityManager.GetEntities()
-                .Where(e => e.Id != Owner.Id && e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Stats) && e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
-                .OrderBy(e => movement.DistanceTo(e.GetComponent<Movement>(ComponentType.Movement)))
+            var closestPlayer = context.GetEntities()
+                .Where(e => e.id != Owner.id && e.HasComponent(typeof(Movement)) && e.HasComponent(typeof(Stats)) && e.HasComponent(typeof(PlayerThought)))
+                .OrderBy(e => movement.DistanceTo((Movement)e.GetComponent(typeof(Movement))))
                 .FirstOrDefault();
             if (closestPlayer == null)
             {
@@ -29,8 +30,8 @@ namespace Ozzyria.Game.Component
                 return;
             }
 
-            var playerMovement = closestPlayer.GetComponent<Movement>(ComponentType.Movement);
-            var playerStats = closestPlayer.GetComponent<Stats>(ComponentType.Stats);
+            var playerMovement = (Movement)closestPlayer.GetComponent(typeof(Movement));
+            var playerStats = (Stats)closestPlayer.GetComponent(typeof(Stats));
 
             var distance = movement.DistanceTo(playerMovement);
             if (distance > MAX_FOLLOW_DISTANCE)

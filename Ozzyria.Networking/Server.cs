@@ -1,6 +1,4 @@
-﻿using Ozzyria.Game;
-using Ozzyria.Game.Event;
-using Ozzyria.Networking.Model;
+﻿using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -9,7 +7,7 @@ using System.Threading;
 
 namespace Ozzyria.Networking
 {
-    public class Server : IEventHandler
+    public class Server
     {
         const int SERVER_PORT = 13000;
 
@@ -29,8 +27,6 @@ namespace Ozzyria.Networking
             clientLastHeardFrom = new DateTime[MAX_CLIENTS];
 
             game = new Game.Game();
-            game.AttachEventHandler(this);
-
             server = new UdpClient(SERVER_PORT);
         }
 
@@ -104,15 +100,15 @@ namespace Ozzyria.Networking
 
         private int PrepareClientSlot(IPEndPoint clientEndPoint)
         {
-            var clientId = -1;
-            for (var i = 0; i < MAX_CLIENTS; i++)
+            int clientId = 0;
+            for (int i = 0; i < MAX_CLIENTS; i++)
             {
                 if (!IsConnected(i))
                 {
                     clientId = i;
                     clients[i] = clientEndPoint;
                     clientLastHeardFrom[i] = DateTime.Now;
-                    game.OnPlayerJoin(clientId);
+                    game.OnPlayerJoin(i);
                     Console.WriteLine($"Client #{i} Joined");
                     break;
                 }
@@ -123,13 +119,16 @@ namespace Ozzyria.Networking
 
         private void SendState()
         {
-            var entityPacket = ServerPacketFactory.EntityUpdates(game.entityManager.GetEntities());
+            var entityPacket = ServerPacketFactory.EntityUpdates(game.context.GetEntities());
             SendToAll(entityPacket);
+
+            var destroyPacket = ServerPacketFactory.EntityRemovals(game.context);
+            SendToAll(destroyPacket);
         }
 
         private void SendToAll(byte[] packet, int exclude = -1)
         {
-            for (var i = 0; i < MAX_CLIENTS; i++)
+            for (int i = 0; i < MAX_CLIENTS; i++)
             {
                 if (!IsConnected(i) || exclude == i)
                 {
@@ -164,17 +163,5 @@ namespace Ozzyria.Networking
             return clients[clientId] != null && clients[clientId].Equals(endPoint);
         }
 
-        public bool CanHandle(IEvent gameEvent)
-        {
-            // handle player deaths only
-            return gameEvent is EntityDead && ((EntityDead)gameEvent).Id >= 0 && ((EntityDead)gameEvent).Id < MAX_CLIENTS;
-        }
-
-        public void Handle(IEvent gameEvent)
-        {
-            var playerId = ((EntityDead)gameEvent).Id;
-            // just re-join game on death
-            game.OnPlayerJoin(playerId);
-        }
     }
 }

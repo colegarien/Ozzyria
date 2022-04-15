@@ -6,14 +6,13 @@ namespace Ozzyria.Game.Component
 {
     public class Collision : Component
     {
-        public override ComponentType Type() => ComponentType.Collision;
         [Savable]
         public bool IsDynamic { get; set; } = true;
 
         public static CollisionResult CircleIntersectsCircle(BoundingCircle circle1, BoundingCircle circle2)
         {
-            var movement = circle1.Owner.GetComponent<Movement>(ComponentType.Movement);
-            var otherMovement = circle2.Owner.GetComponent<Movement>(ComponentType.Movement);
+            var movement = (Movement)circle1.Owner.GetComponent(typeof(Movement));
+            var otherMovement = (Movement)circle2.Owner.GetComponent(typeof(Movement));
 
             var direction = Vector2.Normalize(new Vector2(movement.X - otherMovement.X, movement.Y - otherMovement.Y));
             var collisionResult = new CollisionResult
@@ -42,7 +41,7 @@ namespace Ozzyria.Game.Component
             };
 
             // Determine Correct Normal
-            var movement = box1.Owner.GetComponent<Movement>(ComponentType.Movement);
+            var movement = (Movement)box1.Owner.GetComponent(typeof(Movement));
             var dx = movement.X - movement.PreviousX;
             var dy = movement.Y - movement.PreviousY;
 
@@ -68,7 +67,7 @@ namespace Ozzyria.Game.Component
 
         public static CollisionResult CircleIntersectsBox(BoundingCircle circle, BoundingBox box)
         {
-            var movement = circle.Owner.GetComponent<Movement>(ComponentType.Movement);
+            var movement = (Movement)circle.Owner.GetComponent(typeof(Movement));
 
             var testX = movement.X;
             var testY = movement.Y;

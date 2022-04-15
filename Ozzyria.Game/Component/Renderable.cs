@@ -14,7 +14,6 @@ namespace Ozzyria.Game.Component
     [Options(Name = "Renderable")]
     public class Renderable : Component
     {
-        public override ComponentType Type() => ComponentType.Renderable;
 
         [Savable]
         public SpriteType Sprite { get; set; } = SpriteType.Default;

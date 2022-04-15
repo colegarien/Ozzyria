@@ -12,9 +12,9 @@ namespace Ozzyria.Game.Component
 
         public float GetLeft()
         {
-            if (Owner.HasComponent(ComponentType.Movement))
+            if (Owner.HasComponent(typeof(Movement)))
             {
-                return Owner.GetComponent<Movement>(ComponentType.Movement).X - (Width / 2f);
+                return ((Movement)Owner.GetComponent(typeof(Movement))).X - (Width / 2f);
             }
 
             return 0;
@@ -22,9 +22,9 @@ namespace Ozzyria.Game.Component
 
         public float GetRight()
         {
-            if (Owner.HasComponent(ComponentType.Movement))
+            if (Owner.HasComponent(typeof(Movement)))
             {
-                return Owner.GetComponent<Movement>(ComponentType.Movement).X + (Width / 2f);
+                return ((Movement)Owner.GetComponent(typeof(Movement))).X + (Width / 2f);
             }
 
             return Width;
@@ -32,9 +32,9 @@ namespace Ozzyria.Game.Component
 
         public float GetTop()
         {
-            if (Owner.HasComponent(ComponentType.Movement))
+            if (Owner.HasComponent(typeof(Movement)))
             {
-                return Owner.GetComponent<Movement>(ComponentType.Movement).Y - (Height / 2f);
+                return ((Movement)Owner.GetComponent(typeof(Movement))).Y - (Height / 2f);
             }
 
             return 0;
@@ -42,9 +42,9 @@ namespace Ozzyria.Game.Component
 
         public float GetBottom()
         {
-            if (Owner.HasComponent(ComponentType.Movement))
+            if (Owner.HasComponent(typeof(Movement)))
             {
-                return Owner.GetComponent<Movement>(ComponentType.Movement).Y + (Height / 2f);
+                return ((Movement)Owner.GetComponent(typeof(Movement))).Y + (Height / 2f);
             }
 
             return Height;

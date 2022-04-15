@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Component
 {
     public abstract class Thought : Component
     {
-        public override ComponentType Type() => ComponentType.Thought;
-        public abstract void Update(float deltaTime, EntityManager entityManager);
+        public abstract void Update(float deltaTime, EntityContext context);
     }
 }

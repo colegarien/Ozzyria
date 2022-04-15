@@ -12,7 +12,7 @@ namespace Ozzyria.Networking.Model
     class ClientPacket
     {
         public ClientMessage Type { get; set; }
-        public int ClientId { get; set; } = -1;
+        public int ClientId { get; set; } = 0;
         public byte[] Data { get; set; }
     }
 
@@ -35,7 +35,7 @@ namespace Ozzyria.Networking.Model
 
         public static byte[] Join()
         {
-            return Pack(ClientMessage.Join, -1, new byte[] { });
+            return Pack(ClientMessage.Join, 0, new byte[] { }); // TODO OZ-14 uh oh again on the -1
         }
         public static byte[] Leave(int clientId)
         {

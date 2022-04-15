@@ -23,6 +23,11 @@ namespace Ozzyria.Game.ECS
             // TODO OZ-14 throw error if Component already linked
             _components[component.GetType()] = component;
 
+
+            // TODO OZ-14 get rid of this or do it better!
+            if (component is Component.Component)
+                ((Component.Component)component).Owner = this;
+
             if(OnComponentAdded != null)
                 OnComponentAdded(this, component);
         }

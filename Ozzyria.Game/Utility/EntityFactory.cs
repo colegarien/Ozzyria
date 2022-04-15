@@ -1,65 +1,119 @@
 ﻿using Ozzyria.Game.Component;
+using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Utility
 {
     public class EntityFactory
     {
 
-        public static Entity CreatePlayer(int id)
+        public static void CreatePlayer(EntityContext context, int playerId)
         {
-            var player = new Entity { Id = id };
-            player.AttachComponent(new Renderable { Sprite = SpriteType.Player, Z = (int)ZLayer.Middleground });
-            player.AttachComponent(new PlayerThought());
-            player.AttachComponent(new Movement() { X = 140, Y = 140 });
-            player.AttachComponent(new Stats());
-            player.AttachComponent(new Combat());
-            player.AttachComponent(new Input());
-            player.AttachComponent(new BoundingCircle { Radius = 10 });
+            var player = context.CreateEntity();
 
-            return player;
+            var renderable = (Renderable)player.CreateComponent(typeof(Renderable));
+            renderable.Sprite = SpriteType.Player;
+            renderable.Z = (int)ZLayer.Middleground;
+
+            var playerTag = (Player)player.CreateComponent(typeof(Player));
+            playerTag.PlayerId = playerId;
+
+            var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
+
+            var movement = (Movement)player.CreateComponent(typeof(Movement));
+            movement.X = 140;
+            movement.Y = 140;
+
+            var stats = (Stats)player.CreateComponent(typeof(Stats));
+            var combat = (Combat)player.CreateComponent(typeof(Combat));
+            var input = (Input)player.CreateComponent(typeof(Input));
+
+            var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
+            collision.Radius = 10;
+
+            player.AddComponent(renderable);
+            player.AddComponent(playerTag);
+            player.AddComponent(thought);
+            player.AddComponent(movement);
+            player.AddComponent(stats);
+            player.AddComponent(combat);
+            player.AddComponent(input);
+            player.AddComponent(collision);
         }
 
-        public static Entity CreateSlime(float x, float y)
+        public static void CreateSlime(EntityContext context, float x, float y)
         {
-            var slime = new Entity();
-            slime.AttachComponent(new Renderable { Sprite = SpriteType.Slime, Z = (int)ZLayer.Middleground });
-            slime.AttachComponent(new SlimeThought());
-            slime.AttachComponent(new Movement { MAX_SPEED = 50f, ACCELERATION = 300f, X = x, Y = y });
-            slime.AttachComponent(new Stats { Health = 30, MaxHealth = 30 });
-            slime.AttachComponent(new Combat());
-            slime.AttachComponent(new BoundingCircle { Radius = 10 });
+            var slime = context.CreateEntity();
 
-            return slime;
+            var renderable = (Renderable)slime.CreateComponent(typeof(Renderable));
+            renderable.Sprite = SpriteType.Slime;
+            renderable.Z = (int)ZLayer.Middleground;
+
+            var thought = (SlimeThought)slime.CreateComponent(typeof(SlimeThought));
+
+            var movement = (Movement)slime.CreateComponent(typeof(Movement));
+            movement.MAX_SPEED = 50f;
+            movement.ACCELERATION = 300f;
+            movement.X = x;
+            movement.Y = y;
+
+            var stats = (Stats)slime.CreateComponent(typeof(Stats));
+            stats.Health = 30;
+            stats.MaxHealth = 30;
+
+            var combat = (Combat)slime.CreateComponent(typeof(Combat));
+            var input = (Input)slime.CreateComponent(typeof(Input));
+
+            var collision = (BoundingCircle)slime.CreateComponent(typeof(BoundingCircle));
+            collision.Radius = 10;
+
+            slime.AddComponent(renderable);
+            slime.AddComponent(thought);
+            slime.AddComponent(movement);
+            slime.AddComponent(stats);
+            slime.AddComponent(combat);
+            slime.AddComponent(input);
+            slime.AddComponent(collision);
+
         }
 
-        public static Entity CreateSlimeSpawner(float x, float y)
+        public static void CreateSlimeSpawner(EntityContext context, float x, float y)
         {
-            var spawner = new Entity();
-            spawner.AttachComponent(new SlimeSpawner
-            {
-                X = x,
-                Y = y,
-                ThinkDelay = new Delay
-                {
-                    DelayInSeconds = 5f
-                }
-            });
+            var spawner = context.CreateEntity();
 
-            return spawner;
+            var component = (SlimeSpawner)spawner.CreateComponent(typeof(SlimeSpawner));
+            component.X = x;
+            component.Y = y;
+            component.ThinkDelay = new Delay { DelayInSeconds = 5f };
+
+            spawner.AddComponent(component);
         }
 
-        public static Entity CreateExperienceOrb(float x, float y, int value)
+        public static void CreateExperienceOrb(EntityContext context, float x, float y, int value)
         {
-            var orb = new Entity();
-            orb.AttachComponent(new Renderable { Sprite = SpriteType.Particle, Z = (int)ZLayer.Items });
-            orb.AttachComponent(new ExperienceOrbThought());
-            orb.AttachComponent(new Movement { ACCELERATION = 200f, MAX_SPEED = 300f, X = x, Y = y });
-            orb.AttachComponent(new ExperienceBoost { Experience = value });
+            var orb = context.CreateEntity();
 
-            return orb;
+            var renderable = (Renderable)orb.CreateComponent(typeof(Renderable));
+            renderable.Sprite = SpriteType.Particle;
+            renderable.Z = (int)ZLayer.Items;
+
+            var thought = (ExperienceOrbThought)orb.CreateComponent(typeof(ExperienceOrbThought));
+
+            var movement = (Movement)orb.CreateComponent(typeof(Movement));
+            movement.ACCELERATION = 200f;
+            movement.MAX_SPEED = 300f;
+            movement.X = x;
+            movement.Y = y;
+
+            var boost = (ExperienceBoost)orb.CreateComponent(typeof(ExperienceBoost));
+            boost.Experience = value;
+
+            orb.AddComponent(renderable);
+            orb.AddComponent(thought);
+            orb.AddComponent(movement);
+            orb.AddComponent(boost);
         }
 
-        public static Entity CreateBoxColliderArea(float left, float top, float right, float bottom)
+        public static void CreateBoxColliderArea(EntityContext context, float left, float top, float right, float bottom)
         {
             var width = (int)(right - left);
             var height = (int)(bottom - top);
@@ -67,20 +121,42 @@ namespace Ozzyria.Game.Utility
             var centerX = left + (width / 2f);
             var centerY = top + (height / 2f);
 
-            var box = new Entity();
-            box.AttachComponent(new Movement() { X = centerX, Y = centerY, PreviousX = centerX, PreviousY = centerY });
-            box.AttachComponent(new BoundingBox() { IsDynamic = false, Width = width, Height = height });
+            var box = context.CreateEntity();
 
-            return box;
+            var movement = (Movement)box.CreateComponent<Movement>();
+            movement.X = centerX;
+            movement.Y = centerY;
+            movement.PreviousX = centerX;
+            movement.PreviousY = centerY;
+
+
+            var bounds = (BoundingBox)box.CreateComponent<BoundingBox>();
+            bounds.IsDynamic = false;
+            bounds.Width = width;
+            bounds.Height = height;
+
+            box.AddComponent(movement);
+            box.AddComponent(bounds);
         }
 
-        public static Entity CreateCircleCollider(float x, float y, float radius)
+        public static void CreateCircleCollider(EntityContext context, float x, float y, float radius)
         {
-            var circle = new Entity();
-            circle.AttachComponent(new Movement() { X = x, Y = y, PreviousX = x, PreviousY = y });
-            circle.AttachComponent(new BoundingCircle() { IsDynamic = false, Radius = radius });
+            var circle = context.CreateEntity();
 
-            return circle;
+            var movement = (Movement)circle.CreateComponent<Movement>();
+            movement.X = x;
+            movement.Y = y;
+            movement.PreviousX = x;
+            movement.PreviousY = y;
+
+
+            var bounds = (BoundingCircle)circle.CreateComponent<BoundingCircle>();
+            bounds.IsDynamic = false;
+            bounds.Radius = radius;
+
+            circle.AddComponent(movement);
+            circle.AddComponent(bounds);
+
         }
 
     }

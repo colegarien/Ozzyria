@@ -2,6 +2,6 @@
 {
     public abstract class TickSystem
     {
-        public abstract void Execute(EntityContext context);
+        public abstract void Execute(float deltaTime, EntityContext context);
     }
 }

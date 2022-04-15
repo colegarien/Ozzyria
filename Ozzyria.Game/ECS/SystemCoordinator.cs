@@ -19,11 +19,11 @@ namespace Ozzyria.Game.ECS
             return this;
         }
 
-        public void Execute(EntityContext context)
+        public void Execute(float deltaTime, EntityContext context)
         {
             foreach(var system in tickSystems)
             {
-                system.Execute(context);
+                system.Execute(deltaTime, context);
             }
 
             foreach (var system in triggerSystems)

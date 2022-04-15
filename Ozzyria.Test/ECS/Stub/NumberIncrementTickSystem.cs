@@ -7,7 +7,7 @@ namespace Ozzyria.Test.ECS.Stub
         public static int TickCount = 0;
         public int InstanceTick = -1;
 
-        public override void Execute(EntityContext context)
+        public override void Execute(float deltaTime, EntityContext context)
         {
             // iterate static tickCount and save value in instance variable
             TickCount++;

@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using System.Linq;
 
@@ -18,15 +19,15 @@ namespace Ozzyria.Game.Component
             DelayInSeconds = 5f
         };
 
-        public override void Update(float deltaTime, EntityManager entityManager)
+        public override void Update(float deltaTime, EntityContext context)
         {
             ThinkDelay.Update(deltaTime);
 
-            var numberOfSlimes = entityManager.GetEntities().Count(e => e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is SlimeThought);
+            var numberOfSlimes = context.GetEntities().Count(e => e.HasComponent(typeof(SlimeThought)));
             if (numberOfSlimes < SLIME_LIMIT && ThinkDelay.IsReady())
             {
                 // OZ-22 : check if spawner is block before spawning things
-                entityManager.Register(EntityFactory.CreateSlime(X, Y));
+                EntityFactory.CreateSlime(context, X, Y);
             }
         }
     }

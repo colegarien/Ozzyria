@@ -5,7 +5,6 @@ namespace Ozzyria.Game.Component
     [Options(Name = "Stats")]
     public class Stats : Component
     {
-        public override ComponentType Type() => ComponentType.Stats;
         [Savable]
         public int Experience { get; set; } = 0;
         [Savable]

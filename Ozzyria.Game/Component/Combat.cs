@@ -5,7 +5,6 @@ namespace Ozzyria.Game.Component
     [Options(Name = "Combat")]
     public class Combat : Component
     {
-        public override ComponentType Type() => ComponentType.Combat;
 
         [Savable]
         public Delay Delay { get; set; } = new Delay { DelayInSeconds = 0.5f };

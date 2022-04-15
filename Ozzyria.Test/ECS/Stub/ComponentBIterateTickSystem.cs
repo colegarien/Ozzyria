@@ -4,7 +4,7 @@ namespace Ozzyria.Test.ECS.Stub
 {
     internal class ComponentBIterateTickSystem : TickSystem
     {
-        public override void Execute(EntityContext context)
+        public override void Execute(float deltaTime, EntityContext context)
         {
             var query = new EntityQuery();
             query.And(typeof(ComponentB));

@@ -5,7 +5,6 @@ namespace Ozzyria.Game.Component
     [Options(Name = "Input")]
     public class Input : Component
     {
-        public override ComponentType Type() => ComponentType.Input;
 
         [Savable]
         public bool MoveUp { get; set; } = false;

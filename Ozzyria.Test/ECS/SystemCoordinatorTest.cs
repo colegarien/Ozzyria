@@ -8,6 +8,7 @@ namespace Ozzyria.Test.ECS
     {
         private readonly EntityContext _context;
         private readonly SystemCoordinator _coordinator;
+        private const float DELTA_TIME = 0.16f;
 
         public SystemCoordinatorTest()
         {
@@ -26,7 +27,7 @@ namespace Ozzyria.Test.ECS
                 .Add(systemB)
                 .Add(systemC);
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.True(systemA.InstanceTick < systemB.InstanceTick);
             Assert.True(systemB.InstanceTick < systemC.InstanceTick);
@@ -42,7 +43,7 @@ namespace Ozzyria.Test.ECS
 
             _coordinator.Add(new ComponentBIterateTickSystem());
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.Equal(2, ((ComponentB)entity.GetComponent(typeof(ComponentB))).SomeNumber);
         }
@@ -58,7 +59,7 @@ namespace Ozzyria.Test.ECS
             _coordinator.Add(new ComponentBIterateTickSystem())
                 .Add(new ComponentBIterateTickSystem());
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.Equal(3, ((ComponentB)entity.GetComponent(typeof(ComponentB))).SomeNumber);
         }
@@ -73,8 +74,8 @@ namespace Ozzyria.Test.ECS
 
             _coordinator.Add(new ComponentBIterateTickSystem());
 
-            _coordinator.Execute(_context);
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.Equal(3, ((ComponentB)entity.GetComponent(typeof(ComponentB))).SomeNumber);
         }
@@ -90,13 +91,13 @@ namespace Ozzyria.Test.ECS
 
             _coordinator.Add(new SwapComponentTickSystem());
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.False(entityA.HasComponent(typeof(ComponentA)));
             Assert.True(entityA.HasComponent(typeof(ComponentB)));
             Assert.True(entityB.HasComponent(typeof(ComponentA)));
             Assert.False(entityB.HasComponent(typeof(ComponentB)));
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.True(entityA.HasComponent(typeof(ComponentA)));
             Assert.False(entityA.HasComponent(typeof(ComponentB)));
             Assert.False(entityB.HasComponent(typeof(ComponentA)));
@@ -118,19 +119,19 @@ namespace Ozzyria.Test.ECS
 
             _coordinator.Add(new AddRemoveEntityTickSystem());
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.Equal(2, _context.GetEntities(queryA).Length);
             Assert.Single(_context.GetEntities(queryB));
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.Single(_context.GetEntities(queryA));
             Assert.Equal(2, _context.GetEntities(queryB).Length);
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.Empty(_context.GetEntities(queryA));
             Assert.Equal(3, _context.GetEntities(queryB).Length);
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             Assert.Empty(_context.GetEntities(queryA));
             Assert.Equal(3, _context.GetEntities(queryB).Length);
         }
@@ -141,7 +142,7 @@ namespace Ozzyria.Test.ECS
             var system = new CountingTriggerSystem(_context);
             _coordinator.Add(system);
 
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.Equal(0, system.TriggerCount);
         }
@@ -155,9 +156,9 @@ namespace Ozzyria.Test.ECS
 
 
             entity.AddComponent(entity.CreateComponent(typeof(ComponentA)));
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
             // no changes to any entities
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.Equal(1, system.TriggerCount);
         }
@@ -175,7 +176,7 @@ namespace Ozzyria.Test.ECS
                 .Add(systemC);
 
             entity.AddComponent(entity.CreateComponent(typeof(ComponentA)));
-            _coordinator.Execute(_context);
+            _coordinator.Execute(DELTA_TIME, _context);
 
             Assert.True(systemA.InstanceCount < systemB.InstanceCount);
             Assert.True(systemB.InstanceCount < systemC.InstanceCount);

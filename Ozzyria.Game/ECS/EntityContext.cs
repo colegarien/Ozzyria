@@ -8,6 +8,7 @@ namespace Ozzyria.Game.ECS
     {
         protected IDictionary<uint, Entity> entities = new Dictionary<uint, Entity>();
         protected IDictionary<Type, List<uint>> entityComponents = new Dictionary<Type, List<uint>>();
+        protected List<uint> recentlyRemoved = new List<uint>();
 
         protected List<QueryListener> _queryListeners = new List<QueryListener>();
 
@@ -67,9 +68,14 @@ namespace Ozzyria.Game.ECS
                 .ToArray();
         }
 
-        public Entity CreateEntity()
+        public Entity CreateEntity(uint? id = null)
         {
-            uint newId = (entities.Keys.Count > 0 ? entities.Keys.Max() : 0) + 1;
+            uint newId = id == null
+                ? (entities.Keys.Count > 0 ? entities.Keys.Max() : 0) + 1
+                : (uint)id;
+
+            if(entities.ContainsKey(newId))
+                return entities[newId];
 
             entities[newId] = new Entity();
             entities[newId].id = newId;
@@ -79,10 +85,28 @@ namespace Ozzyria.Game.ECS
             return entities[newId];
         }
 
+        public void DestroyEntity(uint id)
+        {
+            if (entities.ContainsKey(id))
+            {
+                entities[id].RemoveAllComponents();
+                entities.Remove(id);
+            }
+        }
+
         public void DestroyEntity(Entity entity)
         {
+            recentlyRemoved.Add(entity.id);
+
             entity.RemoveAllComponents();
             entities.Remove(entity.id);
+        }
+
+        public uint[] GetRecentlyDestroyed()
+        {
+            var ids = recentlyRemoved.ToArray();
+            recentlyRemoved.Clear();
+            return ids;
         }
 
         public QueryListener CreateListener(EntityQuery query)

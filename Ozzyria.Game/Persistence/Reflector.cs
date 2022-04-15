@@ -16,6 +16,15 @@ namespace Ozzyria.Game.Persistence
         private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
         private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
 
+
+        public static Type  GetTypeForId(string identifier)
+        {
+            ValidateReflectionCaches();
+            return componentTypes.ContainsKey(identifier)
+                ? componentTypes[identifier]
+                : null;
+        }
+
         public static object? CreateInstance(string identifier)
         {
             ValidateReflectionCaches();

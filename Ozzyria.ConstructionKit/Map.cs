@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Component;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using System.Collections.Generic;
@@ -382,11 +383,11 @@ namespace Ozzyria.ConstructionKit
                 var mapMeta = MapMetaDataFactory.mapMetaDatas[mapName];
                 var tileSetMeta = TileSetMetaDataFactory.tileSetMetaDatas[map.TileSet];
 
-                var entityManager = new EntityManager();
+                var context = new EntityContext();
 
-                entityManager.Register(EntityFactory.CreateExperienceOrb(400, 300, 30));
-                entityManager.Register(EntityFactory.CreateSlimeSpawner(500, 400));
-                entityManager.Register(EntityFactory.CreateCircleCollider(60, 60, 10));
+                EntityFactory.CreateExperienceOrb(context, 400, 300, 30);
+                EntityFactory.CreateSlimeSpawner(context, 500, 400);
+                EntityFactory.CreateCircleCollider(context, 60, 60, 10);
 
                 // build colliders for collideable tiles
                 for (var layer = 0; layer < mapMeta.Layers; layer++)
@@ -423,7 +424,7 @@ namespace Ozzyria.ConstructionKit
                                     if (tileType != startType && startY != -1 && endY != -1)
                                     {
                                         // starting new string of wall types (collision could be a different size)
-                                        entityManager.Register(CreateVerticalBoxCollider(tileSetMeta, startType, x, startY, endY));
+                                        CreateVerticalBoxCollider(context, tileSetMeta, startType, x, startY, endY);
                                         startType = -1;
                                         startY = -1;
                                         endY = -1;
@@ -438,7 +439,7 @@ namespace Ozzyria.ConstructionKit
                                 }
                                 else if (startY != -1 && endY != -1)
                                 {
-                                    entityManager.Register(CreateVerticalBoxCollider(tileSetMeta, startType, x, startY, endY));
+                                    CreateVerticalBoxCollider(context, tileSetMeta, startType, x, startY, endY);
                                     startType = -1;
                                     startY = -1;
                                     endY = -1;
@@ -448,7 +449,7 @@ namespace Ozzyria.ConstructionKit
                             {
                                 if (startY != -1 && endY != -1)
                                 {
-                                    entityManager.Register(CreateVerticalBoxCollider(tileSetMeta, startType, x, startY, endY));
+                                    CreateVerticalBoxCollider(context, tileSetMeta, startType, x, startY, endY);
                                 }
 
                                 startType = -1;
@@ -459,7 +460,7 @@ namespace Ozzyria.ConstructionKit
 
                         if (startY != -1 && endY != -1)
                         {
-                            entityManager.Register(CreateVerticalBoxCollider(tileSetMeta, startType, x, startY, endY));
+                            CreateVerticalBoxCollider(context, tileSetMeta, startType, x, startY, endY);
                         }
                     }
 
@@ -493,7 +494,7 @@ namespace Ozzyria.ConstructionKit
                                     if (tileType != startType && startX != -1 && endX != -1)
                                     {
                                         // starting new string of wall types (collision could be a different size)
-                                        entityManager.Register(CreateHorizontalBoxCollider(tileSetMeta, startType, y, startX, endX));
+                                        CreateHorizontalBoxCollider(context, tileSetMeta, startType, y, startX, endX);
                                         startType = -1;
                                         startX = -1;
                                         endX = -1;
@@ -508,7 +509,7 @@ namespace Ozzyria.ConstructionKit
                                 }
                                 else if (startX != -1 && endX != -1)
                                 {
-                                    entityManager.Register(CreateHorizontalBoxCollider(tileSetMeta, startType, y, startX, endX));
+                                    CreateHorizontalBoxCollider(context, tileSetMeta, startType, y, startX, endX);
                                     startType = -1;
                                     startX = -1;
                                     endX = -1;
@@ -518,7 +519,7 @@ namespace Ozzyria.ConstructionKit
                             {
                                 if (startX != -1 && endX != -1)
                                 {
-                                    entityManager.Register(CreateHorizontalBoxCollider(tileSetMeta, startType, y, startX, endX));
+                                    CreateHorizontalBoxCollider(context, tileSetMeta, startType, y, startX, endX);
                                 }
 
                                 startType = -1;
@@ -529,15 +530,15 @@ namespace Ozzyria.ConstructionKit
 
                         if (startX != -1 && endX != -1)
                         {
-                            entityManager.Register(CreateHorizontalBoxCollider(tileSetMeta, startType, y, startX, endX));
+                            CreateHorizontalBoxCollider(context, tileSetMeta, startType, y, startX, endX);
                         }
                     }
                 }
-                persistence.SaveEntityManager(mapMeta.EntityTemplate, entityManager);
+                persistence.SaveContext(mapMeta.EntityTemplate, context);
             }
         }
 
-        private static Entity CreateVerticalBoxCollider(TileSetMetaData tileSetMeta, int tileType, int x, int startY, int endY)
+        private static void CreateVerticalBoxCollider(EntityContext context, TileSetMetaData tileSetMeta, int tileType, int x, int startY, int endY)
         {
             var tileDimension = Tile.DIMENSION;
             var centerXOffset = tileSetMeta.GetWallableCenterXOffset(tileType);
@@ -552,10 +553,10 @@ namespace Ozzyria.ConstructionKit
             var startTop = ((startY * tileDimension) + (tileDimension / 2)) + centerYOffset - (colliderDimension / 2);
             var endBottom = (((endY * tileDimension) + (tileDimension / 2)) + centerYOffset - (colliderDimension / 2)) + colliderDimension;
 
-            return EntityFactory.CreateBoxColliderArea(centerLeft, startTop, centerRight, endBottom);
+            EntityFactory.CreateBoxColliderArea(context, centerLeft, startTop, centerRight, endBottom);
         }
 
-        private static Entity CreateHorizontalBoxCollider(TileSetMetaData tileSetMeta, int tileType, int y, int startX, int endX)
+        private static void CreateHorizontalBoxCollider(EntityContext context, TileSetMetaData tileSetMeta, int tileType, int y, int startX, int endX)
         {
             var tileDimension = Tile.DIMENSION;
             var centerXOffset = tileSetMeta.GetWallableCenterXOffset(tileType);
@@ -570,7 +571,7 @@ namespace Ozzyria.ConstructionKit
             var startLeft = (((startX * tileDimension) + (tileDimension / 2)) + centerXOffset - (colliderDimension / 2));
             var endRight = (((endX * tileDimension) + (tileDimension / 2)) + centerXOffset - (colliderDimension / 2)) + colliderDimension;
 
-            return EntityFactory.CreateBoxColliderArea(startLeft, centerTop, endRight, centerBottom);
+            EntityFactory.CreateBoxColliderArea(context, startLeft, centerTop, endRight, centerBottom);
         }
     }
 }

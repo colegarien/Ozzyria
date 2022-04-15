@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
 using Ozzyria.Game.Component;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using SFML.Graphics;
 using SFML.Window;
@@ -15,6 +16,8 @@ namespace Ozzyria.Client
 
         static void Main(string[] args)
         {
+            var context = new EntityContext();
+
             var graphicsManger = GraphicsManager.GetInstance();
             var worldLoader = new WorldPersistence();
             var tileMap = worldLoader.LoadMap("test_m"); // TODO server should be telling user what map
@@ -75,9 +78,10 @@ namespace Ozzyria.Client
                 /// Do Updates
                 ///
                 client.SendInput(input);
-                client.HandleIncomingMessages();
+                client.HandleIncomingMessages(context);
 
-                var entities = client.Entities;
+                var entities = context.GetEntities();
+                var playerEntityId = entities.FirstOrDefault(e => e.HasComponent(typeof(Player)) && ((Player)e.GetComponent(typeof(Player))).PlayerId == client.Id)?.id ?? 0;
 
                 ///
                 /// DRAWING HERE
@@ -85,7 +89,7 @@ namespace Ozzyria.Client
                 window.Clear();
 
                 worldRenderTexture.Clear();
-                renderSystem.Render(worldRenderTexture, camera, tileMap, client.Id, entities);
+                renderSystem.Render(worldRenderTexture, camera, tileMap, context, playerEntityId);
                 worldRenderTexture.Display();
                 window.Draw(new Sprite(worldRenderTexture.Texture)
                 {
@@ -96,7 +100,7 @@ namespace Ozzyria.Client
                 ///
                 /// Render UI Overlay
                 ///
-                var localPlayerStats = entities.Where(e => e.Id == client.Id).FirstOrDefault()?.GetComponent<Stats>(ComponentType.Stats);
+                var localPlayerStats = (Stats)entities.Where(e => e.id == playerEntityId).FirstOrDefault()?.GetComponent(typeof(Stats));
                 if (localPlayerStats != null)
                 {
                     var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);

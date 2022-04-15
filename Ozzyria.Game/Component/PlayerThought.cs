@@ -1,15 +1,16 @@
 ﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Component
 {
     [Options(Name = "PlayerThought")]
     public class PlayerThought : Thought
     {
-        public override void Update(float deltaTime, EntityManager entityManager)
+        public override void Update(float deltaTime, EntityContext context)
         {
-            var input = Owner.GetComponent<Input>(ComponentType.Input);
-            var movement = Owner.GetComponent<Movement>(ComponentType.Movement);
-            var combat = Owner.GetComponent<Combat>(ComponentType.Combat);
+            var input = (Input)Owner.GetComponent(typeof(Input));
+            var movement = (Movement)Owner.GetComponent(typeof(Movement));
+            var combat = (Combat)Owner.GetComponent(typeof(Combat));
 
             HandleInput(deltaTime, input, movement);
 

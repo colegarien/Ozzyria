@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game.Component.Attribute;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using System;
 using System.Linq;
@@ -13,14 +14,14 @@ namespace Ozzyria.Game.Component
         public Delay ThinkDelay { get; set; } = new Delay();
         public int ThinkAction { get; set; } = 0;
 
-        public override void Update(float deltaTime, EntityManager entityManager)
+        public override void Update(float deltaTime, EntityContext context)
         {
-            var movement = Owner.GetComponent<Movement>(ComponentType.Movement);
-            var combat = Owner.GetComponent<Combat>(ComponentType.Combat);
+            var movement = (Movement)Owner.GetComponent(typeof(Movement));
+            var combat = (Combat)Owner.GetComponent(typeof(Combat));
 
-            var closestPlayer = entityManager.GetEntities()
-                .Where(e => e.Id != Owner.Id && e.HasComponent(ComponentType.Movement) && e.HasComponent(ComponentType.Stats) && e.HasComponent(ComponentType.Thought) && e.GetComponent<Thought>(ComponentType.Thought) is PlayerThought)
-                .OrderBy(p => movement.DistanceTo(p.GetComponent<Movement>(ComponentType.Movement)))
+            var closestPlayer = context.GetEntities()
+                .Where(e => e.id != Owner.id && e.HasComponent(typeof(Movement)) && e.HasComponent(typeof(Stats)) && e.HasComponent(typeof(PlayerThought)))
+                .OrderBy(p => movement.DistanceTo((Movement)p.GetComponent(typeof(Movement))))
                 .FirstOrDefault();
             if (closestPlayer == null)
             {
@@ -30,7 +31,7 @@ namespace Ozzyria.Game.Component
                 return;
             }
 
-            var playerMovement = closestPlayer.GetComponent<Movement>(ComponentType.Movement);
+            var playerMovement = (Movement)closestPlayer.GetComponent(typeof(Movement));
 
             var distance = movement.DistanceTo(playerMovement);
             if (distance > MAX_FOLLOW_DISTANCE)
