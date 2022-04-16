@@ -14,18 +14,19 @@ namespace Ozzyria.Game
 
         public Game()
         {
-            var worldLoader = new WorldPersistence();
-            tileMap = worldLoader.LoadMap("test_m");
-
             context = new EntityContext();
-            worldLoader.LoadContext(context, "test_e");
-
             coordinator = new SystemCoordinator();
+            // TODO OZ-14 rethink some systems with the new changes listener!
             coordinator
                 .Add(new Systems.Thought())
                 .Add(new Systems.Physics())
                 .Add(new Systems.Combat())
                 .Add(new Systems.Death(context));
+
+            var worldLoader = new WorldPersistence();
+            tileMap = worldLoader.LoadMap("test_m");
+            worldLoader.LoadContext(context, "test_e");
+
         }
 
         public void OnPlayerJoin(int playerId)
