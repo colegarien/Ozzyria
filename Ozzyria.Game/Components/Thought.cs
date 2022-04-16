@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Game.ECS;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
     public abstract class Thought : Component
     {

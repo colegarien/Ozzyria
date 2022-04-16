@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,7 +94,7 @@ namespace Ozzyria.Game.Persistence
 
             var types = Assembly.GetExecutingAssembly().GetTypes()
                       .Where(t => t.IsClass
-                                && t.Namespace.Equals("Ozzyria.Game.Component")
+                                && t.Namespace.Equals("Ozzyria.Game.Components")
                                 && t.GetCustomAttributes(typeof(OptionsAttribute), false).Any()
                       );
 

@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Systems
@@ -23,7 +23,7 @@ namespace Ozzyria.Game.Systems
                     continue;
                 }
 
-                var thought = (Component.Thought)(entity.GetComponent(typeof(PlayerThought)) ?? entity.GetComponent(typeof(SlimeThought)) ?? entity.GetComponent(typeof(SlimeSpawner)) ?? entity.GetComponent(typeof(ExperienceOrbThought)));
+                var thought = (Components.Thought)(entity.GetComponent(typeof(PlayerThought)) ?? entity.GetComponent(typeof(SlimeThought)) ?? entity.GetComponent(typeof(SlimeSpawner)) ?? entity.GetComponent(typeof(ExperienceOrbThought)));
                 thought.Update(deltaTime, context);
 
 

@@ -13,11 +13,13 @@ namespace Ozzyria.Game.ECS
         protected List<QueryListener> _queryListeners = new List<QueryListener>();
 
         protected readonly ComponentEvent OnComponentAdded;
+        protected readonly ComponentEvent OnComponentChanged;
         protected readonly ComponentEvent OnComponentRemoved;
 
         public EntityContext()
         {
             OnComponentAdded = HandleOnComponentAdded;
+            OnComponentChanged = HandleOnComponentChanged;
             OnComponentRemoved = HandleOnComponentRemoved;
         }
 
@@ -80,6 +82,7 @@ namespace Ozzyria.Game.ECS
             entities[newId] = new Entity();
             entities[newId].id = newId;
             entities[newId].OnComponentAdded += OnComponentAdded;
+            entities[newId].OnComponentChanged += OnComponentChanged;
             entities[newId].OnComponentRemoved += OnComponentRemoved;
 
             return entities[newId];
@@ -122,7 +125,12 @@ namespace Ozzyria.Game.ECS
                 entityComponents[component.GetType()] = new List<uint>();
             entityComponents[component.GetType()].Add(entity.id);
 
-            UpdateListeners(entity);
+            UpdateListeners(QueryEventType.Added, entity, component);
+        }
+
+        public void HandleOnComponentChanged(Entity entity, IComponent component)
+        {
+            UpdateListeners(QueryEventType.Changed, entity, component);
         }
 
         public void HandleOnComponentRemoved(Entity entity, IComponent component)
@@ -130,13 +138,13 @@ namespace Ozzyria.Game.ECS
             if(entityComponents.ContainsKey(component.GetType()))
                 entityComponents[component.GetType()].Remove(entity.id);
 
-            UpdateListeners(entity);
+            UpdateListeners(QueryEventType.Removed, entity, component);
         }
 
-        protected void UpdateListeners(Entity entity)
+        protected void UpdateListeners(QueryEventType type, Entity entity, IComponent component)
         {
             foreach (var listener in _queryListeners)
-                listener.HandleEntityChangeEvent(entity);
+                listener.HandleEntityChangeEvent(type, entity, component);
         }
     }
 }

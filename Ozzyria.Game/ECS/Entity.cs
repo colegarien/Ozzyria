@@ -14,6 +14,7 @@ namespace Ozzyria.Game.ECS
         // TODO OZ-14 to implement pooling have the context initialize/manage the pool
 
         public event ComponentEvent OnComponentAdded;
+        public event ComponentEvent OnComponentChanged;
         public event ComponentEvent OnComponentRemoved;
 
         public uint id;
@@ -22,13 +23,9 @@ namespace Ozzyria.Game.ECS
         {
             // TODO OZ-14 throw error if Component already linked
             _components[component.GetType()] = component;
+            component.Owner = this;
 
-
-            // TODO OZ-14 get rid of this or do it better!
-            if (component is Component.Component)
-                ((Component.Component)component).Owner = this;
-
-            if(OnComponentAdded != null)
+            if (OnComponentAdded != null)
                 OnComponentAdded(this, component);
         }
 
@@ -36,7 +33,10 @@ namespace Ozzyria.Game.ECS
         {
             var type = component.GetType();
             if (HasComponent(type))
+            {
+                component.OnComponentChanged = null;
                 _components.Remove(type);
+            }
 
             if(OnComponentRemoved != null)
                 OnComponentRemoved(this, component);
@@ -70,12 +70,16 @@ namespace Ozzyria.Game.ECS
 
         public IComponent CreateComponent<T>() where T : new()
         {
-            return (IComponent)new T();
+            IComponent c = (IComponent)new T();
+            c.OnComponentChanged = OnComponentChanged;
+            return c;
         }
 
         public IComponent CreateComponent(Type type)
         {
-            return (IComponent)Activator.CreateInstance(type);
+            IComponent c = (IComponent)Activator.CreateInstance(type);
+            c.OnComponentChanged = OnComponentChanged;
+            return c;
         }
     }
 }

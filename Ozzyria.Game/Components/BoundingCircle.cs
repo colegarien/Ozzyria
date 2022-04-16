@@ -1,6 +1,6 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
     [Options(Name = "BoundingCircle")]
     public class BoundingCircle : Collision

@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 

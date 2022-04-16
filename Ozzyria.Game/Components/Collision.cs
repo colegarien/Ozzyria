@@ -1,8 +1,9 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Game.ECS;
 using System;
 using System.Numerics;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
     public class Collision : Component
     {

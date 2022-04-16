@@ -1,6 +1,7 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Game.ECS;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
     [Options(Name = "Delay")]
     public class Delay : Component

@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using SFML.Graphics;

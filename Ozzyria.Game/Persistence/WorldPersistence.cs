@@ -123,7 +123,7 @@ namespace Ozzyria.Game.Persistence
         {
             if (type.IsEnum)
                 return typeof(Enum);
-            else if (type.BaseType == typeof(IComponent) || type.BaseType == typeof(Component.Component))
+            else if (type.BaseType == typeof(IComponent) || type.BaseType == typeof(Component))
                 return typeof(IComponent);
             else
                 return type;

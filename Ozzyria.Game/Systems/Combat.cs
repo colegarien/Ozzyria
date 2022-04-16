@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Ozzyria.Game.Systems
         public Combat()
         {
             query = new EntityQuery();
-            query.And(typeof(Component.Combat), typeof(Movement), typeof(Stats));
+            query.And(typeof(Components.Combat), typeof(Movement), typeof(Stats));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -20,7 +20,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var combat = (Component.Combat)entity.GetComponent(typeof(Component.Combat));
+                var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
                 if (combat.Attacking)
                 {
                     var entitiesInRange = entities.Where(e => entity.id != e.id && ((Movement)e.GetComponent(typeof(Movement))).DistanceTo(movement) <= combat.AttackRange);

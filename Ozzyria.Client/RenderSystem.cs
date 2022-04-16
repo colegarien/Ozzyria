@@ -1,7 +1,7 @@
 ﻿using Ozzyria.Client.Graphics;
 using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;

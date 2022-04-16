@@ -2,8 +2,18 @@
 
 namespace Ozzyria.Test.ECS.Stub
 {
-    internal class ComponentC : IComponent
+    internal class ComponentC : Component
     {
-        public float FloatyFloat { get; set; }
+        private float floatyFloat;
+        public float FloatyFloat {
+            get => floatyFloat;
+            set {
+                if (floatyFloat != value)
+                {
+                    floatyFloat = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
     }
 }

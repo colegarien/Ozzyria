@@ -2,11 +2,22 @@
 
 namespace Ozzyria.Game.ECS
 {
-    public class QueryListener // TODO OZ-14 right now only listeners for changes in entities that match the query, do I need more?
+    public enum QueryEventType
     {
-        protected EntityQuery _query;
+        Added,
+        Changed,
+        Removed
+    }
 
+    public class QueryListener
+    {
+        public bool ListenToAdded { get; set; } = true;
+        public bool ListenToChanged { get; set; } = false;
+        public bool ListenToRemoved { get; set; } = false;
+
+        protected EntityQuery _query;
         protected List<Entity> _entities;
+
 
         public QueryListener(EntityQuery query)
         {
@@ -22,17 +33,27 @@ namespace Ozzyria.Game.ECS
             return result;
         }
 
-        public void HandleEntityChangeEvent(Entity entity)
+        public void HandleEntityChangeEvent(QueryEventType type, Entity entity, IComponent component)
         {
+            // Check if component change is even relevant
+            if (!_query.Uses(component.GetType())
+                || (type == QueryEventType.Added && !ListenToAdded)
+                || (type == QueryEventType.Changed && !ListenToChanged))
+            {
+                return;
+            }
+
             if (_query.Matches(entity))
             {
-                if(!_entities.Contains(entity))
+                if (!_entities.Contains(entity))
                     _entities.Add(entity);
             }
-            else
+            else if (type == QueryEventType.Removed && ListenToRemoved && !_entities.Contains(entity))
             {
-                if(_entities.Contains(entity))
-                    _entities.Remove(entity);
+                _entities.Add(entity);
+            }
+            else if (!ListenToRemoved && _entities.Contains(entity)) {
+                _entities.Remove(entity);
             }
         }
     }

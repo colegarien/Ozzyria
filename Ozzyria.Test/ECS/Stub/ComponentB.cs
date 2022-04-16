@@ -2,8 +2,19 @@
 
 namespace Ozzyria.Test.ECS.Stub
 {
-    internal class ComponentB : IComponent
+    internal class ComponentB : Component
     {
-        public int SomeNumber { get; set; }
+        private int _someNumber;
+        public int SomeNumber
+        {
+            get => _someNumber; set
+            {
+                if (_someNumber != value)
+                {
+                    _someNumber = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
     }
 }

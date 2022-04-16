@@ -1,10 +1,10 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using System;
 using System.Linq;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
     [Options(Name = "SlimeThought")]
     public class SlimeThought : Thought

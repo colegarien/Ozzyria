@@ -1,6 +1,7 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Game.ECS;
 
-namespace Ozzyria.Game.Component
+namespace Ozzyria.Game.Components
 {
 
     public enum SpriteType  // OZ-23 : refactor this to not be an enum (make more data-driven)

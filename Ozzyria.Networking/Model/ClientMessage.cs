@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game.Components;
 using System.IO;
 namespace Ozzyria.Networking.Model
 {

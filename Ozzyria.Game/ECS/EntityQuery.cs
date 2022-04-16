@@ -35,6 +35,15 @@ namespace Ozzyria.Game.ECS
             return hasAllAnds && hasAnyOr && hasNoNones;
         }
 
+        public bool Uses(Type componentType)
+        {
+            return !IsEmpty() && (
+                ands.Contains(componentType) ||
+                ors.Contains(componentType) ||
+                nones.Contains(componentType)
+            );
+        }
+
         /// <summary>
         /// Add criteria that all entities must meet
         /// </summary>
