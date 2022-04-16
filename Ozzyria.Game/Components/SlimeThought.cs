@@ -12,7 +12,17 @@ namespace Ozzyria.Game.Components
         const float MAX_FOLLOW_DISTANCE = 200;
 
         public Delay ThinkDelay { get; set; } = new Delay();
-        public int ThinkAction { get; set; } = 0;
+
+        private int _thinkAction = 0;
+        public int ThinkAction { get => _thinkAction; set
+            {
+                if (_thinkAction != value)
+                {
+                    _thinkAction = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
 
         public override void Update(float deltaTime, EntityContext context)
         {

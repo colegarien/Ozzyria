@@ -7,8 +7,18 @@ namespace Ozzyria.Game.Components
 {
     public class Collision : Component
     {
+        protected bool _isDynamic = true;
+
         [Savable]
-        public bool IsDynamic { get; set; } = true;
+        public bool IsDynamic { get => _isDynamic; set
+            {
+                if (_isDynamic != value)
+                {
+                    _isDynamic = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
 
         public static CollisionResult CircleIntersectsCircle(BoundingCircle circle1, BoundingCircle circle2)
         {
@@ -51,12 +61,12 @@ namespace Ozzyria.Game.Components
 
             var distanceH = collisionOnRight ? box1.GetRight() - box2.GetLeft() : box2.GetRight() - box1.GetLeft();
             var distanceV = collisionOnBottom ? box1.GetBottom() - box2.GetTop() : box2.GetBottom() - box1.GetTop();
-            if(Math.Abs(distanceH) < Math.Abs(distanceV) && movingTowardH)
+            if (Math.Abs(distanceH) < Math.Abs(distanceV) && movingTowardH)
             {
                 collisionResult.NormalX = collisionOnLeft ? 1 : -1;
                 collisionResult.NormalY = 0;
             }
-            else if(movingTowardV)
+            else if (movingTowardV)
             {
                 collisionResult.NormalX = 0;
                 collisionResult.NormalY = collisionOnTop ? 1 : -1;

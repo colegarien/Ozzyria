@@ -8,11 +8,31 @@ namespace Ozzyria.Game.Components
     [Options(Name = "SlimeSpawner")]
     class SlimeSpawner : Thought
     {
+        private float _x = 500f;
+        private float _y = 400f;
+
         public int SLIME_LIMIT { get; set; } = 3;
+
         [Savable]
-        public float X { get; set; } = 500f;
+        public float X { get => _x; set
+            {
+                if (_x != value)
+                {
+                    _x = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float Y { get; set; } = 400f;
+        public float Y { get => _y; set
+            {
+                if (_y != value)
+                {
+                    _y = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
         public Delay ThinkDelay { get; set; } = new Delay
         {

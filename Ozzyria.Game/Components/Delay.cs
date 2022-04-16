@@ -6,12 +6,39 @@ namespace Ozzyria.Game.Components
     [Options(Name = "Delay")]
     public class Delay : Component
     {
-        [Savable]
-        public float DelayInSeconds { get; set; } = 0.5f;
-        [Savable]
-        public float Timer { get; set; } = 0.5f;
-        public bool Ready { get; set; } = false;
+        private float _delayInSeconds = 0.5f;
+        private float _timer = 0.5f;
+        private bool _ready = false;
 
+        [Savable]
+        public float DelayInSeconds { get => _delayInSeconds; set
+            {
+                if (_delayInSeconds != value)
+                {
+                    _delayInSeconds = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+        [Savable]
+        public float Timer { get => _timer; set
+            {
+                if (_timer != value)
+                {
+                    _timer = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+        public bool Ready { get => _ready; set
+            {
+                if (_ready != value)
+                {
+                    _ready = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         public void Update(float deltaTime)
         {
             if (Ready)

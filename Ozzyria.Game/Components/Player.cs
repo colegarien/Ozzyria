@@ -6,7 +6,17 @@ namespace Ozzyria.Game.Components
     [Options(Name = "Player")]
     public class Player : Component
     {
+        private int _playerId = -1;
+
         [Savable]
-        public int PlayerId { get; set; } = -1;
+        public int PlayerId { get => _playerId; set
+            {
+                if (_playerId != value)
+                {
+                    _playerId = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
     }
 }

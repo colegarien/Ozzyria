@@ -6,11 +6,29 @@ namespace Ozzyria.Game.Components
     [Options(Name = "ExperienceBoost")]
     public class ExperienceBoost : Component
     {
-        [Savable]
-        public int Experience { get; set; } = 10;
-        [Savable]
-        public bool HasBeenAbsorbed { get; set; } = false;
+        private int _experience = 10;
+        private bool _hasBeenAbsorbed = false;
 
+        [Savable]
+        public int Experience { get => _experience; set
+            {
+                if (_experience != value)
+                {
+                    _experience = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+        [Savable]
+        public bool HasBeenAbsorbed { get => _hasBeenAbsorbed; set
+            {
+                if (_hasBeenAbsorbed != value)
+                {
+                    _hasBeenAbsorbed = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         public void AbsorbInto(Stats stats)
         {
             if (HasBeenAbsorbed)

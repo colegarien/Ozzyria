@@ -15,11 +15,30 @@ namespace Ozzyria.Game.Components
     [Options(Name = "Renderable")]
     public class Renderable : Component
     {
-
+        private SpriteType _sprite = SpriteType.Default;
         [Savable]
-        public SpriteType Sprite { get; set; } = SpriteType.Default;
+        public SpriteType Sprite
+        {
+            get => _sprite; set
+            {
+                if (_sprite != value)
+                {
+                    _sprite = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
 
+        private int _z = (int)ZLayer.Background;
         [Savable]
-        public int Z { get; set; } = (int)ZLayer.Background;
+        public int Z { get => _z; set
+            {
+                if (_z != value)
+                {
+                    _z = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
     }
 }

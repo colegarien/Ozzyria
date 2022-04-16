@@ -8,28 +8,99 @@ namespace Ozzyria.Game.Components
     [Options(Name = "Movement")]
     public class Movement : Component
     {
+        private float _previousX = 0f;
+        private float _previousY = 0f;
+        private int _layer = 1;
+        private float _x = 0f;
+        private float _y = 0f;
+        private float _speed = 0f;
+        private float _moveDirection = 0f;
+        private float _lookDirection = 0f;
 
         public float ACCELERATION { get; set; } = 200f;
         public float MAX_SPEED { get; set; } = 100f;
         public float TURN_SPEED { get; set; } = 5f;
 
         [Savable]
-        public float PreviousX { get; set; } = 0f;
+        public float PreviousX { get => _previousX; set
+            {
+                if (_previousX != value)
+                {
+                    _previousX = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float PreviousY { get; set; } = 0f;
+        public float PreviousY { get => _previousY; set
+            {
+                if (_previousY != value)
+                {
+                    _previousY = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public int Layer { get; set; } = 1; // TODO OZ-24 experiment with things on multiple layers
+        public int Layer { get => _layer; set
+            {
+                if (_layer != value)
+                {
+                    _layer = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float X { get; set; } = 0f;
+        public float X { get => _x; set
+            {
+                if (_x != value)
+                {
+                    _x = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float Y { get; set; } = 0f;
+        public float Y { get => _y; set
+            {
+                if (_y != value)
+                {
+                    _y = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float Speed { get; set; } = 0f;
+        public float Speed { get => _speed; set
+            {
+                if (_speed != value)
+                {
+                    _speed = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float MoveDirection { get; set; } = 0f;
+        public float MoveDirection { get => _moveDirection; set
+            {
+                if (_moveDirection != value)
+                {
+                    _moveDirection = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public float LookDirection { get; set; } = 0f;
-        
+        public float LookDirection { get => _lookDirection; set
+            {
+                if (_lookDirection != value)
+                {
+                    _lookDirection = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
 
         public float DistanceTo(Movement target)
         {
@@ -58,7 +129,7 @@ namespace Ozzyria.Game.Components
         }
 
         public void MoveForwardRight(float deltaTime)
-        { 
+        {
             MoveDirection = -AngleHelper.PiOverFour;
         }
 

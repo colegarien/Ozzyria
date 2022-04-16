@@ -5,7 +5,17 @@ namespace Ozzyria.Game.Components
     [Options(Name = "BoundingCircle")]
     public class BoundingCircle : Collision
     {
+        private float _radius = 10f;
+
         [Savable]
-        public float Radius { get; set; } = 10f;
+        public float Radius { get => _radius; set
+            {
+                if (_radius != value)
+                {
+                    _radius = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
     }
 }

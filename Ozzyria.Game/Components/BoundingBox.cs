@@ -5,10 +5,29 @@ namespace Ozzyria.Game.Components
     [Options(Name = "BoundingBox")]
     public class BoundingBox : Collision
     {
+        private int _width = 10;
+        private int _height = 10;
+
         [Savable]
-        public int Width { get; set; } = 10;
+        public int Width { get => _width; set
+            {
+                if (_width != value)
+                {
+                    _width = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
-        public int Height { get; set; } = 10;
+        public int Height { get => _height; set
+            {
+                if (_height != value)
+                {
+                    _height = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
 
         public float GetLeft()
         {
