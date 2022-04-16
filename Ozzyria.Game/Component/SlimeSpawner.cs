@@ -23,7 +23,7 @@ namespace Ozzyria.Game.Component
         {
             ThinkDelay.Update(deltaTime);
 
-            var numberOfSlimes = context.GetEntities().Count(e => e.HasComponent(typeof(SlimeThought)));
+            var numberOfSlimes = context.GetEntities(new EntityQuery().And(typeof(SlimeThought))).Count();
             if (numberOfSlimes < SLIME_LIMIT && ThinkDelay.IsReady())
             {
                 // OZ-22 : check if spawner is block before spawning things

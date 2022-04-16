@@ -35,7 +35,7 @@ namespace Ozzyria.Networking.Model
 
         public static byte[] Join()
         {
-            return Pack(ClientMessage.Join, 0, new byte[] { }); // TODO OZ-14 uh oh again on the -1
+            return Pack(ClientMessage.Join, -1, new byte[] { });
         }
         public static byte[] Leave(int clientId)
         {

@@ -20,8 +20,8 @@ namespace Ozzyria.Game.Component
                 return;
             }
 
-            var closestPlayer = context.GetEntities()
-                .Where(e => e.id != Owner.id && e.HasComponent(typeof(Movement)) && e.HasComponent(typeof(Stats)) && e.HasComponent(typeof(PlayerThought)))
+            var closestPlayer = context.GetEntities(new EntityQuery().And(typeof(Movement), typeof(Stats), typeof(PlayerThought)))
+                .Where(e => e.id != Owner.id)
                 .OrderBy(e => movement.DistanceTo((Movement)e.GetComponent(typeof(Movement))))
                 .FirstOrDefault();
             if (closestPlayer == null)

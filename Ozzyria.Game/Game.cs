@@ -36,7 +36,7 @@ namespace Ozzyria.Game
         public void OnPlayerInput(int playerId, Input input)
         {
             // TODO OZ-14 trashy, don't do this
-            var playerEntity = context.GetEntities().FirstOrDefault(e => e.HasComponent(typeof(Player)) && ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
+            var playerEntity = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
             if (playerEntity == null)
                 return;
 
@@ -58,7 +58,7 @@ namespace Ozzyria.Game
 
         public void OnPlayerLeave(int playerId)
         {
-            var playerEntity = context.GetEntities().FirstOrDefault(e => e.HasComponent(typeof(Player)) && ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
+            var playerEntity = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
             if(playerEntity != null)
                 context.DestroyEntity(playerEntity);
         }
@@ -66,6 +66,8 @@ namespace Ozzyria.Game
         public void Update(float deltaTime)
         {
             coordinator.Execute(deltaTime, context);
+
+            EntityFactory.CreateExperienceOrb(context, 400, 400, 3);
         }
 
     }
