@@ -17,6 +17,9 @@ namespace Ozzyria.Game
             context = new EntityContext();
             coordinator = new SystemCoordinator();
             // TODO OZ-14 rethink some systems with the new changes listener!
+            // TODO OZ-14 split out "Thought" system into 4 seprate systems
+            // TODO OZ-14 chunk entity updates sent back
+            // TODO OZ-14 possible move sending/reading entity updates into separate tasks on the client/server
             coordinator
                 .Add(new Systems.Thought())
                 .Add(new Systems.Physics())
