@@ -17,12 +17,12 @@ namespace Ozzyria.Game.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
 
                 EntityFactory.CreateExperienceOrb(context, movement.X, movement.Y, 10);
-                if (entity.HasComponent(typeof(PlayerThought)))
+                if (entity.HasComponent(typeof(Components.Player)))
                 {
                     // TODO OZ-14 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
                     // TODO OZ-14 : probably just remove thought component, change renderable to corpse then make a "respawn" system to handle player respawn at a graveyard
 
-                    var playerId = ((Player)entity.GetComponent(typeof(Player))).PlayerId;
+                    var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
 
                     // reset player
                     context.DestroyEntity(entity);

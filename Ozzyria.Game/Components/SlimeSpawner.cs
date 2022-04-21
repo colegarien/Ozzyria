@@ -1,12 +1,10 @@
 ﻿using Ozzyria.Game.Components.Attribute;
 using Ozzyria.Game.ECS;
-using Ozzyria.Game.Utility;
-using System.Linq;
 
 namespace Ozzyria.Game.Components
 {
     [Options(Name = "SlimeSpawner")]
-    class SlimeSpawner : Thought
+    class SlimeSpawner : Component
     {
         private float _x = 500f;
         private float _y = 400f;
@@ -38,17 +36,5 @@ namespace Ozzyria.Game.Components
         {
             DelayInSeconds = 5f
         };
-
-        public override void Update(float deltaTime, EntityContext context)
-        {
-            ThinkDelay.Update(deltaTime);
-
-            var numberOfSlimes = context.GetEntities(new EntityQuery().And(typeof(SlimeThought))).Count();
-            if (numberOfSlimes < SLIME_LIMIT && ThinkDelay.IsReady())
-            {
-                // OZ-22 : check if spawner is block before spawning things
-                EntityFactory.CreateSlime(context, X, Y);
-            }
-        }
     }
 }
