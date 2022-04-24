@@ -1,6 +1,5 @@
-﻿using Ozzyria.Game;
+﻿using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Ozzyria.Networking.Model
@@ -10,6 +9,7 @@ namespace Ozzyria.Networking.Model
         JoinResult = 0,
         JoinReject = 1,
         EntityUpdate = 2,
+        EntityRemoval = 3,
     }
 
     class ServerPacket
@@ -84,23 +84,50 @@ namespace Ozzyria.Networking.Model
             }
         }
 
-        public static Entity[] ParseEntityUpdates(byte[] packet)
+        public static void ParseEntityUpdates(EntityContext context, byte[] packet)
         {
-            var entities = new List<Entity>();
             using (MemoryStream m = new MemoryStream(packet))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        entities.Add(WorldPersistence.ReadEntity(reader));
+                        WorldPersistence.ReadEntity(context, reader);
                     }
                 }
             }
-
-            return entities.ToArray();
         }
 
+        public static byte[] EntityRemovals(EntityContext context)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ServerMessage.EntityRemoval);
+                    foreach (var id in context.GetRecentlyDestroyed()) {
+                        writer.Write(id);
+                    }
+                }
+
+                return m.ToArray();
+            }
+        }
+
+        public static void ParseEntityRemovals(EntityContext context, byte[] packet)
+        {
+            using (MemoryStream m = new MemoryStream(packet))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    {
+                        uint id = reader.ReadUInt32();
+                        context.DestroyEntity(id);
+                    }
+                }
+            }
+        }
     }
 
 }

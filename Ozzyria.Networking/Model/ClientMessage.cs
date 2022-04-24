@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component;
+﻿using Ozzyria.Game.Components;
 using System.IO;
 namespace Ozzyria.Networking.Model
 {
@@ -12,7 +12,7 @@ namespace Ozzyria.Networking.Model
     class ClientPacket
     {
         public ClientMessage Type { get; set; }
-        public int ClientId { get; set; } = -1;
+        public int ClientId { get; set; } = 0;
         public byte[] Data { get; set; }
     }
 

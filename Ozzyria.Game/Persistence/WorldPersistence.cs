@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ozzyria.Game.ECS;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -24,21 +25,18 @@ namespace Ozzyria.Game.Persistence
             File.WriteAllText(baseMapsDirectory + "/" + resource + ".ozz", JsonSerializer.Serialize(map, JsonOptionsFactory.GetOptions()));
         }
 
-        public EntityManager LoadEntityManager(string resource)
+        public void LoadContext(EntityContext context, string resource)
         {
-            var entityManager = new EntityManager();
             using (BinaryReader reader = new BinaryReader(File.OpenRead(Content.Loader.Root() + "/Maps/" + resource + ".ozz")))
             {
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
-                    entityManager.Register(ReadEntity(reader));
+                    ReadEntity(context, reader);
                 }
             }
-
-            return entityManager;
         }
 
-        public void SaveEntityManager(string resource, EntityManager entityManager)
+        public void SaveContext(string resource, EntityContext context)
         {
             var baseMapsDirectory = Content.Loader.Root() + "/Maps";
             if (!Directory.Exists(baseMapsDirectory))
@@ -48,7 +46,7 @@ namespace Ozzyria.Game.Persistence
 
             using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "/" + resource + ".ozz", FileMode.Create)))
             {
-                foreach (var entity in entityManager.GetEntities())
+                foreach (var entity in context.GetEntities())
                 {
                     WriteEntity(writer, entity);
                 }
@@ -58,16 +56,16 @@ namespace Ozzyria.Game.Persistence
 
         public static void WriteEntity(BinaryWriter writer, Entity entity)
         {
-            writer.Write(entity.Id);
-            foreach (var component in entity.GetAllComponents()) // TODO consider the fact that adding/removing property can cause old save to break, think of how to communication what parts of the components were actually saved | could possible just write property name first?
+            writer.Write(entity.id);
+            foreach (var component in entity.GetComponents()) // TODO OZ-29 consider the fact that adding/removing property can cause old save to break, think of how to communication what parts of the components were actually saved | could possible just write property name first?
             {
                 writer.Write(false); // signal not done reading entity
-                WriteComponent(writer, component);
+                WriteComponent(entity, writer, component);
             }
             writer.Write(true); // signal end-of-entity
         }
 
-        private static void WriteComponent(BinaryWriter writer, Component.Component component)
+        private static void WriteComponent(Entity entity, BinaryWriter writer, IComponent component)
         {
             var options = Reflector.GetOptionsAttribute(component?.GetType());
             if (options == null)
@@ -80,80 +78,85 @@ namespace Ozzyria.Game.Persistence
             var props = Reflector.GetSavableProperties(component.GetType());
             foreach (var p in props)
             {
-                WriteValueOfType(writer, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
+                WriteValueOfType(entity, writer, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
             }
         }
 
-        public static Entity ReadEntity(BinaryReader reader)
+        public static Entity ReadEntity(EntityContext context, BinaryReader reader)
         {
-            var entity = new Entity
-            {
-                Id = reader.ReadInt32(),
-            };
+            var id = reader.ReadUInt32();
+            var entity = context.CreateEntity(id);
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 var isEndOfEntity = reader.ReadBoolean();
                 if (isEndOfEntity)
                     break;
 
-                entity.AttachComponent(ReadComponent(reader));
+                ReadComponent(entity, reader);
             }
 
             return entity;
         }
 
-        private static Component.Component ReadComponent(BinaryReader reader)
+        private static IComponent ReadComponent(Entity entity, BinaryReader reader)
         {
-            var component = Reflector.CreateInstance(reader.ReadString());
-            if (component == null)
+            var componentType = Reflector.GetTypeForId(reader.ReadString());
+            if (componentType == null)
                 return null;
+
+            var component = entity.GetComponent(componentType);
+            if (component == null)
+            {
+                component = entity.CreateComponent(componentType);
+                entity.AddComponent(component);
+            }
 
             var props = Reflector.GetSavableProperties(component.GetType());
             foreach (var p in props)
             {
-                Reflector.SetPropertyValue(p, component, ReadValueOfType(reader, GetSerializableBaseType(p.PropertyType)));
+                Reflector.SetPropertyValue(p, component, ReadValueOfType(entity, reader, GetSerializableBaseType(p.PropertyType)));
             }
-            return (Component.Component)component;
+            return component;
         }
 
         private static Type GetSerializableBaseType(Type type) // TODO abstract binary read/write possibly once have dependency injection
         {
             if (type.IsEnum)
                 return typeof(Enum);
-            else if (type.BaseType == typeof(Component.Component))
-                return type.BaseType;
+            else if (type.BaseType == typeof(IComponent) || type.BaseType == typeof(Component))
+                return typeof(IComponent);
             else
                 return type;
         }
 
-        private static void WriteValueOfType(BinaryWriter writer, Type type, object? value) // TODO abstract binary read/write possibly once have dependency injection
+        private static void WriteValueOfType(Entity entity, BinaryWriter writer, Type type, object? value) // TODO abstract binary read/write possibly once have dependency injection
         {
-            supportedWriteTypes[type](writer, value);
+            supportedWriteTypes[type](entity, writer, value);
         }
 
-        private static object? ReadValueOfType(BinaryReader reader, Type type) // TODO abstract binary read/write possibly once have dependency injection
+        private static object? ReadValueOfType(Entity entity, BinaryReader reader, Type type) // TODO abstract binary read/write possibly once have dependency injection
         {
-            return supportedReadTypes[type](reader);
+            return supportedReadTypes[type](entity, reader);
         }
 
-        private static Dictionary<Type, Func<BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<BinaryReader, object>>
+        private static Dictionary<Type, Func<Entity, BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<Entity, BinaryReader, object>>
         {
-            { typeof(int), br => br.ReadInt32() },
-            { typeof(bool), br => br.ReadBoolean() },
-            { typeof(float), br => br.ReadSingle() },
-            { typeof(string), br => br.ReadString() },
-            { typeof(Enum), br => br.ReadInt32() },
-            { typeof(Component.Component), br => ReadComponent(br) },
+            { typeof(int), (e, br) => br.ReadInt32() },
+            { typeof(bool), (e, br) => br.ReadBoolean() },
+            { typeof(float), (e, br) => br.ReadSingle() },
+            { typeof(string), (e, br) => br.ReadString() },
+            { typeof(Enum), (e, br) => br.ReadInt32() },
+            { typeof(IComponent), (e, br) => ReadComponent(e, br) },
         };
 
-        private static Dictionary<Type, Action<BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<BinaryWriter, object?>>
+        private static Dictionary<Type, Action<Entity, BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<Entity, BinaryWriter, object?>>
         {
-            { typeof(int), (bw, value) => bw.Write((int)value) },
-            { typeof(bool), (bw, value) => bw.Write((bool)value) },
-            { typeof(float), (bw, value) => bw.Write((float)value) },
-            { typeof(string), (bw, value) => bw.Write((string)value) },
-            { typeof(Enum), (bw, value) => bw.Write((int)value) },
-            { typeof(Component.Component), (bw, value) => WriteComponent(bw, (Component.Component)value) },
+            { typeof(int), (e, bw, value) => bw.Write((int)value) },
+            { typeof(bool), (e, bw, value) => bw.Write((bool)value) },
+            { typeof(float), (e, bw, value) => bw.Write((float)value) },
+            { typeof(string), (e, bw, value) => bw.Write((string)value) },
+            { typeof(Enum), (e, bw, value) => bw.Write((int)value) },
+            { typeof(IComponent), (e, bw, value) => WriteComponent(e, bw, (IComponent)value) },
         };
 
     }

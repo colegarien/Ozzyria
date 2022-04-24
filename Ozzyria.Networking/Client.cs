@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
+using Ozzyria.Game.ECS;
 using Ozzyria.Networking.Model;
 using System.Net;
 using System.Net.Sockets;
@@ -11,8 +12,6 @@ namespace Ozzyria.Networking
         public int Id { get; set; }
         private bool connected;
         private UdpClient udpClient;
-
-        public Entity[] Entities { get; set; }
 
         public Client()
         {
@@ -47,7 +46,8 @@ namespace Ozzyria.Networking
                 udpClient.Send(joinPacket, joinPacket.Length);
 
                 IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                Id = ServerPacketFactory.ParseJoin(udpClient.Receive(ref remoteIPEndPoint));
+
+                Id= ServerPacketFactory.ParseJoin(udpClient.Receive(ref remoteIPEndPoint));
                 if (Id == -1)
                 {
                     udpClient.Close();
@@ -82,7 +82,7 @@ namespace Ozzyria.Networking
             }
         }
 
-        public void HandleIncomingMessages()
+        public void HandleIncomingMessages(EntityContext context)
         {
             if (!connected)
             {
@@ -101,7 +101,10 @@ namespace Ozzyria.Networking
                     switch (messageType)
                     {
                         case ServerMessage.EntityUpdate:
-                            Entities = ServerPacketFactory.ParseEntityUpdates(messageData);
+                            ServerPacketFactory.ParseEntityUpdates(context, messageData);
+                            break;
+                        case ServerMessage.EntityRemoval:
+                            ServerPacketFactory.ParseEntityRemovals(context, messageData);
                             break;
                     }
                 }

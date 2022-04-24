@@ -1,5 +1,5 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
 using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.IO;
@@ -227,9 +227,11 @@ namespace Ozzyria.ConstructionKit
 
         public static void AddNewTileType(string tileSetId, int type, string name)
         {
-            // TODO set default yes / no questions and x / y for tile type
             tileSetMetaDatas[tileSetId].TileTypes.Add(type);
             tileSetMetaDatas[tileSetId].TileNames[type] = name;
+            tileSetMetaDatas[tileSetId].BaseTileX[type] = 0;
+            tileSetMetaDatas[tileSetId].BaseTileY[type] = 0;
+            tileSetMetaDatas[tileSetId].BaseTileZ[type] = (int)ZLayer.Background;
         }
 
         public static void EnsureInitializedMetaData()

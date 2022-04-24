@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Client.Graphics;
 using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
 using SFML.Graphics;
 using SFML.System;
 using System.Collections.Generic;

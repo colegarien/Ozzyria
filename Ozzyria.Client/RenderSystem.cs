@@ -1,8 +1,8 @@
 ﻿using Ozzyria.Client.Graphics;
-using Ozzyria.Client.Graphics.DebugShape;
 using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Utility;
 using SFML.Graphics;
 using SFML.System;
@@ -13,41 +13,47 @@ namespace Ozzyria.Client
 {
     class RenderSystem
     {
-        public const bool DEBUG_SHOW_COLLISIONS = true;
-        public const bool DEBUG_SHOW_RENDER_AREA = false;
-
         private List<IGraphic> cachedTileMapGraphics;
+        private EntityQuery query;
+
+        public RenderSystem()
+        {
+            query = new EntityQuery();
+            query.And(typeof(Movement), typeof(Renderable));
+        }
 
         // TODO OZ-15 rework this a bit so that graphics don't have to constantly be re-instantiaed, possibly tracking by Entities Ids or Tile Maps
-        public void Render(RenderTarget target, Camera camera, TileMap tileMap, int localPlayerId, Entity[] entities)
+        public void Render(RenderTarget target, Camera camera, TileMap tileMap, EntityContext context, uint playerEntityId)
         {
             var graphicsManager = GraphicsManager.GetInstance();
             var graphics = new List<IGraphic>();
+
+            var entities = context.GetEntities(query);
             foreach (var entity in entities)
             {
-                var movement = entity.GetComponent<Movement>(ComponentType.Movement);
-                if (entity.HasComponent(ComponentType.Renderable))
+                var movement = (Movement)entity.GetComponent(typeof(Movement));
+                if (entity.HasComponent(typeof(Renderable)))
                 {
-                    if (entity.HasComponent(ComponentType.Stats))
+                    if (entity.HasComponent(typeof(Stats)))
                     {
                         // Show Health Bar for Entities that are not the local player
-                        var stats = entity.GetComponent<Stats>(ComponentType.Stats);
-                        if (entity.Id != localPlayerId)
+                        var stats = (Stats)entity.GetComponent(typeof(Stats));
+                        if (entity.id != playerEntityId)
                         {
                             graphics.Add(new HoverStatBar(movement.Layer, movement.X, movement.Y, stats.Health, stats.MaxHealth));
                         }
                     }
 
-                    var renderable = entity.GetComponent<Renderable>(ComponentType.Renderable);
+                    var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
                     var sfmlSprite = graphicsManager.CreateSprite(renderable.Sprite);
                     sfmlSprite.Position = new Vector2f(movement.X, movement.Y);
                     sfmlSprite.Rotation = AngleHelper.RadiansToDegrees(movement.LookDirection);
 
                     // OZ-23 : swich this over to be an animation instead
-                    if (entity.HasComponent(ComponentType.Combat))
+                    if (entity.HasComponent(typeof(Combat)))
                     {
                         // show as attacking for a brief period
-                        var combat = entity.GetComponent<Combat>(ComponentType.Combat);
+                        var combat = (Combat)entity.GetComponent(typeof(Combat));
                         sfmlSprite.Color = (combat.Delay.Timer / combat.Delay.DelayInSeconds >= 0.3f) ? Color.White : Color.Red;
                     }
 
@@ -63,16 +69,10 @@ namespace Ozzyria.Client
                     });
 
                     // center camera on entity
-                    if (entity.Id == localPlayerId)
+                    if (entity.id == playerEntityId)
                     {
                         camera.CenterView(movement.X, movement.Y);
                     }
-                }
-
-                if (DEBUG_SHOW_COLLISIONS && entity.HasComponent(ComponentType.Collision))
-                {
-                    var collision = entity.GetComponent<Collision>(ComponentType.Collision);
-                    graphics.Add(new DebugCollision(movement, collision));
                 }
             }
 
@@ -103,17 +103,6 @@ namespace Ozzyria.Client
             foreach (var graphic in graphicsInRenderOrder)
             {
                 graphic.Draw(target);
-            }
-
-            if (DEBUG_SHOW_RENDER_AREA)
-            {
-                foreach (var graphic in graphicsInRenderOrder)
-                {
-                    if (graphic.GetZOrder() == (int)ZLayer.Background) continue; // skip rendering background to lessen noise
-
-                    var debugGraphic = new DebugRenderArea(graphic);
-                    debugGraphic.Draw(target);
-                }
             }
         }
     }

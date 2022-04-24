@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.Component.Attribute;
+﻿using Ozzyria.Game.Components.Attribute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +9,22 @@ namespace Ozzyria.Game.Persistence
 {
     class Reflector
     {
+        // TODO OZ-29 Simple this or cache more dynamically? at-least remove the whole "options attribute" situation, seems uncessary right now
         private static bool _isInitialized = false;
         private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
         private static Dictionary<Type, OptionsAttribute> componentOptions = new Dictionary<Type, OptionsAttribute>();
         private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
         private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
+
+
+        public static Type  GetTypeForId(string identifier)
+        {
+            ValidateReflectionCaches();
+            return componentTypes.ContainsKey(identifier)
+                ? componentTypes[identifier]
+                : null;
+        }
 
         public static object? CreateInstance(string identifier)
         {
@@ -85,7 +95,7 @@ namespace Ozzyria.Game.Persistence
 
             var types = Assembly.GetExecutingAssembly().GetTypes()
                       .Where(t => t.IsClass
-                                && t.Namespace.Equals("Ozzyria.Game.Component")
+                                && t.Namespace.Equals("Ozzyria.Game.Components")
                                 && t.GetCustomAttributes(typeof(OptionsAttribute), false).Any()
                       );
 

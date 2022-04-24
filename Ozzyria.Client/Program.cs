@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Client.Graphics.UI;
 using Ozzyria.Game;
-using Ozzyria.Game.Component;
+using Ozzyria.Game.Components;
+using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using SFML.Graphics;
 using SFML.Window;
@@ -15,12 +16,14 @@ namespace Ozzyria.Client
 
         static void Main(string[] args)
         {
+            var context = new EntityContext();
+
             var graphicsManger = GraphicsManager.GetInstance();
             var worldLoader = new WorldPersistence();
-            var tileMap = worldLoader.LoadMap("test_m"); // TODO server should be telling user what map
-            // TODO think about how multiple side-by-side tile mpas might work
-            var worldRenderTexture = new RenderTexture((uint)(tileMap.Width * Tile.DIMENSION), (uint)(tileMap.Height * Tile.DIMENSION));
 
+            // Loaded / Reloaded as player changes maps
+            TileMap tileMap = null;
+            RenderTexture worldRenderTexture = null;
 
             var client = new Networking.Client();
 
@@ -31,6 +34,9 @@ namespace Ozzyria.Client
             var camera = new Camera(Camera.RENDER_RESOLUTION_W, Camera.RENDER_RESOLUTION_H);
 
             var renderSystem = new RenderSystem();
+
+            var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);
+            var experienceBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 10, Color.Magenta, Color.Yellow);
 
             Console.WriteLine($"Window Size {window.Size.X}x{window.Size.Y} - View Size {window.GetView().Size.X}x{window.GetView().Size.Y}");
 
@@ -75,34 +81,42 @@ namespace Ozzyria.Client
                 /// Do Updates
                 ///
                 client.SendInput(input);
-                client.HandleIncomingMessages();
+                client.HandleIncomingMessages(context);
 
-                var entities = client.Entities;
+                var localPlayer = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == client.Id);
+                var playerEntityId = localPlayer?.id ?? 0;
+                var playerEntityMap = ((Player)localPlayer?.GetComponent(typeof(Player)))?.Map ?? "";
+
+                if ((tileMap == null || playerEntityMap != tileMap?.Name) && playerEntityMap != "")
+                {
+                    tileMap = worldLoader.LoadMap(playerEntityMap);
+                    worldRenderTexture = new RenderTexture((uint)(tileMap.Width * Tile.DIMENSION), (uint)(tileMap.Height * Tile.DIMENSION));
+                }
 
                 ///
                 /// DRAWING HERE
                 ///
                 window.Clear();
 
-                worldRenderTexture.Clear();
-                renderSystem.Render(worldRenderTexture, camera, tileMap, client.Id, entities);
-                worldRenderTexture.Display();
-                window.Draw(new Sprite(worldRenderTexture.Texture)
+                if (tileMap != null && worldRenderTexture != null)
                 {
-                    Position = camera.GetTranslationVector()
-                });
+                    worldRenderTexture.Clear();
+                    renderSystem.Render(worldRenderTexture, camera, tileMap, context, playerEntityId);
+                    worldRenderTexture.Display();
+                    window.Draw(new Sprite(worldRenderTexture.Texture)
+                    {
+                        Position = camera.GetTranslationVector()
+                    });
+                }
 
 
                 ///
                 /// Render UI Overlay
                 ///
-                var localPlayerStats = entities.Where(e => e.Id == client.Id).FirstOrDefault()?.GetComponent<Stats>(ComponentType.Stats);
+                var localPlayerStats = (Stats)localPlayer?.GetComponent(typeof(Stats));
                 if (localPlayerStats != null)
                 {
-                    var healthBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 22, Color.Magenta, Color.Green);
                     healthBar.SetMagnitude(localPlayerStats.Health, localPlayerStats.MaxHealth);
-
-                    var experienceBar = new OverlayProgressBar(0, Camera.RENDER_RESOLUTION_H - 10, Color.Magenta, Color.Yellow);
                     experienceBar.SetMagnitude(localPlayerStats.Experience, localPlayerStats.MaxExperience);
 
                     healthBar.Draw(window);
