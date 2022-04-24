@@ -20,10 +20,10 @@ namespace Ozzyria.Client
 
             var graphicsManger = GraphicsManager.GetInstance();
             var worldLoader = new WorldPersistence();
-            var tileMap = worldLoader.LoadMap("test_m"); // TODO server should be telling user what map
-            // TODO think about how multiple side-by-side tile mpas might work
-            var worldRenderTexture = new RenderTexture((uint)(tileMap.Width * Tile.DIMENSION), (uint)(tileMap.Height * Tile.DIMENSION));
 
+            // Loaded / Reloaded as player changes maps
+            TileMap tileMap = null;
+            RenderTexture worldRenderTexture = null;
 
             var client = new Networking.Client();
 
@@ -85,19 +85,29 @@ namespace Ozzyria.Client
 
                 var localPlayer = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == client.Id);
                 var playerEntityId = localPlayer?.id ?? 0;
+                var playerEntityMap = ((Player)localPlayer?.GetComponent(typeof(Player)))?.Map ?? "";
+
+                if ((tileMap == null || playerEntityMap != tileMap?.Name) && playerEntityMap != "")
+                {
+                    tileMap = worldLoader.LoadMap(playerEntityMap);
+                    worldRenderTexture = new RenderTexture((uint)(tileMap.Width * Tile.DIMENSION), (uint)(tileMap.Height * Tile.DIMENSION));
+                }
 
                 ///
                 /// DRAWING HERE
                 ///
                 window.Clear();
 
-                worldRenderTexture.Clear();
-                renderSystem.Render(worldRenderTexture, camera, tileMap, context, playerEntityId);
-                worldRenderTexture.Display();
-                window.Draw(new Sprite(worldRenderTexture.Texture)
+                if (tileMap != null && worldRenderTexture != null)
                 {
-                    Position = camera.GetTranslationVector()
-                });
+                    worldRenderTexture.Clear();
+                    renderSystem.Render(worldRenderTexture, camera, tileMap, context, playerEntityId);
+                    worldRenderTexture.Display();
+                    window.Draw(new Sprite(worldRenderTexture.Texture)
+                    {
+                        Position = camera.GetTranslationVector()
+                    });
+                }
 
 
                 ///

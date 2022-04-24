@@ -10,7 +10,6 @@ namespace Ozzyria.Game
     {
         public EntityContext context;
         public SystemCoordinator coordinator;
-        public TileMap tileMap;
 
         public Game()
         {
@@ -29,8 +28,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Death(context));
 
             var worldLoader = new WorldPersistence();
-            tileMap = worldLoader.LoadMap("test_m");
-            worldLoader.LoadContext(context, "test_e");
+            worldLoader.LoadContext(context, "test_e"); // TODO OZ-14 only load map metadata to get the current "entities" to load and send mapname over to client (i.e. don't load actual tilemap on server)
 
         }
 

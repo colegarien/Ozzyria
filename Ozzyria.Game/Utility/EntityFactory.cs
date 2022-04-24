@@ -16,6 +16,7 @@ namespace Ozzyria.Game.Utility
 
             var playerTag = (Player)player.CreateComponent(typeof(Player));
             playerTag.PlayerId = playerId;
+            playerTag.Map = "test_m"; // TODO OZ-27 pull this from a storage or some kind?
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
 
