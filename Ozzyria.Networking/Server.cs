@@ -41,6 +41,8 @@ namespace Ozzyria.Networking
                 {
                     stopWatch.Restart();
 
+                    // TODO OZ-28 chunk entity updates sent back
+                    // TODO OZ-28 move sending/reading entity updates into separate tasks on the client/server
                     HandleMessages();
                     game.Update(SECONDS_PER_TICK);
                     SendState();

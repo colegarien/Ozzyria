@@ -11,7 +11,7 @@ namespace Ozzyria.Game.ECS
     {
         protected IDictionary<Type, IComponent> _components = new Dictionary<Type, IComponent>();
 
-        // TODO OZ-14 to implement pooling have the context initialize/manage the pool
+        // TODO OZ-27 implement pooling have the context initialize/manage the pool?
 
         public event ComponentEvent OnComponentAdded;
         public event ComponentEvent OnComponentChanged;
@@ -21,7 +21,6 @@ namespace Ozzyria.Game.ECS
 
         public void AddComponent(IComponent component)
         {
-            // TODO OZ-14 throw error if Component already linked
             _components[component.GetType()] = component;
             component.Owner = this;
 

@@ -19,8 +19,8 @@ namespace Ozzyria.Game.Systems
                 EntityFactory.CreateExperienceOrb(context, movement.X, movement.Y, 10);
                 if (entity.HasComponent(typeof(Components.Player)))
                 {
-                    // TODO OZ-14 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
-                    // TODO OZ-14 : probably just remove thought component, change renderable to corpse then make a "respawn" system to handle player respawn at a graveyard
+                    // TODO OZ-30 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
+                    // TODO OZ-30 : probably just remove thought component, change renderable to corpse then make a "respawn" system to handle player respawn at a graveyard
 
                     var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
 

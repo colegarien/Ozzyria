@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Ozzyria.Game
 {
-    public class Game
+    public class Game // TODO OZ-28 delete game and just do it in Server?
     {
         public EntityContext context;
         public SystemCoordinator coordinator;
@@ -15,9 +15,6 @@ namespace Ozzyria.Game
         {
             context = new EntityContext();
             coordinator = new SystemCoordinator();
-            // TODO OZ-14 rethink some systems with the new changes listener!
-            // TODO OZ-14 chunk entity updates sent back
-            // TODO OZ-14 possible move sending/reading entity updates into separate tasks on the client/server
             coordinator
                 .Add(new Systems.Player())
                 .Add(new Systems.Slime())
@@ -28,7 +25,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Death(context));
 
             var worldLoader = new WorldPersistence();
-            worldLoader.LoadContext(context, "test_e"); // TODO OZ-14 only load map metadata to get the current "entities" to load and send mapname over to client (i.e. don't load actual tilemap on server)
+            worldLoader.LoadContext(context, "test_e"); // TODO OZ-27 manages contexts as players change maps
 
         }
 
@@ -39,7 +36,6 @@ namespace Ozzyria.Game
 
         public void OnPlayerInput(int playerId, Input input)
         {
-            // TODO OZ-14 trashy, don't do this
             var playerEntity = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
             if (playerEntity == null)
                 return;
@@ -70,8 +66,6 @@ namespace Ozzyria.Game
         public void Update(float deltaTime)
         {
             coordinator.Execute(deltaTime, context);
-
-            EntityFactory.CreateExperienceOrb(context, 400, 400, 3);
         }
 
     }

@@ -9,6 +9,7 @@ namespace Ozzyria.Game.Persistence
 {
     class Reflector
     {
+        // TODO OZ-29 Simple this or cache more dynamically? at-least remove the whole "options attribute" situation, seems uncessary right now
         private static bool _isInitialized = false;
         private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();

@@ -57,7 +57,7 @@ namespace Ozzyria.Game.Persistence
         public static void WriteEntity(BinaryWriter writer, Entity entity)
         {
             writer.Write(entity.id);
-            foreach (var component in entity.GetComponents()) // TODO consider the fact that adding/removing property can cause old save to break, think of how to communication what parts of the components were actually saved | could possible just write property name first?
+            foreach (var component in entity.GetComponents()) // TODO OZ-29 consider the fact that adding/removing property can cause old save to break, think of how to communication what parts of the components were actually saved | could possible just write property name first?
             {
                 writer.Write(false); // signal not done reading entity
                 WriteComponent(entity, writer, component);
