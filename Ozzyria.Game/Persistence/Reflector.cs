@@ -26,14 +26,6 @@ namespace Ozzyria.Game.Persistence
                 : null;
         }
 
-        public static object? CreateInstance(string identifier)
-        {
-            ValidateReflectionCaches();
-            return componentTypes.ContainsKey(identifier)
-                ? Activator.CreateInstance(componentTypes[identifier])
-                : null;
-        }
-
         public static object? GetPropertyValue(PropertyInfo p, object? instance)
         {
             ValidateReflectionCaches();
@@ -80,14 +72,14 @@ namespace Ozzyria.Game.Persistence
                 return;
             }
 
-            Type baseType = typeof(IComponent);
-            var types = Assembly.GetExecutingAssembly().GetTypes()
+            Type componentInterface = typeof(IComponent);
+            var typesOfComponents = Assembly.GetExecutingAssembly().GetTypes()
                       .Where(t => t.IsClass
                                 && t.Namespace.Equals("Ozzyria.Game.Components")
-                                && baseType.IsAssignableFrom(t)
+                                && componentInterface.IsAssignableFrom(t)
                       );
 
-            foreach (var type in types)
+            foreach (var type in typesOfComponents)
             {
                 componentTypes[type.ToString()] = type;
 
