@@ -10,7 +10,6 @@ namespace Ozzyria.Game.Persistence
 {
     class Reflector
     {
-        // TODO OZ-29 Simple this or cache more dynamically?
         private static bool _isInitialized = false;
         private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
@@ -23,14 +22,6 @@ namespace Ozzyria.Game.Persistence
             ValidateReflectionCaches();
             return componentTypes.ContainsKey(identifier)
                 ? componentTypes[identifier]
-                : null;
-        }
-
-        public static object? CreateInstance(string identifier)
-        {
-            ValidateReflectionCaches();
-            return componentTypes.ContainsKey(identifier)
-                ? Activator.CreateInstance(componentTypes[identifier])
                 : null;
         }
 
@@ -80,14 +71,14 @@ namespace Ozzyria.Game.Persistence
                 return;
             }
 
-            Type baseType = typeof(IComponent);
-            var types = Assembly.GetExecutingAssembly().GetTypes()
+            Type componentInterface = typeof(IComponent);
+            var typesOfComponents = Assembly.GetExecutingAssembly().GetTypes()
                       .Where(t => t.IsClass
                                 && t.Namespace.Equals("Ozzyria.Game.Components")
-                                && baseType.IsAssignableFrom(t)
+                                && componentInterface.IsAssignableFrom(t)
                       );
 
-            foreach (var type in types)
+            foreach (var type in typesOfComponents)
             {
                 componentTypes[type.ToString()] = type;
 

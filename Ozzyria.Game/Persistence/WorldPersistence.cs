@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace Ozzyria.Game.Persistence
@@ -57,12 +58,13 @@ namespace Ozzyria.Game.Persistence
         public static void WriteEntity(BinaryWriter writer, Entity entity)
         {
             writer.Write(entity.id);
-            foreach (var component in entity.GetComponents()) // TODO OZ-29 consider the fact that adding/removing property can cause old save to break, think of how to communication what parts of the components were actually saved | could possible just write property name first?
+
+            var components = entity.GetComponents();
+            writer.Write(components.Length);
+            foreach (var component in entity.GetComponents())
             {
-                writer.Write(false); // signal not done reading entity
                 WriteComponent(entity, writer, component);
             }
-            writer.Write(true); // signal end-of-entity
         }
 
         private static void WriteComponent(Entity entity, BinaryWriter writer, IComponent component)
@@ -74,11 +76,23 @@ namespace Ozzyria.Game.Persistence
                 return;
             }
 
-            writer.Write(name);
             var props = Reflector.GetSavableProperties(component.GetType());
+
+            writer.Write(name);
+            writer.Write(props.Length);
             foreach (var p in props)
             {
-                WriteValueOfType(entity, writer, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
+                writer.Write(p.Name);
+                using (MemoryStream m = new MemoryStream())
+                {
+                    using (var writer2 = new BinaryWriter(m)) {
+                        WriteValueOfType(entity, writer2, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
+                    }
+
+                    var bytes = m.ToArray();
+                    writer.Write(bytes.Length);
+                    writer.Write(bytes.ToArray());
+                }
             }
         }
 
@@ -86,13 +100,13 @@ namespace Ozzyria.Game.Persistence
         {
             var id = reader.ReadUInt32();
             var entity = context.CreateEntity(id);
-            while (reader.BaseStream.Position < reader.BaseStream.Length)
-            {
-                var isEndOfEntity = reader.ReadBoolean();
-                if (isEndOfEntity)
-                    break;
 
+            var numberOfComponents = reader.ReadInt32();
+            var componentsRead = 0;
+            while (numberOfComponents != componentsRead && reader.BaseStream.Position < reader.BaseStream.Length)
+            {
                 ReadComponent(entity, reader);
+                componentsRead++;
             }
 
             return entity;
@@ -112,10 +126,24 @@ namespace Ozzyria.Game.Persistence
             }
 
             var props = Reflector.GetSavableProperties(component.GetType());
-            foreach (var p in props)
+            var numberOfPropsToRead = reader.ReadInt32();
+            for(var i = 0; i < numberOfPropsToRead; i++)
             {
-                Reflector.SetPropertyValue(p, component, ReadValueOfType(entity, reader, GetSerializableBaseType(p.PropertyType)));
+                var propertyName = reader.ReadString();
+                var packetSize = reader.ReadInt32();
+                var property = props.FirstOrDefault(p => p.Name == propertyName);
+
+                if (property == null)
+                {
+                    // Skip Over Packet
+                    reader.ReadBytes(packetSize);
+                    continue;
+                }
+
+
+                Reflector.SetPropertyValue(property, component, ReadValueOfType(entity, reader, GetSerializableBaseType(property.PropertyType)));
             }
+
             return component;
         }
 
@@ -123,7 +151,7 @@ namespace Ozzyria.Game.Persistence
         {
             if (type.IsEnum)
                 return typeof(Enum);
-            else if (type.BaseType == typeof(IComponent) || type.BaseType == typeof(Component))
+            else if (typeof(IComponent).IsAssignableFrom(type))
                 return typeof(IComponent);
             else
                 return type;

@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Content", "Ozzyria.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.ConstructionKit", "Ozzyria.ConstructionKit\Ozzyria.ConstructionKit.csproj", "{3900F3F3-9266-4B79-AEE4-C2047C9C96A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozzyria.Test", "Ozzyria.Test\Ozzyria.Test.csproj", "{86367876-795B-4F91-A459-58EEE5AE4125}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Test", "Ozzyria.Test\Ozzyria.Test.csproj", "{86367876-795B-4F91-A459-58EEE5AE4125}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
