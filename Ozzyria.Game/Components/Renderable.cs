@@ -12,7 +12,6 @@ namespace Ozzyria.Game.Components
         Particle = 4,
     }
 
-    [Options(Name = "Renderable")]
     public class Renderable : Component
     {
         private SpriteType _sprite = SpriteType.Default;

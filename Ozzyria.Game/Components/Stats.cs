@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Stats")]
     public class Stats : Component
     {
         private int _experience = 0;

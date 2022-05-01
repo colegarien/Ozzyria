@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Player")]
     public class Player : Component
     {
         private int _playerId = -1;

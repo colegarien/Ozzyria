@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Game.ECS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,10 @@ namespace Ozzyria.Game.Persistence
 {
     class Reflector
     {
-        // TODO OZ-29 Simple this or cache more dynamically? at-least remove the whole "options attribute" situation, seems uncessary right now
+        // TODO OZ-29 Simple this or cache more dynamically?
         private static bool _isInitialized = false;
         private static Dictionary<string, Type> componentTypes = new Dictionary<string, Type>();
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
-        private static Dictionary<Type, OptionsAttribute> componentOptions = new Dictionary<Type, OptionsAttribute>();
         private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
         private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
 
@@ -60,19 +60,6 @@ namespace Ozzyria.Game.Persistence
             propertySetters[instance.GetType()][p.Name].DynamicInvoke(instance, value);
         }
 
-        public static OptionsAttribute GetOptionsAttribute(Type type)
-        {
-            ValidateReflectionCaches();
-            if (!componentOptions.ContainsKey(type))
-            {
-                // TODO OZ-21 : add logger
-                Console.WriteLine($"[ERROR] Reflector: Type '{type.Name}' Missing OptionsAttribute");
-                return null;
-            }
-
-            return componentOptions[type];
-        }
-
         public static PropertyInfo[] GetSavableProperties(Type type)
         {
             ValidateReflectionCaches();
@@ -93,19 +80,16 @@ namespace Ozzyria.Game.Persistence
                 return;
             }
 
+            Type baseType = typeof(IComponent);
             var types = Assembly.GetExecutingAssembly().GetTypes()
                       .Where(t => t.IsClass
                                 && t.Namespace.Equals("Ozzyria.Game.Components")
-                                && t.GetCustomAttributes(typeof(OptionsAttribute), false).Any()
+                                && baseType.IsAssignableFrom(t)
                       );
 
             foreach (var type in types)
             {
-                var options = (OptionsAttribute)type?.GetCustomAttributes(typeof(OptionsAttribute), false).FirstOrDefault();
-                if (options == null)
-                    continue;
-                componentOptions[type] = options;
-                componentTypes[options.Name] = type;
+                componentTypes[type.ToString()] = type;
 
                 var properties = type.GetProperties()
                     .Where(property => Attribute.IsDefined(property, typeof(SavableAttribute)))

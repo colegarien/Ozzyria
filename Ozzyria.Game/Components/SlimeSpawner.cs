@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "SlimeSpawner")]
     class SlimeSpawner : Component
     {
         private float _x = 500f;

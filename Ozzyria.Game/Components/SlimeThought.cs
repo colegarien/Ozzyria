@@ -1,9 +1,7 @@
-﻿using Ozzyria.Game.Components.Attribute;
-using Ozzyria.Game.ECS;
+﻿using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "SlimeThought")]
     public class SlimeThought : Component
     {
         public Delay ThinkDelay { get; set; } = new Delay();

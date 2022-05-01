@@ -67,14 +67,14 @@ namespace Ozzyria.Game.Persistence
 
         private static void WriteComponent(Entity entity, BinaryWriter writer, IComponent component)
         {
-            var options = Reflector.GetOptionsAttribute(component?.GetType());
-            if (options == null)
+            var name = component?.GetType()?.ToString() ?? null;
+            if (name == null)
             {
                 writer.Write("");
                 return;
             }
 
-            writer.Write(options.Name);
+            writer.Write(name);
             var props = Reflector.GetSavableProperties(component.GetType());
             foreach (var p in props)
             {

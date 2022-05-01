@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Delay")]
     public class Delay : Component
     {
         private float _delayInSeconds = 0.5f;

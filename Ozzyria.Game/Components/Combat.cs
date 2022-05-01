@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Combat")]
     public class Combat : Component
     {
         private bool _attacking = false;

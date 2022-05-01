@@ -2,7 +2,6 @@
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "BoundingBox")]
     public class BoundingBox : Collision
     {
         private int _width = 10;

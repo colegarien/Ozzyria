@@ -5,7 +5,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Movement")]
     public class Movement : Component
     {
         private float _previousX = 0f;

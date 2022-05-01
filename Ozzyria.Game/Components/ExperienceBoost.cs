@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "ExperienceBoost")]
     public class ExperienceBoost : Component
     {
         private int _experience = 10;

@@ -3,7 +3,6 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "Input")]
     public class Input : Component
     {
         private bool _moveUp = false;

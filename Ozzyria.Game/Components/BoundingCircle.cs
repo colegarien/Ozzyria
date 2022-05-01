@@ -2,7 +2,6 @@
 
 namespace Ozzyria.Game.Components
 {
-    [Options(Name = "BoundingCircle")]
     public class BoundingCircle : Collision
     {
         private float _radius = 10f;
