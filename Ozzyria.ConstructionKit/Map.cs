@@ -364,6 +364,7 @@ namespace Ozzyria.ConstructionKit
 
             var persistence = new WorldPersistence();
             loadedMaps[mapName] = persistence.LoadMap(mapName);
+            loadedMaps[mapName].Name = mapName;
 
             return loadedMaps[mapName];
         }
