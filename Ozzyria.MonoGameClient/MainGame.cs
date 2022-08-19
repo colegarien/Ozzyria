@@ -24,14 +24,14 @@ namespace Ozzyria.MonoGameClient
         public static Entity _localPlayer;
         public static TileMap _tileMap = null;
         public static WorldPersistence _worldLoader;
+        public static Texture2D entitySheet;
+        public static Texture2D tileSheet;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
 
-        private Texture2D entitySheet;
-        private Texture2D tileSheet;
 
-        // for runnign a local server
+        // for running a local server
         private const bool IS_SINGLEPLAYER = true;
         private CancellationTokenSource _cts;
         private Server _localServer;
@@ -64,7 +64,8 @@ namespace Ozzyria.MonoGameClient
             _coordinator = new SystemCoordinator();
             _coordinator
                 .Add(new Systems.Network())
-                .Add(new Systems.LocalPlayer(_context));
+                .Add(new Systems.LocalPlayer(_context))
+                .Add(new Systems.RenderTracking(_context));
 
             _client = new Client();
             if (!_client.Connect("127.0.0.1", 13000))
@@ -107,9 +108,6 @@ namespace Ozzyria.MonoGameClient
 
         protected override void Update(GameTime gameTime)
         {
-            ///
-            /// EVENT HANDLING HERE
-            ///
             if (!_client.IsConnected() || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 Log($"Disconnecting");
@@ -118,13 +116,7 @@ namespace Ozzyria.MonoGameClient
                 return;
             }
 
-            ///
-            /// Do Updates
-            ///
             _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
-
-            var playerMovement = (Movement)MainGame._localPlayer?.GetComponent(typeof(Movement));
-            MainGame._camera.CenterView(playerMovement?.X ?? 0, playerMovement?.Y ?? 0);
 
             base.Update(gameTime);
         }
@@ -142,57 +134,8 @@ namespace Ozzyria.MonoGameClient
             query.And(typeof(Movement), typeof(Renderable));
             var entities = _context.GetEntities(query);
 
-            var listDrawables = new List<DrawableInfo>();
-            foreach (var entity in entities)
-            {
-                var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
 
-                if (!_camera.IsInView(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
-                    continue;
-
-                listDrawables.Add(new DrawableInfo
-                {
-                    Sheet = entitySheet,
-                    Layer = movement.Layer,
-                    Position = new Vector2(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION),
-                    Rotation = -movement.LookDirection,
-                    Width = Tile.DIMENSION,
-                    Height = Tile.DIMENSION,
-                    Z = renderable.Z,
-                    Color = renderable.Sprite == SpriteType.Particle ? Color.Yellow : Color.White,
-                    TextureRect = new Rectangle[] { GetEntitySpriteRect(renderable.Sprite) }
-                });
-            }
-
-            foreach (var layer in _tileMap.Layers)
-            {
-                foreach (var tile in layer.Value)
-                {
-                    if (!_camera.IsInView(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
-                        continue;
-
-                    var textureList = new List<Rectangle>();
-                    textureList.Add(new Rectangle(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION));
-                    foreach(var decal in tile.Decals)
-                    {
-                        textureList.Add(new Rectangle(decal.TextureCoordX * Tile.DIMENSION, decal.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION));
-                    }
-
-                    listDrawables.Add(new DrawableInfo
-                    {
-                        Sheet = tileSheet,
-                        Layer = layer.Key,
-                        Position = new Vector2(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
-                        Width = Tile.DIMENSION,
-                        Height = Tile.DIMENSION,
-                        Z = tile.Z,
-                        TextureRect = textureList.ToArray()
-                    });
-                }
-            }
-
-            foreach (var drawls in listDrawables.OrderBy(g => g.Layer).ThenBy(g => g.Z).ThenBy(g => g.Position.Y))
+            foreach (var drawls in Systems.RenderTracking.finalDrawables)
             {
                 var finalRotation = drawls.Rotation; //(transform.RelativeRotation ? (MathHelper.PiOver2 * drawls.Rotation) : 0f) + transform.Rotation;
                 var spriteEffectFlags = SpriteEffects.None;//(transform.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (transform.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
@@ -220,32 +163,5 @@ namespace Ozzyria.MonoGameClient
             base.Draw(gameTime);
         }
 
-        protected Rectangle GetEntitySpriteRect(SpriteType type)
-        {
-            switch (type)
-            {
-                case SpriteType.Particle:
-                    return new Rectangle(0, 96, 32, 32);
-                case SpriteType.Player:
-                    return new Rectangle(0, 32, 32, 32);
-                case SpriteType.Slime:
-                default:
-                    return new Rectangle(0, 0, 32, 32);
-            }
-        }
-
-        public class DrawableInfo
-        {
-            public Texture2D Sheet { get; set; }
-            public int Layer { get; set; }
-            public Vector2 Position { get; set; }
-            public int Width { get; set; }
-            public int Height { get; set; }
-            public int Z { get; set; }
-            public float Rotation { get; set; } = 0f;
-            public Vector2 Origin { get; set; } = new Vector2(16, 16);
-            public Rectangle[] TextureRect { get; set; }
-            public Color Color { get; set; } = Color.White;
-        }
     }
 }
