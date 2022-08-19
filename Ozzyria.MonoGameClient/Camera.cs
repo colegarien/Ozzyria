@@ -3,7 +3,7 @@ using System;
 
 namespace Ozzyria.MonoGameClient
 {
-    internal class Camera
+    public class Camera
     {
         public const int RENDER_RESOLUTION_W = 640;
         public const int RENDER_RESOLUTION_H = 360;

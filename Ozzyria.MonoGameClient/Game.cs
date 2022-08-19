@@ -19,16 +19,17 @@ namespace Ozzyria.MonoGameClient
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
 
-        private Client _client;
+        public static Client _client;
+        public static Camera _camera;
+        public static Entity _localPlayer;
+        public static TileMap _tileMap = null;
+        public static WorldPersistence _worldLoader;
+
         private EntityContext _context;
-        private TileMap _tileMap = null;
-        private WorldPersistence _worldLoader;
+        private SystemCoordinator _coordinator;
 
         private Texture2D entitySheet;
         private Texture2D tileSheet;
-
-        private Camera _camera;
-        private Entity _localPlayerEntity;
 
         // for runnign a local server
         private const bool IS_SINGLEPLAYER = true;
@@ -60,6 +61,11 @@ namespace Ozzyria.MonoGameClient
 
             _worldLoader = new WorldPersistence();
             _context = new EntityContext();
+            _coordinator = new SystemCoordinator();
+            _coordinator
+                .Add(new Systems.Network())
+                .Add(new Systems.LocalPlayer(_context));
+
             _client = new Client();
             if (!_client.Connect("127.0.0.1", 13000))
             {
@@ -67,7 +73,7 @@ namespace Ozzyria.MonoGameClient
                 Exit();
                 return;
             }
-            Log($"Join as Client #{_client.Id}");
+            Log($"Joined as Client #{_client.Id}");
 
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
@@ -112,36 +118,13 @@ namespace Ozzyria.MonoGameClient
                 return;
             }
 
-            var input = new Input
-            {
-                MoveUp = Keyboard.GetState().IsKeyDown(Keys.W),
-                MoveDown = Keyboard.GetState().IsKeyDown(Keys.S),
-                MoveLeft = Keyboard.GetState().IsKeyDown(Keys.A),
-                MoveRight = Keyboard.GetState().IsKeyDown(Keys.D),
-                TurnLeft = Keyboard.GetState().IsKeyDown(Keys.Q),
-                TurnRight = Keyboard.GetState().IsKeyDown(Keys.E),
-                Attack = Keyboard.GetState().IsKeyDown(Keys.Space)
-            };
-
             ///
             /// Do Updates
             ///
-            _client.SendInput(input);
-            _client.HandleIncomingMessages(_context);
+            _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
 
-            if (_localPlayerEntity == null || !_localPlayerEntity.HasComponent(typeof(Player)))
-            {
-                _localPlayerEntity = _context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == _client.Id);
-            }
-
-            var playerEntityMap = ((Player)_localPlayerEntity?.GetComponent(typeof(Player)))?.Map ?? "";
-            if ((_tileMap == null || playerEntityMap != _tileMap?.Name) && playerEntityMap != "")
-            {
-                _tileMap = _worldLoader.LoadMap(playerEntityMap);
-            }
-
-            var playerMovement = (Movement)_localPlayerEntity?.GetComponent(typeof(Movement));
-            _camera.CenterView(playerMovement?.X ?? 0, playerMovement?.Y ?? 0);
+            var playerMovement = (Movement)MainGame._localPlayer?.GetComponent(typeof(Movement));
+            MainGame._camera.CenterView(playerMovement?.X ?? 0, playerMovement?.Y ?? 0);
 
             base.Update(gameTime);
         }
@@ -228,9 +211,9 @@ namespace Ozzyria.MonoGameClient
             /// Render UI Overlay
             ///
             _spriteBatch.Begin();
-            if (_localPlayerEntity != null)
+            if (_localPlayer != null)
             {
-                var localPlayerStats = (Stats)_localPlayerEntity?.GetComponent(typeof(Stats));
+                var localPlayerStats = (Stats)_localPlayer?.GetComponent(typeof(Stats));
                 _spriteBatch.DrawString(_debugFont, $"HP: {localPlayerStats?.Health}/{localPlayerStats?.MaxHealth}\r\nEXP: {localPlayerStats?.Experience}/{localPlayerStats?.MaxExperience}", Vector2.Zero, Color.Red);
             }
             _spriteBatch.End();
