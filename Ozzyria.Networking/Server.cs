@@ -30,14 +30,20 @@ namespace Ozzyria.Networking
             server = new UdpClient(SERVER_PORT);
         }
 
-        public void Start()
+        public void Start(object obj = null)
         {
+            CancellationToken ct;
+            if (obj != null)
+                ct = (CancellationToken)obj;
+            else
+                ct = new CancellationToken();
+
             try
             {
                 Console.WriteLine($"Server Started - Listening on port {SERVER_PORT}");
                 Stopwatch stopWatch = new Stopwatch();
                 var isRunning = true;
-                while (isRunning)
+                while (isRunning && !ct.IsCancellationRequested)
                 {
                     stopWatch.Restart();
 

@@ -6,7 +6,7 @@
         static void Main(string[] args)
         {
             var server = new Networking.Server();
-            server.Start();
+            server.Start(null);
         }
     }
 }

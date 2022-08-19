@@ -9,6 +9,7 @@ using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Ozzyria.MonoGameClient
 {
@@ -16,6 +17,7 @@ namespace Ozzyria.MonoGameClient
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private SpriteFont _debugFont;
 
         private Client _client;
         private EntityContext _context;
@@ -26,6 +28,13 @@ namespace Ozzyria.MonoGameClient
         private Texture2D tileSheet;
 
         private Camera _camera;
+        private Entity _localPlayerEntity;
+
+        // for runnign a local server
+        private const bool IS_SINGLEPLAYER = true;
+        private CancellationTokenSource _cts;
+        private Server _localServer;
+        private Thread _localServerTheard;
 
         public MainGame()
         {
@@ -41,6 +50,14 @@ namespace Ozzyria.MonoGameClient
 
         protected override void Initialize()
         {
+            if (IS_SINGLEPLAYER)
+            {
+                _cts = new CancellationTokenSource();
+                _localServer = new Server();
+                _localServerTheard = new Thread(_localServer.Start);
+                _localServerTheard.Start(_cts.Token);
+            }
+
             _worldLoader = new WorldPersistence();
             _context = new EntityContext();
             _client = new Client();
@@ -61,9 +78,23 @@ namespace Ozzyria.MonoGameClient
             base.Initialize();
         }
 
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            _client.Disconnect();
+
+            if (IS_SINGLEPLAYER)
+            {
+                // clean up local server
+                _cts.Cancel();
+            }
+
+            base.OnExiting(sender, args);
+        }
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _debugFont = Content.Load<SpriteFont>("debug_font");
             entitySheet = Content.Load<Texture2D>("Sprites/entity_set_001");
             tileSheet = Content.Load<Texture2D>("Sprites/outside_tileset_001");
         }
@@ -78,6 +109,7 @@ namespace Ozzyria.MonoGameClient
                 Log($"Disconnecting");
                 _client.Disconnect();
                 Exit();
+                return;
             }
 
             var input = new Input
@@ -97,17 +129,19 @@ namespace Ozzyria.MonoGameClient
             _client.SendInput(input);
             _client.HandleIncomingMessages(_context);
 
-            var localPlayer = _context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == _client.Id);
-            var playerEntityId = localPlayer?.id ?? 0;
-            var playerEntityMap = ((Player)localPlayer?.GetComponent(typeof(Player)))?.Map ?? "";
+            if (_localPlayerEntity == null || !_localPlayerEntity.HasComponent(typeof(Player)))
+            {
+                _localPlayerEntity = _context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == _client.Id);
+            }
 
+            var playerEntityMap = ((Player)_localPlayerEntity?.GetComponent(typeof(Player)))?.Map ?? "";
             if ((_tileMap == null || playerEntityMap != _tileMap?.Name) && playerEntityMap != "")
             {
                 _tileMap = _worldLoader.LoadMap(playerEntityMap);
             }
 
-            var playerMovement = (Movement)localPlayer.GetComponent(typeof(Movement));
-            _camera.CenterView(playerMovement.X, playerMovement.Y);
+            var playerMovement = (Movement)_localPlayerEntity?.GetComponent(typeof(Movement));
+            _camera.CenterView(playerMovement?.X ?? 0, playerMovement?.Y ?? 0);
 
             base.Update(gameTime);
         }
@@ -116,6 +150,9 @@ namespace Ozzyria.MonoGameClient
         {
             GraphicsDevice.Clear(Color.Black);
 
+            ///
+            /// Render Game World
+            ///
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, _camera.GetViewMatrix());
 
             var query = new EntityQuery();
@@ -184,11 +221,18 @@ namespace Ozzyria.MonoGameClient
                 
             }
 
+            _spriteBatch.End();
+
+
             ///
             /// Render UI Overlay
             ///
-
-
+            _spriteBatch.Begin();
+            if (_localPlayerEntity != null)
+            {
+                var localPlayerStats = (Stats)_localPlayerEntity?.GetComponent(typeof(Stats));
+                _spriteBatch.DrawString(_debugFont, $"HP: {localPlayerStats?.Health}/{localPlayerStats?.MaxHealth}\r\nEXP: {localPlayerStats?.Experience}/{localPlayerStats?.MaxExperience}", Vector2.Zero, Color.Red);
+            }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
