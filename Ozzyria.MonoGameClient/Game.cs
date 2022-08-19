@@ -25,8 +25,7 @@ namespace Ozzyria.MonoGameClient
         private Texture2D entitySheet;
         private Texture2D tileSheet;
 
-        int cameraX = 0;
-        int cameraY = 0;
+        private Camera _camera;
 
         public MainGame()
         {
@@ -56,6 +55,8 @@ namespace Ozzyria.MonoGameClient
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
+
+            _camera = new Camera(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             base.Initialize();
         }
@@ -105,6 +106,9 @@ namespace Ozzyria.MonoGameClient
                 _tileMap = _worldLoader.LoadMap(playerEntityMap);
             }
 
+            var playerMovement = (Movement)localPlayer.GetComponent(typeof(Movement));
+            _camera.CenterView(playerMovement.X, playerMovement.Y);
+
             base.Update(gameTime);
         }
 
@@ -112,7 +116,7 @@ namespace Ozzyria.MonoGameClient
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.Identity * Matrix.CreateTranslation(new Vector3(-(int)cameraX, -(int)cameraY, 0)) * Matrix.CreateScale(2f));
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, _camera.GetViewMatrix());
 
             var query = new EntityQuery();
             query.And(typeof(Movement), typeof(Renderable));
@@ -124,23 +128,30 @@ namespace Ozzyria.MonoGameClient
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
 
+                if (!_camera.IsInView(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
+                    continue;
+
                 listDrawables.Add(new DrawableInfo
                 {
                     Sheet = entitySheet,
                     Layer = movement.Layer,
-                    Position = new Vector2(movement.X - 16, movement.Y - 16),
-                    Rotation = movement.LookDirection,
+                    Position = new Vector2(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION),
+                    Rotation = -movement.LookDirection,
                     Width = Tile.DIMENSION,
                     Height = Tile.DIMENSION,
                     Z = renderable.Z,
-                    TextureRect = new Rectangle[] { new Rectangle(0, 32, 32, 32) }
-                }) ;
+                    Color = renderable.Sprite == SpriteType.Particle ? Color.Yellow : Color.White,
+                    TextureRect = new Rectangle[] { GetEntitySpriteRect(renderable.Sprite) }
+                });
             }
 
             foreach (var layer in _tileMap.Layers)
             {
                 foreach (var tile in layer.Value)
                 {
+                    if (!_camera.IsInView(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
+                        continue;
+
                     var textureList = new List<Rectangle>();
                     textureList.Add(new Rectangle(tile.TextureCoordX * Tile.DIMENSION, tile.TextureCoordY * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION));
                     foreach(var decal in tile.Decals)
@@ -175,6 +186,20 @@ namespace Ozzyria.MonoGameClient
 
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        protected Rectangle GetEntitySpriteRect(SpriteType type)
+        {
+            switch (type)
+            {
+                case SpriteType.Particle:
+                    return new Rectangle(0, 96, 32, 32);
+                case SpriteType.Player:
+                    return new Rectangle(0, 32, 32, 32);
+                case SpriteType.Slime:
+                default:
+                    return new Rectangle(0, 0, 32, 32);
+            }
         }
 
         public class DrawableInfo
