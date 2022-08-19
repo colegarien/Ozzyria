@@ -75,6 +75,7 @@ namespace Ozzyria.Game
     public class Tile
     {
         public const int DIMENSION = 32;
+        public const int HALF_DIMENSION = 16;
         public int X { get; set; } = 0;
         public int Y { get; set; } = 0;
         public int Z { get; set; } = 0;
