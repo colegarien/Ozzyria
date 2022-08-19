@@ -184,6 +184,11 @@ namespace Ozzyria.MonoGameClient
                 
             }
 
+            ///
+            /// Render UI Overlay
+            ///
+
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
