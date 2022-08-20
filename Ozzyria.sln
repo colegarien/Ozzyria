@@ -10,11 +10,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Server", "Ozzyria.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Networking", "Ozzyria.Networking\Ozzyria.Networking.csproj", "{7873A90D-3461-45CC-9C69-B45DAD547D74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Client", "Ozzyria.Client\Ozzyria.Client.csproj", "{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D} = {CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Game", "Ozzyria.Game\Ozzyria.Game.csproj", "{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2} = {16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}
@@ -26,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.ConstructionKit", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Test", "Ozzyria.Test\Ozzyria.Test.csproj", "{86367876-795B-4F91-A459-58EEE5AE4125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozzyria.MonoGameClient", "Ozzyria.MonoGameClient\Ozzyria.MonoGameClient.csproj", "{DF23C054-3A03-4219-A3BB-01E1BB511983}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.MonoGameClient", "Ozzyria.MonoGameClient\Ozzyria.MonoGameClient.csproj", "{DF23C054-3A03-4219-A3BB-01E1BB511983}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,10 +37,6 @@ Global
 		{7873A90D-3461-45CC-9C69-B45DAD547D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7873A90D-3461-45CC-9C69-B45DAD547D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7873A90D-3461-45CC-9C69-B45DAD547D74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFC7DA87-793C-4E36-A9F0-0D328A8A49D0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCCB1FC6-4F5F-48E0-BBF2-A5D1E792306D}.Release|Any CPU.ActiveCfg = Release|Any CPU
