@@ -8,7 +8,6 @@ using Ozzyria.Game.Persistence;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace Ozzyria.MonoGameClient
@@ -24,11 +23,11 @@ namespace Ozzyria.MonoGameClient
         public static Entity _localPlayer;
         public static TileMap _tileMap = null;
         public static WorldPersistence _worldLoader;
-        public static Texture2D entitySheet;
-        public static Texture2D tileSheet;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
+
+        private static Dictionary<string, Texture2D> textureResources;
 
 
         // for running a local server
@@ -102,8 +101,12 @@ namespace Ozzyria.MonoGameClient
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _debugFont = Content.Load<SpriteFont>("debug_font");
-            entitySheet = Content.Load<Texture2D>("Sprites/entity_set_001");
-            tileSheet = Content.Load<Texture2D>("Sprites/outside_tileset_001");
+
+            textureResources = new Dictionary<string, Texture2D>()
+            {
+                {"entity_set_001", Content.Load<Texture2D>("Sprites/entity_set_001")},
+                {"outside_tileset_001", Content.Load<Texture2D>("Sprites/outside_tileset_001")},
+            };
         }
 
         protected override void Update(GameTime gameTime)
@@ -142,7 +145,7 @@ namespace Ozzyria.MonoGameClient
 
                 foreach (var rect in drawls.TextureRect)
                 {
-                    _spriteBatch.Draw(drawls.Sheet, new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, finalRotation, drawls.Origin, spriteEffectFlags, 0);
+                    _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, finalRotation, drawls.Origin, spriteEffectFlags, 0);
                 }
                 
             }
