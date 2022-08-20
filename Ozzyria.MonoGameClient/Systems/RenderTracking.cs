@@ -134,7 +134,7 @@ namespace Ozzyria.MonoGameClient.Systems
                     return new Rectangle(0, 32, 32, 32);
                 case SpriteType.Slime:
                 default:
-                    return new Rectangle(0, 0, 32, 32);
+                    return new Rectangle(0, 8*32, 32, 32);
             }
         }
 
