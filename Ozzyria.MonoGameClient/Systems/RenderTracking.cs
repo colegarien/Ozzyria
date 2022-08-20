@@ -21,7 +21,6 @@ namespace Ozzyria.MonoGameClient.Systems
 
         public override void Execute(EntityContext context, Entity[] entities)
         {
-            var hadChange = false;
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
@@ -30,37 +29,26 @@ namespace Ozzyria.MonoGameClient.Systems
                 if (MainGame._localPlayer != null && MainGame._localPlayer?.id == entity.id)
                 {
                     MainGame._camera.CenterView(movement.X, movement.Y);
-                    hadChange = true;
-
                     RebuildTileMapGraphics();
                 }
 
-
-                entityDrawables.RemoveAll(d => d.Entity != null && d.Entity?.id == entity.id); // TODO OZ-23 don't do this, just remove/add/update when necessary
-                if (movement == null || renderable == null || !MainGame._camera.IsInView(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
+                if (movement == null || renderable == null)
                 {
-                    hadChange = true;
-
-                    // TODO OZ-23 Remove from "renderables" list or skip it altogether
+                    entityDrawables.RemoveAll(d => d.EntityId != null && d.EntityId == entity.id);
                 }
                 else
                 {
-                    hadChange = true;
-
-                    // TODO OZ-23 add or update to "drawables" list
-                    AddEntityDrawables(entity, movement, renderable);
+                    UpdateEntityDrawables(entity, movement, renderable);
                 }
             }
 
-            if (hadChange)
-            {
-                finalDrawables = tileMapDrawables
-                    .Concat(entityDrawables)
-                    .OrderBy(g => g.Layer)
-                    .ThenBy(g => g.Z)
-                    .ThenBy(g => g.Position.Y)
-                    .ToList();
-            }
+            finalDrawables = tileMapDrawables
+                .Concat(entityDrawables)
+                .Where(e => MainGame._camera.IsInView(e.Position.X, e.Position.Y, e.Width, e.Height))
+                .OrderBy(g => g.Layer)
+                .ThenBy(g => g.Z)
+                .ThenBy(g => g.Position.Y)
+                .ToList();
         }
 
         private void RebuildTileMapGraphics()
@@ -88,27 +76,52 @@ namespace Ozzyria.MonoGameClient.Systems
                         Width = Tile.DIMENSION,
                         Height = Tile.DIMENSION,
                         Z = tile.Z,
-                        TextureRect = textureList.ToArray()
+                        TextureRect = textureList.ToArray(),
+                        Rotation = 0,
+                        Origin = new Vector2(Tile.HALF_DIMENSION, Tile.HALF_DIMENSION),
+                        Color = Color.White
                     });
                 }
             }
         }
 
-        private void AddEntityDrawables(Entity entity, Movement movement, Renderable renderable)
+        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable)
         {
-            entityDrawables.Add(new DrawableInfo
+            var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.EntityId != null && e.EntityId == entity.id);
+            if (existingItemIndex != -1)
             {
-                Entity = entity,
-                Sheet = MainGame.entitySheet,
-                Layer = movement.Layer,
-                Position = new Vector2(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION),
-                Rotation = -movement.LookDirection,
-                Width = Tile.DIMENSION,
-                Height = Tile.DIMENSION,
-                Z = renderable.Z,
-                Color = renderable.Sprite == SpriteType.Particle ? Color.Yellow : Color.White,
-                TextureRect = new Rectangle[] { GetEntitySpriteRect(renderable.Sprite) }
-            });           
+                entityDrawables[existingItemIndex] = new DrawableInfo
+                {
+                    EntityId = entity.id,
+                    Sheet = MainGame.entitySheet,
+                    Layer = movement.Layer,
+                    Position = new Vector2(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION),
+                    Rotation = -movement.LookDirection,
+                    Width = Tile.DIMENSION,
+                    Height = Tile.DIMENSION,
+                    Z = renderable.Z,
+                    Color = renderable.Sprite == SpriteType.Particle ? Color.Yellow : Color.White,
+                    TextureRect = new Rectangle[] { GetEntitySpriteRect(renderable.Sprite) },
+                    Origin = new Vector2(Tile.HALF_DIMENSION, Tile.HALF_DIMENSION)
+                };
+            }
+            else
+            {
+                entityDrawables.Add(new DrawableInfo
+                {
+                    EntityId = entity.id,
+                    Sheet = MainGame.entitySheet,
+                    Layer = movement.Layer,
+                    Position = new Vector2(movement.X - Tile.HALF_DIMENSION, movement.Y - Tile.HALF_DIMENSION),
+                    Rotation = -movement.LookDirection,
+                    Width = Tile.DIMENSION,
+                    Height = Tile.DIMENSION,
+                    Z = renderable.Z,
+                    Color = renderable.Sprite == SpriteType.Particle ? Color.Yellow : Color.White,
+                    TextureRect = new Rectangle[] { GetEntitySpriteRect(renderable.Sprite) },
+                    Origin = new Vector2(Tile.HALF_DIMENSION, Tile.HALF_DIMENSION)
+                });
+            }
         }
 
 
@@ -144,18 +157,18 @@ namespace Ozzyria.MonoGameClient.Systems
         }
     }
 
-    public class DrawableInfo
+    public struct DrawableInfo
     {
-        public Entity Entity { get; set; }
+        public uint? EntityId { get; set; }
         public Texture2D Sheet { get; set; }
         public int Layer { get; set; }
         public Vector2 Position { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int Z { get; set; }
-        public float Rotation { get; set; } = 0f;
-        public Vector2 Origin { get; set; } = new Vector2(16, 16);
+        public float Rotation { get; set; }
+        public Vector2 Origin { get; set; }
         public Rectangle[] TextureRect { get; set; }
-        public Color Color { get; set; } = Color.White;
+        public Color Color { get; set; }
     }
 }
