@@ -132,24 +132,15 @@ namespace Ozzyria.MonoGameClient
             /// Render Game World
             ///
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, _camera.GetViewMatrix());
-
-            var query = new EntityQuery();
-            query.And(typeof(Movement), typeof(Renderable));
-            var entities = _context.GetEntities(query);
-
-
             foreach (var drawls in Systems.RenderTracking.finalDrawables)
             {
-                var finalRotation = drawls.Rotation; //(transform.RelativeRotation ? (MathHelper.PiOver2 * drawls.Rotation) : 0f) + transform.Rotation;
-                var spriteEffectFlags = SpriteEffects.None;//(transform.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (transform.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
-
+                var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
                 foreach (var rect in drawls.TextureRect)
                 {
-                    _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, finalRotation, drawls.Origin, spriteEffectFlags, 0);
+                    _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
                 }
                 
             }
-
             _spriteBatch.End();
 
 

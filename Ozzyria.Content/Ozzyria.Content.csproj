@@ -37,4 +37,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Entities\resource_registry.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

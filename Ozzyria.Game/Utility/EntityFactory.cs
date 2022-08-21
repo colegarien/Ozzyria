@@ -11,7 +11,7 @@ namespace Ozzyria.Game.Utility
             var player = context.CreateEntity();
 
             var renderable = (Renderable)player.CreateComponent(typeof(Renderable));
-            renderable.Sprite = SpriteType.Player;
+            renderable.CurrentClip = "body_white_idle_east";
             renderable.Z = (int)ZLayer.Middleground;
 
             var playerTag = (Player)player.CreateComponent(typeof(Player));
@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Utility
             var slime = context.CreateEntity();
 
             var renderable = (Renderable)slime.CreateComponent(typeof(Renderable));
-            renderable.Sprite = SpriteType.Slime;
+            renderable.CurrentClip = "slime_idle_east";
             renderable.Z = (int)ZLayer.Middleground;
 
             var thought = (SlimeThought)slime.CreateComponent(typeof(SlimeThought));
@@ -94,7 +94,7 @@ namespace Ozzyria.Game.Utility
             var orb = context.CreateEntity();
 
             var renderable = (Renderable)orb.CreateComponent(typeof(Renderable));
-            renderable.Sprite = SpriteType.Particle;
+            renderable.CurrentClip = "static_exp_orb";
             renderable.Z = (int)ZLayer.Items;
 
             var thought = (ExperienceOrbThought)orb.CreateComponent(typeof(ExperienceOrbThought));

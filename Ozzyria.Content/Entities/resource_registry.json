@@ -1,0 +1,91 @@
+{
+  "Resources": [
+    "entity_set_001"
+  ],
+  "FrameSources": {
+    "exp_orb": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_east_01": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "slime_east_01": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 256,
+      "Width": 32,
+      "Height": 32
+    }
+  },
+  "Clips": {
+    "static_exp_orb": {
+      "Frames": [
+        {
+          "SourceId": "exp_orb",
+          "Transform": {
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 0,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "body_white_idle_east": {
+      "Frames": [
+        {
+          "SourceId": "body_white_east_01",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "slime_idle_east": {
+      "Frames": [
+        {
+          "SourceId": "slime_east_01",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    }
+  }
+}

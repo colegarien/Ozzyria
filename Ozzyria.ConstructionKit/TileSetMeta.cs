@@ -258,6 +258,7 @@ namespace Ozzyria.ConstructionKit
                 return;
             }
 
+            // TODO OZ-31 Z-levels don't update in the maps, this might cause issues
             File.WriteAllText(Content.Loader.Root() + "/TileSets/tileset_metadata.json", JsonSerializer.Serialize(tileSetMetaDatas, JsonOptionsFactory.GetOptions()));
         }
     }

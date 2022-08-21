@@ -14,20 +14,6 @@ namespace Ozzyria.Game.Components
 
     public class Renderable : Component
     {
-        private SpriteType _sprite = SpriteType.Default;
-        [Savable]
-        public SpriteType Sprite
-        {
-            get => _sprite; set
-            {
-                if (_sprite != value)
-                {
-                    _sprite = value;
-                    OnComponentChanged?.Invoke(Owner, this);
-                }
-            }
-        }
-
         private int _z = (int)ZLayer.Background;
         [Savable]
         public int Z { get => _z; set
@@ -39,5 +25,34 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
+
+        private string _currentClip = "";
+        [Savable]
+        public string CurrentClip
+        {
+            get => _currentClip; set
+            {
+                if (_currentClip != value)
+                {
+                    _currentClip = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+
+        private int _currentFrame = 0;
+        [Savable]
+        public int CurrentFrame
+        {
+            get => _currentFrame; set
+            {
+                if (_currentFrame != value)
+                {
+                    _currentFrame  = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+
     }
 }
