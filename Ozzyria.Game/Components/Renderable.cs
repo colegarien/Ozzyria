@@ -54,5 +54,7 @@ namespace Ozzyria.Game.Components
             }
         }
 
+        public float timer = 0;
+
     }
 }

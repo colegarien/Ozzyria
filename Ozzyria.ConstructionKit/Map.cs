@@ -388,7 +388,6 @@ namespace Ozzyria.ConstructionKit
 
                 EntityFactory.CreateExperienceOrb(context, 400, 300, 30);
                 EntityFactory.CreateSlimeSpawner(context, 500, 400);
-                EntityFactory.CreateCircleCollider(context, 60, 60, 10);
 
                 // build colliders for collideable tiles
                 for (var layer = 0; layer < mapMeta.Layers; layer++)
