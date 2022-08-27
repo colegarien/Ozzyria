@@ -31,6 +31,8 @@ namespace Ozzyria.Game.Utility
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
+            var animationState = player.CreateComponent(typeof(AnimationState));
+
             player.AddComponent(renderable);
             player.AddComponent(playerTag);
             player.AddComponent(thought);
@@ -39,6 +41,7 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(combat);
             player.AddComponent(input);
             player.AddComponent(collision);
+            player.AddComponent(animationState);
         }
 
         public static void CreateSlime(EntityContext context, float x, float y)

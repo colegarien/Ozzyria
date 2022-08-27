@@ -3,18 +3,13 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-
-    public enum SpriteType  // OZ-23 : refactor this to not be an enum (make more data-driven)
-    {
-        Default = 1,
-        Player = 2,
-        Slime = 3,
-        Particle = 4,
-    }
-
     public class Renderable : Component
     {
         private int _z = (int)ZLayer.Background;
+        private int _currentFrame = 0;
+        private string _currentClip = "";
+        public float timer = 0f;
+
         [Savable]
         public int Z { get => _z; set
             {
@@ -26,7 +21,19 @@ namespace Ozzyria.Game.Components
             }
         }
 
-        private string _currentClip = "";
+        [Savable]
+        public int CurrentFrame
+        {
+            get => _currentFrame; set
+            {
+                if (_currentFrame != value)
+                {
+                    _currentFrame = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+
         [Savable]
         public string CurrentClip
         {
@@ -39,22 +46,6 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
-
-        private int _currentFrame = 0;
-        [Savable]
-        public int CurrentFrame
-        {
-            get => _currentFrame; set
-            {
-                if (_currentFrame != value)
-                {
-                    _currentFrame  = value;
-                    OnComponentChanged?.Invoke(Owner, this);
-                }
-            }
-        }
-
-        public float timer = 0;
 
     }
 }

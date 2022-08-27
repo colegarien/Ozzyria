@@ -31,15 +31,6 @@ namespace Ozzyria.Game.Systems
 
                 combat.Update(deltaTime, input.Attack);
                 movement.Update(deltaTime);
-
-                // TODO OZ-23 : https://gamedev.stackexchange.com/questions/197372/how-to-do-state-based-animation-with-ecs
-                var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
-                renderable.timer += deltaTime;
-                if (renderable.timer > 0.1f)
-                {
-                    renderable.timer = 0;
-                    renderable.CurrentFrame++;
-                }
             }
         }
 

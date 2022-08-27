@@ -95,44 +95,28 @@ namespace Ozzyria.MonoGameClient.Systems
             var frame = currentClip.GetFrame(renderable.CurrentFrame);
             var transform = frame.Transform;
             var source = ResourceRegistry.FrameSources[frame.SourceId];
+
+            var drawable = new DrawableInfo
+            {
+                EntityId = entity.id,
+                Sheet = ResourceRegistry.Resources[source.Resource],
+                Layer = movement.Layer,
+                Position = new Vector2(movement.X - (transform.DestinationW * 0.5f) + transform.RelativeX, movement.Y - (transform.DestinationH * 0.5f) + transform.RelativeY),
+                Rotation = (transform.RelativeRotation ? -movement.LookDirection : 0) + transform.Rotation,
+                Width = transform.DestinationW,
+                Height = transform.DestinationH,
+                Z = renderable.Z,
+                Color = new Color(transform.Red, transform.Green, transform.Blue, transform.Alpha),
+                TextureRect = new Rectangle[] { new Rectangle(source.Left, source.Top, source.Width, source.Height) },
+                FlipHorizontally = transform.FlipHorizontally,
+                FlipVertically = transform.FlipVertically,
+                Origin = new Vector2((transform.DestinationW * 0.5f) + transform.OriginOffsetX, (transform.DestinationH * 0.5f) + transform.OriginOffsetY)
+            };
+
             if (existingItemIndex != -1)
-            {
-                entityDrawables[existingItemIndex] = new DrawableInfo
-                {
-                    EntityId = entity.id,
-                    Sheet = ResourceRegistry.Resources[source.Resource],
-                    Layer = movement.Layer,
-                    Position = new Vector2(movement.X - (transform.DestinationW * 0.5f) + transform.RelativeX, movement.Y - (transform.DestinationH * 0.5f) + transform.RelativeY),
-                    Rotation = (transform.RelativeRotation ? -movement.LookDirection : 0) + transform.Rotation,
-                    Width = transform.DestinationW,
-                    Height = transform.DestinationH,
-                    Z = renderable.Z,
-                    Color = new Color(transform.Red, transform.Green, transform.Blue, transform.Alpha),
-                    TextureRect = new Rectangle[] { new Rectangle(source.Left, source.Top, source.Width, source.Height) },
-                    FlipHorizontally = transform.FlipHorizontally,
-                    FlipVertically = transform.FlipVertically,
-                    Origin = new Vector2((transform.DestinationW * 0.5f) + transform.OriginOffsetX, (transform.DestinationH * 0.5f) + transform.OriginOffsetY)
-                };
-            }
+                entityDrawables[existingItemIndex] = drawable;
             else
-            {
-                entityDrawables.Add(new DrawableInfo
-                {
-                    EntityId = entity.id,
-                    Sheet = ResourceRegistry.Resources[source.Resource],
-                    Layer = movement.Layer,
-                    Position = new Vector2(movement.X - (transform.DestinationW * 0.5f) + transform.RelativeX, movement.Y - (transform.DestinationH * 0.5f) + transform.RelativeY),
-                    Rotation = (transform.RelativeRotation ? -movement.LookDirection : 0) + transform.Rotation,
-                    Width = transform.DestinationW,
-                    Height = transform.DestinationH,
-                    Z = renderable.Z,
-                    Color = new Color(transform.Red, transform.Green, transform.Blue, transform.Alpha),
-                    TextureRect = new Rectangle[] { new Rectangle(source.Left, source.Top, source.Width, source.Height) },
-                    FlipHorizontally = transform.FlipHorizontally,
-                    FlipVertically = transform.FlipVertically,
-                    Origin = new Vector2((transform.DestinationW * 0.5f) + transform.OriginOffsetX, (transform.DestinationH * 0.5f) + transform.OriginOffsetY)
-                });
-            }
+                entityDrawables.Add(drawable);
         }
 
         protected override bool Filter(Entity entity)

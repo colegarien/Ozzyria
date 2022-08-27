@@ -22,7 +22,8 @@ namespace Ozzyria.Game
                 .Add(new Systems.ExperieneOrb())
                 .Add(new Systems.Physics())
                 .Add(new Systems.Combat())
-                .Add(new Systems.Death(context));
+                .Add(new Systems.Death(context))
+                .Add(new Systems.Animation());
 
             var worldLoader = new WorldPersistence();
             worldLoader.LoadContext(context, "test_e"); // TODO OZ-27 manages contexts as players change maps
