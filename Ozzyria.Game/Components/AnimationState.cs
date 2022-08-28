@@ -6,6 +6,7 @@ namespace Ozzyria.Game.Components
     public class AnimationState : Component
     {
         private string _state = "idle";
+        private string _direction = "south";
 
         [Savable]
         public string State
@@ -15,6 +16,19 @@ namespace Ozzyria.Game.Components
                 if (_state != value)
                 {
                     _state = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+
+        [Savable]
+        public string Direction
+        {
+            get => _direction; set
+            {
+                if (_direction != value)
+                {
+                    _direction = value;
                     OnComponentChanged?.Invoke(Owner, this);
                 }
             }

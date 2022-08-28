@@ -52,6 +52,48 @@
       "Width": 32,
       "Height": 32
     },
+    "body_white_west_01": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_west_02": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_west_03": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_north_01": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_north_02": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "body_white_north_03": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
     "slime_east_01": {
       "Resource": 0,
       "Left": 0,
@@ -179,6 +221,128 @@
         },
         {
           "SourceId": "body_white_south_03",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "body_white_idle_west": {
+      "Frames": [
+        {
+          "SourceId": "body_white_west_01",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "body_white_west_02",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "body_white_west_03",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "body_white_idle_north": {
+      "Frames": [
+        {
+          "SourceId": "body_white_north_01",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "body_white_north_02",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "body_white_north_03",
           "Transform": {
             "RelativeX": 0,
             "RelativeY": 0,
