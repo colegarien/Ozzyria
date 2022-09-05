@@ -89,12 +89,20 @@ namespace Ozzyria.Game.Components
             }
         }
 
-        public void ClearVariables()
+        ///
+        /// HELPER Functions
+        ///
+        public bool GetBoolVariable(string name)
         {
-            _variables.Clear();
+            return GetVariable(name).Equals("true");
+        }
 
-            _needsEncoded = true;
-            OnComponentChanged?.Invoke(Owner, this);
+        public string GetDirectionVariable(string name)
+        {
+            var value = GetVariable(name);
+            return value != "" && (value == "east" || value == "west" || value == "south" || value == "north")
+                ? value
+                : "east";
         }
     }
 }

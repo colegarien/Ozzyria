@@ -5,10 +5,23 @@ namespace Ozzyria.Game.Components
 {
     public class Combat : Component
     {
+        private bool _wantsToAttack = false;
         private bool _attacking = false;
 
         [Savable]
         public Delay Delay { get; set; } = new Delay { DelayInSeconds = 0.5f };
+        [Savable]
+        public bool WantToAttack
+        {
+            get => _wantsToAttack; set
+            {
+                if (_wantsToAttack != value)
+                {
+                    _wantsToAttack = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
         [Savable]
         public bool Attacking { get => _attacking; set
             {
@@ -25,9 +38,10 @@ namespace Ozzyria.Game.Components
 
         public void Update(float deltaTime, bool doAttack)
         {
+            WantToAttack = doAttack;
             Delay.Update(deltaTime);
 
-            if (doAttack)
+            if (WantToAttack)
             {
                 // Attacking when delay is ready
                 Attacking = Delay.IsReady();

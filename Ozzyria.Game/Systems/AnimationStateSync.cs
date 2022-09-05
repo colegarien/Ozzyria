@@ -1,6 +1,5 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
-using System;
 
 namespace Ozzyria.Game.Systems
 {
@@ -45,11 +44,13 @@ namespace Ozzyria.Game.Systems
                 if (entity.HasComponent(typeof(Components.Combat)))
                 {
                     var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
+                    state.SetVariable("WantsToAttack", combat.WantToAttack ? "true" : "false");
                     state.SetVariable("IsAttacking", combat.Attacking ? "true" : "false");
                 }
                 else
                 {
                     // IsAttacking default is false
+                    state.SetVariable("WantsToAttack", "false");
                     state.SetVariable("IsAttacking", "false");
                 }
             }
@@ -62,7 +63,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().Or(typeof(Movement), typeof(Combat));
+            var query = new EntityQuery().Or(typeof(Movement), typeof(Components.Combat));
             var listener = context.CreateListener(query);
 
             listener.ListenToAdded = true;

@@ -85,7 +85,7 @@ namespace Ozzyria.Game.Components
             {
                 if (_moveDirection != value)
                 {
-                    _moveDirection = value;
+                    _moveDirection = AngleHelper.Clamp(value);
                     OnComponentChanged?.Invoke(Owner, this);
                 }
             }
@@ -95,7 +95,7 @@ namespace Ozzyria.Game.Components
             {
                 if (_lookDirection != value)
                 {
-                    _lookDirection = value;
+                    _lookDirection = AngleHelper.Clamp(value);
                     OnComponentChanged?.Invoke(Owner, this);
                 }
             }
@@ -114,12 +114,12 @@ namespace Ozzyria.Game.Components
 
         public void TurnLeft(float deltaTime)
         {
-            LookDirection = AngleHelper.Clamp(LookDirection + (TURN_SPEED * deltaTime));
+            LookDirection += (TURN_SPEED * deltaTime);
         }
 
         public void TurnRight(float deltaTime)
         {
-            LookDirection = AngleHelper.Clamp(LookDirection - (TURN_SPEED * deltaTime));
+            LookDirection -= (TURN_SPEED * deltaTime);
         }
 
         public void MoveForward(float deltaTime)

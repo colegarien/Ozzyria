@@ -11,10 +11,10 @@ namespace Ozzyria.Game.Utility
             var player = context.CreateEntity();
 
             var renderable = (Renderable)player.CreateComponent(typeof(Renderable));
-            renderable.CurrentClip = "body_white_idle_east";
+            renderable.IsDynamic = true;
             renderable.Z = (int)ZLayer.Middleground;
 
-            var playerTag = (Player)player.CreateComponent(typeof(Player));
+            var playerTag = (Components.Player)player.CreateComponent(typeof(Components.Player));
             playerTag.PlayerId = playerId;
             playerTag.Map = "test_m"; // TODO OZ-27 pull this from a storage or some kind?
 
@@ -25,14 +25,19 @@ namespace Ozzyria.Game.Utility
             movement.Y = 140;
 
             var stats = (Stats)player.CreateComponent(typeof(Stats));
-            var combat = (Combat)player.CreateComponent(typeof(Combat));
+            var combat = (Components.Combat)player.CreateComponent(typeof(Components.Combat));
             var input = (Input)player.CreateComponent(typeof(Input));
+
+            var equippedGear = (EquippedGear)player.CreateComponent(typeof(EquippedGear));
+            equippedGear.Body = "body_white";
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
             var animationState = player.CreateComponent(typeof(AnimationState));
 
+            player.AddComponent(animationState);
+            player.AddComponent(equippedGear);
             player.AddComponent(renderable);
             player.AddComponent(playerTag);
             player.AddComponent(thought);
@@ -41,7 +46,6 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(combat);
             player.AddComponent(input);
             player.AddComponent(collision);
-            player.AddComponent(animationState);
         }
 
         public static void CreateSlime(EntityContext context, float x, float y)
@@ -49,7 +53,7 @@ namespace Ozzyria.Game.Utility
             var slime = context.CreateEntity();
 
             var renderable = (Renderable)slime.CreateComponent(typeof(Renderable));
-            renderable.CurrentClip = "slime_idle_east";
+            renderable.IsDynamic = true;
             renderable.Z = (int)ZLayer.Middleground;
 
             var thought = (SlimeThought)slime.CreateComponent(typeof(SlimeThought));
@@ -64,12 +68,19 @@ namespace Ozzyria.Game.Utility
             stats.Health = 30;
             stats.MaxHealth = 30;
 
-            var combat = (Combat)slime.CreateComponent(typeof(Combat));
+            var combat = (Components.Combat)slime.CreateComponent(typeof(Components.Combat));
             var input = (Input)slime.CreateComponent(typeof(Input));
+
+            var equippedGear = (EquippedGear)slime.CreateComponent(typeof(EquippedGear));
+            equippedGear.Body = "slime";
 
             var collision = (BoundingCircle)slime.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
+            var animationState = slime.CreateComponent(typeof(AnimationState));
+
+            slime.AddComponent(animationState);
+            slime.AddComponent(equippedGear);
             slime.AddComponent(renderable);
             slime.AddComponent(thought);
             slime.AddComponent(movement);
@@ -97,7 +108,8 @@ namespace Ozzyria.Game.Utility
             var orb = context.CreateEntity();
 
             var renderable = (Renderable)orb.CreateComponent(typeof(Renderable));
-            renderable.CurrentClip = "static_exp_orb";
+            renderable.IsDynamic = false;
+            renderable.StaticClip = "static_exp_orb";
             renderable.Z = (int)ZLayer.Items;
 
             var thought = (ExperienceOrbThought)orb.CreateComponent(typeof(ExperienceOrbThought));

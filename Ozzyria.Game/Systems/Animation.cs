@@ -20,33 +20,33 @@ namespace Ozzyria.Game.Systems
                 var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
                 var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
 
-
                 // TODO OZ-23 : https://gamedev.stackexchange.com/questions/197372/how-to-do-state-based-animation-with-ecs
                 renderable.timer += deltaTime;
-                if (renderable.timer > 0.1f)
+                if (renderable.timer > 0.1f) // TODO OZ-23 around 10fps
                 {
                     renderable.timer = 0;
                     renderable.CurrentFrame++;
                 }
 
-                // TODO OZ-23 : check transitions to new states or clips/directions
+                // TODO OZ-23 : check transitions to new states and do transition
                 if (state.State == "idle")
                 {
-                    if (state.GetVariable("IsAttacking").Equals("true"))
+                    if (state.GetBoolVariable("WantsToAttack"))
                     {
-                        state.State = "attack";
+                        state.State = "attack"; // TODO OZ-23 tie state into Attack timer and stuff so combat is in-sync with animation (or vice-versa)?
+                        renderable.timer = 0;
+                        renderable.CurrentFrame = 0;
                     }
                 }
                 else if (state.State == "attack")
                 {
-                    if (!state.GetVariable("IsAttacking").Equals("true"))
+                    if (!state.GetBoolVariable("WantsToAttack")) // TODO OZ-23 AND attack animation is done
                     {
                         state.State = "idle";
+                        renderable.timer = 0;
+                        renderable.CurrentFrame = 0;
                     }
                 }
-
-                // TODO OZ-23 don't hard code this... make this more data-driven!
-                renderable.CurrentClip = $"body_white_{state.State}_{state.GetVariable("Direction")}";
             }
         }
     }

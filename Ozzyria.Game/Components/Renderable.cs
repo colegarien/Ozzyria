@@ -7,7 +7,10 @@ namespace Ozzyria.Game.Components
     {
         private int _z = (int)ZLayer.Background;
         private int _currentFrame = 0;
-        private string _currentClip = "";
+        private bool _isDynamic = false;
+        private string _staticClip = "";
+
+        // TODO OZ-23 reconsider this, it's kinda weird
         public float timer = 0f;
 
         [Savable]
@@ -35,13 +38,26 @@ namespace Ozzyria.Game.Components
         }
 
         [Savable]
-        public string CurrentClip
+        public bool IsDynamic
         {
-            get => _currentClip; set
+            get => _isDynamic; set
             {
-                if (_currentClip != value)
+                if (_isDynamic != value)
                 {
-                    _currentClip = value;
+                    _isDynamic = value;
+                    OnComponentChanged?.Invoke(Owner, this);
+                }
+            }
+        }
+
+        [Savable]
+        public string StaticClip
+        {
+            get => _staticClip; set
+            {
+                if (_staticClip != value)
+                {
+                    _staticClip = value;
                     OnComponentChanged?.Invoke(Owner, this);
                 }
             }

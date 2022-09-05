@@ -28,6 +28,8 @@ namespace Ozzyria.MonoGameClient.Systems
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
+                var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
+                var gear = (EquippedGear)entity.GetComponent(typeof(EquippedGear));
 
                 if (MainGame._localPlayer != null && MainGame._localPlayer?.id == entity.id)
                 {
@@ -41,7 +43,7 @@ namespace Ozzyria.MonoGameClient.Systems
                 }
                 else
                 {
-                    UpdateEntityDrawables(entity, movement, renderable);
+                    UpdateEntityDrawables(entity, movement, renderable, state, gear);
                 }
             }
 
@@ -88,10 +90,18 @@ namespace Ozzyria.MonoGameClient.Systems
             }
         }
 
-        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable)
+        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable, AnimationState state, EquippedGear gear)
         {
             var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.EntityId != null && e.EntityId == entity.id);
-            var currentClip = ResourceRegistry.Clips[renderable.CurrentClip];
+
+            var clip = renderable.IsDynamic
+                ? $"{gear.Body}_{state.State}_{state.GetDirectionVariable("Direction")}"
+                : renderable.StaticClip;
+
+            if (!ResourceRegistry.Clips.ContainsKey(clip))
+                return;
+
+            var currentClip = ResourceRegistry.Clips[clip];
             var frame = currentClip.GetFrame(renderable.CurrentFrame);
             var transform = frame.Transform;
             var source = ResourceRegistry.FrameSources[frame.SourceId];
