@@ -23,6 +23,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Physics())
                 .Add(new Systems.Combat())
                 .Add(new Systems.Death(context))
+                .Add(new Systems.AnimationStateSync(context))
                 .Add(new Systems.Animation());
 
             var worldLoader = new WorldPersistence();

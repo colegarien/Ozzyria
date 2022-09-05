@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Ozzyria.Game.ECS
@@ -70,6 +71,7 @@ namespace Ozzyria.Game.ECS
         public IComponent CreateComponent<T>() where T : new()
         {
             IComponent c = (IComponent)new T();
+            c.Owner = this;
             c.OnComponentChanged = OnComponentChanged;
             return c;
         }
@@ -77,6 +79,7 @@ namespace Ozzyria.Game.ECS
         public IComponent CreateComponent(Type type)
         {
             IComponent c = (IComponent)Activator.CreateInstance(type);
+            c.Owner = this;
             c.OnComponentChanged = OnComponentChanged;
             return c;
         }
