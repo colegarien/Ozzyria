@@ -5,6 +5,7 @@ using Ozzyria.Game;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
+using Ozzyria.MonoGameClient.Systems;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
@@ -134,10 +135,17 @@ namespace Ozzyria.MonoGameClient
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, _camera.GetViewMatrix());
             foreach (var drawls in Systems.RenderTracking.finalDrawables)
             {
-                var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
-                foreach (var rect in drawls.TextureRect)
+                if (drawls is DrawableInfo)
                 {
-                    _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
+                    DrawDrawableInfo((DrawableInfo)drawls);
+                }
+                else
+                {
+                    var drawlsList = ((ComplexDrawableInfo)drawls).Drawables;
+                    foreach(var subDrawls in drawlsList)
+                    {
+                        DrawDrawableInfo(subDrawls);
+                    }
                 }
                 
             }
@@ -155,6 +163,15 @@ namespace Ozzyria.MonoGameClient
             }
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        protected void DrawDrawableInfo(DrawableInfo drawls)
+        {
+            var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
+            foreach (var rect in drawls.TextureRect)
+            {
+                _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
+            }
         }
 
     }

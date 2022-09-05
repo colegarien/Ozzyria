@@ -3,6 +3,7 @@ using Ozzyria.Game;
 using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,9 +12,9 @@ namespace Ozzyria.MonoGameClient.Systems
     // TODO OZ-23 how to do debug shapes... that's a tough one lol
     internal class RenderTracking : TriggerSystem
     {
-        public static List<DrawableInfo> finalDrawables = new List<DrawableInfo>();
-        public static List<DrawableInfo> tileMapDrawables = new List<DrawableInfo>();
-        public static List<DrawableInfo> entityDrawables = new List<DrawableInfo>();
+        public static List<IDrawableInfo> finalDrawables = new List<IDrawableInfo>();
+        public static List<IDrawableInfo> tileMapDrawables = new List<IDrawableInfo>();
+        public static List<IDrawableInfo> entityDrawables = new List<IDrawableInfo>();
 
         public Registry ResourceRegistry;
 
@@ -39,7 +40,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
                 if (movement == null || renderable == null)
                 {
-                    entityDrawables.RemoveAll(d => d.EntityId != null && d.EntityId == entity.id);
+                    entityDrawables.RemoveAll(d => d.GetEntityId() != null && d.GetEntityId() == entity.id);
                 }
                 else
                 {
@@ -49,16 +50,16 @@ namespace Ozzyria.MonoGameClient.Systems
 
             finalDrawables = tileMapDrawables
                 .Concat(entityDrawables)
-                .Where(e => MainGame._camera.IsInView(e.Position.X, e.Position.Y, e.Width, e.Height))
-                .OrderBy(g => g.Layer)
-                .ThenBy(g => g.Z)
-                .ThenBy(g => g.Position.Y)
+                .Where(d => MainGame._camera.IsInView(d.GetLeft(), d.GetTop(), d.GetWidth(), d.GetHeight()))
+                .OrderBy(d => d.GetLayer())
+                .ThenBy(d => d.GetZ())
+                .ThenBy(d => d.GetTop())
                 .ToList();
         }
 
         private void RebuildTileMapGraphics()
         {
-            tileMapDrawables = new List<DrawableInfo>();
+            tileMapDrawables = new List<IDrawableInfo>();
             foreach (var layer in MainGame._tileMap?.Layers)
             {
                 foreach (var tile in layer.Value)
@@ -92,12 +93,60 @@ namespace Ozzyria.MonoGameClient.Systems
 
         private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable, AnimationState state, EquippedGear gear)
         {
-            var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.EntityId != null && e.EntityId == entity.id);
+            var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.GetEntityId() != null && e.GetEntityId() == entity.id);
 
-            var clip = renderable.IsDynamic
-                ? $"{gear.Body}_{state.State}_{state.GetDirectionVariable("Direction")}"
-                : renderable.StaticClip;
+            // TODO OZ-23 don't froget render order: [if n/w then weapon -> wep-effect] body -> armor -> mask -> hat [if e/s then weapon -> wep-effect] 
+            if (renderable.IsDynamic)
+            {
+                // TODO OZ-23 try using the ComplexDrawableInfo and then try the Z instead!!!
+                var complexDrawable = new ComplexDrawableInfo();
+                if (gear.Body != "")
+                {
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"{gear.Body}_{state.State}_{state.GetDirectionVariable("Direction")}");
+                    if (clip != null)
+                        complexDrawable.Drawables.Add(clip);
+                }
 
+                if(gear.Hat != "")
+                {
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-hat_{state.State}_{state.GetDirectionVariable("Direction")}");
+                    if (clip != null)
+                        complexDrawable.Drawables.Add(clip);
+                }
+
+                if (complexDrawable.Drawables.Count > 0)
+                    PushEntityDrawable(existingItemIndex, complexDrawable);
+            }
+            else
+            {
+                PushClip(entity, movement, renderable, existingItemIndex, renderable.StaticClip);
+            }
+        }
+
+        private DrawableInfo BuildSubClip(Entity entity, Movement movement, Renderable renderable, AnimationState state, EquippedGear gear, string clip)
+        {
+            if (!ResourceRegistry.Clips.ContainsKey(clip))
+                return null;
+
+            var currentClip = ResourceRegistry.Clips[clip];
+            var frame = currentClip.GetFrame(renderable.CurrentFrame);
+            var transform = frame.Transform;
+            var sourceId = frame.SourceId;
+
+            // TODO OZ-23 decouple the name of the gear with the name of the frame-itself
+            if(sourceId == "**HAT**")
+                sourceId = gear.Hat + "_" + state.GetDirectionVariable("Direction");
+
+            if (!ResourceRegistry.FrameSources.ContainsKey(sourceId))
+                return null;
+
+            var source = ResourceRegistry.FrameSources[sourceId]; // TODO OZ-23 cross-reference item-id with sources
+
+            return BuildDrawable(entity.id, movement.Layer, renderable.Z, movement.X, movement.Y, movement.LookDirection, transform, source);
+        }
+
+        private void PushClip(Entity entity, Movement movement, Renderable renderable, int itemIndex, string clip)
+        {
             if (!ResourceRegistry.Clips.ContainsKey(clip))
                 return;
 
@@ -106,25 +155,34 @@ namespace Ozzyria.MonoGameClient.Systems
             var transform = frame.Transform;
             var source = ResourceRegistry.FrameSources[frame.SourceId];
 
-            var drawable = new DrawableInfo
+            var drawable = BuildDrawable(entity.id, movement.Layer, renderable.Z, movement.X, movement.Y, movement.LookDirection, transform, source);
+            PushEntityDrawable(itemIndex, drawable);
+        }
+
+        private DrawableInfo BuildDrawable(uint entityId, int layer, int z, float x, float y, float rotation, FrameTransform transform, FrameSource source)
+        {
+            return new DrawableInfo
             {
-                EntityId = entity.id,
+                EntityId = entityId,
                 Sheet = ResourceRegistry.Resources[source.Resource],
-                Layer = movement.Layer,
-                Position = new Vector2(movement.X - (transform.DestinationW * 0.5f) + transform.RelativeX, movement.Y - (transform.DestinationH * 0.5f) + transform.RelativeY),
-                Rotation = (transform.RelativeRotation ? -movement.LookDirection : 0) + transform.Rotation,
+                Layer = layer,
+                Position = new Vector2(x - (transform.DestinationW * 0.5f) + transform.RelativeX, y - (transform.DestinationH * 0.5f) + transform.RelativeY),
+                Rotation = (transform.RelativeRotation ? -rotation : 0) + transform.Rotation,
                 Width = transform.DestinationW,
                 Height = transform.DestinationH,
-                Z = renderable.Z,
+                Z = z,
                 Color = new Color(transform.Red, transform.Green, transform.Blue, transform.Alpha),
                 TextureRect = new Rectangle[] { new Rectangle(source.Left, source.Top, source.Width, source.Height) },
                 FlipHorizontally = transform.FlipHorizontally,
                 FlipVertically = transform.FlipVertically,
                 Origin = new Vector2((transform.DestinationW * 0.5f) + transform.OriginOffsetX, (transform.DestinationH * 0.5f) + transform.OriginOffsetY)
             };
+        }
 
-            if (existingItemIndex != -1)
-                entityDrawables[existingItemIndex] = drawable;
+        private void PushEntityDrawable(int index, IDrawableInfo drawable)
+        {
+            if (index > -1 && entityDrawables.Count > index)
+                entityDrawables[index] = drawable;
             else
                 entityDrawables.Add(drawable);
         }
@@ -147,7 +205,16 @@ namespace Ozzyria.MonoGameClient.Systems
         }
     }
 
-    public struct DrawableInfo
+    public interface IDrawableInfo {
+        public uint? GetEntityId();
+        public float GetLeft();
+        public float GetTop();
+        public int GetWidth();
+        public int GetHeight();
+        public int GetLayer();
+        public int GetZ();
+    }
+    public class DrawableInfo : IDrawableInfo
     {
         public uint? EntityId { get; set; }
         public string Sheet { get; set; }
@@ -162,5 +229,99 @@ namespace Ozzyria.MonoGameClient.Systems
         public Color Color { get; set; }
         public bool FlipHorizontally { get; set; }
         public bool FlipVertically { get; set; }
+
+        public uint? GetEntityId()
+        {
+            return EntityId;
+        }
+
+        public float GetLeft()
+        {
+            return Position.X;
+        }
+
+        public float GetTop()
+        {
+            return Position.Y;
+        }
+
+        public int GetWidth()
+        {
+            return Width;
+        }
+
+        public int GetHeight()
+        {
+            return Height;
+        }
+
+        public int GetLayer()
+        {
+            return Layer;
+        }
+
+        public int GetZ()
+        {
+            return Z;
+        }
+    }
+    public class ComplexDrawableInfo : IDrawableInfo
+    {
+        public List<DrawableInfo> Drawables = new List<DrawableInfo>();
+
+        public uint? GetEntityId()
+        {
+            if (Drawables.Count == 0)
+                return null;
+
+            return Drawables[0].EntityId;
+        }
+
+        public float GetLeft()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Min(d => d.GetLeft());
+        }
+
+        public float GetTop()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Min(d => d.GetTop());
+        }
+        public int GetWidth()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Max(d => d.Width);
+        }
+
+        public int GetHeight()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Max(d => d.Height);
+        }
+
+        public int GetLayer()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Max(d => d.Layer);
+        }
+
+        public int GetZ()
+        {
+            if (Drawables.Count == 0)
+                return 0;
+
+            return Drawables.Max(d => d.Z);
+        }
     }
 }

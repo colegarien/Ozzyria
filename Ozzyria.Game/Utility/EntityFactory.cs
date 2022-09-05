@@ -29,6 +29,7 @@ namespace Ozzyria.Game.Utility
             var input = (Input)player.CreateComponent(typeof(Input));
 
             var equippedGear = (EquippedGear)player.CreateComponent(typeof(EquippedGear));
+            equippedGear.Hat = "green_hat";
             equippedGear.Body = "body_white";
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));

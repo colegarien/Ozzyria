@@ -177,6 +177,62 @@
       "Top": 352,
       "Width": 32,
       "Height": 32
+    },
+    "green_hat_east": {
+      "Resource": 0,
+      "Left": 896,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "green_hat_south": {
+      "Resource": 0,
+      "Left": 928,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "green_hat_west": {
+      "Resource": 0,
+      "Left": 960,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "green_hat_north": {
+      "Resource": 0,
+      "Left": 992,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "cowboy_hat_east": {
+      "Resource": 0,
+      "Left": 896,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "cowboy_hat_south": {
+      "Resource": 0,
+      "Left": 928,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "cowboy_hat_west": {
+      "Resource": 0,
+      "Left": 960,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "cowboy_hat_north": {
+      "Resource": 0,
+      "Left": 992,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
     }
   },
   "Clips": {
@@ -1307,6 +1363,570 @@
           "Transform": {
             "RelativeX": 0,
             "RelativeY": 0,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_idle_east": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -12,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_idle_south": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -12,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_idle_west": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -12,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_idle_north": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -12,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_attack_east": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_attack_south": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_attack_west": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "generic-hat_attack_north": {
+      "Frames": [
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -9,
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "RelativeRotation": false,
+            "Rotation": 0,
+            "OriginOffsetX": 0,
+            "OriginOffsetY": 0,
+            "FlipHorizontally": false,
+            "FlipVertically": false,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        },
+        {
+          "SourceId": "**HAT**",
+          "Transform": {
+            "RelativeX": 0,
+            "RelativeY": -11,
             "DestinationW": 32,
             "DestinationH": 32,
             "RelativeRotation": false,
