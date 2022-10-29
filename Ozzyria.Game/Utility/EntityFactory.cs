@@ -31,6 +31,10 @@ namespace Ozzyria.Game.Utility
             var equippedGear = (EquippedGear)player.CreateComponent(typeof(EquippedGear));
             equippedGear.Hat = "green_hat";
             equippedGear.Body = "body_white";
+            equippedGear.Armor = "biker_jacket";
+            equippedGear.Mask = "shades";
+            equippedGear.Weapon = "gladius";
+            equippedGear.WeaponEffect = "basic_slash";
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;

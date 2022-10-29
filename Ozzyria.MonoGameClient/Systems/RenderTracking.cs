@@ -95,23 +95,72 @@ namespace Ozzyria.MonoGameClient.Systems
         {
             var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.GetEntityId() != null && e.GetEntityId() == entity.id);
 
-            // TODO OZ-23 don't froget render order: [if n/w then weapon -> wep-effect] body -> armor -> mask -> hat [if e/s then weapon -> wep-effect] 
             if (renderable.IsDynamic)
             {
                 // TODO OZ-23 try using the ComplexDrawableInfo and then try the Z instead!!!
                 var complexDrawable = new ComplexDrawableInfo();
+
+                var direction = state.GetDirectionVariable("Direction");
+                if (direction == "north" || direction == "west")
+                {
+                    if (gear.Weapon != "")
+                    {
+                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weapon_{state.State}_{direction}");
+                        if (clip != null)
+                            complexDrawable.Drawables.Add(clip);
+                    }
+                    if (gear.WeaponEffect != "")
+                    {
+                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weaponfx_{state.State}_{direction}");
+                        if (clip != null)
+                            complexDrawable.Drawables.Add(clip);
+                    }
+                }
+
                 if (gear.Body != "")
                 {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"{gear.Body}_{state.State}_{state.GetDirectionVariable("Direction")}");
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"{gear.Body}_{state.State}_{direction}");
                     if (clip != null)
                         complexDrawable.Drawables.Add(clip);
                 }
 
-                if(gear.Hat != "")
+                if (gear.Armor != "")
                 {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-hat_{state.State}_{state.GetDirectionVariable("Direction")}");
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-armor_{state.State}_{direction}");
                     if (clip != null)
                         complexDrawable.Drawables.Add(clip);
+                }
+
+                if (gear.Mask != "")
+                {
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-mask_{state.State}_{direction}");
+                    if (clip != null)
+                        complexDrawable.Drawables.Add(clip);
+                }
+
+                if (gear.Hat != "")
+                {
+                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-hat_{state.State}_{direction}");
+                    if (clip != null)
+                        complexDrawable.Drawables.Add(clip);
+                }
+
+
+                if (direction == "south" || direction == "east")
+                {
+                    if (gear.Weapon != "")
+                    {
+                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weapon_{state.State}_{direction}");
+                        if (clip != null)
+                            complexDrawable.Drawables.Add(clip);
+                    }
+                    if (gear.WeaponEffect != "")
+                    {
+                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weaponfx_{state.State}_{direction}");
+                        if (clip != null)
+                            complexDrawable.Drawables.Add(clip);
+                    }
+
                 }
 
                 if (complexDrawable.Drawables.Count > 0)
@@ -136,6 +185,14 @@ namespace Ozzyria.MonoGameClient.Systems
             // TODO OZ-23 decouple the name of the gear with the name of the frame-itself
             if(sourceId == "**HAT**")
                 sourceId = gear.Hat + "_" + state.GetDirectionVariable("Direction");
+            else if (sourceId == "**ARMOR**")
+                sourceId = gear.Armor + "_" + state.GetDirectionVariable("Direction");
+            else if (sourceId == "**MASK**")
+                sourceId = gear.Mask + "_" + state.GetDirectionVariable("Direction");
+            else if (sourceId == "**WEAPON**")
+                sourceId = gear.Weapon;
+            else if (sourceId == "**WEAPONFX**")
+                sourceId = gear.WeaponEffect + "_" + state.GetDirectionVariable("Direction");
 
             if (!ResourceRegistry.FrameSources.ContainsKey(sourceId))
                 return null;
