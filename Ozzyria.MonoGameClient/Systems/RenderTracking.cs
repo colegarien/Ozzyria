@@ -181,7 +181,8 @@ namespace Ozzyria.MonoGameClient.Systems
             var frame = currentClip.GetFrame(renderable.CurrentFrame);
             var transform = frame.Transform;
             var sourceId = frame.SourceId;
-
+            
+            // TODO OZ-23 make it so that "body" can have generic animation as well!! (3 frame idle, 4 frame attack, etc)
             // TODO OZ-23 decouple the name of the gear with the name of the frame-itself
             if(sourceId == "**HAT**")
                 sourceId = gear.Hat + "_" + state.GetDirectionVariable("Direction");
