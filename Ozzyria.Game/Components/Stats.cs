@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Components
                 if (_experience != value)
                 {
                     _experience = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -26,7 +26,7 @@ namespace Ozzyria.Game.Components
                 if (_maxExperience != value)
                 {
                     _maxExperience = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace Ozzyria.Game.Components
                 if (_health != value)
                 {
                     _health = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Components
                 if (_maxHealth != value)
                 {
                     _maxHealth = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

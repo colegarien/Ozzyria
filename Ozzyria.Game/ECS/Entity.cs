@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace Ozzyria.Game.ECS
@@ -34,13 +33,10 @@ namespace Ozzyria.Game.ECS
             var type = component.GetType();
             if (HasComponent(type))
             {
-                component.OnComponentChanged = null;
                 _components.Remove(type);
             }
 
-            if(OnComponentRemoved != null)
-                OnComponentRemoved(this, component);
-
+            TriggerComponentRemoved(component);
             return this;
         }
 
@@ -72,7 +68,6 @@ namespace Ozzyria.Game.ECS
         {
             IComponent c = (IComponent)new T();
             c.Owner = this;
-            c.OnComponentChanged = OnComponentChanged;
             return c;
         }
 
@@ -80,8 +75,20 @@ namespace Ozzyria.Game.ECS
         {
             IComponent c = (IComponent)Activator.CreateInstance(type);
             c.Owner = this;
-            c.OnComponentChanged = OnComponentChanged;
             return c;
+        }
+
+        public void TriggerComponentAdded(IComponent component)
+        {
+            OnComponentAdded?.Invoke(this, component);
+        }
+        public void TriggerComponentChanged(IComponent component)
+        {
+            OnComponentChanged?.Invoke(this, component);
+        }
+        public void TriggerComponentRemoved(IComponent component)
+        {
+            OnComponentRemoved?.Invoke(this, component);
         }
     }
 }

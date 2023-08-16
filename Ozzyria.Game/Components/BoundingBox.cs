@@ -13,7 +13,7 @@ namespace Ozzyria.Game.Components
                 if (_width != value)
                 {
                     _width = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -23,7 +23,7 @@ namespace Ozzyria.Game.Components
                 if (_height != value)
                 {
                     _height = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

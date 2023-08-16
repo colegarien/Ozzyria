@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Components
                 if (_body != value)
                 {
                     _body = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace Ozzyria.Game.Components
                 if (_hat != value)
                 {
                     _hat = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Components
                 if (_armor != value)
                 {
                     _armor = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace Ozzyria.Game.Components
                 if (_mask != value)
                 {
                     _mask = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace Ozzyria.Game.Components
                 if (_weapon != value)
                 {
                     _weapon = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponEffect != value)
                 {
                     _weaponEffect = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

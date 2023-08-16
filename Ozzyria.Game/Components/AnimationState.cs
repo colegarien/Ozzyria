@@ -21,7 +21,7 @@ namespace Ozzyria.Game.Components
                 if (_state != value)
                 {
                     _state = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Ozzyria.Game.Components
 
                     _variables.Add(pieces[0], pieces[1]);
                 }
-                OnComponentChanged?.Invoke(Owner, this);
+                Owner?.TriggerComponentChanged(this);
             }
         }
 
@@ -67,7 +67,7 @@ namespace Ozzyria.Game.Components
                 {
                     _variables = value;
                     _needsEncoded = true;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace Ozzyria.Game.Components
             if (originalValue == null || originalValue != value)
             {
                 _needsEncoded = true;
-                OnComponentChanged?.Invoke(Owner, this);
+                Owner?.TriggerComponentChanged(this);
             }
         }
 

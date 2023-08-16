@@ -19,7 +19,7 @@ namespace Ozzyria.Game.Components
                 if (_z != value)
                 {
                     _z = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -32,7 +32,7 @@ namespace Ozzyria.Game.Components
                 if (_currentFrame != value)
                 {
                     _currentFrame = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace Ozzyria.Game.Components
                 if (_isDynamic != value)
                 {
                     _isDynamic = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace Ozzyria.Game.Components
                 if (_staticClip != value)
                 {
                     _staticClip = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

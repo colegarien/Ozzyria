@@ -15,7 +15,7 @@ namespace Ozzyria.Game.Components
                 if (_isDynamic != value)
                 {
                     _isDynamic = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

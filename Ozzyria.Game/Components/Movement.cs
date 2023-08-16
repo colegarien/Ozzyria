@@ -26,7 +26,7 @@ namespace Ozzyria.Game.Components
                 if (_previousX != value)
                 {
                     _previousX = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace Ozzyria.Game.Components
                 if (_previousY != value)
                 {
                     _previousY = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Components
                 if (_layer != value)
                 {
                     _layer = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace Ozzyria.Game.Components
                 if (_x != value)
                 {
                     _x = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace Ozzyria.Game.Components
                 if (_y != value)
                 {
                     _y = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Ozzyria.Game.Components
                 if (_speed != value)
                 {
                     _speed = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace Ozzyria.Game.Components
                 if (_moveDirection != value)
                 {
                     _moveDirection = AngleHelper.Clamp(value);
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace Ozzyria.Game.Components
                 if (_lookDirection != value)
                 {
                     _lookDirection = AngleHelper.Clamp(value);
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Ozzyria.Game.ECS
@@ -103,6 +104,45 @@ namespace Ozzyria.Game.ECS
 
             entity.RemoveAllComponents();
             entities.Remove(entity.id);
+        }
+
+        public void AttachEntity(Entity entity)
+        {
+            if (!entities.ContainsKey(entity.id) || entities[entity.id] != entity)
+            {
+                entity.id = (entities.Keys.Count > 0 ? entities.Keys.Max() : 0) + 1;
+                entity.OnComponentAdded += OnComponentAdded;
+                entity.OnComponentChanged += OnComponentChanged;
+                entity.OnComponentRemoved += OnComponentRemoved;
+
+                entities[entity.id] = entity;
+
+                foreach (var component in entity.GetComponents()) {
+                    HandleOnComponentAdded(entity, component);
+                }
+            }
+        }
+
+        public void DetachEntity(Entity entity)
+        {
+            if (entities.ContainsKey(entity.id) && entities[entity.id] == entity)
+            {
+                entity.OnComponentAdded -= OnComponentAdded;
+                entity.OnComponentChanged -= OnComponentChanged;
+                entity.OnComponentRemoved -= OnComponentRemoved;
+
+                entities.Remove(entity.id);
+                foreach (var component in entity.GetComponents())
+                {
+                    if (entityComponents.ContainsKey(component.GetType()))
+                    {
+                        entityComponents[component.GetType()].Remove(entity.id);
+                    }
+                }
+
+                foreach (var listener in _queryListeners)
+                    listener.Detach(entity);
+            }
         }
 
         public uint[] GetRecentlyDestroyed()
