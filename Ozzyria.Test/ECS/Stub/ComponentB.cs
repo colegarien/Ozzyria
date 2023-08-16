@@ -12,7 +12,7 @@ namespace Ozzyria.Test.ECS.Stub
                 if (_someNumber != value)
                 {
                     _someNumber = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

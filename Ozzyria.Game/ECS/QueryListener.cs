@@ -25,6 +25,11 @@ namespace Ozzyria.Game.ECS
             _entities = new List<Entity>();
         }
 
+        public void Detach(Entity entity)
+        {
+            _entities.Remove(entity);
+        }
+
         public Entity[] Gather()
         {
             var result = _entities.ToArray();

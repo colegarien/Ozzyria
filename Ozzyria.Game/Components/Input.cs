@@ -19,7 +19,7 @@ namespace Ozzyria.Game.Components
                 if (_moveUp != value)
                 {
                     _moveUp = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -29,7 +29,7 @@ namespace Ozzyria.Game.Components
                 if (_moveDown != value)
                 {
                     _moveDown = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace Ozzyria.Game.Components
                 if (_moveLeft != value)
                 {
                     _moveLeft = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace Ozzyria.Game.Components
                 if (_moveRight != value)
                 {
                     _moveRight = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace Ozzyria.Game.Components
                 if (_turnLeft != value)
                 {
                     _turnLeft = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace Ozzyria.Game.Components
                 if (_turnRight != value)
                 {
                     _turnRight = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace Ozzyria.Game.Components
                 if (_attack != value)
                 {
                     _attack = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

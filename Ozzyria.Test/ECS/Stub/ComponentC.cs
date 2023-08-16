@@ -11,7 +11,7 @@ namespace Ozzyria.Test.ECS.Stub
                 if (floatyFloat != value)
                 {
                     floatyFloat = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

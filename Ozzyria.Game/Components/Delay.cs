@@ -15,7 +15,7 @@ namespace Ozzyria.Game.Components
                 if (_delayInSeconds != value)
                 {
                     _delayInSeconds = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -25,7 +25,7 @@ namespace Ozzyria.Game.Components
                 if (_timer != value)
                 {
                     _timer = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace Ozzyria.Game.Components
                 if (_ready != value)
                 {
                     _ready = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }

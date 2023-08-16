@@ -18,7 +18,7 @@ namespace Ozzyria.Game.Components
                 if (_wantsToAttack != value)
                 {
                     _wantsToAttack = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
@@ -28,7 +28,7 @@ namespace Ozzyria.Game.Components
                 if (_attacking != value)
                 {
                     _attacking = value;
-                    OnComponentChanged?.Invoke(Owner, this);
+                    Owner?.TriggerComponentChanged(this);
                 }
             }
         }
