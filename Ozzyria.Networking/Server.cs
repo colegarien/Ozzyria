@@ -51,7 +51,8 @@ namespace Ozzyria.Networking
                     // TODO OZ-28 move sending/reading entity updates into separate tasks on the client/server
                     HandleMessages();
                     game.Update(SECONDS_PER_TICK);
-                    SendState();
+                    SendLocalState();
+                    SendGlobalState();
 
                     Thread.Sleep((int)Math.Max((SECONDS_PER_TICK * 1000) - stopWatch.ElapsedMilliseconds, 1));
                 }
@@ -125,26 +126,59 @@ namespace Ozzyria.Networking
             return clientId;
         }
 
-        private void SendState()
-        {
-            var entityPacket = ServerPacketFactory.EntityUpdates(game.context.GetEntities());
-            SendToAll(entityPacket);
 
-            var destroyPacket = ServerPacketFactory.EntityRemovals(game.context);
-            SendToAll(destroyPacket);
+        private void SendLocalState()
+        {
+            foreach (var client in clients)
+            {
+                for (int i = 0; i < MAX_CLIENTS; i++)
+                {
+                    if (!IsConnected(i))
+                    {
+                        continue;
+                    }
+
+                    var localContext = game.GetLocalContext(i);
+                    if(localContext == null)
+                    {
+                        continue;
+                    }
+
+                    var entityPacket = ServerPacketFactory.EntityUpdates(localContext.GetEntities());
+                    SendToClient(i, entityPacket);
+
+                    var destroyPacket = ServerPacketFactory.EntityRemovals(localContext);
+                    SendToClient(i, destroyPacket);
+                }
+            }
+        }
+
+        private void SendGlobalState()
+        {
+            // TODO Send Globally Broadcasted Packets
         }
 
         private void SendToAll(byte[] packet, int exclude = -1)
         {
             for (int i = 0; i < MAX_CLIENTS; i++)
             {
-                if (!IsConnected(i) || exclude == i)
+                if (exclude == i)
                 {
                     continue;
                 }
 
-                server.Send(packet, packet.Length, clients[i]);
+                SendToClient(i, packet);
             }
+        }
+
+        private void SendToClient(int clientId, byte[] packet)
+        {
+            if (!IsConnected(clientId))
+            {
+                return;
+            }
+
+            server.Send(packet, packet.Length, clients[clientId]);
         }
 
         private bool IsConnected(int clientId)
