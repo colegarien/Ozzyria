@@ -2,12 +2,14 @@
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ozzyria.Game
 {
     public class Game // TODO OZ-28 delete game and just do it in Server?
     {
+        public Dictionary<int, Input> playerInputBuffer = new Dictionary<int, Input>();
         public EntityContext context;
         public SystemCoordinator coordinator;
 
@@ -16,7 +18,7 @@ namespace Ozzyria.Game
             context = new EntityContext();
             coordinator = new SystemCoordinator();
             coordinator
-                .Add(new Systems.Player())
+                .Add(new Systems.Player(this))
                 .Add(new Systems.Slime())
                 .Add(new Systems.Spawner())
                 .Add(new Systems.ExperieneOrb())
@@ -27,42 +29,35 @@ namespace Ozzyria.Game
                 .Add(new Systems.Animation());
 
             var worldLoader = new WorldPersistence();
-            worldLoader.LoadContext(context, "test_e"); // TODO OZ-27 manages contexts as players change maps
+            worldLoader.LoadContext(context, "test_a_template"); // TODO OZ-27 manages contexts as players change maps
 
         }
 
         public void OnPlayerJoin(int playerId)
         {
             EntityFactory.CreatePlayer(context, playerId);
+            playerInputBuffer[playerId] = new Input();
         }
 
         public void OnPlayerInput(int playerId, Input input)
         {
-            var playerEntity = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
-            if (playerEntity == null)
-                return;
-
-            var i = playerEntity.GetComponent(typeof(Input));
-            if (i == null)
-            {
-                i = playerEntity.CreateComponent<Input>();
-                playerEntity.AddComponent(i);
-            }
-
-            ((Input)i).MoveUp = input.MoveUp;
-            ((Input)i).MoveDown = input.MoveDown;
-            ((Input)i).MoveLeft = input.MoveLeft;
-            ((Input)i).MoveRight = input.MoveRight;
-            ((Input)i).TurnLeft = input.TurnLeft;
-            ((Input)i).TurnRight = input.TurnRight;
-            ((Input)i).Attack = input.Attack;
+            playerInputBuffer[playerId].MoveUp = input.MoveUp;
+            playerInputBuffer[playerId].MoveDown = input.MoveDown;
+            playerInputBuffer[playerId].MoveLeft = input.MoveLeft;
+            playerInputBuffer[playerId].MoveRight = input.MoveRight;
+            playerInputBuffer[playerId].TurnLeft = input.TurnLeft;
+            playerInputBuffer[playerId].TurnRight = input.TurnRight;
+            playerInputBuffer[playerId].Attack = input.Attack;
         }
 
         public void OnPlayerLeave(int playerId)
         {
             var playerEntity = context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == playerId);
-            if(playerEntity != null)
+            if (playerEntity != null)
+            {
                 context.DestroyEntity(playerEntity);
+                playerInputBuffer.Remove(playerId);
+            }
         }
 
         public void Update(float deltaTime)

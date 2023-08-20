@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Networking.Model;
 using System.Net;

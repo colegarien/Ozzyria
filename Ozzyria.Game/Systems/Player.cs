@@ -5,9 +5,11 @@ namespace Ozzyria.Game.Systems
 {
     internal class Player : TickSystem
     {
+        protected Game _game;
         protected EntityQuery query;
-        public Player()
+        public Player(Game game)
         {
+            _game = game;
             query = new EntityQuery();
             query.And(typeof(PlayerThought));
         }
@@ -23,7 +25,8 @@ namespace Ozzyria.Game.Systems
                     continue;
                 }
 
-                var input = (Input)entity.GetComponent(typeof(Input));
+                var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
+                var input = _game.playerInputBuffer.ContainsKey(playerId) ? _game.playerInputBuffer[playerId] : new Input();
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
 

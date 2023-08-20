@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Utility
 
             var playerTag = (Components.Player)player.CreateComponent(typeof(Components.Player));
             playerTag.PlayerId = playerId;
-            playerTag.Map = "test_m"; // TODO OZ-27 pull this from a storage or some kind?
+            playerTag.Map = "test_a"; // TODO OZ-27 pull this from a storage or some kind?
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
 
@@ -26,7 +26,6 @@ namespace Ozzyria.Game.Utility
 
             var stats = (Stats)player.CreateComponent(typeof(Stats));
             var combat = (Components.Combat)player.CreateComponent(typeof(Components.Combat));
-            var input = (Input)player.CreateComponent(typeof(Input));
 
             var equippedGear = (EquippedGear)player.CreateComponent(typeof(EquippedGear));
             equippedGear.Hat = "green_hat";
@@ -49,7 +48,6 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(movement);
             player.AddComponent(stats);
             player.AddComponent(combat);
-            player.AddComponent(input);
             player.AddComponent(collision);
         }
 
@@ -74,7 +72,6 @@ namespace Ozzyria.Game.Utility
             stats.MaxHealth = 30;
 
             var combat = (Components.Combat)slime.CreateComponent(typeof(Components.Combat));
-            var input = (Input)slime.CreateComponent(typeof(Input));
 
             var equippedGear = (EquippedGear)slime.CreateComponent(typeof(EquippedGear));
             equippedGear.Body = "slime";
@@ -91,7 +88,6 @@ namespace Ozzyria.Game.Utility
             slime.AddComponent(movement);
             slime.AddComponent(stats);
             slime.AddComponent(combat);
-            slime.AddComponent(input);
             slime.AddComponent(collision);
 
         }
