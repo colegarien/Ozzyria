@@ -14,10 +14,10 @@ namespace Ozzyria.MonoGameClient.Systems
             if (entities.Length > 0 && (MainGame._localPlayer == null || MainGame._localPlayer.id != entities[0].id))
                 MainGame._localPlayer = entities[0];
 
-            var playerEntityMap = ((Player)MainGame._localPlayer?.GetComponent(typeof(Player)))?.Map ?? "";
-            if ((MainGame._tileMap == null || playerEntityMap != MainGame._tileMap?.Name) && playerEntityMap != "")
+            var playerLocation = ((Location)MainGame._localPlayer?.GetComponent(typeof(Location)))?.Area ?? "";
+            if ((MainGame._tileMap == null || playerLocation != MainGame._tileMap?.Name) && playerLocation != "")
             {
-                MainGame._tileMap = MainGame._worldLoader.LoadMap(playerEntityMap);
+                MainGame._tileMap = MainGame._worldLoader.LoadMap(playerLocation);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Player));
+            var query = new EntityQuery().And(typeof(Player), typeof(Location));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
             listener.ListenToChanged = true;

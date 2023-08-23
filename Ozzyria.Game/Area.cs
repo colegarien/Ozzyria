@@ -8,7 +8,7 @@ namespace Ozzyria.Game
         public SystemCoordinator _coordinator;
         public EntityContext _context;
 
-        public Area(World world, string name)
+        public Area(World world, string name, string contextTemplate)
         {
             _name = name;
             _context = new EntityContext();
@@ -25,8 +25,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.AnimationStateSync(_context))
                 .Add(new Systems.Animation());
 
-            // TODO OZ-27 load from generate area meta-data instead (or pass in template name from World)
-            world.WorldLoader.LoadContext(_context, _name + "_template");
+            world.WorldLoader.LoadContext(_context, contextTemplate);
         }
 
         public void Update(float deltaTime)

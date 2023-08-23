@@ -1,7 +1,4 @@
-﻿using Ozzyria.Game.Components.Attribute;
-using Ozzyria.Game.ECS;
-
-namespace Ozzyria.Game
+﻿namespace Ozzyria.Game
 {
     public class Input
     {

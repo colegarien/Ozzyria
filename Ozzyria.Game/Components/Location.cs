@@ -3,18 +3,18 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    public class Player : Component
+    public class Location : Component
     {
-        private int _playerId = -1;
+        private string _area = "";
 
         [Savable]
-        public int PlayerId
+        public string Area
         {
-            get => _playerId; set
+            get => _area; set
             {
-                if (_playerId != value)
+                if (_area != value)
                 {
-                    _playerId = value;
+                    _area = value;
                     Owner?.TriggerComponentChanged(this);
                 }
             }

@@ -1,4 +1,5 @@
-﻿using Ozzyria.Networking.Model;
+﻿using Ozzyria.Game;
+using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -19,14 +20,15 @@ namespace Ozzyria.Networking
         private readonly DateTime[] clientLastHeardFrom;
 
         private readonly UdpClient server;
-        private readonly Game.Game game;
+        private readonly World world;
 
         public Server()
         {
             clients = new IPEndPoint[MAX_CLIENTS];
             clientLastHeardFrom = new DateTime[MAX_CLIENTS];
 
-            game = new Game.Game();
+            // TODO OZ-28 add abstract so World is configure in Ozzyria.Server and leave Networking package just for networking
+            world = new World();
             server = new UdpClient(SERVER_PORT);
         }
 
@@ -50,7 +52,7 @@ namespace Ozzyria.Networking
                     // TODO OZ-28 chunk entity updates sent back
                     // TODO OZ-28 move sending/reading entity updates into separate tasks on the client/server
                     HandleMessages();
-                    game.Update(SECONDS_PER_TICK);
+                    world.Update(SECONDS_PER_TICK);
                     SendLocalState();
                     SendGlobalState();
 
@@ -87,14 +89,22 @@ namespace Ozzyria.Networking
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
                                 clients[messageClient] = null;
-                                game.OnPlayerLeave(messageClient);
+                                world.PlayerLeave(messageClient);
                                 Console.WriteLine($"Client #{messageClient} Left");
                             }
                             break;
                         case ClientMessage.InputUpdate:
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
-                                game.OnPlayerInput(messageClient, ClientPacketFactory.ParseInputData(messageData));
+                                var input = ClientPacketFactory.ParseInputData(messageData);
+                                world.WorldState.PlayerInputBuffer[messageClient].MoveUp = input.MoveUp;
+                                world.WorldState.PlayerInputBuffer[messageClient].MoveDown = input.MoveDown;
+                                world.WorldState.PlayerInputBuffer[messageClient].MoveLeft = input.MoveLeft;
+                                world.WorldState.PlayerInputBuffer[messageClient].MoveRight = input.MoveRight;
+                                world.WorldState.PlayerInputBuffer[messageClient].TurnLeft = input.TurnLeft;
+                                world.WorldState.PlayerInputBuffer[messageClient].TurnRight = input.TurnRight;
+                                world.WorldState.PlayerInputBuffer[messageClient].Attack = input.Attack;
+
                                 clientLastHeardFrom[messageClient] = DateTime.Now;
                             }
                             break;
@@ -117,7 +127,7 @@ namespace Ozzyria.Networking
                     clientId = i;
                     clients[i] = clientEndPoint;
                     clientLastHeardFrom[i] = DateTime.Now;
-                    game.OnPlayerJoin(i);
+                    world.PlayerJoin(i);
                     Console.WriteLine($"Client #{i} Joined");
                     break;
                 }
@@ -138,7 +148,7 @@ namespace Ozzyria.Networking
                         continue;
                     }
 
-                    var localContext = game.GetLocalContext(i);
+                    var localContext = world.GetLocalContext(i);
                     if(localContext == null)
                     {
                         continue;
@@ -191,7 +201,7 @@ namespace Ozzyria.Networking
             {
                 // Haven't heard from client in a while
                 clients[clientId] = null;
-                game.OnPlayerLeave(clientId);
+                world.PlayerLeave(clientId);
                 Console.WriteLine($"Client #{clientId} timed out");
 
                 return false;

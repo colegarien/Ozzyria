@@ -16,7 +16,9 @@ namespace Ozzyria.Game.Utility
 
             var playerTag = (Components.Player)player.CreateComponent(typeof(Components.Player));
             playerTag.PlayerId = playerId;
-            playerTag.Map = "test_a"; // TODO OZ-27 pull this from a storage or some kind?
+
+            var playerLocation = (Components.Location)player.CreateComponent(typeof(Components.Location));
+            playerLocation.Area = "test_a"; // TODO OZ-28 pull this from a storage or some kind?
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
 
@@ -44,6 +46,7 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(equippedGear);
             player.AddComponent(renderable);
             player.AddComponent(playerTag);
+            player.AddComponent(playerLocation);
             player.AddComponent(thought);
             player.AddComponent(movement);
             player.AddComponent(stats);
