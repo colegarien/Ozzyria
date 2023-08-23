@@ -18,13 +18,13 @@ namespace Ozzyria.Game
 
         public void OnPlayerInput(int playerId, Input input)
         {
-            _world.PlayerInputBuffer[playerId].MoveUp = input.MoveUp;
-            _world.PlayerInputBuffer[playerId].MoveDown = input.MoveDown;
-            _world.PlayerInputBuffer[playerId].MoveLeft = input.MoveLeft;
-            _world.PlayerInputBuffer[playerId].MoveRight = input.MoveRight;
-            _world.PlayerInputBuffer[playerId].TurnLeft = input.TurnLeft;
-            _world.PlayerInputBuffer[playerId].TurnRight = input.TurnRight;
-            _world.PlayerInputBuffer[playerId].Attack = input.Attack;
+            _world.WorldState.PlayerInputBuffer[playerId].MoveUp = input.MoveUp;
+            _world.WorldState.PlayerInputBuffer[playerId].MoveDown = input.MoveDown;
+            _world.WorldState.PlayerInputBuffer[playerId].MoveLeft = input.MoveLeft;
+            _world.WorldState.PlayerInputBuffer[playerId].MoveRight = input.MoveRight;
+            _world.WorldState.PlayerInputBuffer[playerId].TurnLeft = input.TurnLeft;
+            _world.WorldState.PlayerInputBuffer[playerId].TurnRight = input.TurnRight;
+            _world.WorldState.PlayerInputBuffer[playerId].Attack = input.Attack;
         }
 
         public void OnPlayerLeave(int playerId)

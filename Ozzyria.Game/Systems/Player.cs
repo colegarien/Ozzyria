@@ -26,7 +26,7 @@ namespace Ozzyria.Game.Systems
                 }
 
                 var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
-                var input = _world.PlayerInputBuffer.ContainsKey(playerId) ? _world.PlayerInputBuffer[playerId] : new Input();
+                var input = _world.WorldState.PlayerInputBuffer.ContainsKey(playerId) ? _world.WorldState.PlayerInputBuffer[playerId] : new Input();
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
 

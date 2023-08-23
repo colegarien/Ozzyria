@@ -29,7 +29,11 @@ namespace Ozzyria.MonoGameClient.Systems
         protected override QueryListener GetListener(EntityContext context)
         {
             var query = new EntityQuery().And(typeof(Player));
-            return context.CreateListener(query);
+            var listener = context.CreateListener(query);
+            listener.ListenToAdded = true;
+            listener.ListenToChanged = true;
+
+            return listener;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Ozzyria.Networking.Model
         JoinReject = 1,
         EntityUpdate = 2,
         EntityRemoval = 3,
+        AreaChanged = 4,
     }
 
     class ServerPacket
@@ -124,6 +125,44 @@ namespace Ozzyria.Networking.Model
                     {
                         uint id = reader.ReadUInt32();
                         context.DestroyEntity(id);
+                    }
+                }
+            }
+        }
+
+        public static byte[] AreaChanged(int clientId, string oldArea, string newArea)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ServerMessage.AreaChanged);
+                    writer.Write(clientId);
+                    writer.Write(oldArea);
+                    writer.Write(newArea);
+                }
+
+                return m.ToArray();
+            }
+        }
+
+        public static void ParseAreaChanged(EntityContext context, byte[] packet)
+        {
+            using (MemoryStream m = new MemoryStream(packet))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    {
+                        int clientId = reader.ReadInt32();
+                        string oldArea = reader.ReadString();
+                        string newArea = reader.ReadString();
+
+                        // clear out context (entity updates should rehydrate everything)
+                        foreach(var entity in context.GetEntities())
+                        {
+                            context.DestroyEntity(entity.id);
+                        }
                     }
                 }
             }

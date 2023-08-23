@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game.ECS;
-using Ozzyria.Game.Persistence;
 
 namespace Ozzyria.Game
 {
@@ -22,6 +21,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Physics())
                 .Add(new Systems.Combat())
                 .Add(new Systems.Death(_context))
+                .Add(new Systems.AreaChange(world, _context))
                 .Add(new Systems.AnimationStateSync(_context))
                 .Add(new Systems.Animation());
 

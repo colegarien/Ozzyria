@@ -105,6 +105,9 @@ namespace Ozzyria.Networking
                         case ServerMessage.EntityRemoval:
                             ServerPacketFactory.ParseEntityRemovals(context, messageData);
                             break;
+                        case ServerMessage.AreaChanged:
+                            ServerPacketFactory.ParseAreaChanged(context, messageData);
+                            break;
                     }
                 }
             }
