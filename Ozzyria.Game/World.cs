@@ -32,12 +32,11 @@ namespace Ozzyria.Game
 
         public World()
         {
-
-            // TODO OZ-27 load from generate area meta-data instead (or pass in template name from World)
-            WorldState.Areas["test_a"] = new Area(this, "test_a", "test_a_template");
-            WorldState.Areas["test_b"] = new Area(this, "test_b", "test_b_template");
-            WorldState.Areas["cool_map"] = new Area(this, "cool_map", "cool_map_template");
-            WorldState.Areas["test_m"] = new Area(this, "test_m", "test_e");
+            // load in all area templates
+            foreach (var template in WorldLoader.RetrieveAreaTemplates())
+            {
+                WorldState.Areas[template.Name] = new Area(this, template);
+            }
         }
 
         public void PlayerJoin(int playerId)

@@ -2,15 +2,21 @@
 
 namespace Ozzyria.Game
 {
+    public class AreaTemplate
+    {
+        public string Name { get; set; }
+        public string EntityTemplate { get; set; }
+    }
+
     public class Area
     {
         private string _name;
         public SystemCoordinator _coordinator;
         public EntityContext _context;
 
-        public Area(World world, string name, string contextTemplate)
+        public Area(World world, AreaTemplate template)
         {
-            _name = name;
+            _name = template.Name;
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator
@@ -25,7 +31,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.AnimationStateSync(_context))
                 .Add(new Systems.Animation());
 
-            world.WorldLoader.LoadContext(_context, contextTemplate);
+            world.WorldLoader.LoadContext(_context, template.EntityTemplate);
         }
 
         public void Update(float deltaTime)

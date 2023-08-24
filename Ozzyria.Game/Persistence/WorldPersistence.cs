@@ -4,11 +4,31 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Ozzyria.Game.Persistence
 {
     public class WorldPersistence
     {
+
+        public AreaTemplate[] RetrieveAreaTemplates()
+        {
+            var metaData = JsonSerializer.Deserialize<Dictionary<string, JsonObject>>(File.ReadAllText(Content.Loader.Root() + "/Maps/map_metadata.json"), JsonOptionsFactory.GetOptions());
+            var areaTemplates = new List<AreaTemplate>();
+            foreach(var kv in metaData)
+            {
+                JsonNode jsonProperty;
+                kv.Value.TryGetPropertyValue("EntityTemplate", out jsonProperty);
+                
+                areaTemplates.Add(new AreaTemplate
+                {
+                    Name = kv.Key,
+                    EntityTemplate = jsonProperty.GetValue<string>()
+
+                });
+            }
+            return areaTemplates.ToArray();
+        }
 
         public TileMap LoadMap(string mapName)
         {
