@@ -2,6 +2,7 @@
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -139,28 +140,42 @@ namespace Ozzyria.Networking
 
         private void SendLocalState()
         {
-            foreach (var client in clients)
+            for (int i = 0; i < MAX_CLIENTS; i++)
             {
-                for (int i = 0; i < MAX_CLIENTS; i++)
+                if (!IsConnected(i))
                 {
-                    if (!IsConnected(i))
-                    {
-                        continue;
-                    }
-
-                    var localContext = world.GetLocalContext(i);
-                    if(localContext == null)
-                    {
-                        continue;
-                    }
-
-                    var entityPacket = ServerPacketFactory.EntityUpdates(localContext.GetEntities());
-                    SendToClient(i, entityPacket);
-
-                    var destroyPacket = ServerPacketFactory.EntityRemovals(localContext);
-                    SendToClient(i, destroyPacket);
+                    continue;
                 }
+
+                var localContext = world.GetLocalContext(i);
+                if(localContext == null)
+                {
+                    continue;
+                }
+
+                // TODO OZ-28 add better mechanism for broadcasting packates in local areas to players in those areas
+                // TODO OZ-28 get rid of this event system of make it less coupled to the "World" and/or les boxing/unboxing of objects
+                foreach(var areaEvent in world.WorldState.AreaEvents)
+                {
+                    if(areaEvent is EntityLeaveAreaEvent)
+                    {
+                        EntityLeaveAreaEvent alae = (EntityLeaveAreaEvent)areaEvent;
+                        if (alae.PlayerId == i) {
+                            // tell client the local player left the area they were in
+                            var areaChangePacket = ServerPacketFactory.AreaChanged(i, alae.SourceArea, alae.NewArea);
+                            SendToClient(i, areaChangePacket);
+                        }
+                    }
+                }
+
+                var entityPacket = ServerPacketFactory.EntityUpdates(localContext.GetEntities());
+                SendToClient(i, entityPacket);
+
+                var destroyPacket = ServerPacketFactory.EntityRemovals(localContext);
+                SendToClient(i, destroyPacket);
             }
+
+            world.WorldState.AreaEvents.Clear();
         }
 
         private void SendGlobalState()

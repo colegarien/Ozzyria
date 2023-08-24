@@ -32,7 +32,7 @@ namespace Ozzyria.MonoGameClient.Systems
                 var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
                 var gear = (EquippedGear)entity.GetComponent(typeof(EquippedGear));
 
-                if (MainGame._localPlayer != null && MainGame._localPlayer?.id == entity.id)
+                if (MainGame._localPlayer != null && MainGame._localPlayer?.id == entity.id && movement != null)
                 {
                     MainGame._camera.CenterView(movement.X, movement.Y);
                     RebuildTileMapGraphics();

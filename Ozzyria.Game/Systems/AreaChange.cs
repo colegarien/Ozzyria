@@ -18,8 +18,16 @@ namespace Ozzyria.Game.Systems
                 var location = (Components.Location)entity.GetComponent(typeof(Components.Location));
                 var areaChange = (Components.AreaChange)entity.GetComponent(typeof(Components.AreaChange));
 
+
                 if (areaChange.NewArea != location.Area)
                 {
+                    var entityLeaveEvent = new EntityLeaveAreaEvent
+                    {
+                        SourceArea = location.Area,
+                        EntityId = location.Owner.id,
+                        NewArea = areaChange.NewArea,
+                    };
+
                     // detach from current area
                     _world.WorldState.Areas[location.Area]._context.DetachEntity(entity);
 
@@ -31,6 +39,7 @@ namespace Ozzyria.Game.Systems
                     {
                         var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player)))?.PlayerId ?? -1;
                         _world.WorldState.PlayerAreaTracker[playerId] = areaChange.NewArea;
+                        entityLeaveEvent.PlayerId = playerId;
                     }
 
                     // update movement if has component
@@ -45,8 +54,7 @@ namespace Ozzyria.Game.Systems
 
                     // reattach to new area
                     _world.WorldState.Areas[areaChange.NewArea]._context.AttachEntity(entity);
-
-                    // TODO OZ-27 trigger the AreaChange networking packet
+                    _world.WorldState.AreaEvents.Add(entityLeaveEvent);
                 }
 
                 entity.RemoveComponent(areaChange);

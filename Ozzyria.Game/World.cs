@@ -7,11 +7,22 @@ using System.Linq;
 
 namespace Ozzyria.Game
 {
+    public abstract class AreaEvent{
+        public string SourceArea { get; set; }
+    }
+    public class EntityLeaveAreaEvent : AreaEvent
+    {
+        public uint EntityId { get; set; }
+        public int PlayerId { get; set; } = -1;
+        public string NewArea { get; set; } = "";
+    }
+
     public class WorldState
     {
         public Dictionary<int, Input> PlayerInputBuffer = new Dictionary<int, Input>();
         public Dictionary<int, string> PlayerAreaTracker = new Dictionary<int, string>();
         public Dictionary<string, Area> Areas = new Dictionary<string, Area>();
+        public List<AreaEvent> AreaEvents = new List<AreaEvent>();
     }
 
     public class World
