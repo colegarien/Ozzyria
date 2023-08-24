@@ -69,22 +69,6 @@ namespace Ozzyria.Game
             {
                 kv.Value.Update(deltaTime);
             }
-
-            if(WorldState.PlayerInputBuffer.ContainsKey(0) && WorldState.PlayerInputBuffer[0].Attack && WorldState.PlayerAreaTracker[0] == "test_a")
-            {
-                foreach(var entity in WorldState.Areas["test_a"]._context.GetEntities())
-                {
-                    if (entity.HasComponent(typeof(Components.Player)))
-                    {
-                        var areaChange = (AreaChange)entity.CreateComponent(typeof(AreaChange));
-                        areaChange.NewArea = "test_b";
-                        areaChange.NewX = 140;
-                        areaChange.NewY = 140;
-                        entity.AddComponent(areaChange);
-                        break;
-                    }
-                }
-            }
         }
     }
 }

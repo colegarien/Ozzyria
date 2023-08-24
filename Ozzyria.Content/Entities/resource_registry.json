@@ -10,6 +10,13 @@
       "Width": 32,
       "Height": 32
     },
+    "door": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
     "body_white_east_01": {
       "Resource": 0,
       "Left": 0,
@@ -373,6 +380,21 @@
       "Frames": [
         {
           "SourceId": "exp_orb",
+          "Transform": {
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 0,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "static_door": {
+      "Frames": [
+        {
+          "SourceId": "door",
           "Transform": {
             "DestinationW": 32,
             "DestinationH": 32,

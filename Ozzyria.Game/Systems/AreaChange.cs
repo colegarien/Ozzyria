@@ -19,7 +19,8 @@ namespace Ozzyria.Game.Systems
                 var areaChange = (Components.AreaChange)entity.GetComponent(typeof(Components.AreaChange));
 
 
-                if (areaChange.NewArea != location.Area)
+                // TODO OZ-22 consider if we want this or not, its cool for doors to be able to move them around the same area
+                //if (areaChange.NewArea != location.Area)
                 {
                     var entityLeaveEvent = new EntityLeaveAreaEvent
                     {

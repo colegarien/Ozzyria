@@ -1,5 +1,8 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
+using Ozzyria.Game.Systems;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace Ozzyria.Game.Utility
 {
@@ -25,6 +28,8 @@ namespace Ozzyria.Game.Utility
             var movement = (Movement)player.CreateComponent(typeof(Movement));
             movement.X = 140;
             movement.Y = 140;
+            movement.PreviousX = 140;
+            movement.PreviousY = 140;
 
             var stats = (Stats)player.CreateComponent(typeof(Stats));
             var combat = (Components.Combat)player.CreateComponent(typeof(Components.Combat));
@@ -69,6 +74,8 @@ namespace Ozzyria.Game.Utility
             movement.ACCELERATION = 300f;
             movement.X = x;
             movement.Y = y;
+            movement.PreviousX = x;
+            movement.PreviousY = y;
 
             var stats = (Stats)slime.CreateComponent(typeof(Stats));
             stats.Health = 30;
@@ -107,6 +114,31 @@ namespace Ozzyria.Game.Utility
             spawner.AddComponent(component);
         }
 
+        public static void CreateDoor(EntityContext context, float x, float y, string newArea, float newX, float newY) {
+            var door = context.CreateEntity();
+
+            var doorComponent = (Door)door.CreateComponent(typeof(Door));
+            doorComponent.NewArea = newArea;
+            doorComponent.NewX = newX;
+            doorComponent.NewY = newY;
+            
+            var movement = (Movement)door.CreateComponent<Movement>();
+            movement.X = x;
+            movement.Y = y;
+            movement.PreviousX = x;
+            movement.PreviousY = y;
+
+            // TODO OZ-22 make doors have their own graphic
+            var renderable = (Renderable)door.CreateComponent(typeof(Renderable));
+            renderable.IsDynamic = false;
+            renderable.StaticClip = "static_door";
+            renderable.Z = (int)ZLayer.Items;
+
+            door.AddComponent(doorComponent);
+            door.AddComponent(movement);
+            door.AddComponent(renderable);
+        }
+
         public static void CreateExperienceOrb(EntityContext context, float x, float y, int value)
         {
             var orb = context.CreateEntity();
@@ -123,6 +155,8 @@ namespace Ozzyria.Game.Utility
             movement.MAX_SPEED = 300f;
             movement.X = x;
             movement.Y = y;
+            movement.PreviousX = x;
+            movement.PreviousY = y;
 
             var boost = (ExperienceBoost)orb.CreateComponent(typeof(ExperienceBoost));
             boost.Experience = value;
