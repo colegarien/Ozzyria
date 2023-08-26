@@ -37,6 +37,9 @@ namespace Ozzyria.MonoGameClient.Systems
                 if (entity.HasComponent(typeof(Player)) && ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id && movement != null)
                 {
                     _game.Camera.CenterView(movement.X, movement.Y);
+                    // coordinates are centered so offset bounds by half a tile
+                    _game.Camera.ApplyBounds(-Tile.HALF_DIMENSION, -Tile.HALF_DIMENSION, _game.TileMap.Width * Tile.DIMENSION - Tile.HALF_DIMENSION, _game.TileMap.Height * Tile.DIMENSION - Tile.HALF_DIMENSION);
+
                     RebuildTileMapGraphics();
                 }
 

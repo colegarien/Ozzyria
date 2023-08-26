@@ -18,6 +18,8 @@ namespace Ozzyria.MonoGameClient
         private Vector3 scaleVector = new Vector3(0.5f, 0.5f, 0);
         private Vector3 inversePosition = new Vector3(0, 0, 0);
         private Matrix viewMatrix;
+        private float fullViewWidth = 0f;
+        private float fullViewHeight = 0f;
         private float halfViewWidth = 0f;
         private float halfViewHeight = 0f;
         private float minRenderX = 0f;
@@ -34,6 +36,8 @@ namespace Ozzyria.MonoGameClient
         {
             // So that the MATH is only done once, and only when it really needs to be done
             inversePosition = -(new Vector3((float)Math.Round(Position.X * 2, MidpointRounding.AwayFromZero) / 2f, (float)Math.Round(Position.Y * 2, MidpointRounding.AwayFromZero) / 2f, 0)); // round to 0.5 to avoid float issues
+            fullViewWidth = ViewSize.X / hScale;
+            fullViewHeight = ViewSize.Y / vScale;
             halfViewWidth = ViewSize.X * 0.5f / hScale;
             halfViewHeight = ViewSize.Y * 0.5f / vScale;
             minRenderX = Position.X - ViewPadding;
@@ -57,7 +61,7 @@ namespace Ozzyria.MonoGameClient
 
         public void CenterView(float x, float y)
         {
-            if (x != Position.X || y != Position.Y) // this 'if' is not here for any good reason, just paranoid trying to avoid newing
+            if (x - halfViewWidth != Position.X || y - halfViewHeight != Position.Y) // this 'if' is not here for any good reason, just paranoid trying to avoid newing
             {
                 Position = new Vector2
                 {
@@ -66,6 +70,52 @@ namespace Ozzyria.MonoGameClient
                 };
                 RecalculateInternals();
             }
+        }
+
+        public void ApplyBounds(float left, float top, float right, float bottom)
+        {
+            var x = Position.X;
+            var y = Position.Y;
+
+            if (x < left && x + fullViewWidth > right)
+            {
+                // small bounds so center camera
+                x = right - left - halfViewWidth;
+            }
+            else if (x < left)
+            {
+                x = left;
+            }
+            else if(x + fullViewWidth > right)
+            {
+                x = right - fullViewWidth;
+            }
+
+            if(y < top && y + fullViewHeight > bottom)
+            {
+                // small bounds so center camera
+                y = bottom - top - halfViewHeight;
+            }
+            else if(y < top)
+            {
+                y = top;
+            }
+            else if(y + fullViewHeight > bottom)
+            {
+                y = bottom - fullViewHeight;
+            }
+
+
+            if(x != minRenderX || y != minRenderY)
+            {
+                Position = new Vector2
+                {
+                    X = x,
+                    Y = y
+                };
+                RecalculateInternals();
+            }
+
         }
 
         public bool IsInView(float x, float y, float w, float h)
