@@ -5,7 +5,6 @@ using Ozzyria.Game;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
-using Ozzyria.MonoGameClient.UI.Model;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
@@ -19,18 +18,17 @@ namespace Ozzyria.MonoGameClient
         private SpriteBatch _spriteBatch;
         private SpriteFont _debugFont;
 
-        public static Client _client;
-        public static Camera _camera;
-        public static TileMap _tileMap = null;
-        public static WorldPersistence _worldLoader;
-
-        internal static StatBlock _localStatBlock = new StatBlock();
-
         private EntityContext _context;
         private SystemCoordinator _coordinator;
 
-        private static Dictionary<string, Texture2D> textureResources;
+        private Dictionary<string, Texture2D> textureResources;
 
+        // "global" variables used by systems
+        internal Client Client;
+        internal Camera Camera;
+        internal TileMap TileMap = null;
+        internal WorldPersistence WorldLoader;
+        internal LocalState LocalState;
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;
@@ -60,36 +58,37 @@ namespace Ozzyria.MonoGameClient
                 _localServerTheard.Start(_cts.Token);
             }
 
-            _worldLoader = new WorldPersistence();
+            LocalState = new LocalState();
+            WorldLoader = new WorldPersistence();
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator
-                .Add(new Systems.Network())
-                .Add(new Systems.LocalPlayer(_context))
-                .Add(new Systems.RenderTracking(_context))
-                .Add(new Systems.LocalStatTracking(_context));
+                .Add(new Systems.Network(this))
+                .Add(new Systems.LocalPlayer(this, _context))
+                .Add(new Systems.RenderTracking(this, _context))
+                .Add(new Systems.LocalStateTracking(this, _context));
 
-            _client = new Client();
-            if (!_client.Connect("127.0.0.1", 13000))
+            Client = new Client();
+            if (!Client.Connect("127.0.0.1", 13000))
             {
                 Log("Join failed!");
                 Exit();
                 return;
             }
-            Log($"Joined as Client #{_client.Id}");
+            Log($"Joined as Client #{Client.Id}");
 
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
 
-            _camera = new Camera(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            Camera = new Camera(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             base.Initialize();
         }
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            _client.Disconnect();
+            Client.Disconnect();
 
             if (IS_SINGLEPLAYER)
             {
@@ -114,10 +113,10 @@ namespace Ozzyria.MonoGameClient
 
         protected override void Update(GameTime gameTime)
         {
-            if (!_client.IsConnected() || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (!Client.IsConnected() || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 Log($"Disconnecting");
-                _client.Disconnect();
+                Client.Disconnect();
                 Exit();
                 return;
             }
@@ -134,7 +133,7 @@ namespace Ozzyria.MonoGameClient
             ///
             /// Render Game World
             ///
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, _camera.GetViewMatrix());
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Camera.GetViewMatrix());
             foreach (var drawls in Systems.RenderTracking.finalDrawables)
             {
                 if (drawls is DrawableInfo)
@@ -158,10 +157,7 @@ namespace Ozzyria.MonoGameClient
             /// Render UI Overlay
             ///
             _spriteBatch.Begin();
-            if (_localStatBlock != null)
-            {
-                _spriteBatch.DrawString(_debugFont, $"HP: {_localStatBlock.Health}/{_localStatBlock?.MaxHealth}\r\nEXP: {_localStatBlock.Experience}/{_localStatBlock.MaxExperience}", Vector2.Zero, Color.Red);
-            }
+            _spriteBatch.DrawString(_debugFont, $"HP: {LocalState.Health}/{LocalState.MaxHealth}\r\nEXP: {LocalState.Experience}/{LocalState.MaxExperience}", Vector2.Zero, Color.Red);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

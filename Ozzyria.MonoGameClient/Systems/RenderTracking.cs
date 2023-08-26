@@ -3,7 +3,6 @@ using Ozzyria.Game;
 using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,9 +17,12 @@ namespace Ozzyria.MonoGameClient.Systems
 
         public Registry ResourceRegistry;
 
-        public RenderTracking(EntityContext context) : base(context)
+        private MainGame _game;
+
+        public RenderTracking(MainGame game, EntityContext context) : base(context)
         {
             ResourceRegistry = Registry.GetInstance();
+            _game = game;
         }
 
         public override void Execute(EntityContext context, Entity[] entities)
@@ -32,9 +34,9 @@ namespace Ozzyria.MonoGameClient.Systems
                 var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
                 var gear = (EquippedGear)entity.GetComponent(typeof(EquippedGear));
 
-                if (entity.HasComponent(typeof(Player)) && ((Player)entity.GetComponent(typeof(Player))).PlayerId == MainGame._client.Id && movement != null)
+                if (entity.HasComponent(typeof(Player)) && ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id && movement != null)
                 {
-                    MainGame._camera.CenterView(movement.X, movement.Y);
+                    _game.Camera.CenterView(movement.X, movement.Y);
                     RebuildTileMapGraphics();
                 }
 
@@ -50,7 +52,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
             finalDrawables = tileMapDrawables
                 .Concat(entityDrawables)
-                .Where(d => MainGame._camera.IsInView(d.GetLeft(), d.GetTop(), d.GetWidth(), d.GetHeight()))
+                .Where(d => _game.Camera.IsInView(d.GetLeft(), d.GetTop(), d.GetWidth(), d.GetHeight()))
                 .OrderBy(d => d.GetLayer())
                 .ThenBy(d => d.GetZ())
                 .ThenBy(d => d.GetTop())
@@ -60,11 +62,11 @@ namespace Ozzyria.MonoGameClient.Systems
         private void RebuildTileMapGraphics()
         {
             tileMapDrawables = new List<IDrawableInfo>();
-            foreach (var layer in MainGame._tileMap?.Layers)
+            foreach (var layer in _game.TileMap?.Layers)
             {
                 foreach (var tile in layer.Value)
                 {
-                    if (!MainGame._camera.IsInView(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
+                    if (!_game.Camera.IsInView(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION, Tile.DIMENSION, Tile.DIMENSION))
                         continue;
 
                     var textureList = new List<Rectangle>();
@@ -76,7 +78,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
                     tileMapDrawables.Add(new DrawableInfo
                     {
-                        Sheet = MainGame._tileMap?.TileSet,
+                        Sheet = _game.TileMap?.TileSet,
                         Layer = layer.Key,
                         Position = new Vector2(tile.X * Tile.DIMENSION, tile.Y * Tile.DIMENSION),
                         Width = Tile.DIMENSION,

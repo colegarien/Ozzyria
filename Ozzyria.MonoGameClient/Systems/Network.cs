@@ -7,11 +7,16 @@ namespace Ozzyria.MonoGameClient.Systems
     internal class Network : TickSystem
     {
         private Input lastSentInput = new Input();
+        private MainGame _game;
+        public Network(MainGame game)
+        {
+            _game = game;
+        }
 
         public override void Execute(float deltaTime, EntityContext context)
         {
             ProcessInput();
-            MainGame._client?.HandleIncomingMessages(context);
+            _game.Client?.HandleIncomingMessages(context);
         }
 
         private void ProcessInput()
@@ -55,7 +60,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
             if (inputChanged)
             {
-                MainGame._client?.SendInput(lastSentInput);
+                _game.Client?.SendInput(lastSentInput);
             }
         }
     }

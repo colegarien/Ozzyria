@@ -5,23 +5,25 @@ namespace Ozzyria.MonoGameClient.Systems
 {
     internal class LocalPlayer : TriggerSystem
     {
-        public LocalPlayer(EntityContext context) : base(context)
+        private MainGame _game;
+        public LocalPlayer(MainGame game, EntityContext context) : base(context)
         {
+            _game = game;
         }
 
         public override void Execute(EntityContext context, Entity[] entities)
         {
             var localPlayer = entities[0];
             var playerLocation = ((Location)localPlayer?.GetComponent(typeof(Location)))?.Area ?? "";
-            if ((MainGame._tileMap == null || playerLocation != MainGame._tileMap?.Name) && playerLocation != "")
+            if ((_game.TileMap == null || playerLocation != _game.TileMap?.Name) && playerLocation != "")
             {
-                MainGame._tileMap = MainGame._worldLoader.LoadMap(playerLocation);
+                _game.TileMap = _game.WorldLoader.LoadMap(playerLocation);
             }
         }
 
         protected override bool Filter(Entity entity)
         {
-            return ((Player)entity.GetComponent(typeof(Player))).PlayerId == MainGame._client.Id;
+            return ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id;
         }
 
         protected override QueryListener GetListener(EntityContext context)

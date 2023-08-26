@@ -3,10 +3,12 @@ using Ozzyria.Game.ECS;
 
 namespace Ozzyria.MonoGameClient.Systems
 {
-    internal class LocalStatTracking : TriggerSystem
+    internal class LocalStateTracking : TriggerSystem
     {
-        public LocalStatTracking(EntityContext context) : base(context)
+        private MainGame _game;
+        public LocalStateTracking(MainGame game, EntityContext context) : base(context)
         {
+            _game = game;
         }
 
         public override void Execute(EntityContext context, Entity[] entities)
@@ -16,21 +18,21 @@ namespace Ozzyria.MonoGameClient.Systems
                 var localPlayer = entities[0];
 
                 var localStats = (Stats)localPlayer.GetComponent(typeof(Stats));
-                MainGame._localStatBlock.Health = localStats.Health;
-                MainGame._localStatBlock.MaxHealth = localStats.MaxHealth;
-                MainGame._localStatBlock.Experience = localStats.Experience;
-                MainGame._localStatBlock.MaxExperience = localStats.MaxExperience;
+                _game.LocalState.Health = localStats.Health;
+                _game.LocalState.MaxHealth = localStats.MaxHealth;
+                _game.LocalState.Experience = localStats.Experience;
+                _game.LocalState.MaxExperience = localStats.MaxExperience;
             }
         }
 
         protected override bool Filter(Entity entity)
         {
-            return ((Player)entity.GetComponent(typeof(Player))).PlayerId == MainGame._client.Id;
+            return ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id;
         }
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Player), typeof(Stats));
+            var query = new EntityQuery().And(typeof(Player));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
             listener.ListenToChanged = true;
