@@ -11,10 +11,8 @@ namespace Ozzyria.MonoGameClient.Systems
 
         public override void Execute(EntityContext context, Entity[] entities)
         {
-            if (entities.Length > 0 && (MainGame._localPlayer == null || MainGame._localPlayer.id != entities[0].id))
-                MainGame._localPlayer = entities[0];
-
-            var playerLocation = ((Location)MainGame._localPlayer?.GetComponent(typeof(Location)))?.Area ?? "";
+            var localPlayer = entities[0];
+            var playerLocation = ((Location)localPlayer?.GetComponent(typeof(Location)))?.Area ?? "";
             if ((MainGame._tileMap == null || playerLocation != MainGame._tileMap?.Name) && playerLocation != "")
             {
                 MainGame._tileMap = MainGame._worldLoader.LoadMap(playerLocation);

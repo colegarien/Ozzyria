@@ -2,10 +2,10 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game;
-using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
+using Ozzyria.MonoGameClient.UI.Model;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
@@ -21,9 +21,10 @@ namespace Ozzyria.MonoGameClient
 
         public static Client _client;
         public static Camera _camera;
-        public static Entity _localPlayer;
         public static TileMap _tileMap = null;
         public static WorldPersistence _worldLoader;
+
+        internal static StatBlock _localStatBlock = new StatBlock();
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
@@ -65,7 +66,8 @@ namespace Ozzyria.MonoGameClient
             _coordinator
                 .Add(new Systems.Network())
                 .Add(new Systems.LocalPlayer(_context))
-                .Add(new Systems.RenderTracking(_context));
+                .Add(new Systems.RenderTracking(_context))
+                .Add(new Systems.LocalStatTracking(_context));
 
             _client = new Client();
             if (!_client.Connect("127.0.0.1", 13000))
@@ -156,10 +158,9 @@ namespace Ozzyria.MonoGameClient
             /// Render UI Overlay
             ///
             _spriteBatch.Begin();
-            if (_localPlayer != null)
+            if (_localStatBlock != null)
             {
-                var localPlayerStats = (Stats)_localPlayer?.GetComponent(typeof(Stats));
-                _spriteBatch.DrawString(_debugFont, $"HP: {localPlayerStats?.Health}/{localPlayerStats?.MaxHealth}\r\nEXP: {localPlayerStats?.Experience}/{localPlayerStats?.MaxExperience}", Vector2.Zero, Color.Red);
+                _spriteBatch.DrawString(_debugFont, $"HP: {_localStatBlock.Health}/{_localStatBlock?.MaxHealth}\r\nEXP: {_localStatBlock.Experience}/{_localStatBlock.MaxExperience}", Vector2.Zero, Color.Red);
             }
             _spriteBatch.End();
             base.Draw(gameTime);
