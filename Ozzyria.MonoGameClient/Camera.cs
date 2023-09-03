@@ -10,7 +10,7 @@ namespace Ozzyria.MonoGameClient
 
         private Vector2 Position { get; set; } = new Vector2(0, 0);
         private Vector2 ViewSize { get; set; } = new Vector2(0, 0);
-        public int ViewPadding = 0;
+        public int ViewPadding = 16;
 
         public float hScale = 0.5f;
         public float vScale = 0.5f;
@@ -35,7 +35,7 @@ namespace Ozzyria.MonoGameClient
         private void RecalculateInternals()
         {
             // So that the MATH is only done once, and only when it really needs to be done
-            inversePosition = -(new Vector3((float)Math.Round(Position.X * 2, MidpointRounding.AwayFromZero) / 2f, (float)Math.Round(Position.Y * 2, MidpointRounding.AwayFromZero) / 2f, 0)); // round to 0.5 to avoid float issues
+            inversePosition = -(new Vector3((float)Math.Round(Position.X * hScale, MidpointRounding.AwayFromZero) / hScale, (float)Math.Round(Position.Y * vScale, MidpointRounding.AwayFromZero) / vScale, 0)); // round to v and h scale to avoid float issues & tearing
             fullViewWidth = ViewSize.X / hScale;
             fullViewHeight = ViewSize.Y / vScale;
             halfViewWidth = ViewSize.X * 0.5f / hScale;
