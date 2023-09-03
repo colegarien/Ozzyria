@@ -7,7 +7,7 @@ namespace Ozzyria.Game.Animation
 {
     public class Registry
     {
-        public string[] Resources { get; set; }
+        public Dictionary<uint, string> Resources { get; set; }
         public Dictionary<string, FrameSource> FrameSources { get; set; }
         public Dictionary<string, Clip> Clips { get; set; }
 

@@ -1,7 +1,7 @@
 {
-  "Resources": [
-    "entity_set_001"
-  ],
+  "Resources": {
+    "0": "entity_set_001"
+  },
   "FrameSources": {
     "exp_orb": {
       "Resource": 0,

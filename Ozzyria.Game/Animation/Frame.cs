@@ -25,7 +25,7 @@ namespace Ozzyria.Game.Animation
 
     public struct FrameSource
     {
-        public int Resource { get; set; }
+        public uint Resource { get; set; }
         public int Top { get; set; }
         public int Left { get; set; }
         public int Width { get; set; }
