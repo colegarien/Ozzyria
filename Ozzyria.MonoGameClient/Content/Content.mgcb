@@ -37,10 +37,10 @@
 /processorParam:TextureFormat=Color
 /build:../../Ozzyria.Content/TileSets/Sprites/outside_tileset_001.png;Sprites/outside_tileset_001.png
 
-#begin debug_font.spritefont
+#begin sf_greyfont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:debug_font.spritefont
+/build:sf_greyfont.spritefont
 

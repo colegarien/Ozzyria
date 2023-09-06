@@ -16,7 +16,7 @@ namespace Ozzyria.MonoGameClient
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _debugFont;
+        private SpriteFont _greyFont;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
@@ -102,7 +102,7 @@ namespace Ozzyria.MonoGameClient
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _debugFont = Content.Load<SpriteFont>("debug_font");
+            _greyFont = Content.Load<SpriteFont>("sf_greyfont");
 
             textureResources = new Dictionary<string, Texture2D>()
             {
@@ -157,7 +157,7 @@ namespace Ozzyria.MonoGameClient
             /// Render UI Overlay
             ///
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_debugFont, $"HP: {LocalState.Health}/{LocalState.MaxHealth}\r\nEXP: {LocalState.Experience}/{LocalState.MaxExperience}", Vector2.Zero, Color.Red);
+            _spriteBatch.DrawString(_greyFont, $"HP: {LocalState.Health}/{LocalState.MaxHealth}\r\nEXP: {LocalState.Experience}/{LocalState.MaxExperience}", Vector2.Zero, Color.Red);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
