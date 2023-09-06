@@ -10,6 +10,7 @@ namespace Ozzyria.Game.Persistence
 {
     public class WorldPersistence
     {
+        private static Dictionary<Type, Type> _baseTypeCache = new Dictionary<Type, Type>();
 
         public AreaTemplate[] RetrieveAreaTemplates()
         {
@@ -169,12 +170,19 @@ namespace Ozzyria.Game.Persistence
 
         private static Type GetSerializableBaseType(Type type) // TODO abstract binary read/write possibly once have dependency injection
         {
+            if (_baseTypeCache.ContainsKey(type))
+            {
+                return _baseTypeCache[type];
+            }
+
+            var baseType = type;
             if (type.IsEnum)
-                return typeof(Enum);
+                baseType = typeof(Enum);
             else if (typeof(IComponent).IsAssignableFrom(type))
-                return typeof(IComponent);
-            else
-                return type;
+                baseType = typeof(IComponent);
+
+            _baseTypeCache[type] = baseType;
+            return baseType;
         }
 
         private static void WriteValueOfType(Entity entity, BinaryWriter writer, Type type, object? value) // TODO abstract binary read/write possibly once have dependency injection

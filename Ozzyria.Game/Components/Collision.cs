@@ -7,8 +7,22 @@ namespace Ozzyria.Game.Components
 {
     public class Collision : Component
     {
-        protected bool _isDynamic = true;
+        private Movement _ownerMovement = null;
+        protected Movement OwnerMovement {
+            get {
+                if(_ownerMovement == null)
+                {
+                    _ownerMovement = (Movement)Owner.GetComponent(typeof(Movement));
+                }
 
+                return _ownerMovement;
+            }
+            set {
+                // noop
+            }
+        }
+
+        protected bool _isDynamic = true;
         [Savable]
         public bool IsDynamic { get => _isDynamic; set
             {
@@ -22,8 +36,8 @@ namespace Ozzyria.Game.Components
 
         public static CollisionResult CircleIntersectsCircle(BoundingCircle circle1, BoundingCircle circle2)
         {
-            var movement = (Movement)circle1.Owner.GetComponent(typeof(Movement));
-            var otherMovement = (Movement)circle2.Owner.GetComponent(typeof(Movement));
+            var movement = circle1.OwnerMovement;
+            var otherMovement = circle2.OwnerMovement;
 
             var direction = Vector2.Normalize(new Vector2(movement.X - otherMovement.X, movement.Y - otherMovement.Y));
             var collisionResult = new CollisionResult
@@ -52,7 +66,7 @@ namespace Ozzyria.Game.Components
             };
 
             // Determine Correct Normal
-            var movement = (Movement)box1.Owner.GetComponent(typeof(Movement));
+            var movement = box1.OwnerMovement; 
             var dx = movement.X - movement.PreviousX;
             var dy = movement.Y - movement.PreviousY;
 
@@ -78,7 +92,7 @@ namespace Ozzyria.Game.Components
 
         public static CollisionResult CircleIntersectsBox(BoundingCircle circle, BoundingBox box)
         {
-            var movement = (Movement)circle.Owner.GetComponent(typeof(Movement));
+            var movement = circle.OwnerMovement;
 
             var testX = movement.X;
             var testY = movement.Y;
@@ -97,7 +111,7 @@ namespace Ozzyria.Game.Components
             float deltaY = movement.Y - testY;
 
             var direction = Vector2.Normalize(new Vector2(movement.X - testX, movement.Y - testY));
-            var depth = (float)(Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY)) - circle.Radius);
+            var depth = MathF.Sqrt((deltaX * deltaX) + (deltaY * deltaY)) - circle.Radius;
             var collisionResult = new CollisionResult
             {
                 Collided = depth < 0,
