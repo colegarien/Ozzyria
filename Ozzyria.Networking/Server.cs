@@ -45,19 +45,23 @@ namespace Ozzyria.Networking
             {
                 Console.WriteLine($"Server Started - Listening on port {SERVER_PORT}");
                 Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Restart();
                 var isRunning = true;
                 while (isRunning && !ct.IsCancellationRequested)
                 {
-                    stopWatch.Restart();
-
                     // TODO OZ-28 chunk entity updates sent back
                     // TODO OZ-28 move sending/reading entity updates into separate tasks on the client/server
                     HandleMessages();
-                    world.Update(SECONDS_PER_TICK);
-                    SendLocalState();
-                    SendGlobalState();
 
-                    Thread.Sleep((int)Math.Max((SECONDS_PER_TICK * 1000) - stopWatch.ElapsedMilliseconds, 1));
+                    if (stopWatch.ElapsedMilliseconds >= SECONDS_PER_TICK * 1000)
+                    {
+                        // update and re-send state every SECONDS_PER_TICK
+                        world.Update(SECONDS_PER_TICK);
+                        SendLocalState();
+                        SendGlobalState();
+
+                        stopWatch.Restart();
+                    }
                 }
             }
             finally {
