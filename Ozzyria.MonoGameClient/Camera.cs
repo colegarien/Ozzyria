@@ -17,6 +17,7 @@ namespace Ozzyria.MonoGameClient
 
         private Vector3 scaleVector = new Vector3(0.5f, 0.5f, 0);
         private Vector3 inversePosition = new Vector3(0, 0, 0);
+        private Matrix scaleMatrix;
         private Matrix viewMatrix;
         private float fullViewWidth = 0f;
         private float fullViewHeight = 0f;
@@ -44,7 +45,7 @@ namespace Ozzyria.MonoGameClient
             maxRenderX = Position.X + ViewSize.X + ViewPadding;
             minRenderY = Position.Y - ViewPadding;
             maxRenderY = Position.Y + ViewSize.Y + ViewPadding;
-            viewMatrix = Matrix.Identity * Matrix.CreateTranslation(inversePosition) * Matrix.CreateScale(scaleVector);
+            viewMatrix = Matrix.Identity * Matrix.CreateTranslation(inversePosition) * scaleMatrix;
         }
 
         public void ResizeView(int width, int height)
@@ -54,6 +55,7 @@ namespace Ozzyria.MonoGameClient
                 hScale = width / RENDER_RESOLUTION_W;
                 vScale = height / RENDER_RESOLUTION_H;
                 scaleVector = new Vector3(hScale, vScale, 1f);
+                scaleMatrix = Matrix.Identity * Matrix.CreateScale(scaleVector);
                 ViewSize = new Vector2(width, height);
                 RecalculateInternals();
             }
@@ -126,6 +128,11 @@ namespace Ozzyria.MonoGameClient
                 y < maxRenderY &&
                 y + h > minRenderY
             );
+        }
+
+        public Matrix GetScaleMatrix()
+        {
+            return scaleMatrix;
         }
 
         public Matrix GetViewMatrix()

@@ -36,6 +36,8 @@ namespace Ozzyria.MonoGameClient
         private Server _localServer;
         private Thread _localServerTheard;
 
+        private Texture2D _uiTexture;
+
         public MainGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -77,6 +79,7 @@ namespace Ozzyria.MonoGameClient
             }
             Log($"Joined as Client #{Client.Id}");
 
+            IsMouseVisible = false;
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.ApplyChanges();
@@ -109,6 +112,8 @@ namespace Ozzyria.MonoGameClient
                 {"entity_set_001", Content.Load<Texture2D>("Sprites/entity_set_001")},
                 {"outside_tileset_001", Content.Load<Texture2D>("Sprites/outside_tileset_001")},
             };
+
+            _uiTexture = Content.Load<Texture2D>("ui_components");
         }
 
         protected override void Update(GameTime gameTime)
@@ -148,7 +153,7 @@ namespace Ozzyria.MonoGameClient
                         DrawDrawableInfo(subDrawls);
                     }
                 }
-                
+
             }
             _spriteBatch.End();
 
@@ -156,8 +161,31 @@ namespace Ozzyria.MonoGameClient
             ///
             /// Render UI Overlay
             ///
-            _spriteBatch.Begin();
-            _spriteBatch.DrawString(_greyFont, $"HP: {LocalState.Health}/{LocalState.MaxHealth}\r\nEXP: {LocalState.Experience}/{LocalState.MaxExperience}", Vector2.Zero, Color.Red);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Camera.GetScaleMatrix());
+            //_spriteBatch.Draw(_uiTexture, new Rectangle(0, 0, 512, 512), Color.White);
+            //_spriteBatch.DrawString(_greyFont, $"Inventory", new Vector2(32, 303), Color.WhiteSmoke);
+            //_spriteBatch.DrawString(_greyFont, $"Info", new Vector2(288, 308), Color.WhiteSmoke);
+            //_spriteBatch.DrawString(_greyFont, $"Actions", new Vector2(384, 308), Color.WhiteSmoke);
+
+            // stat bar
+            _spriteBatch.Draw(_uiTexture, new Rectangle(0, 333, 160, 27), new Rectangle(0,64,160, 27), Color.White);
+            // health
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 336, 154, 6), new Rectangle(104, 32, 8, 8), Color.White);
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 336, (int)(154f * ((float)LocalState.Health / (float)LocalState.MaxHealth)), 6), new Rectangle(96, 32, 8, 8), Color.White);
+            // magic?
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 344, 154, 6), new Rectangle(120, 32, 8, 8), Color.White);
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 344, 134, 6), new Rectangle(112, 32, 8, 8), Color.White);
+            // experience
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 352, 154, 6), new Rectangle(104, 40, 8, 8), Color.White);
+            _spriteBatch.Draw(_uiTexture, new Rectangle(3, 352, (int)(154f * ((float)LocalState.Experience / (float)LocalState.MaxExperience)), 6), new Rectangle(96, 40, 8, 8), Color.White);
+
+            // equipped weapon
+            _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
+
+            // custom mouse cursor
+            var mousePosition = Mouse.GetState().Position;
+            _spriteBatch.Draw(_uiTexture, new Rectangle((int)(mousePosition.X/Camera.hScale), (int)(mousePosition.Y/Camera.vScale), 16, 16), new Rectangle(80,0,16,16), Color.White);
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
