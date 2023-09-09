@@ -161,11 +161,7 @@ namespace Ozzyria.MonoGameClient
             ///
             /// Render UI Overlay
             ///
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Camera.GetScaleMatrix());
-            //_spriteBatch.Draw(_uiTexture, new Rectangle(0, 0, 512, 512), Color.White);
-            //_spriteBatch.DrawString(_greyFont, $"Inventory", new Vector2(32, 303), Color.WhiteSmoke);
-            //_spriteBatch.DrawString(_greyFont, $"Info", new Vector2(288, 308), Color.WhiteSmoke);
-            //_spriteBatch.DrawString(_greyFont, $"Actions", new Vector2(384, 308), Color.WhiteSmoke);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, new RasterizerState { ScissorTestEnable=true }, null, Camera.GetScaleMatrix());
 
             // stat bar
             _spriteBatch.Draw(_uiTexture, new Rectangle(0, 333, 160, 27), new Rectangle(0,64,160, 27), Color.White);
@@ -181,9 +177,13 @@ namespace Ozzyria.MonoGameClient
 
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
+            // TODO draw icon for weapon here
 
             // window panel resources
             var blueImg = new Rectangle(0,0,16,16);
+            var greyImg = new Rectangle(0, 16, 16, 16);
+            var slotImg = new Rectangle(0, 32, 32, 32);
+            var equippedIconImg = new Rectangle(112, 0, 16, 16);
             var exitImg = new Rectangle(64, 0, 11, 11);
             var vScrollImg = new Rectangle(32, 32, 11, 16);
             var vScrollHandleImg = new Rectangle(32, 22, 9, 10);
@@ -203,7 +203,7 @@ namespace Ozzyria.MonoGameClient
             // window panel variables
             var windowPosition = new Vector2(140, 30);
             var windowHeader = "Inventory";
-            var verticalScrollPercent = 0f;
+            var verticalScrollPercent = 0.5f;
             var horizontalScrollPercent = 0f;
 
             var contentArea = new Rectangle((int)windowPosition.X + padding, (int)windowPosition.Y+padding+headerHeight,164,164);
@@ -291,9 +291,27 @@ namespace Ozzyria.MonoGameClient
                 _spriteBatch.DrawString(_greyFont, windowHeader, new Vector2(headerArea.X, headerArea.Y), Color.White);
             }
 
+            // draw content
+            var originalScissor = GraphicsDevice.ScissorRectangle;
+            GraphicsDevice.ScissorRectangle = new Rectangle((int)(contentArea.X * Camera.hScale), (int)(contentArea.Y * Camera.hScale), (int)(contentArea.Width* Camera.hScale), (int)(contentArea.Height* Camera.hScale));
+            
+            _spriteBatch.Draw(_uiTexture, contentArea, greyImg, Color.White);
+            for (var i = 0; i < 5; i++)
+            {
+                for (var j = 0; j < 15; j++)
+                {
+                    var x = (int)(contentArea.X + (i * 32) + margin);
+                    var y = (int)(contentArea.Y + (j * 32) + margin - verticalScrollPercent * 32);
+                    _spriteBatch.Draw(_uiTexture, new Rectangle(x, y, 32, 32), slotImg, Color.White);
+                }
+            }
+
+            GraphicsDevice.ScissorRectangle = originalScissor;
+
             // custom mouse cursor
             var mousePosition = Mouse.GetState().Position;
             _spriteBatch.Draw(_uiTexture, new Rectangle((int)(mousePosition.X/Camera.hScale), (int)(mousePosition.Y/Camera.vScale), 16, 16), new Rectangle(80,0,16,16), Color.White);
+
 
             _spriteBatch.End();
             base.Draw(gameTime);
