@@ -182,6 +182,115 @@ namespace Ozzyria.MonoGameClient
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
 
+            // window panel resources
+            var blueImg = new Rectangle(0,0,16,16);
+            var exitImg = new Rectangle(64, 0, 11, 11);
+            var vScrollImg = new Rectangle(32, 32, 11, 16);
+            var vScrollHandleImg = new Rectangle(32, 22, 9, 10);
+            var hScrollImg = new Rectangle(48, 32, 16, 11);
+            var hScrollHandleImg = new Rectangle(48, 22, 10, 9);
+
+            // window panel constants
+            var padding = 3;
+            var margin = 2;
+            var headerHeight = 17;
+
+            // window panel config
+            var hasExitButton = true;
+            var hasVerticalScroll = true;
+            var hasHorizontalScroll = true;
+
+            // window panel variables
+            var windowPosition = new Vector2(140, 30);
+            var windowHeader = "Inventory";
+            var verticalScrollPercent = 0f;
+            var horizontalScrollPercent = 0f;
+
+            var contentArea = new Rectangle((int)windowPosition.X + padding, (int)windowPosition.Y+padding+headerHeight,164,164);
+
+            var headerArea = hasVerticalScroll || !hasExitButton
+                ? new Rectangle((int)windowPosition.X + padding, (int)windowPosition.Y + padding, contentArea.Width, headerHeight)
+                : new Rectangle((int)windowPosition.X + padding, (int)windowPosition.Y + padding, contentArea.Width-margin-exitImg.Width, headerHeight);
+
+            var exitButton = new Rectangle(headerArea.X + headerArea.Width + margin, (int)windowPosition.Y+padding, exitImg.Width, exitImg.Height);
+            var exitLeftMargin = new Rectangle(headerArea.X + headerArea.Width, (int)windowPosition.Y + padding, margin, hasVerticalScroll ? headerArea.Height + contentArea.Height: headerArea.Height);
+            var exitBottomMargin = new Rectangle(exitButton.X, exitButton.Y + exitButton.Height, exitButton.Width, headerArea.Height - exitButton.Height);
+
+            var vScrollArea = new Rectangle(contentArea.X + contentArea.Width + margin, contentArea.Y, vScrollImg.Width, contentArea.Height);
+            var vScrollStart = vScrollArea.Y + margin;
+            var vScrollEnd = vScrollArea.Bottom - margin - vScrollHandleImg.Height;
+            var vScrollHandleArea = new Rectangle(vScrollArea.X + 1, vScrollArea.Y + margin + (int)((vScrollEnd-vScrollStart) * verticalScrollPercent), vScrollHandleImg.Width, vScrollHandleImg.Height);
+            var vScrollBottomMargin =  new Rectangle(vScrollArea.X - margin, vScrollArea.Y + vScrollArea.Height, vScrollArea.Width+margin, margin);
+
+            var hScrollArea = new Rectangle(contentArea.X, contentArea.Y + contentArea.Height + margin, contentArea.Width, hScrollImg.Height);
+            var hScrollStart = hScrollArea.X + margin;
+            var hScrollEnd = hScrollArea.Right - margin - hScrollHandleImg.Width;
+            var hScrollHandleArea =  new Rectangle(hScrollArea.X + margin + (int)((hScrollEnd - hScrollStart) * horizontalScrollPercent), hScrollArea.Y + 1, hScrollHandleImg.Width, hScrollHandleImg.Height);
+            var hScrollTopMargin = new Rectangle(hScrollArea.X, hScrollArea.Y - margin, hScrollArea.Width, margin);
+
+            var hvFiller = new Rectangle(hScrollArea.X + hScrollArea.Width, vScrollArea.Y+vScrollArea.Height+margin, vScrollArea.Width+margin, hScrollArea.Height);
+
+            // exterior paddings
+            var horizontalPaddingWidth = padding + contentArea.Width + padding;
+            if (hasVerticalScroll)
+            {
+                horizontalPaddingWidth += margin + vScrollArea.Width;
+            }
+            var verticalPaddingHeight = headerArea.Height + contentArea.Height;
+            if (hasHorizontalScroll)
+            {
+                verticalPaddingHeight += margin + hScrollArea.Height;
+            }
+
+            var topPadding = new Rectangle((int)windowPosition.X, (int)windowPosition.Y, horizontalPaddingWidth, padding);
+            var leftPadding = new Rectangle((int)windowPosition.X, (int)windowPosition.Y + padding, padding, verticalPaddingHeight);
+
+            var bottomPadding = new Rectangle((int)windowPosition.X, leftPadding.Bottom, horizontalPaddingWidth, padding);
+            var rightPadding = new Rectangle(topPadding.Right-padding, (int)windowPosition.Y + padding, padding, verticalPaddingHeight);
+
+            // draw the window
+            _spriteBatch.Draw(_uiTexture, headerArea, blueImg, Color.White);
+            if (hasExitButton)
+            {
+                _spriteBatch.Draw(_uiTexture, exitButton, exitImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, exitLeftMargin, blueImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, exitBottomMargin, blueImg, Color.White);
+            }
+            if (hasVerticalScroll)
+            {
+                _spriteBatch.Draw(_uiTexture, vScrollArea, vScrollImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, vScrollHandleArea, vScrollHandleImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, vScrollBottomMargin, blueImg, Color.White);
+
+                if (!hasExitButton)
+                {
+                    // fill in where exit button would go with background
+                    _spriteBatch.Draw(_uiTexture, exitLeftMargin, blueImg, Color.White);
+                    _spriteBatch.Draw(_uiTexture, exitButton, blueImg, Color.White);
+                    _spriteBatch.Draw(_uiTexture, exitBottomMargin, blueImg, Color.White);
+                }
+            }
+            if (hasHorizontalScroll)
+            {
+                _spriteBatch.Draw(_uiTexture, hScrollArea, hScrollImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, hScrollHandleArea, hScrollHandleImg, Color.White);
+                _spriteBatch.Draw(_uiTexture, hScrollTopMargin, blueImg, Color.White);
+            }
+
+            if(hasVerticalScroll && hasHorizontalScroll)
+            {
+                _spriteBatch.Draw(_uiTexture, hvFiller, blueImg, Color.White);
+            }
+
+            _spriteBatch.Draw(_uiTexture, topPadding, blueImg, Color.White);
+            _spriteBatch.Draw(_uiTexture, bottomPadding, blueImg, Color.White);
+            _spriteBatch.Draw(_uiTexture, leftPadding, blueImg, Color.White);
+            _spriteBatch.Draw(_uiTexture, rightPadding, blueImg, Color.White);
+            if (windowHeader != "")
+            {
+                _spriteBatch.DrawString(_greyFont, windowHeader, new Vector2(headerArea.X, headerArea.Y), Color.White);
+            }
+
             // custom mouse cursor
             var mousePosition = Mouse.GetState().Position;
             _spriteBatch.Draw(_uiTexture, new Rectangle((int)(mousePosition.X/Camera.hScale), (int)(mousePosition.Y/Camera.vScale), 16, 16), new Rectangle(80,0,16,16), Color.White);
