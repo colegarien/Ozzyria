@@ -5,6 +5,7 @@ using Ozzyria.Game;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
+using Ozzyria.MonoGameClient.UI;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
@@ -37,9 +38,7 @@ namespace Ozzyria.MonoGameClient
         private Thread _localServerTheard;
 
         private Texture2D _uiTexture;
-
-        // UI Components
-        Window _inventoryWindow;
+        private WindowManager _uiManager;
 
         public MainGame()
         {
@@ -117,21 +116,7 @@ namespace Ozzyria.MonoGameClient
             };
 
             _uiTexture = Content.Load<Texture2D>("ui_components");
-
-            _inventoryWindow = new Window(_uiTexture, _greyFont)
-            {
-                IsVisible = true,
-                HasCloseButton = true,
-                HasVerticalScroll = true,
-                HasHorizontalScroll = true,
-                X = 140,
-                Y = 30,
-                Header = "Inventory",
-                VerticalScrollPercent = 0.5f,
-                HorizontalScrollPercent = 0.5f,
-                ContentWidth = 164,
-                ContentHeight = 164,
-            };
+            _uiManager = new WindowManager(_uiTexture, _greyFont, new InputTracker(Camera));
         }
 
         protected override void Update(GameTime gameTime)
@@ -145,6 +130,7 @@ namespace Ozzyria.MonoGameClient
             }
 
             _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
+            _uiManager.Update((float)gameTime.ElapsedGameTime.TotalMilliseconds);
 
             base.Update(gameTime);
         }
@@ -198,7 +184,7 @@ namespace Ozzyria.MonoGameClient
             // TODO draw icon for weapon here
 
             // draw windows
-            _inventoryWindow.Draw(_spriteBatch);
+            _uiManager.Draw(_spriteBatch);
 
             // custom mouse cursor
             var mousePosition = Mouse.GetState().Position;

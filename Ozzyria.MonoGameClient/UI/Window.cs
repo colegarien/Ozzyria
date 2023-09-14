@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Ozzyria.MonoGameClient
+namespace Ozzyria.MonoGameClient.UI
 {
     internal class Window
     {
@@ -41,6 +41,8 @@ namespace Ozzyria.MonoGameClient
 
         public int ContentWidth { get; set; } = 0;
         public int ContentHeight { get; set; } = 0;
+
+        public Rectangle WindowArea { get; set; } = new Rectangle(0, 0, 0, 0);
 
         public Window(Texture2D uiTexture, SpriteFont font)
         {
@@ -99,6 +101,8 @@ namespace Ozzyria.MonoGameClient
             var bottomPadding = new Rectangle(X, leftPadding.Bottom, horizontalPaddingWidth, PADDING);
             var rightPadding = new Rectangle(topPadding.Right - PADDING, Y + PADDING, PADDING, verticalPaddingHeight);
 
+            WindowArea = new Rectangle(X, Y, horizontalPaddingWidth, verticalPaddingHeight);
+
             // draw the window
             spriteBatch.Draw(_uiTexture, headerArea, Backing, Color.White);
             if (HasCloseButton)
@@ -149,8 +153,8 @@ namespace Ozzyria.MonoGameClient
                 for (var j = 0; j < 15; j++)
                 {
                     // TODO do a real calculation for total content width and height to de-hard-code scroll calculation
-                    var x = (int)(contentArea.X + (i * 32) + MARGIN - HorizontalScrollPercent * 32);
-                    var y = (int)(contentArea.Y + (j * 32) + MARGIN - VerticalScrollPercent * 32);
+                    var x = (int)(contentArea.X + i * 32 + MARGIN - HorizontalScrollPercent * 32);
+                    var y = (int)(contentArea.Y + j * 32 + MARGIN - VerticalScrollPercent * 32);
                     ContentDraw(spriteBatch, contentArea, new Rectangle(x, y, 32, 32), slotImg, true);
                 }
             }
@@ -158,7 +162,8 @@ namespace Ozzyria.MonoGameClient
 
         private void ContentDraw(SpriteBatch spriteBatch, Rectangle bounds, Rectangle destination, Rectangle source, bool cropSource = false)
         {
-            if(bounds.Contains(destination)) {
+            if (bounds.Contains(destination))
+            {
                 // don't crop
                 spriteBatch.Draw(_uiTexture, destination, source, Color.White);
             }
@@ -175,27 +180,27 @@ namespace Ozzyria.MonoGameClient
             var sourceRight = source.Right;
 
             // calculate crop
-            if(destinationTop < bounds.Top)
+            if (destinationTop < bounds.Top)
             {
                 destinationTop = bounds.Top;
             }
-            if(destinationBottom > bounds.Bottom)
+            if (destinationBottom > bounds.Bottom)
             {
                 destinationBottom = bounds.Bottom;
             }
-            if(destinationLeft < bounds.Left)
+            if (destinationLeft < bounds.Left)
             {
                 destinationLeft = bounds.Left;
             }
-            if(destinationRight > bounds.Right)
+            if (destinationRight > bounds.Right)
             {
                 destinationRight = bounds.Right;
             }
 
             if (cropSource)
             {
-                var widthChange = (float)source.Width / (float)destination.Width;
-                var heightChange = (float)source.Height / (float)destination.Height;
+                var widthChange = source.Width / (float)destination.Width;
+                var heightChange = source.Height / (float)destination.Height;
 
                 // scale destination delta onto source (they can be different sizes)
                 sourceTop += (int)(destinationTop - destination.Top * heightChange);
