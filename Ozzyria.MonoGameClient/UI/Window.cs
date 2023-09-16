@@ -49,10 +49,12 @@ namespace Ozzyria.MonoGameClient.UI
         protected Rectangle headerArea;
         protected Rectangle closeButton;
 
+        protected Rectangle vScrollArea;
         protected int vScrollStart;
         protected int vScrollEnd;
         protected Rectangle vScrollHandleArea;
 
+        protected Rectangle hScrollArea;
         protected int hScrollStart;
         protected int hScrollEnd;
         protected Rectangle hScrollHandleArea;
@@ -87,12 +89,51 @@ namespace Ozzyria.MonoGameClient.UI
                 dragXOffset = x - vScrollHandleArea.Left;
                 dragYOffset = y - vScrollHandleArea.Top;
             }
+            else if(button == MouseButton.Left && vScrollArea.Contains(x, y))
+            {
+                dragVertScroll = true;
+                dragXOffset = vScrollHandleArea.Width / 2;
+                dragYOffset = vScrollHandleArea.Height / 2;
+            }
             if (button == MouseButton.Left && hScrollHandleArea.Contains(x, y))
             {
                 dragHorzScroll = true;
                 dragXOffset = x - hScrollHandleArea.Left;
                 dragYOffset = y - hScrollHandleArea.Top;
             }
+            else if (button == MouseButton.Left && hScrollArea.Contains(x, y))
+            {
+                dragHorzScroll = true;
+                dragXOffset = hScrollHandleArea.Width / 2;
+                dragYOffset = hScrollHandleArea.Height / 2;
+            }
+
+            if (dragVertScroll)
+            {
+                VerticalScrollPercent = (float)(y - dragYOffset - vScrollStart) / (float)(vScrollEnd - vScrollStart);
+                if (VerticalScrollPercent < 0)
+                {
+                    VerticalScrollPercent = 0;
+                }
+                else if (VerticalScrollPercent > 1)
+                {
+                    VerticalScrollPercent = 1;
+                }
+            }
+
+            if (dragHorzScroll)
+            {
+                HorizontalScrollPercent = (float)(x - dragXOffset - hScrollStart) / (float)(hScrollEnd - hScrollStart);
+                if (HorizontalScrollPercent < 0)
+                {
+                    HorizontalScrollPercent = 0;
+                }
+                else if (HorizontalScrollPercent > 1)
+                {
+                    HorizontalScrollPercent = 1;
+                }
+            }
+
             if (button == MouseButton.Left && headerArea.Contains(x, y))
             {
                 dragWindow = true;
@@ -178,13 +219,13 @@ namespace Ozzyria.MonoGameClient.UI
             var closeLeftMargin = new Rectangle(headerArea.X + headerArea.Width, Y + PADDING, MARGIN, HasVerticalScroll ? headerArea.Height + contentArea.Height : headerArea.Height);
             var closeBottomMargin = new Rectangle(closeButton.X, closeButton.Y + closeButton.Height, closeButton.Width, headerArea.Height - closeButton.Height);
 
-            var vScrollArea = new Rectangle(contentArea.X + contentArea.Width + MARGIN, contentArea.Y, vScrollImg.Width, contentArea.Height);
+            vScrollArea = new Rectangle(contentArea.X + contentArea.Width + MARGIN, contentArea.Y, vScrollImg.Width, contentArea.Height);
             vScrollStart = vScrollArea.Y + MARGIN;
             vScrollEnd = vScrollArea.Bottom - MARGIN - vScrollHandleImg.Height;
             vScrollHandleArea = new Rectangle(vScrollArea.X + 1, vScrollStart + (int)((vScrollEnd - vScrollStart) * VerticalScrollPercent), vScrollHandleImg.Width, vScrollHandleImg.Height);
             var vScrollBottomMargin = new Rectangle(vScrollArea.X - MARGIN, vScrollArea.Y + vScrollArea.Height, vScrollArea.Width + MARGIN, MARGIN);
 
-            var hScrollArea = new Rectangle(contentArea.X, contentArea.Y + contentArea.Height + MARGIN, contentArea.Width, hScrollImg.Height);
+            hScrollArea = new Rectangle(contentArea.X, contentArea.Y + contentArea.Height + MARGIN, contentArea.Width, hScrollImg.Height);
             hScrollStart = hScrollArea.X + MARGIN;
             hScrollEnd = hScrollArea.Right - MARGIN - hScrollHandleImg.Width;
             hScrollHandleArea = new Rectangle(hScrollArea.X + MARGIN + (int)((hScrollEnd - hScrollStart) * HorizontalScrollPercent), hScrollArea.Y + 1, hScrollHandleImg.Width, hScrollHandleImg.Height);
