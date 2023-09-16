@@ -25,11 +25,18 @@ namespace Ozzyria.MonoGameClient.UI
                 X = 140,
                 Y = 30,
                 Header = "Inventory",
-                VerticalScrollPercent = 0.5f,
-                HorizontalScrollPercent = 0.5f,
+                VerticalScrollPercent = 0f,
+                HorizontalScrollPercent = 0f,
                 ContentWidth = 164,
                 ContentHeight = 164,
             };
+
+            ///
+            /// Register Events
+            ///
+            _inputTracker.OnMouseUp += _inventoryWindow.HandleMouseUp;
+            _inputTracker.OnMouseDown += _inventoryWindow.HandleMouseDown;
+            _inputTracker.OnMouseMove += _inventoryWindow.HandleMouseMove;
         }
 
         public void Update(float deltaTime)
@@ -40,12 +47,6 @@ namespace Ozzyria.MonoGameClient.UI
             if (_inputTracker.IsKeyReleased(Keys.I))
             {
                 _inventoryWindow.IsVisible = !_inventoryWindow.IsVisible;
-            }
-
-            if (_inventoryWindow.IsVisible && _inventoryWindow.WindowArea.Contains(_inputTracker.MouseX(), _inputTracker.MouseY()) && _inputTracker.IsLeftMouseDown())
-            {
-                _inventoryWindow.X = _inputTracker.MouseX() - _inventoryWindow.WindowArea.Width / 2;
-                _inventoryWindow.Y = _inputTracker.MouseY() - _inventoryWindow.WindowArea.Height / 2;
             }
 
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Ozzyria.Game.ECS;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,6 +35,20 @@ namespace Ozzyria.MonoGameClient.UI
         bool middleMouseDown = false;
         int middleMouseDownStartX = -1;
         int middleMouseDownStartY = -1;
+
+
+        public enum MouseButton
+        {
+            Left,
+            Right,
+            Middle
+        }
+        public delegate void MouseButtonEvent(MouseButton button, int x, int y);
+        public delegate void MouseMoveEvent(int previousX, int previousY, int x, int y);
+        public event MouseButtonEvent OnMouseDown;
+        public event MouseMoveEvent OnMouseMove;
+        public event MouseButtonEvent OnMouseUp;
+
 
         public InputTracker(Camera camera)
         {
@@ -90,20 +105,45 @@ namespace Ozzyria.MonoGameClient.UI
             rightMouseDown = mouseState.RightButton == ButtonState.Pressed;
             middleMouseDown = mouseState.MiddleButton == ButtonState.Pressed;
 
+            if(prevMouseX != mouseX || prevMouseY != mouseY)
+            {
+                OnMouseMove?.Invoke(prevMouseX, prevMouseY, mouseX, mouseY);
+            }
+
             if(leftMouseDown && !prevLeftMouseDown)
             {
                 leftMouseDownStartX = mouseX;
                 leftMouseDownStartY = mouseY;
+
+                OnMouseDown?.Invoke(MouseButton.Left, mouseX, mouseY);
             }
+            else if (!leftMouseDown && prevLeftMouseDown)
+            {
+                OnMouseUp?.Invoke(MouseButton.Left, mouseX, mouseY);
+            }
+
             if (rightMouseDown && !prevRightMouseDown)
             {
                 rightMouseDownStartX = mouseX;
                 rightMouseDownStartY = mouseY;
+
+                OnMouseDown?.Invoke(MouseButton.Right, mouseX, mouseY);
             }
+            else if (!rightMouseDown && prevRightMouseDown)
+            {
+                OnMouseUp?.Invoke(MouseButton.Right, mouseX, mouseY);
+            }
+
             if (middleMouseDown && !prevMiddleMouseDown)
             {
                 middleMouseDownStartX = mouseX;
                 middleMouseDownStartY = mouseY;
+
+                OnMouseDown?.Invoke(MouseButton.Middle, mouseX, mouseY);
+            } 
+            else if (!middleMouseDown && prevMiddleMouseDown)
+            {
+                OnMouseUp?.Invoke(MouseButton.Middle, mouseX, mouseY);
             }
         }
 
