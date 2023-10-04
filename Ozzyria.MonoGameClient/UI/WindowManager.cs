@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Ozzyria.MonoGameClient.UI.Windows;
+using System.Collections.Generic;
 
 namespace Ozzyria.MonoGameClient.UI
 {
@@ -8,37 +10,25 @@ namespace Ozzyria.MonoGameClient.UI
         private InputTracker _inputTracker;
 
         // UI Components
-        Window _inventoryWindow;
+        List<Window> _windows = new List<Window>();
 
-
-
-        public WindowManager(Texture2D uiTexture, SpriteFont font, InputTracker inputTracker)
+        public WindowManager(InputTracker inputTracker)
         {
             _inputTracker = inputTracker;
+        }
 
-            _inventoryWindow = new Window(uiTexture, font)
-            {
-                IsVisible = false,
-                HasCloseButton = true,
-                HasVerticalScroll = true,
-                HasHorizontalScroll = true,
-                X = 140,
-                Y = 30,
-                Header = "Inventory",
-                VerticalScrollPercent = 0f,
-                HorizontalScrollPercent = 0f,
-                ContentWidth = 164,
-                ContentHeight = 164,
-            };
+        public void AddWindow(Window window)
+        {
+            _windows.Add(window);
 
             ///
             /// Register Events
             ///
-            _inputTracker.OnMouseUp += _inventoryWindow.HandleMouseUp;
-            _inputTracker.OnMouseDown += _inventoryWindow.HandleMouseDown;
-            _inputTracker.OnMouseMove += _inventoryWindow.HandleMouseMove;
-            _inputTracker.OnMouseVerticalScroll += _inventoryWindow.HandleVerticalScroll;
-            _inputTracker.OnMouseHorizontalScroll += _inventoryWindow.HandleHorizontalScroll;
+            _inputTracker.OnMouseUp += window.HandleMouseUp;
+            _inputTracker.OnMouseDown += window.HandleMouseDown;
+            _inputTracker.OnMouseMove += window.HandleMouseMove;
+            _inputTracker.OnMouseVerticalScroll += window.HandleVerticalScroll;
+            _inputTracker.OnMouseHorizontalScroll += window.HandleHorizontalScroll;
         }
 
         public void Update(float deltaTime)
@@ -46,17 +36,23 @@ namespace Ozzyria.MonoGameClient.UI
             _inputTracker.Calculate(deltaTime);
 
 
+            // TODO UI Add in some kind of optional key listener/event so windows control their own visibility?
             if (_inputTracker.IsKeyReleased(Keys.I))
             {
-                _inventoryWindow.IsVisible = !_inventoryWindow.IsVisible;
+                foreach (var window in _windows)
+                {
+                    window.IsVisible = !window.IsVisible;
+                }
             }
-
-
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            _inventoryWindow.Draw(spriteBatch);
+            // TODO UI consider "focus" when/if there are multiple windows layering
+            foreach (var window in _windows)
+            {
+                window.Draw(spriteBatch);
+            }
         }
     }
 }

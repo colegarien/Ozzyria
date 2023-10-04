@@ -6,6 +6,7 @@ using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
 using Ozzyria.MonoGameClient.UI;
+using Ozzyria.MonoGameClient.UI.Windows;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
@@ -116,7 +117,13 @@ namespace Ozzyria.MonoGameClient
             };
 
             _uiTexture = Content.Load<Texture2D>("ui_components");
-            _uiManager = new WindowManager(_uiTexture, _greyFont, new InputTracker(Camera));
+            _uiManager = new WindowManager(new InputTracker(Camera));
+            _uiManager.AddWindow(new InventoryWindow(_uiTexture, textureResources["entity_set_001"], _greyFont)
+            {
+                IsVisible = false,
+                X = 140,
+                Y = 30,
+            });
         }
 
         protected override void Update(GameTime gameTime)

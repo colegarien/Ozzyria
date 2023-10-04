@@ -4,7 +4,7 @@ using static Ozzyria.MonoGameClient.UI.InputTracker;
 
 namespace Ozzyria.MonoGameClient.UI
 {
-    internal class Window
+    internal abstract class Window
     {
         // Constants
         public const int MARGIN = 2;
@@ -12,14 +12,14 @@ namespace Ozzyria.MonoGameClient.UI
         public const int HEADER_HEIGHT = 17;
 
         // Resources, TODO not this
-        private Texture2D _uiTexture;
-        private SpriteFont _font;
-        private Rectangle blueImg = new Rectangle(0, 0, 16, 16);
-        private Rectangle redImg = new Rectangle(16, 0, 16, 16);
-        private Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
-        private Rectangle greyImg = new Rectangle(0, 16, 16, 16);
-        private Rectangle slotImg = new Rectangle(0, 32, 32, 32);
-        private Rectangle equippedIconImg = new Rectangle(112, 0, 16, 16);
+        protected Texture2D _uiTexture;
+        protected SpriteFont _font;
+        protected Rectangle blueImg = new Rectangle(0, 0, 16, 16);
+        protected Rectangle redImg = new Rectangle(16, 0, 16, 16);
+        protected Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
+        protected Rectangle greyImg = new Rectangle(0, 16, 16, 16);
+        protected Rectangle slotImg = new Rectangle(0, 32, 32, 32);
+        protected Rectangle equippedIconImg = new Rectangle(112, 0, 16, 16);
         private Rectangle closeImg = new Rectangle(64, 0, 11, 11);
         private Rectangle vScrollImg = new Rectangle(32, 32, 11, 16);
         private Rectangle vScrollHandleImg = new Rectangle(32, 22, 9, 10);
@@ -36,16 +36,22 @@ namespace Ozzyria.MonoGameClient.UI
         public bool IsVisible { get; set; } = false;
         public int X { get; set; } = 0;
         public int Y { get; set; } = 0;
+        protected int ContentX { get; set; } = 0;
+        protected int ContentY { get; set; } = 0;
         public string Header { get; set; } = "";
         public float VerticalScrollPercent { get; set; } = 0f;
         public float HorizontalScrollPercent { get; set; } = 0f;
 
         public int ContentWidth { get; set; } = 0;
         public int ContentHeight { get; set; } = 0;
+        public int ContentTotalWidth { get; set; } = 0;
+        public int ContentTotalHeight { get; set; } = 0;
 
         public Rectangle WindowArea { get; set; } = new Rectangle(0, 0, 0, 0);
 
         #region components
+        protected Rectangle contentArea;
+
         protected Rectangle headerArea;
         protected Rectangle closeButton;
 
@@ -203,7 +209,7 @@ namespace Ozzyria.MonoGameClient.UI
 
         public void HandleVerticalScroll(int x, int y, float delta)
         {
-            if (!IsVisible || !WindowArea.Contains(x, y))
+            if (!HasVerticalScroll || !IsVisible || !WindowArea.Contains(x, y))
             {
                 return;
             }
@@ -221,7 +227,7 @@ namespace Ozzyria.MonoGameClient.UI
 
         public void HandleHorizontalScroll(int x, int y, float delta)
         {
-            if (!IsVisible || !WindowArea.Contains(x, y))
+            if (!HasHorizontalScroll || !IsVisible || !WindowArea.Contains(x, y))
             {
                 return;
             }
@@ -245,7 +251,7 @@ namespace Ozzyria.MonoGameClient.UI
                 return;
             }
 
-            var contentArea = new Rectangle(X + PADDING, Y + PADDING + HEADER_HEIGHT, ContentWidth, ContentHeight);
+            contentArea = new Rectangle(X + PADDING, Y + PADDING + HEADER_HEIGHT, ContentWidth, ContentHeight);
 
             headerArea = HasVerticalScroll || !HasCloseButton
                 ? new Rectangle(X + PADDING, Y + PADDING, contentArea.Width, HEADER_HEIGHT)
@@ -333,27 +339,19 @@ namespace Ozzyria.MonoGameClient.UI
             }
 
             // draw content
-            ContentDraw(spriteBatch, contentArea, contentArea, greyImg);
-            var totalConentWidth = 10 * 32;
-            var totalConentHeight = 10 * 32;
-            for (var i = 0; i < 15; i++)
-            {
-                for (var j = 0; j < 15; j++)
-                {
-                    // TODO do a real calculation for total content width and height to de-hard-code scroll calculation
-                    var x = (int)(contentArea.X + i * 32 + MARGIN - (HorizontalScrollPercent * totalConentWidth));
-                    var y = (int)(contentArea.Y + j * 32 + MARGIN - (VerticalScrollPercent * totalConentHeight));
-                    ContentDraw(spriteBatch, contentArea, new Rectangle(x, y, 32, 32), slotImg, true);
-                }
-            }
+            ContentX = (int)(contentArea.X - (HorizontalScrollPercent * ContentTotalWidth));
+            ContentY = (int)(contentArea.Y - (VerticalScrollPercent * ContentTotalHeight));
+            RenderContent(spriteBatch);
         }
 
-        private void ContentDraw(SpriteBatch spriteBatch, Rectangle bounds, Rectangle destination, Rectangle source, bool cropSource = false)
+        protected abstract void RenderContent(SpriteBatch spriteBatch);
+
+        protected void ContentDraw(SpriteBatch spriteBatch, Texture2D texture, Rectangle bounds, Rectangle destination, Rectangle source, bool cropSource = false)
         {
             if (bounds.Contains(destination))
             {
                 // don't crop
-                spriteBatch.Draw(_uiTexture, destination, source, Color.White);
+                spriteBatch.Draw(texture, destination, source, Color.White);
             }
 
             // decompose rectangles
@@ -408,7 +406,7 @@ namespace Ozzyria.MonoGameClient.UI
             if (destinationWidth > 0 && destinationHeight > 0 && sourceWidth > 0 && sourceHeight > 0)
             {
                 // recompose and draw
-                spriteBatch.Draw(_uiTexture, new Rectangle(destinationLeft, destinationTop, destinationWidth, destinationHeight), new Rectangle(sourceLeft, sourceTop, sourceWidth, sourceHeight), Color.White);
+                spriteBatch.Draw(texture, new Rectangle(destinationLeft, destinationTop, destinationWidth, destinationHeight), new Rectangle(sourceLeft, sourceTop, sourceWidth, sourceHeight), Color.White);
             }
         }
     }
