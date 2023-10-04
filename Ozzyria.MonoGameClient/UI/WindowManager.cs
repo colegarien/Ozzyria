@@ -37,6 +37,8 @@ namespace Ozzyria.MonoGameClient.UI
             _inputTracker.OnMouseUp += _inventoryWindow.HandleMouseUp;
             _inputTracker.OnMouseDown += _inventoryWindow.HandleMouseDown;
             _inputTracker.OnMouseMove += _inventoryWindow.HandleMouseMove;
+            _inputTracker.OnMouseVerticalScroll += _inventoryWindow.HandleVerticalScroll;
+            _inputTracker.OnMouseHorizontalScroll += _inventoryWindow.HandleHorizontalScroll;
         }
 
         public void Update(float deltaTime)

@@ -201,6 +201,42 @@ namespace Ozzyria.MonoGameClient.UI
             }
         }
 
+        public void HandleVerticalScroll(int x, int y, float delta)
+        {
+            if (!IsVisible || !WindowArea.Contains(x, y))
+            {
+                return;
+            }
+
+            VerticalScrollPercent -= delta;
+            if (VerticalScrollPercent < 0)
+            {
+                VerticalScrollPercent = 0;
+            }
+            else if (VerticalScrollPercent > 1)
+            {
+                VerticalScrollPercent = 1;
+            }
+        }
+
+        public void HandleHorizontalScroll(int x, int y, float delta)
+        {
+            if (!IsVisible || !WindowArea.Contains(x, y))
+            {
+                return;
+            }
+
+            HorizontalScrollPercent -= delta;
+            if (HorizontalScrollPercent < 0)
+            {
+                HorizontalScrollPercent = 0;
+            }
+            else if (HorizontalScrollPercent > 1)
+            {
+                HorizontalScrollPercent = 1;
+            }
+        }
+
 
         public void Draw(SpriteBatch spriteBatch)
         {

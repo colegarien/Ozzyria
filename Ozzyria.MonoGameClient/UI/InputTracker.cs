@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using Ozzyria.Game.ECS;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +6,8 @@ namespace Ozzyria.MonoGameClient.UI
 {
     internal class InputTracker
     {
+        const float SCROLL_SENSITIVITY = 3333f;
+
         private Camera _camera;
 
 
@@ -36,6 +37,12 @@ namespace Ozzyria.MonoGameClient.UI
         int middleMouseDownStartX = -1;
         int middleMouseDownStartY = -1;
 
+        int prevVerticalMouseScroll = -1;
+        int verticalMouseScroll = -1;
+
+        int prevHorizontalMouseScroll = -1;
+        int horizontalMouseScroll = -1;
+
 
         public enum MouseButton
         {
@@ -45,9 +52,12 @@ namespace Ozzyria.MonoGameClient.UI
         }
         public delegate void MouseButtonEvent(MouseButton button, int x, int y);
         public delegate void MouseMoveEvent(int previousX, int previousY, int x, int y);
+        public delegate void MouseScrollEvent(int x, int y, float delta);
         public event MouseButtonEvent OnMouseDown;
         public event MouseMoveEvent OnMouseMove;
         public event MouseButtonEvent OnMouseUp;
+        public event MouseScrollEvent OnMouseVerticalScroll;
+        public event MouseScrollEvent OnMouseHorizontalScroll;
 
 
         public InputTracker(Camera camera)
@@ -105,7 +115,8 @@ namespace Ozzyria.MonoGameClient.UI
             rightMouseDown = mouseState.RightButton == ButtonState.Pressed;
             middleMouseDown = mouseState.MiddleButton == ButtonState.Pressed;
 
-            if(prevMouseX != mouseX || prevMouseY != mouseY)
+
+            if (prevMouseX != mouseX || prevMouseY != mouseY)
             {
                 OnMouseMove?.Invoke(prevMouseX, prevMouseY, mouseX, mouseY);
             }
@@ -145,6 +156,44 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 OnMouseUp?.Invoke(MouseButton.Middle, mouseX, mouseY);
             }
+
+
+            if (IsKeyPressed(Keys.LeftShift))
+            {
+                // on initial press switch horizontal to track vertical mouse wheel values
+                horizontalMouseScroll = verticalMouseScroll;
+            }
+
+            if (IsKeyDown(Keys.LeftShift))
+            {
+                // if shift is down, use vertical wheel to scroll horizontally
+                prevHorizontalMouseScroll = horizontalMouseScroll;
+                horizontalMouseScroll = mouseState.ScrollWheelValue;
+            }
+            else if (IsKeyReleased(Keys.LeftShift))
+            {
+                // switch values back to normal
+                prevVerticalMouseScroll = mouseState.ScrollWheelValue;
+                verticalMouseScroll = mouseState.ScrollWheelValue;
+                prevHorizontalMouseScroll = mouseState.HorizontalScrollWheelValue;
+                horizontalMouseScroll = mouseState.HorizontalScrollWheelValue;
+            }
+            else
+            {
+                // read from normal mouse-wheels
+                prevVerticalMouseScroll = verticalMouseScroll;
+                verticalMouseScroll = mouseState.ScrollWheelValue;
+                prevHorizontalMouseScroll = horizontalMouseScroll;
+                horizontalMouseScroll = mouseState.HorizontalScrollWheelValue;
+            }
+            if (prevVerticalMouseScroll != verticalMouseScroll)
+            {
+                OnMouseVerticalScroll?.Invoke(mouseX, mouseY, (verticalMouseScroll - prevVerticalMouseScroll) / SCROLL_SENSITIVITY);
+            }
+            if (prevHorizontalMouseScroll != horizontalMouseScroll)
+            {
+                OnMouseHorizontalScroll?.Invoke(mouseX, mouseY, (horizontalMouseScroll - prevHorizontalMouseScroll) / SCROLL_SENSITIVITY);
+            }
         }
 
         public bool IsKeyReleased(Keys key)
@@ -153,11 +202,11 @@ namespace Ozzyria.MonoGameClient.UI
         }
         public bool IsKeyDown(Keys key)
         {
-            return _releasedKeys.Contains(key);
+            return _downKeys.Contains(key);
         }
         public bool IsKeyPressed(Keys key)
         {
-            return _releasedKeys.Contains(key);
+            return _pressedKeys.Contains(key);
         }
         public int MouseX()
         {
