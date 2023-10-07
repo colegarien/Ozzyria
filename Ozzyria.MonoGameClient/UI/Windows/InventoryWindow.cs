@@ -19,10 +19,13 @@ namespace Ozzyria.MonoGameClient.UI.Windows
         private int mouseGridX = -1;
         private int mouseGridY = -1;
 
+        private ItemStatWindow _itemStatWindow;
+
         public InventoryWindow(MainGame game, Texture2D uiTexture, SpriteFont font) : base(game, uiTexture, font)
         {
             // TODO UI move the ui textures into the Resource Registry!
             _resources = Registry.GetInstance();
+            _itemStatWindow = new ItemStatWindow(game, uiTexture, font);
 
             HasCloseButton = true;
             HasVerticalScroll = false;
@@ -103,23 +106,8 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             if (mouseIndex >= 0 && mouseIndex < inventoryContents.Count)
             {
                 var itemEntity = inventoryContents[mouseIndex];
-                if (itemEntity.HasComponent(typeof(Item)))
-                {
-                    var item = (Item)itemEntity.GetComponent(typeof(Item));
-
-                    // TODO UI render proper stats tool tip box!
-                    var x = ContentX + MARGIN + mouseGridX * GRID_DIM + GRID_DIM;
-                    var y = ContentY + MARGIN + mouseGridY * GRID_DIM;
-                    spriteBatch.Draw(_uiTexture, new Rectangle(x, y, 120, 14), purpleImg, Color.White);
-                    spriteBatch.DrawString(_font, item.Name, new Vector2(x+MARGIN, y+MARGIN), Color.White);
-
-                    /**
-                     * TODO
-                     *  1. add equip / unequip
-                     *  2. make EquippedGear based on what's equipped in Inventory
-                     *  3. make combat based on stats of equipped gear!
-                     */
-                }
+                _itemStatWindow.ChangeSubject(ContentX + MARGIN + mouseGridX * GRID_DIM + GRID_DIM, ContentY + MARGIN + mouseGridY * GRID_DIM, itemEntity);
+                _itemStatWindow.Draw(spriteBatch);
             }
         }
 

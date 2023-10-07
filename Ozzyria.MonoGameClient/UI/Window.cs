@@ -16,6 +16,8 @@ namespace Ozzyria.MonoGameClient.UI
         protected SpriteFont _font;
         protected Rectangle blueImg = new Rectangle(0, 0, 16, 16);
         protected Rectangle redImg = new Rectangle(16, 0, 16, 16);
+        protected Rectangle darkRedImg = new Rectangle(48, 11, 8, 8);
+        protected Rectangle darkerRedImg = new Rectangle(48, 0, 8, 8);
         protected Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
         protected Rectangle greyImg = new Rectangle(0, 16, 16, 16);
         protected Rectangle missingImg = new Rectangle(48, 48, 16, 16);
