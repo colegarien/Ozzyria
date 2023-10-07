@@ -7,6 +7,7 @@ namespace Ozzyria.Networking.Model
         Join = 0,
         Leave = 1,
         InputUpdate = 2,
+        OpenBag = 3, // TODO UI add equip/unequip
     }
 
     class ClientPacket
@@ -78,6 +79,31 @@ namespace Ozzyria.Networking.Model
                         TurnRight = reader.ReadBoolean(),
                         Attack = reader.ReadBoolean(),
                     };
+                }
+            }
+        }
+
+        public static byte[] OpenBag(int clientId, uint bagEntityId)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ClientMessage.OpenBag);
+                    writer.Write(clientId);
+                    writer.Write(bagEntityId);
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static uint ParseOpenBagData(byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return reader.ReadUInt32();
                 }
             }
         }

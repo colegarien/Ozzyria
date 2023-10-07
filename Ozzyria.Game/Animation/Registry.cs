@@ -7,13 +7,20 @@ namespace Ozzyria.Game.Animation
 {
     public class Registry
     {
+        protected static Registry _instance;
+
         public Dictionary<uint, string> Resources { get; set; }
         public Dictionary<string, FrameSource> FrameSources { get; set; }
         public Dictionary<string, Clip> Clips { get; set; }
 
         public static Registry GetInstance()
         {
-            return JsonSerializer.Deserialize<Registry>(File.ReadAllText(Content.Loader.Root() + "/Entities/resource_registry.json"), JsonOptionsFactory.GetOptions());
+            if (_instance == null)
+            {
+                _instance = JsonSerializer.Deserialize<Registry>(File.ReadAllText(Content.Loader.Root() + "/Entities/resource_registry.json"), JsonOptionsFactory.GetOptions());
+            }
+
+            return _instance;
         }
     }
 }

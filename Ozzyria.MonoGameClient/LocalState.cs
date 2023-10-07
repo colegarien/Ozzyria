@@ -1,4 +1,7 @@
 ﻿
+using Ozzyria.Game.ECS;
+using System.Collections.Generic;
+
 namespace Ozzyria.MonoGameClient
 {
     internal class LocalState
@@ -7,5 +10,7 @@ namespace Ozzyria.MonoGameClient
         public int MaxHealth { get; set; }
         public int Experience { get; set; }
         public int MaxExperience { get; set; }
+
+        public List<Entity> InventoryContents { get; set; }
     }
 }

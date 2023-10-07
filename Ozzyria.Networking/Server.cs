@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game;
+using Ozzyria.Game.Components;
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
@@ -113,6 +114,30 @@ namespace Ozzyria.Networking
                                 clientLastHeardFrom[messageClient] = DateTime.Now;
                             }
                             break;
+                        case ClientMessage.OpenBag:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                var bagEntityId = ClientPacketFactory.ParseOpenBagData(messageData);
+                                var areaContext = world.GetLocalContext(messageClient);
+                                var bagEntity = areaContext.GetEntity(bagEntityId);
+                                if(bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                {
+                                    // cannot open bag
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagEntityId);
+                                    SendToClient(messageClient, bagContentsPacket);
+                                }
+                                else
+                                {
+                                    // send back bag contents
+                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
+                                    var bagContentsPacket = ServerPacketFactory.BagContents(bagEntityId, bag.Contents.ToArray());
+                                    SendToClient(messageClient, bagContentsPacket);
+                                }
+
+                                clientLastHeardFrom[messageClient] = DateTime.Now;
+                            }
+                            break;
+
                     }
                 }
                 catch (SocketException)

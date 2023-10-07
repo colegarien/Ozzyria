@@ -19,12 +19,16 @@ namespace Ozzyria.MonoGameClient.UI
         protected Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
         protected Rectangle greyImg = new Rectangle(0, 16, 16, 16);
         protected Rectangle slotImg = new Rectangle(0, 32, 32, 32);
+        protected Rectangle slotHighlightImg = new Rectangle(0, 96, 32, 32);
         protected Rectangle equippedIconImg = new Rectangle(112, 0, 16, 16);
         private Rectangle closeImg = new Rectangle(64, 0, 11, 11);
         private Rectangle vScrollImg = new Rectangle(32, 32, 11, 16);
         private Rectangle vScrollHandleImg = new Rectangle(32, 22, 9, 10);
         private Rectangle hScrollImg = new Rectangle(48, 32, 16, 11);
         private Rectangle hScrollHandleImg = new Rectangle(48, 22, 10, 9);
+
+        // Game Instance
+        protected MainGame _game;
 
         // Configs
         public bool HasCloseButton { get; set; } = false;
@@ -66,8 +70,9 @@ namespace Ozzyria.MonoGameClient.UI
         protected Rectangle hScrollHandleArea;
         #endregion
 
-        public Window(Texture2D uiTexture, SpriteFont font)
+        public Window(MainGame game, Texture2D uiTexture, SpriteFont font)
         {
+            _game = game;
             _uiTexture = uiTexture;
             _font = font;
             Backing = blueImg;
@@ -82,6 +87,7 @@ namespace Ozzyria.MonoGameClient.UI
         protected int dragXOffset = 0;
         protected int dragYOffset = 0;
         protected bool mStartedOnExit = false;
+
         public void HandleMouseDown(MouseButton button, int x, int y)
         {
             if (!IsVisible || !WindowArea.Contains(x, y))
@@ -152,6 +158,7 @@ namespace Ozzyria.MonoGameClient.UI
                 mStartedOnExit = true;
             }
         }
+
         public void HandleMouseUp(MouseButton button, int x, int y)
         {
 
@@ -186,8 +193,7 @@ namespace Ozzyria.MonoGameClient.UI
                     VerticalScrollPercent = 1;
                 }
             }
-
-            if (dragHorzScroll)
+            else if (dragHorzScroll)
             {
                 HorizontalScrollPercent = (float)(x - dragXOffset - hScrollStart) / (float)(hScrollEnd - hScrollStart);
                 if (HorizontalScrollPercent < 0)
@@ -199,11 +205,14 @@ namespace Ozzyria.MonoGameClient.UI
                     HorizontalScrollPercent = 1;
                 }
             }
-
-            if (dragWindow)
+            else if (dragWindow)
             {
                 X = x - dragXOffset - PADDING;
                 Y = y - dragYOffset - PADDING;
+            }
+            else
+            {
+                this.OnMouseMove(previousX, previousY, x, y);
             }
         }
 
@@ -243,6 +252,14 @@ namespace Ozzyria.MonoGameClient.UI
             }
         }
 
+        ///
+        /// Overridable Event Handlers
+        ///     These are only called if Window hasn't completely handled event
+        ///
+        protected virtual void OnMouseMove(int previousX, int previousY, int x, int y)
+        {
+            return;
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {

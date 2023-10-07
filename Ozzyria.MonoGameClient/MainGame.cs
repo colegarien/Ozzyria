@@ -23,9 +23,8 @@ namespace Ozzyria.MonoGameClient
         private EntityContext _context;
         private SystemCoordinator _coordinator;
 
-        private Dictionary<string, Texture2D> textureResources;
-
         // "global" variables used by systems
+        internal Dictionary<string, Texture2D> TextureResources;
         internal Client Client;
         internal Camera Camera;
         internal TileMap TileMap = null;
@@ -110,7 +109,7 @@ namespace Ozzyria.MonoGameClient
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _greyFont = Content.Load<SpriteFont>("sf_greyfont");
 
-            textureResources = new Dictionary<string, Texture2D>()
+            TextureResources = new Dictionary<string, Texture2D>()
             {
                 {"entity_set_001", Content.Load<Texture2D>("Sprites/entity_set_001")},
                 {"outside_tileset_001", Content.Load<Texture2D>("Sprites/outside_tileset_001")},
@@ -118,7 +117,7 @@ namespace Ozzyria.MonoGameClient
 
             _uiTexture = Content.Load<Texture2D>("ui_components");
             _uiManager = new WindowManager(new InputTracker(Camera));
-            _uiManager.AddWindow(new InventoryWindow(_uiTexture, textureResources["entity_set_001"], _greyFont)
+            _uiManager.AddWindow(new InventoryWindow(this, _uiTexture, _greyFont)
             {
                 IsVisible = false,
                 X = 140,
@@ -188,7 +187,7 @@ namespace Ozzyria.MonoGameClient
 
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
-            // TODO draw icon for weapon here
+            // TODO find equipped weapon in inventory and draw icon for weapon here
 
             // draw windows
             _uiManager.Draw(_spriteBatch);
@@ -207,7 +206,7 @@ namespace Ozzyria.MonoGameClient
             var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
             foreach (var rect in drawls.TextureRect)
             {
-                _spriteBatch.Draw(textureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
+                _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
             }
         }
 

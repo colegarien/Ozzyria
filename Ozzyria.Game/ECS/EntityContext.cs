@@ -24,6 +24,15 @@ namespace Ozzyria.Game.ECS
             OnComponentRemoved = HandleOnComponentRemoved;
         }
 
+        public Entity GetEntity(uint id)
+        {
+            if (!entities.ContainsKey(id)) {
+                return null;
+            }
+
+            return entities[id];
+        }
+
         public Entity[] GetEntities()
         {
             return entities.Values.ToArray();

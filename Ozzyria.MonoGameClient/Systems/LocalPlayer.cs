@@ -19,6 +19,9 @@ namespace Ozzyria.MonoGameClient.Systems
             {
                 _game.TileMap = _game.WorldLoader.LoadMap(playerLocation);
             }
+
+            // re-requst latest inventory contents
+            _game.Client?.RequestBagContents(localPlayer.id);
         }
 
         protected override bool Filter(Entity entity)

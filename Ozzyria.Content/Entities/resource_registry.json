@@ -341,8 +341,8 @@
     },
     "grey_sword": {
       "Resource": 0,
-      "Left": 32,
-      "Top": 128,
+      "Left": 96,
+      "Top": 96,
       "Width": 32,
       "Height": 32
     },

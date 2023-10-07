@@ -88,6 +88,17 @@ namespace Ozzyria.Game.Persistence
             }
         }
 
+        public static void WriteDetachedEntity(BinaryWriter writer, Entity entity)
+        {
+            var components = entity.GetComponents();
+            writer.Write(components.Length);
+            foreach (var component in entity.GetComponents())
+            {
+                WriteComponent(entity, writer, component);
+            }
+        }
+
+
         private static void WriteComponent(Entity entity, BinaryWriter writer, IComponent component)
         {
             var name = component?.GetType()?.ToString() ?? null;
@@ -121,6 +132,21 @@ namespace Ozzyria.Game.Persistence
         {
             var id = reader.ReadUInt32();
             var entity = context.CreateEntity(id);
+
+            var numberOfComponents = reader.ReadInt32();
+            var componentsRead = 0;
+            while (numberOfComponents != componentsRead && reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                ReadComponent(entity, reader);
+                componentsRead++;
+            }
+
+            return entity;
+        }
+
+        public static Entity ReadDetachedEntity(BinaryReader reader)
+        {
+            var entity = new Entity();
 
             var numberOfComponents = reader.ReadInt32();
             var componentsRead = 0;
