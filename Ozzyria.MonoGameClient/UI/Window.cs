@@ -18,9 +18,11 @@ namespace Ozzyria.MonoGameClient.UI
         protected Rectangle redImg = new Rectangle(16, 0, 16, 16);
         protected Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
         protected Rectangle greyImg = new Rectangle(0, 16, 16, 16);
+        protected Rectangle missingImg = new Rectangle(48, 48, 16, 16);
         protected Rectangle slotImg = new Rectangle(0, 32, 32, 32);
         protected Rectangle slotHighlightImg = new Rectangle(0, 96, 32, 32);
         protected Rectangle equippedIconImg = new Rectangle(112, 0, 16, 16);
+        protected Rectangle missingIconImg = new Rectangle(32, 96, 32, 32);
         private Rectangle closeImg = new Rectangle(64, 0, 11, 11);
         private Rectangle vScrollImg = new Rectangle(32, 32, 11, 16);
         private Rectangle vScrollHandleImg = new Rectangle(32, 22, 9, 10);

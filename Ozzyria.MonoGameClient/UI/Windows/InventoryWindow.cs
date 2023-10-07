@@ -78,11 +78,11 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                             {
                                 var source = _resources.FrameSources[item.Icon];
                                 var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
-                                ContentDraw(spriteBatch, _game.TextureResources[_resources.Resources[source.Resource]], contentArea, new Rectangle(x, y + 4, GRID_DIM, GRID_DIM), sourceRect, true);
+                                ContentDraw(spriteBatch, _game.TextureResources[_resources.Resources[source.Resource]], contentArea, new Rectangle(x, y, GRID_DIM, GRID_DIM), sourceRect, true);
                             }
                             else
                             {
-                                // TODO UI render "missing" or something
+                                ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(x, y, GRID_DIM, GRID_DIM), missingIconImg, true);
                             }
 
                             if (item.IsEquipped)
@@ -92,7 +92,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                         }
                         else
                         {
-                            // TODO UI render "missing" or something
+                            ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(x, y, GRID_DIM, GRID_DIM), missingIconImg, true);
                         }
 
                     }
@@ -112,6 +112,13 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     var y = ContentY + MARGIN + mouseGridY * GRID_DIM;
                     spriteBatch.Draw(_uiTexture, new Rectangle(x, y, 120, 14), purpleImg, Color.White);
                     spriteBatch.DrawString(_font, item.Name, new Vector2(x+MARGIN, y+MARGIN), Color.White);
+
+                    /**
+                     * TODO
+                     *  1. add equip / unequip
+                     *  2. make EquippedGear based on what's equipped in Inventory
+                     *  3. make combat based on stats of equipped gear!
+                     */
                 }
             }
         }
