@@ -7,7 +7,10 @@ namespace Ozzyria.Networking.Model
         Join = 0,
         Leave = 1,
         InputUpdate = 2,
-        OpenBag = 3, // TODO UI add equip/unequip
+        OpenBag = 3,
+        EquipItem = 4,
+        UnequipItem = 5,
+        DropItem = 6,
     }
 
     class ClientPacket
@@ -15,6 +18,12 @@ namespace Ozzyria.Networking.Model
         public ClientMessage Type { get; set; }
         public int ClientId { get; set; } = 0;
         public byte[] Data { get; set; }
+    }
+
+    class EquipItemRequest
+    {
+        public uint BagEntityId { get; set; }
+        public int ItemSlot { get; set; }
     }
 
     class ClientPacketFactory
@@ -104,6 +113,66 @@ namespace Ozzyria.Networking.Model
                 using (BinaryReader reader = new BinaryReader(m))
                 {
                     return reader.ReadUInt32();
+                }
+            }
+        }
+
+        public static byte[] EquipItem(int clientId, uint bagEntityId, int itemSlot)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ClientMessage.EquipItem);
+                    writer.Write(clientId);
+                    writer.Write(bagEntityId);
+                    writer.Write(itemSlot);
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static EquipItemRequest ParseEquipItemData(byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new EquipItemRequest
+                    {
+                        BagEntityId = reader.ReadUInt32(),
+                        ItemSlot = reader.ReadInt32(),
+                    };
+                }
+            }
+        }
+
+        public static byte[] UnequipItem(int clientId, uint bagEntityId, int itemSlot)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ClientMessage.UnequipItem);
+                    writer.Write(clientId);
+                    writer.Write(bagEntityId);
+                    writer.Write(itemSlot);
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static EquipItemRequest ParseUnequipItemData(byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new EquipItemRequest
+                    {
+                        BagEntityId = reader.ReadUInt32(),
+                        ItemSlot = reader.ReadInt32(),
+                    };
                 }
             }
         }

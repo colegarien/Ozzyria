@@ -65,7 +65,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(ContentX, ContentY, ContentWidth, ContentHeight), darkRedImg);
             spriteBatch.DrawString(_font, "Some details\nabout:\n  " + item.Name + "!!", new Vector2(ContentX + MARGIN, ContentY + MARGIN), Color.White);
             
-            // TODO UI this list: make EquippedGear based on what's equipped in Inventory
             // TODO UI make combat based on stats of equipped gear!
         }
     }

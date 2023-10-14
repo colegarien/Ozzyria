@@ -24,6 +24,7 @@ namespace Ozzyria.MonoGameClient.Systems
                 _game.LocalState.MaxExperience = localStats.MaxExperience;
                 
                 var bag = (Bag)localPlayer.GetComponent(typeof(Bag));
+                _game.LocalState.InventoryEntityId = localPlayer.id;
                 _game.LocalState.InventoryContents = bag.Contents;
             }
         }

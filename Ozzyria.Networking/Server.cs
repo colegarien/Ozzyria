@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Components;
+using Ozzyria.Game.ECS;
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
@@ -137,7 +138,157 @@ namespace Ozzyria.Networking
                                 clientLastHeardFrom[messageClient] = DateTime.Now;
                             }
                             break;
+                        case ClientMessage.EquipItem:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                var equipRequest = ClientPacketFactory.ParseEquipItemData(messageData);
+                                var areaContext = world.GetLocalContext(messageClient);
 
+                                // TODO UI add check to make sure that Player has access to the bag!!
+                                // TODO UI might need to track what bags player has open (like what chests and stuff)
+                                var bagEntity = areaContext.GetEntity(equipRequest.BagEntityId);
+                                if (bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                {
+                                    // cannot open bag
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                    SendToClient(messageClient, bagContentsPacket);
+                                }
+                                else
+                                {
+                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+
+                                    
+
+                                    if (equipRequest.ItemSlot >= 0 && equipRequest.ItemSlot < bag.Contents.Count)
+                                    {
+                                        var bagId = equipRequest.BagEntityId;
+                                        var itemSlot = equipRequest.ItemSlot;
+                                        var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Game.Components.Player))).FirstOrDefault(e => ((Game.Components.Player)e.GetComponent(typeof(Game.Components.Player))).PlayerId == messageClient);
+                                        if (playerEntity.id != bagId)
+                                        {
+                                            var playerBag = (Bag)playerEntity.GetComponent(typeof(Bag));
+                                            var tranferredEntity = bag.RemoveItem(itemSlot);
+
+                                            if (tranferredEntity != null)
+                                            {
+                                                playerBag.AddItem(tranferredEntity);
+
+                                                bagId = playerEntity.id;
+                                                itemSlot = playerBag.Contents.Count - 1;
+                                            }
+                                        }
+
+                                        var itemEntity = bag.Contents[itemSlot];
+                                        var item = (Item)itemEntity.GetComponent(typeof(Item));
+
+                                        // unequip gear currently in equipment slot
+                                        var equippedItems = bag.Contents.Where(i =>
+                                        {
+                                            var ii = i.GetComponent(typeof(Item)) as Item;
+                                            return ii != null && ii.IsEquipped && ii.EquipmentSlot == item.EquipmentSlot;
+                                        });
+                                        foreach(var equippedItem in equippedItems)
+                                        {
+                                            ((Item)equippedItem.GetComponent(typeof(Item))).IsEquipped = false;
+                                        }
+
+                                        // equip gear into appropriate slot
+                                        var equippedGear = (EquippedGear)playerEntity.GetComponent(typeof(EquippedGear));
+                                        switch (item.EquipmentSlot)
+                                        {
+                                            case "hat":
+                                                equippedGear.Hat = item.ItemId;
+                                                break;
+                                            case "armor":
+                                                equippedGear.Armor = item.ItemId;
+                                                break;
+                                            case "mask":
+                                                equippedGear.Mask = item.ItemId;
+                                                break;
+                                            case "weapon":
+                                                equippedGear.Weapon = item.ItemId;
+                                                break;
+                                        }
+                                        item.IsEquipped = true;
+
+                                        // send source bag contents back
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        SendToClient(messageClient, bagContentsPacket);
+                                        if(bagEntity.id != bagId)
+                                        {
+                                            // also send player inventory back to client
+                                            bagContentsPacket = ServerPacketFactory.BagContents(bagId, bag.Contents.ToArray());
+                                            SendToClient(messageClient, bagContentsPacket);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // cannot open bag
+                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                        SendToClient(messageClient, bagContentsPacket);
+                                    }
+                                }
+
+                                clientLastHeardFrom[messageClient] = DateTime.Now;
+                            }
+                            break;
+                        case ClientMessage.UnequipItem:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                var equipRequest = ClientPacketFactory.ParseEquipItemData(messageData);
+                                var areaContext = world.GetLocalContext(messageClient);
+
+                                var bagEntity = areaContext.GetEntity(equipRequest.BagEntityId);
+                                var playerComponent = (Player)bagEntity?.GetComponent(typeof(Player));
+                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                {
+                                    // cannot open bag
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                    SendToClient(messageClient, bagContentsPacket);
+                                }
+                                else
+                                {
+                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+
+                                    if (equipRequest.ItemSlot >= 0 && equipRequest.ItemSlot < bag.Contents.Count)
+                                    {
+                                        var itemEntity = bag.Contents[equipRequest.ItemSlot];
+                                        var item = (Item)itemEntity.GetComponent(typeof(Item));
+
+                                        // unequip gear from the appropriate slot
+                                        var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                        switch (item.EquipmentSlot)
+                                        {
+                                            case "hat":
+                                                equippedGear.Hat = "";
+                                                break;
+                                            case "armor":
+                                                equippedGear.Armor = "";
+                                                break;
+                                            case "mask":
+                                                equippedGear.Mask = "";
+                                                break;
+                                            case "weapon":
+                                                equippedGear.Weapon = "";
+                                                break;
+                                        }
+                                        item.IsEquipped = false;
+
+                                        // send source bag contents back
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        SendToClient(messageClient, bagContentsPacket);
+                                    }
+                                    else
+                                    {
+                                        // cannot open bag
+                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                        SendToClient(messageClient, bagContentsPacket);
+                                    }
+                                }
+
+                                clientLastHeardFrom[messageClient] = DateTime.Now;
+                            }
+                            break;
                     }
                 }
                 catch (SocketException)

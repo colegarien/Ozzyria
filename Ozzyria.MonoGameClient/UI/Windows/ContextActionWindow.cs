@@ -11,6 +11,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
     {
         public string Label { get; set; } = "";
         public Rectangle RenderArea { get; set; } = new Rectangle();
+        public System.Action Action;
     }
 
     internal class ContextActionWindow : Window
@@ -51,28 +52,40 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             if (subject.HasComponent(typeof(Item)))
             {
                 var item = (Item)subject.GetComponent(typeof(Item));
+                // TODO UI decouple inventory and context action from the Players ineventory specifically (ideally just change localstate to any container player knows about??)
                 if (_game.LocalState.InventoryContents.Contains(subject))
                 {
-                    if (!item.IsEquipped)
+                    if (item.EquipmentSlot != "")
                     {
-                        _actions.Add(new ContextAction
+                        if (!item.IsEquipped)
                         {
-                            Label = "equip",
-                            RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
-                        });
-                        renderY += 14;
-                    }
-                    else
-                    {
-                        _actions.Add(new ContextAction
+                            _actions.Add(new ContextAction
+                            {
+                                Label = "equip",
+                                RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                                Action = () =>
+                                {
+                                    _game.Client.RequestEquipItem(_game.LocalState.InventoryEntityId, item.Slot);
+                                }
+                            });
+                            renderY += 14;
+                        }
+                        else
                         {
-                            Label = "unequip",
-                            RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
-                        });
-                        renderY += 14;
+                            _actions.Add(new ContextAction
+                            {
+                                Label = "unequip",
+                                RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                                Action = () =>
+                                {
+                                    _game.Client.RequestUnequipItem(_game.LocalState.InventoryEntityId, item.Slot);
+                                }
+                            });
+                            renderY += 14;
+                        }
                     }
 
-
+                    // TODO UI send drop request
                     _actions.Add(new ContextAction
                     {
                         Label = "drop",
@@ -106,18 +119,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     if(action.RenderArea.Contains(x, y))
                     {
                         MainGame.Log("Doing Action: " + action.Label);
-                        switch (action.Label)
-                        {
-                            case "equip":
-                                // TODO UI send equip request
-                                break;
-                            case "unequip":
-                                // TODO UI send unequip request
-                                break;
-                            case "drop":
-                                // TODO UI send drop request
-                                break;
-                        }
+                        action.Action?.Invoke();
                         CloseContextMenu();
                         break;
                     }

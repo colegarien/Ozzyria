@@ -223,6 +223,7 @@ namespace Ozzyria.Game.Persistence
 
         private static Dictionary<Type, Func<Entity, BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<Entity, BinaryReader, object>>
         {
+            { typeof(uint), (e, br) => br.ReadUInt32() },
             { typeof(int), (e, br) => br.ReadInt32() },
             { typeof(bool), (e, br) => br.ReadBoolean() },
             { typeof(float), (e, br) => br.ReadSingle() },
@@ -233,6 +234,7 @@ namespace Ozzyria.Game.Persistence
 
         private static Dictionary<Type, Action<Entity, BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<Entity, BinaryWriter, object?>>
         {
+            { typeof(uint), (e, bw, value) => bw.Write((uint)value) },
             { typeof(int), (e, bw, value) => bw.Write((int)value) },
             { typeof(bool), (e, bw, value) => bw.Write((bool)value) },
             { typeof(float), (e, bw, value) => bw.Write((float)value) },

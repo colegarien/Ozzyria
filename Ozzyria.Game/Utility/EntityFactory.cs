@@ -53,6 +53,8 @@ namespace Ozzyria.Game.Utility
             var hatItem = (Item)greenHat.CreateComponent(typeof(Item));
             hatItem.Name = "Green Hat";
             hatItem.Icon = "green_hat_south"; // TODO UI separate resources for ICONS is a good idea
+            hatItem.ItemId = "green_hat";
+            hatItem.EquipmentSlot = "hat"; // TODO UI gross
             hatItem.IsEquipped = true;
             greenHat.AddComponent(hatItem);
             bag.AddItem(greenHat);
@@ -61,6 +63,8 @@ namespace Ozzyria.Game.Utility
             var bikerJacketItem = (Item)bikerJacket.CreateComponent(typeof(Item));
             bikerJacketItem.Name = "Biker Jacket";
             bikerJacketItem.Icon = "biker_jacket_south"; // TODO UI separate resources for ICONS is a good idea
+            bikerJacketItem.ItemId = "biker_jacket";
+            bikerJacketItem.EquipmentSlot = "armor"; // TODO UI gross
             bikerJacketItem.IsEquipped = true;
             bikerJacket.AddComponent(bikerJacketItem);
             bag.AddItem(bikerJacket);
@@ -69,6 +73,8 @@ namespace Ozzyria.Game.Utility
             var shadesItem = (Item)shades.CreateComponent(typeof(Item));
             shadesItem.Name = "Biker Shades";
             shadesItem.Icon = "shades_south"; // TODO UI separate resources for ICONS is a good idea
+            shadesItem.ItemId = "shades";
+            shadesItem.EquipmentSlot = "mask"; // TODO UI gross
             shadesItem.IsEquipped = true;
             shades.AddComponent(shadesItem);
             bag.AddItem(shades);
@@ -77,6 +83,8 @@ namespace Ozzyria.Game.Utility
             var gladiusItem = (Item)gladius.CreateComponent(typeof(Item));
             gladiusItem.Name = "Gladius";
             gladiusItem.Icon = "gladius"; // TODO UI separate resources for ICONS is a good idea
+            gladiusItem.ItemId = "gladius";
+            gladiusItem.EquipmentSlot = "weapon"; // TODO UI gross
             gladiusItem.IsEquipped = true;
             gladius.AddComponent(gladiusItem);
             bag.AddItem(gladius);
@@ -86,6 +94,8 @@ namespace Ozzyria.Game.Utility
             var cowboyHatItem = (Item)cowboyHat.CreateComponent(typeof(Item));
             cowboyHatItem.Name = "Cowboy Hat";
             cowboyHatItem.Icon = "cowboy_hat_east"; // TODO UI separate resources for ICONS is a good idea
+            cowboyHatItem.ItemId = "cowboy_hat";
+            cowboyHatItem.EquipmentSlot = "hat"; // TODO UI gross
             cowboyHatItem.IsEquipped = false;
             cowboyHat.AddComponent(cowboyHatItem);
             bag.AddItem(cowboyHat);
@@ -94,6 +104,8 @@ namespace Ozzyria.Game.Utility
             var cyanArmorItem = (Item)cyanArmor.CreateComponent(typeof(Item));
             cyanArmorItem.Name = "Cyan Armor";
             cyanArmorItem.Icon = "cyan_armor_south"; // TODO UI separate resources for ICONS is a good idea
+            cyanArmorItem.ItemId = "cyan_armor";
+            cyanArmorItem.EquipmentSlot = "armor"; // TODO UI gross
             cyanArmorItem.IsEquipped = false;
             cyanArmor.AddComponent(cyanArmorItem);
             bag.AddItem(cyanArmor);
@@ -102,6 +114,8 @@ namespace Ozzyria.Game.Utility
             var pinkSwordItem = (Item)pinkSword.CreateComponent(typeof(Item));
             pinkSwordItem.Name = "Pink Sword";
             pinkSwordItem.Icon = "pink_sword"; // TODO UI separate resources for ICONS is a good idea
+            pinkSwordItem.ItemId = "pink_sword";
+            pinkSwordItem.EquipmentSlot = "weapon"; // TODO UI gross
             pinkSwordItem.IsEquipped = false;
             pinkSword.AddComponent(pinkSwordItem);
             bag.AddItem(pinkSword);
@@ -110,6 +124,8 @@ namespace Ozzyria.Game.Utility
             var greySwordItem = (Item)greySword.CreateComponent(typeof(Item));
             greySwordItem.Name = "Grey Sword";
             greySwordItem.Icon = "grey_sword"; // TODO UI separate resources for ICONS is a good idea
+            greySwordItem.ItemId = "grey_sword";
+            greySwordItem.EquipmentSlot = "weapon"; // TODO UI gross
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
             bag.AddItem(greySword);

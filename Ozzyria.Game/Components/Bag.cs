@@ -6,7 +6,7 @@ namespace Ozzyria.Game.Components
 {
     public class Bag : Component
     {
-        private string _name = "Iventory";
+        private string _name = "Inventory";
         private int _capacity = 25;
 
         // Not synced to clients automatically with normal entity updates
@@ -40,14 +40,30 @@ namespace Ozzyria.Game.Components
 
         public bool AddItem(Entity entity)
         {
-            if(_contents.Count >= _capacity)
+            if(_contents.Count >= _capacity || !entity.HasComponent(typeof(Item)))
             {
                 return false;
             }
 
+            var item = entity.GetComponent(typeof(Item)) as Item;
+            item.Slot = _contents.Count;
+
             _contents.Add(entity);
             Owner?.TriggerComponentChanged(this);
             return true;
+        }
+
+        public Entity RemoveItem(int slot)
+        {
+            if (slot >= _contents.Count || slot < 0)
+            {
+                return null;
+            }
+
+            var entity = _contents[slot];
+            _contents.RemoveAt(slot);
+            Owner?.TriggerComponentChanged(this);
+            return entity;
         }
 
         public List<Entity> Contents

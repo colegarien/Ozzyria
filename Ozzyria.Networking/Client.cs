@@ -100,6 +100,42 @@ namespace Ozzyria.Networking
             }
         }
 
+        public void RequestEquipItem(uint bagEntityId, int itemSlot)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var equipItemPacket = ClientPacketFactory.EquipItem(Id, bagEntityId, itemSlot);
+                udpClient.Send(equipItemPacket, equipItemPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
+        public void RequestUnequipItem(uint bagEntityId, int itemSlot)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var equipItemPacket = ClientPacketFactory.UnequipItem(Id, bagEntityId, itemSlot);
+                udpClient.Send(equipItemPacket, equipItemPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
         public void HandleIncomingMessages(EntityContext context)
         {
             if (!connected)
