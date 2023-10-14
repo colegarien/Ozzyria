@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game;
+using Ozzyria.Game.Animation;
+using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
@@ -10,6 +12,7 @@ using Ozzyria.MonoGameClient.UI.Windows;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Ozzyria.MonoGameClient
@@ -187,7 +190,18 @@ namespace Ozzyria.MonoGameClient
 
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
-            // TODO find equipped weapon in inventory and draw icon for weapon here
+            var equippedWeapon = LocalState.InventoryContents.FirstOrDefault(i =>
+            {
+                var ii = (Item)i.GetComponent(typeof(Item));
+                return ii != null && ii.IsEquipped && ii.EquipmentSlot == "weapon";
+            })?.GetComponent(typeof(Item)) as Item;
+            if (equippedWeapon != null)
+            {
+                var resources = Registry.GetInstance();
+                var source = resources.FrameSources[equippedWeapon.Icon];
+                var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
+                _spriteBatch.Draw(TextureResources[resources.Resources[source.Resource]], new Rectangle(162, 331, 32, 32), sourceRect, Color.White);
+            }
 
             // draw windows
             _uiManager.Draw(_spriteBatch);

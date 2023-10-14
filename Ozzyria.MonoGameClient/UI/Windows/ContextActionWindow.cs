@@ -118,7 +118,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                 {
                     if(action.RenderArea.Contains(x, y))
                     {
-                        MainGame.Log("Doing Action: " + action.Label);
                         action.Action?.Invoke();
                         CloseContextMenu();
                         break;
