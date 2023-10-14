@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using System;
+using static Ozzyria.MonoGameClient.UI.InputTracker;
 
 namespace Ozzyria.MonoGameClient.UI.Windows
 {
@@ -20,12 +21,14 @@ namespace Ozzyria.MonoGameClient.UI.Windows
         private int mouseGridY = -1;
 
         private ItemStatWindow _itemStatWindow;
+        private ContextActionWindow _contextActionWindow;
 
         public InventoryWindow(MainGame game, Texture2D uiTexture, SpriteFont font) : base(game, uiTexture, font)
         {
             // TODO UI move the ui textures into the Resource Registry!
             _resources = Registry.GetInstance();
             _itemStatWindow = new ItemStatWindow(game, uiTexture, font);
+            _contextActionWindow = new ContextActionWindow(game, uiTexture, font);
 
             HasCloseButton = true;
             HasVerticalScroll = false;
@@ -41,6 +44,11 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
         protected override void OnMouseMove(int previousX, int previousY, int x, int y)
         {
+            if (_contextActionWindow.IsVisible && _contextActionWindow.WindowArea.Contains(x, y))
+            {
+                _contextActionWindow.HandleMouseMove(previousX, previousY, x, y);
+            }
+
             mouseGridX = mouseGridY = -1;
             if (!contentArea.Contains(x, y))
             {
@@ -49,6 +57,33 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
             mouseGridX = (x - contentArea.X - MARGIN) / GRID_DIM;
             mouseGridY = (y - contentArea.Y - MARGIN) / GRID_DIM;
+
+        }
+        protected override void OnMouseClick(MouseButton button, int x, int y)
+        {
+            if(button == MouseButton.Right)
+            {
+                var inventoryContents = _game.LocalState.InventoryContents;
+                var mouseIndex = mouseGridX + mouseGridY * GRID_WIDTH;
+                if (mouseIndex >= 0 && mouseIndex < inventoryContents.Count)
+                {
+                    var itemEntity = inventoryContents[mouseIndex];
+                    _contextActionWindow.OpenContextMenu(x, y, itemEntity);
+                }
+                else
+                {
+                    _contextActionWindow.CloseContextMenu();
+                }
+
+            }
+            else if(button == MouseButton.Left && _contextActionWindow.IsVisible && _contextActionWindow.WindowArea.Contains(x, y))
+            {
+                _contextActionWindow.HandleMouseUp(button, x, y);
+            }
+            else
+            {
+                _contextActionWindow.CloseContextMenu();
+            }
         }
 
         protected override void RenderContent(SpriteBatch spriteBatch)
@@ -109,6 +144,8 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                 _itemStatWindow.ChangeSubject(ContentX + MARGIN + mouseGridX * GRID_DIM + GRID_DIM, ContentY + MARGIN + mouseGridY * GRID_DIM, itemEntity);
                 _itemStatWindow.Draw(spriteBatch);
             }
+
+            _contextActionWindow.Draw(spriteBatch);
         }
 
     }

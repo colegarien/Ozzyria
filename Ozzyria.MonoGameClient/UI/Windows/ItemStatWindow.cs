@@ -40,9 +40,10 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                 Header = item.Name;
                 IsVisible = true;
                 X = x;
-                Y = y; 
-                
+                Y = y;
+
                 // TODO UI resize ContentWidth and ContentHeight here possibly
+                CalculateInternals();
             }
             else
             {
@@ -62,14 +63,10 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
             // TODO UI render proper stats tool tip box!
             ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(ContentX, ContentY, ContentWidth, ContentHeight), darkRedImg);
-            spriteBatch.DrawString(_font, "Some details about " + item.Name + "!!", new Vector2(ContentX + MARGIN, ContentY + MARGIN), Color.White);
+            spriteBatch.DrawString(_font, "Some details\nabout:\n  " + item.Name + "!!", new Vector2(ContentX + MARGIN, ContentY + MARGIN), Color.White);
             
-            // TODO UI this list:
-            /**
-             *  1. add equip / unequip
-             *  2. make EquippedGear based on what's equipped in Inventory
-             *  3. make combat based on stats of equipped gear!
-             */
+            // TODO UI this list: make EquippedGear based on what's equipped in Inventory
+            // TODO UI make combat based on stats of equipped gear!
         }
     }
 }

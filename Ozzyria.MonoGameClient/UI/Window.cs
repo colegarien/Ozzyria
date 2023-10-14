@@ -19,6 +19,8 @@ namespace Ozzyria.MonoGameClient.UI
         protected Rectangle darkRedImg = new Rectangle(48, 11, 8, 8);
         protected Rectangle darkerRedImg = new Rectangle(48, 0, 8, 8);
         protected Rectangle purpleImg = new Rectangle(16, 16, 16, 16);
+        protected Rectangle darkPurpleImg = new Rectangle(32, 11, 8, 8);
+        protected Rectangle darkerPurpleImg = new Rectangle(32, 0, 8, 8);
         protected Rectangle greyImg = new Rectangle(0, 16, 16, 16);
         protected Rectangle missingImg = new Rectangle(48, 48, 16, 16);
         protected Rectangle slotImg = new Rectangle(0, 32, 32, 32);
@@ -62,16 +64,23 @@ namespace Ozzyria.MonoGameClient.UI
 
         protected Rectangle headerArea;
         protected Rectangle closeButton;
-
+        protected Rectangle closeLeftMargin;
+        protected Rectangle closeBottomMargin;
         protected Rectangle vScrollArea;
         protected int vScrollStart;
         protected int vScrollEnd;
         protected Rectangle vScrollHandleArea;
-
+        protected Rectangle vScrollBottomMargin;
         protected Rectangle hScrollArea;
         protected int hScrollStart;
         protected int hScrollEnd;
         protected Rectangle hScrollHandleArea;
+        protected Rectangle hScrollTopMargin;
+        protected Rectangle hvFiller;
+        protected Rectangle topPadding;
+        protected Rectangle leftPadding;
+        protected Rectangle bottomPadding;
+        protected Rectangle rightPadding;
         #endregion
 
         public Window(MainGame game, Texture2D uiTexture, SpriteFont font)
@@ -176,6 +185,7 @@ namespace Ozzyria.MonoGameClient.UI
             }
 
             mStartedOnExit = false;
+            this.OnMouseClick(button, x, y);
         }
 
         public void HandleMouseMove(int previousX, int previousY, int x, int y)
@@ -264,14 +274,13 @@ namespace Ozzyria.MonoGameClient.UI
         {
             return;
         }
-
-        public void Draw(SpriteBatch spriteBatch)
+        protected virtual void OnMouseClick(MouseButton button, int x, int y)
         {
-            if (!IsVisible)
-            {
-                return;
-            }
+            return;
+        }
 
+        protected void CalculateInternals()
+        {
             contentArea = new Rectangle(X + PADDING, Y + PADDING + HEADER_HEIGHT, ContentWidth, ContentHeight);
 
             headerArea = HasVerticalScroll || !HasCloseButton
@@ -279,22 +288,22 @@ namespace Ozzyria.MonoGameClient.UI
                 : new Rectangle(X + PADDING, Y + PADDING, contentArea.Width - MARGIN - closeImg.Width, HEADER_HEIGHT);
 
             closeButton = new Rectangle(headerArea.X + headerArea.Width + MARGIN, Y + PADDING, closeImg.Width, closeImg.Height);
-            var closeLeftMargin = new Rectangle(headerArea.X + headerArea.Width, Y + PADDING, MARGIN, HasVerticalScroll ? headerArea.Height + contentArea.Height : headerArea.Height);
-            var closeBottomMargin = new Rectangle(closeButton.X, closeButton.Y + closeButton.Height, closeButton.Width, headerArea.Height - closeButton.Height);
+            closeLeftMargin = new Rectangle(headerArea.X + headerArea.Width, Y + PADDING, MARGIN, HasVerticalScroll ? headerArea.Height + contentArea.Height : headerArea.Height);
+            closeBottomMargin = new Rectangle(closeButton.X, closeButton.Y + closeButton.Height, closeButton.Width, headerArea.Height - closeButton.Height);
 
             vScrollArea = new Rectangle(contentArea.X + contentArea.Width + MARGIN, contentArea.Y, vScrollImg.Width, contentArea.Height);
             vScrollStart = vScrollArea.Y + MARGIN;
             vScrollEnd = vScrollArea.Bottom - MARGIN - vScrollHandleImg.Height;
             vScrollHandleArea = new Rectangle(vScrollArea.X + 1, vScrollStart + (int)((vScrollEnd - vScrollStart) * VerticalScrollPercent), vScrollHandleImg.Width, vScrollHandleImg.Height);
-            var vScrollBottomMargin = new Rectangle(vScrollArea.X - MARGIN, vScrollArea.Y + vScrollArea.Height, vScrollArea.Width + MARGIN, MARGIN);
+            vScrollBottomMargin = new Rectangle(vScrollArea.X - MARGIN, vScrollArea.Y + vScrollArea.Height, vScrollArea.Width + MARGIN, MARGIN);
 
             hScrollArea = new Rectangle(contentArea.X, contentArea.Y + contentArea.Height + MARGIN, contentArea.Width, hScrollImg.Height);
             hScrollStart = hScrollArea.X + MARGIN;
             hScrollEnd = hScrollArea.Right - MARGIN - hScrollHandleImg.Width;
             hScrollHandleArea = new Rectangle(hScrollArea.X + MARGIN + (int)((hScrollEnd - hScrollStart) * HorizontalScrollPercent), hScrollArea.Y + 1, hScrollHandleImg.Width, hScrollHandleImg.Height);
-            var hScrollTopMargin = new Rectangle(hScrollArea.X, hScrollArea.Y - MARGIN, hScrollArea.Width, MARGIN);
+            hScrollTopMargin = new Rectangle(hScrollArea.X, hScrollArea.Y - MARGIN, hScrollArea.Width, MARGIN);
 
-            var hvFiller = new Rectangle(hScrollArea.X + hScrollArea.Width, vScrollArea.Y + vScrollArea.Height + MARGIN, vScrollArea.Width + MARGIN, hScrollArea.Height);
+            hvFiller = new Rectangle(hScrollArea.X + hScrollArea.Width, vScrollArea.Y + vScrollArea.Height + MARGIN, vScrollArea.Width + MARGIN, hScrollArea.Height);
 
             // exterior PADDINGs
             var horizontalPaddingWidth = PADDING + contentArea.Width + PADDING;
@@ -308,13 +317,26 @@ namespace Ozzyria.MonoGameClient.UI
                 verticalPaddingHeight += MARGIN + hScrollArea.Height;
             }
 
-            var topPadding = new Rectangle(X, Y, horizontalPaddingWidth, PADDING);
-            var leftPadding = new Rectangle(X, Y + PADDING, PADDING, verticalPaddingHeight);
+            topPadding = new Rectangle(X, Y, horizontalPaddingWidth, PADDING);
+            leftPadding = new Rectangle(X, Y + PADDING, PADDING, verticalPaddingHeight);
 
-            var bottomPadding = new Rectangle(X, leftPadding.Bottom, horizontalPaddingWidth, PADDING);
-            var rightPadding = new Rectangle(topPadding.Right - PADDING, Y + PADDING, PADDING, verticalPaddingHeight);
+            bottomPadding = new Rectangle(X, leftPadding.Bottom, horizontalPaddingWidth, PADDING);
+            rightPadding = new Rectangle(topPadding.Right - PADDING, Y + PADDING, PADDING, verticalPaddingHeight);
 
             WindowArea = new Rectangle(X, Y, horizontalPaddingWidth, verticalPaddingHeight);
+            ContentX = (int)(contentArea.X - (HorizontalScrollPercent * ContentTotalWidth));
+            ContentY = (int)(contentArea.Y - (VerticalScrollPercent * ContentTotalHeight));
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            if (!IsVisible)
+            {
+                return;
+            }
+
+            // Recalculate
+            CalculateInternals();
 
             // draw the window
             spriteBatch.Draw(_uiTexture, headerArea, Backing, Color.White);
@@ -360,8 +382,6 @@ namespace Ozzyria.MonoGameClient.UI
             }
 
             // draw content
-            ContentX = (int)(contentArea.X - (HorizontalScrollPercent * ContentTotalWidth));
-            ContentY = (int)(contentArea.Y - (VerticalScrollPercent * ContentTotalHeight));
             RenderContent(spriteBatch);
         }
 

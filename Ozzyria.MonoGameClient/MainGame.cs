@@ -47,7 +47,7 @@ namespace Ozzyria.MonoGameClient
             IsMouseVisible = true;
         }
 
-        protected void Log(string message)
+        public static void Log(string message)
         {
             System.Diagnostics.Debug.WriteLine(message);
         }
