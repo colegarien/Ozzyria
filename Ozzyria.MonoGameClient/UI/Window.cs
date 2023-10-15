@@ -43,7 +43,22 @@ namespace Ozzyria.MonoGameClient.UI
         public Rectangle Backing { get; set; }
 
         // Variables
-        public bool IsVisible { get; set; } = false;
+        private bool _isVisible = false;
+        public bool IsVisible
+        {
+            get => _isVisible; set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    if (_isVisible)
+                        OnWindowOpen();
+                    else
+                        OnWindowClose();
+                }
+            }
+        }
+
         public int X { get; set; } = 0;
         public int Y { get; set; } = 0;
         protected int ContentX { get; set; } = 0;
@@ -192,6 +207,7 @@ namespace Ozzyria.MonoGameClient.UI
         {
             if (!IsVisible)
             {
+                this.OnMouseMove(previousX, previousY, x, y);
                 return;
             }
 
@@ -270,6 +286,14 @@ namespace Ozzyria.MonoGameClient.UI
         /// Overridable Event Handlers
         ///     These are only called if Window hasn't completely handled event
         ///
+        protected virtual void OnWindowOpen()
+        {
+            return;
+        }
+        protected virtual void OnWindowClose()
+        {
+            return;
+        }
         protected virtual void OnMouseMove(int previousX, int previousY, int x, int y)
         {
             return;

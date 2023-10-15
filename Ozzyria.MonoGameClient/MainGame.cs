@@ -130,7 +130,7 @@ namespace Ozzyria.MonoGameClient
 
         protected override void Update(GameTime gameTime)
         {
-            if (!Client.IsConnected() || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (!Client.IsConnected() || _uiManager.QuitRequested())
             {
                 Log($"Disconnecting");
                 Client.Disconnect();

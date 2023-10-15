@@ -113,6 +113,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             mouseX = x;
             mouseY = y;
         }
+
         protected override void OnMouseClick(MouseButton button, int x, int y)
         {
             if(button == MouseButton.Left)

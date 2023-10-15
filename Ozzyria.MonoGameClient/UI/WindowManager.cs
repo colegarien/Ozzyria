@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.MonoGameClient.UI.Windows;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ozzyria.MonoGameClient.UI
 {
     internal class WindowManager
     {
         private InputTracker _inputTracker;
+        private bool _quitRequested = false;
 
         // UI Components
         List<Window> _windows = new List<Window>();
@@ -31,6 +33,11 @@ namespace Ozzyria.MonoGameClient.UI
             _inputTracker.OnMouseHorizontalScroll += window.HandleHorizontalScroll;
         }
 
+        public bool QuitRequested()
+        {
+            return _quitRequested;
+        }
+
         public void Update(float deltaTime)
         {
             _inputTracker.Calculate(deltaTime);
@@ -42,6 +49,20 @@ namespace Ozzyria.MonoGameClient.UI
                 foreach (var window in _windows)
                 {
                     window.IsVisible = !window.IsVisible;
+                }
+            }
+            if (_inputTracker.IsKeyReleased(Keys.Escape))
+            {
+                if(_windows.Any(w => w.IsVisible))
+                {
+                    foreach (var window in _windows)
+                    {
+                        window.IsVisible = false;
+                    }
+                }
+                else
+                {
+                    _quitRequested = true;
                 }
             }
         }
