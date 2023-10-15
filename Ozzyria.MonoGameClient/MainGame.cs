@@ -22,6 +22,7 @@ namespace Ozzyria.MonoGameClient
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private SpriteFont _greyFont;
+        private SpriteFont _greyMonoFont;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
@@ -111,6 +112,7 @@ namespace Ozzyria.MonoGameClient
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _greyFont = Content.Load<SpriteFont>("sf_greyfont");
+            _greyMonoFont = Content.Load<SpriteFont>("sf_monogreyfont");
 
             TextureResources = new Dictionary<string, Texture2D>()
             {
@@ -121,6 +123,12 @@ namespace Ozzyria.MonoGameClient
             _uiTexture = Content.Load<Texture2D>("ui_components");
             _uiManager = new WindowManager(new InputTracker(Camera));
             _uiManager.AddWindow(new InventoryWindow(this, _uiTexture, _greyFont)
+            {
+                IsVisible = false,
+                X = 140,
+                Y = 30,
+            });
+            _uiManager.AddWindow(new ConsoleWindow(this, _uiTexture, _greyFont, _greyMonoFont)
             {
                 IsVisible = false,
                 X = 140,

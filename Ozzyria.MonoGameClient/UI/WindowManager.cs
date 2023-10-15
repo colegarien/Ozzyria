@@ -51,6 +51,13 @@ namespace Ozzyria.MonoGameClient.UI
                     window.IsVisible = !window.IsVisible;
                 }
             }
+            if (_inputTracker.IsKeyReleased(Keys.OemTilde))
+            {
+                foreach (var window in _windows)
+                {
+                    window.IsVisible = !window.IsVisible;
+                }
+            }
             if (_inputTracker.IsKeyReleased(Keys.Escape))
             {
                 if(_windows.Any(w => w.IsVisible))

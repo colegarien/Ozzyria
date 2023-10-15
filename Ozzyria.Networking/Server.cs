@@ -339,21 +339,28 @@ namespace Ozzyria.Networking
                                         {
                                             var bagMovement = (Movement)bagEntity.GetComponent(typeof(Movement));
 
-                                            // Atttach Renderable and Position
-                                            var swordrenderable = (Renderable)droppedEntity.CreateComponent(typeof(Renderable));
-                                            swordrenderable.IsDynamic = false;
-                                            swordrenderable.StaticClip = "static_bag";
-                                            swordrenderable.Z = (int)ZLayer.Middleground;
-                                            droppedEntity.AddComponent(swordrenderable);
+                                            // Create Bag
+                                            var newBagEntity = areaContext.CreateEntity();
 
-                                            var swordmovement = (Movement)droppedEntity.CreateComponent(typeof(Movement));
-                                            swordmovement.X = bagMovement.X;
-                                            swordmovement.Y = bagMovement.Y;
-                                            swordmovement.PreviousX = bagMovement.X;
-                                            swordmovement.PreviousY = bagMovement.Y;
-                                            droppedEntity.AddComponent(swordmovement);
+                                            var newBag = (Bag)newBagEntity.CreateComponent(typeof(Bag));
+                                            newBag.Capacity = 4;
+                                            newBag.AddItem(droppedEntity);
+                                            newBagEntity.AddComponent(newBag);
 
-                                            areaContext.AttachEntity(droppedEntity);
+                                            var newBagRenderable = (Renderable)newBagEntity.CreateComponent(typeof(Renderable));
+                                            newBagRenderable.IsDynamic = false;
+                                            newBagRenderable.StaticClip = "static_bag";
+                                            newBagRenderable.Z = (int)ZLayer.Middleground;
+                                            newBagEntity.AddComponent(newBagRenderable);
+
+                                            var newBagMovement = (Movement)newBagEntity.CreateComponent(typeof(Movement));
+                                            newBagMovement.X = bagMovement.X;
+                                            newBagMovement.Y = bagMovement.Y;
+                                            newBagMovement.PreviousX = bagMovement.X;
+                                            newBagMovement.PreviousY = bagMovement.Y;
+                                            newBagEntity.AddComponent(newBagMovement);
+
+                                            areaContext.AttachEntity(newBagEntity);
                                         }
 
                                         // send source bag contents back

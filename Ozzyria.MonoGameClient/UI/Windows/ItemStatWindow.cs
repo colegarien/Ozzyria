@@ -61,7 +61,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
             var item = (Item)Subject.GetComponent(typeof(Item));
 
-            // TODO UI render proper stats tool tip box!
             ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(ContentX, ContentY, ContentWidth, ContentHeight), darkRedImg);
             spriteBatch.DrawString(_font, "Some details\nabout:\n  " + item.Name + "!!", new Vector2(ContentX + MARGIN, ContentY + MARGIN), Color.White);
             
