@@ -61,7 +61,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
         }
         protected override void OnMouseClick(MouseButton button, int x, int y)
         {
-            if(button == MouseButton.Right)
+            if(IsVisible && button == MouseButton.Right)
             {
                 var inventoryContents = _game.LocalState.InventoryContents;
                 var mouseIndex = mouseGridX + mouseGridY * GRID_WIDTH;
@@ -138,7 +138,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             }
 
             var mouseIndex = mouseGridX + mouseGridY * GRID_WIDTH;
-            if (mouseIndex >= 0 && mouseIndex < inventoryContents.Count)
+            if (!_contextActionWindow.IsVisible && mouseIndex >= 0 && mouseIndex < inventoryContents.Count)
             {
                 var itemEntity = inventoryContents[mouseIndex];
                 _itemStatWindow.ChangeSubject(ContentX + MARGIN + mouseGridX * GRID_DIM + GRID_DIM, ContentY + MARGIN + mouseGridY * GRID_DIM, itemEntity);

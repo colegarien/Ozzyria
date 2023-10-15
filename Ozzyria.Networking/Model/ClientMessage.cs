@@ -20,7 +20,7 @@ namespace Ozzyria.Networking.Model
         public byte[] Data { get; set; }
     }
 
-    class EquipItemRequest
+    class BagItemRequest
     {
         public uint BagEntityId { get; set; }
         public int ItemSlot { get; set; }
@@ -132,13 +132,13 @@ namespace Ozzyria.Networking.Model
             }
         }
 
-        public static EquipItemRequest ParseEquipItemData(byte[] data)
+        public static BagItemRequest ParseEquipItemData(byte[] data)
         {
             using (MemoryStream m = new MemoryStream(data))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    return new EquipItemRequest
+                    return new BagItemRequest
                     {
                         BagEntityId = reader.ReadUInt32(),
                         ItemSlot = reader.ReadInt32(),
@@ -162,13 +162,43 @@ namespace Ozzyria.Networking.Model
             }
         }
 
-        public static EquipItemRequest ParseUnequipItemData(byte[] data)
+        public static BagItemRequest ParseUnequipItemData(byte[] data)
         {
             using (MemoryStream m = new MemoryStream(data))
             {
                 using (BinaryReader reader = new BinaryReader(m))
                 {
-                    return new EquipItemRequest
+                    return new BagItemRequest
+                    {
+                        BagEntityId = reader.ReadUInt32(),
+                        ItemSlot = reader.ReadInt32(),
+                    };
+                }
+            }
+        }
+
+        public static byte[] DropItem(int clientId, uint bagEntityId, int itemSlot)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ClientMessage.DropItem);
+                    writer.Write(clientId);
+                    writer.Write(bagEntityId);
+                    writer.Write(itemSlot);
+                }
+                return m.ToArray();
+            }
+        }
+
+        public static BagItemRequest ParseDropItemData(byte[] data)
+        {
+            using (MemoryStream m = new MemoryStream(data))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    return new BagItemRequest
                     {
                         BagEntityId = reader.ReadUInt32(),
                         ItemSlot = reader.ReadInt32(),

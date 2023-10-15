@@ -85,11 +85,14 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                         }
                     }
 
-                    // TODO UI send drop request
                     _actions.Add(new ContextAction
                     {
                         Label = "drop",
                         RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                        Action = () =>
+                        {
+                            _game.Client.RequestDropItem(_game.LocalState.InventoryEntityId, item.Slot);
+                        }
                     });
                     renderY += 14;
                 }

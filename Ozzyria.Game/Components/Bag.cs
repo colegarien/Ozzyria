@@ -62,6 +62,15 @@ namespace Ozzyria.Game.Components
 
             var entity = _contents[slot];
             _contents.RemoveAt(slot);
+
+            if (slot <  _contents.Count)
+            {
+                // adjust slot numbers since items are shifted
+                for(var i = slot; i < _contents.Count; i++)
+                {
+                    ((Item)_contents[i].GetComponent(typeof(Item))).Slot = i;
+                }
+            }
             Owner?.TriggerComponentChanged(this);
             return entity;
         }

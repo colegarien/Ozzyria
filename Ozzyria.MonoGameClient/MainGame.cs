@@ -221,6 +221,9 @@ namespace Ozzyria.MonoGameClient
             foreach (var rect in drawls.TextureRect)
             {
                 _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
+
+                // debug shapes
+                // _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y + drawls.Height, drawls.Width, 1), new Rectangle(905,87,4,4), Color.White);
             }
         }
 

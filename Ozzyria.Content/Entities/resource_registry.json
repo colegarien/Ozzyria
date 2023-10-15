@@ -17,6 +17,13 @@
       "Width": 32,
       "Height": 32
     },
+    "simple_bag": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
     "body_white_east_01": {
       "Resource": 0,
       "Left": 0,
@@ -400,7 +407,22 @@
             "DestinationH": 32,
             "Red": 255,
             "Green": 255,
-            "Blue": 0,
+            "Blue": 255,
+            "Alpha": 255
+          }
+        }
+      ]
+    },
+    "static_bag": {
+      "Frames": [
+        {
+          "SourceId": "simple_bag",
+          "Transform": {
+            "DestinationW": 32,
+            "DestinationH": 32,
+            "Red": 255,
+            "Green": 255,
+            "Blue": 255,
             "Alpha": 255
           }
         }

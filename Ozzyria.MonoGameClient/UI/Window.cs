@@ -108,25 +108,25 @@ namespace Ozzyria.MonoGameClient.UI
                 return;
             }
 
-            if(button == MouseButton.Left && vScrollHandleArea.Contains(x, y))
+            if(button == MouseButton.Left && HasVerticalScroll && vScrollHandleArea.Contains(x, y))
             {
                 dragVertScroll = true;
                 dragXOffset = x - vScrollHandleArea.Left;
                 dragYOffset = y - vScrollHandleArea.Top;
             }
-            else if(button == MouseButton.Left && vScrollArea.Contains(x, y))
+            else if(button == MouseButton.Left && HasVerticalScroll && vScrollArea.Contains(x, y))
             {
                 dragVertScroll = true;
                 dragXOffset = vScrollHandleArea.Width / 2;
                 dragYOffset = vScrollHandleArea.Height / 2;
             }
-            if (button == MouseButton.Left && hScrollHandleArea.Contains(x, y))
+            if (button == MouseButton.Left && HasHorizontalScroll && hScrollHandleArea.Contains(x, y))
             {
                 dragHorzScroll = true;
                 dragXOffset = x - hScrollHandleArea.Left;
                 dragYOffset = y - hScrollHandleArea.Top;
             }
-            else if (button == MouseButton.Left && hScrollArea.Contains(x, y))
+            else if (button == MouseButton.Left && HasHorizontalScroll && hScrollArea.Contains(x, y))
             {
                 dragHorzScroll = true;
                 dragXOffset = hScrollHandleArea.Width / 2;

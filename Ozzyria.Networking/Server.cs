@@ -141,16 +141,16 @@ namespace Ozzyria.Networking
                         case ClientMessage.EquipItem:
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
-                                var equipRequest = ClientPacketFactory.ParseEquipItemData(messageData);
+                                var bagItemRequest = ClientPacketFactory.ParseEquipItemData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
 
                                 // TODO UI add check to make sure that Player has access to the bag!!
                                 // TODO UI might need to track what bags player has open (like what chests and stuff)
-                                var bagEntity = areaContext.GetEntity(equipRequest.BagEntityId);
+                                var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
                                 if (bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
                                 {
                                     // cannot open bag
-                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
                                     SendToClient(messageClient, bagContentsPacket);
                                 }
                                 else
@@ -159,10 +159,10 @@ namespace Ozzyria.Networking
 
                                     
 
-                                    if (equipRequest.ItemSlot >= 0 && equipRequest.ItemSlot < bag.Contents.Count)
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
                                     {
-                                        var bagId = equipRequest.BagEntityId;
-                                        var itemSlot = equipRequest.ItemSlot;
+                                        var bagId = bagItemRequest.BagEntityId;
+                                        var itemSlot = bagItemRequest.ItemSlot;
                                         var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Game.Components.Player))).FirstOrDefault(e => ((Game.Components.Player)e.GetComponent(typeof(Game.Components.Player))).PlayerId == messageClient);
                                         if (playerEntity.id != bagId)
                                         {
@@ -224,7 +224,7 @@ namespace Ozzyria.Networking
                                     else
                                     {
                                         // cannot open bag
-                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
                                         SendToClient(messageClient, bagContentsPacket);
                                     }
                                 }
@@ -235,24 +235,24 @@ namespace Ozzyria.Networking
                         case ClientMessage.UnequipItem:
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
-                                var equipRequest = ClientPacketFactory.ParseEquipItemData(messageData);
+                                var bagItemRequest = ClientPacketFactory.ParseUnequipItemData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
 
-                                var bagEntity = areaContext.GetEntity(equipRequest.BagEntityId);
+                                var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
                                 var playerComponent = (Player)bagEntity?.GetComponent(typeof(Player));
                                 if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
                                 {
                                     // cannot open bag
-                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
                                     SendToClient(messageClient, bagContentsPacket);
                                 }
                                 else
                                 {
                                     var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
 
-                                    if (equipRequest.ItemSlot >= 0 && equipRequest.ItemSlot < bag.Contents.Count)
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
                                     {
-                                        var itemEntity = bag.Contents[equipRequest.ItemSlot];
+                                        var itemEntity = bag.Contents[bagItemRequest.ItemSlot];
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear from the appropriate slot
@@ -281,7 +281,89 @@ namespace Ozzyria.Networking
                                     else
                                     {
                                         // cannot open bag
-                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(equipRequest.BagEntityId);
+                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
+                                        SendToClient(messageClient, bagContentsPacket);
+                                    }
+                                }
+
+                                clientLastHeardFrom[messageClient] = DateTime.Now;
+                            }
+                            break;
+                        case ClientMessage.DropItem:
+                            if (IsValidEndPoint(messageClient, clientEndPoint))
+                            {
+                                var bagItemRequest = ClientPacketFactory.ParseUnequipItemData(messageData);
+                                var areaContext = world.GetLocalContext(messageClient);
+
+                                var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
+                                var playerComponent = (Player)bagEntity?.GetComponent(typeof(Player));
+                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                {
+                                    // cannot open bag
+                                    var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
+                                    SendToClient(messageClient, bagContentsPacket);
+                                }
+                                else
+                                {
+                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
+                                    {
+                                        var itemEntity = bag.Contents[bagItemRequest.ItemSlot];
+                                        var item = (Item)itemEntity.GetComponent(typeof(Item));
+
+                                        // unequip gear from the appropriate slot
+                                        if (item.IsEquipped)
+                                        {
+                                            var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                            switch (item.EquipmentSlot)
+                                            {
+                                                case "hat":
+                                                    equippedGear.Hat = "";
+                                                    break;
+                                                case "armor":
+                                                    equippedGear.Armor = "";
+                                                    break;
+                                                case "mask":
+                                                    equippedGear.Mask = "";
+                                                    break;
+                                                case "weapon":
+                                                    equippedGear.Weapon = "";
+                                                    break;
+                                            }
+                                            item.IsEquipped = false;
+                                        }
+
+                                        var droppedEntity = bag.RemoveItem(bagItemRequest.ItemSlot);
+                                        if (droppedEntity != null)
+                                        {
+                                            var bagMovement = (Movement)bagEntity.GetComponent(typeof(Movement));
+
+                                            // Atttach Renderable and Position
+                                            var swordrenderable = (Renderable)droppedEntity.CreateComponent(typeof(Renderable));
+                                            swordrenderable.IsDynamic = false;
+                                            swordrenderable.StaticClip = "static_bag";
+                                            swordrenderable.Z = (int)ZLayer.Middleground;
+                                            droppedEntity.AddComponent(swordrenderable);
+
+                                            var swordmovement = (Movement)droppedEntity.CreateComponent(typeof(Movement));
+                                            swordmovement.X = bagMovement.X;
+                                            swordmovement.Y = bagMovement.Y;
+                                            swordmovement.PreviousX = bagMovement.X;
+                                            swordmovement.PreviousY = bagMovement.Y;
+                                            droppedEntity.AddComponent(swordmovement);
+
+                                            areaContext.AttachEntity(droppedEntity);
+                                        }
+
+                                        // send source bag contents back
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        SendToClient(messageClient, bagContentsPacket);
+                                    }
+                                    else
+                                    {
+                                        // cannot open bag
+                                        var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
                                         SendToClient(messageClient, bagContentsPacket);
                                     }
                                 }
