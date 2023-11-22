@@ -52,7 +52,7 @@ namespace Ozzyria.Game.Utility
             var greenHat = new Entity();
             var hatItem = (Item)greenHat.CreateComponent(typeof(Item));
             hatItem.Name = "Green Hat";
-            hatItem.Icon = "green_hat_south"; // TODO UI separate resources for ICONS is a good idea
+            hatItem.Icon = "green_hat_icon";
             hatItem.ItemId = "green_hat";
             hatItem.EquipmentSlot = "hat"; // TODO UI gross
             hatItem.IsEquipped = true;
@@ -62,7 +62,7 @@ namespace Ozzyria.Game.Utility
             var bikerJacket = new Entity();
             var bikerJacketItem = (Item)bikerJacket.CreateComponent(typeof(Item));
             bikerJacketItem.Name = "Biker Jacket";
-            bikerJacketItem.Icon = "biker_jacket_south"; // TODO UI separate resources for ICONS is a good idea
+            bikerJacketItem.Icon = "biker_jacket_icon";
             bikerJacketItem.ItemId = "biker_jacket";
             bikerJacketItem.EquipmentSlot = "armor"; // TODO UI gross
             bikerJacketItem.IsEquipped = true;
@@ -72,7 +72,7 @@ namespace Ozzyria.Game.Utility
             var shades = new Entity();
             var shadesItem = (Item)shades.CreateComponent(typeof(Item));
             shadesItem.Name = "Biker Shades";
-            shadesItem.Icon = "shades_south"; // TODO UI separate resources for ICONS is a good idea
+            shadesItem.Icon = "shades_icon";
             shadesItem.ItemId = "shades";
             shadesItem.EquipmentSlot = "mask"; // TODO UI gross
             shadesItem.IsEquipped = true;
@@ -82,7 +82,7 @@ namespace Ozzyria.Game.Utility
             var gladius = new Entity();
             var gladiusItem = (Item)gladius.CreateComponent(typeof(Item));
             gladiusItem.Name = "Gladius";
-            gladiusItem.Icon = "gladius"; // TODO UI separate resources for ICONS is a good idea
+            gladiusItem.Icon = "gladius_icon";
             gladiusItem.ItemId = "gladius";
             gladiusItem.EquipmentSlot = "weapon"; // TODO UI gross
             gladiusItem.IsEquipped = true;
@@ -93,7 +93,7 @@ namespace Ozzyria.Game.Utility
             var cowboyHat = new Entity();
             var cowboyHatItem = (Item)cowboyHat.CreateComponent(typeof(Item));
             cowboyHatItem.Name = "Cowboy Hat";
-            cowboyHatItem.Icon = "cowboy_hat_east"; // TODO UI separate resources for ICONS is a good idea
+            cowboyHatItem.Icon = "cowboy_hat_icon";
             cowboyHatItem.ItemId = "cowboy_hat";
             cowboyHatItem.EquipmentSlot = "hat"; // TODO UI gross
             cowboyHatItem.IsEquipped = false;
@@ -103,7 +103,7 @@ namespace Ozzyria.Game.Utility
             var cyanArmor = new Entity();
             var cyanArmorItem = (Item)cyanArmor.CreateComponent(typeof(Item));
             cyanArmorItem.Name = "Cyan Armor";
-            cyanArmorItem.Icon = "cyan_armor_south"; // TODO UI separate resources for ICONS is a good idea
+            cyanArmorItem.Icon = "cyan_armor_icon";
             cyanArmorItem.ItemId = "cyan_armor";
             cyanArmorItem.EquipmentSlot = "armor"; // TODO UI gross
             cyanArmorItem.IsEquipped = false;
@@ -113,7 +113,7 @@ namespace Ozzyria.Game.Utility
             var pinkSword = new Entity();
             var pinkSwordItem = (Item)pinkSword.CreateComponent(typeof(Item));
             pinkSwordItem.Name = "Pink Sword";
-            pinkSwordItem.Icon = "pink_sword"; // TODO UI separate resources for ICONS is a good idea
+            pinkSwordItem.Icon = "pink_sword_icon";
             pinkSwordItem.ItemId = "pink_sword";
             pinkSwordItem.EquipmentSlot = "weapon"; // TODO UI gross
             pinkSwordItem.IsEquipped = false;
@@ -123,7 +123,7 @@ namespace Ozzyria.Game.Utility
             var greySword = new Entity();
             var greySwordItem = (Item)greySword.CreateComponent(typeof(Item));
             greySwordItem.Name = "Grey Sword";
-            greySwordItem.Icon = "grey_sword"; // TODO UI separate resources for ICONS is a good idea
+            greySwordItem.Icon = "grey_sword_icon";
             greySwordItem.ItemId = "grey_sword";
             greySwordItem.EquipmentSlot = "weapon"; // TODO UI gross
             greySwordItem.IsEquipped = false;

@@ -207,9 +207,15 @@ namespace Ozzyria.MonoGameClient
             if (equippedWeapon != null)
             {
                 var resources = Registry.GetInstance();
-                var source = resources.FrameSources[equippedWeapon.Icon];
-                var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
-                _spriteBatch.Draw(TextureResources[resources.Resources[source.Resource]], new Rectangle(162, 331, 32, 32), sourceRect, Color.White);
+                if (resources.FrameSources.ContainsKey(equippedWeapon.Icon))
+                {
+                    var source = resources.FrameSources[equippedWeapon.Icon];
+                    var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
+                    var slotRectangle = new Rectangle(162, 331, 32, 32);
+
+                    // draw icon centered onto the slot
+                    _spriteBatch.Draw(TextureResources[resources.Resources[source.Resource]], new Rectangle(slotRectangle.Center.X - (sourceRect.Width / 2), slotRectangle.Center.Y - (sourceRect.Height / 2), sourceRect.Width, sourceRect.Height), sourceRect, Color.White);
+                }
             }
 
             // draw windows

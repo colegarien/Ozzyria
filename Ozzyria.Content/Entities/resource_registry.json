@@ -192,6 +192,13 @@
       "Width": 32,
       "Height": 32
     },
+    "green_hat_icon": {
+      "Resource": 0,
+      "Left": 934,
+      "Top": 5,
+      "Width": 20,
+      "Height": 16
+    },
     "green_hat_east": {
       "Resource": 0,
       "Left": 896,
@@ -219,6 +226,13 @@
       "Top": 0,
       "Width": 32,
       "Height": 32
+    },
+    "cowboy_hat_icon": {
+      "Resource": 0,
+      "Left": 934,
+      "Top": 104,
+      "Width": 20,
+      "Height": 18
     },
     "cowboy_hat_east": {
       "Resource": 0,
@@ -248,6 +262,13 @@
       "Width": 32,
       "Height": 32
     },
+    "cyan_armor_icon": {
+      "Resource": 0,
+      "Left": 935,
+      "Top": 81,
+      "Width": 18,
+      "Height": 15
+    },
     "cyan_armor_east": {
       "Resource": 0,
       "Left": 896,
@@ -275,6 +296,13 @@
       "Top": 64,
       "Width": 32,
       "Height": 32
+    },
+    "biker_jacket_icon": {
+      "Resource": 0,
+      "Left": 935,
+      "Top": 145,
+      "Width": 18,
+      "Height": 15
     },
     "biker_jacket_east": {
       "Resource": 0,
@@ -304,6 +332,13 @@
       "Width": 32,
       "Height": 32
     },
+    "shades_icon": {
+      "Resource": 0,
+      "Left": 935,
+      "Top": 171,
+      "Width": 18,
+      "Height": 7
+    },
     "shades_east": {
       "Resource": 0,
       "Left": 896,
@@ -332,6 +367,13 @@
       "Width": 32,
       "Height": 32
     },
+    "gladius_icon": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 109,
+      "Width": 21,
+      "Height": 6
+    },
     "gladius": {
       "Resource": 0,
       "Left": 32,
@@ -339,12 +381,26 @@
       "Width": 32,
       "Height": 32
     },
+    "pink_sword_icon": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 109,
+      "Width": 32,
+      "Height": 6
+    },
     "pink_sword": {
       "Resource": 0,
       "Left": 64,
       "Top": 96,
       "Width": 32,
       "Height": 32
+    },
+    "grey_sword_icon": {
+      "Resource": 0,
+      "Left": 96,
+      "Top": 110,
+      "Width": 20,
+      "Height": 4
     },
     "grey_sword": {
       "Resource": 0,

@@ -127,7 +127,10 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                             {
                                 var source = _resources.FrameSources[item.Icon];
                                 var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
-                                ContentDraw(spriteBatch, _game.TextureResources[_resources.Resources[source.Resource]], contentArea, new Rectangle(x, y, GRID_DIM, GRID_DIM), sourceRect, true);
+
+                                // center source rect into slot center
+                                var slotRect = new Rectangle(x + (GRID_DIM / 2) - (source.Width / 2), y + (GRID_DIM / 2) - (source.Height / 2), source.Width, source.Height);
+                                ContentDraw(spriteBatch, _game.TextureResources[_resources.Resources[source.Resource]], contentArea, slotRect, sourceRect, true);
                             }
                             else
                             {
