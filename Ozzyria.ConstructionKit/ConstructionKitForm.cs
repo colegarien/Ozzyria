@@ -52,9 +52,9 @@ namespace Ozzyria.ConstructionKit
                 var tileSetForm = new TileSetForm();
                 tileSetForm.ShowDialog();
             }
-            else if(e.ClickedItem == menuItemMap)
+            else if (e.ClickedItem == menuItemMap)
             {
-                if(_currentMap != "")
+                if (_currentMap != "")
                 {
                     var result = MessageBox.Show("Would you like to discard any pending map changes?", "Discard Changes", MessageBoxButtons.YesNoCancel);
                     if (result == DialogResult.Yes)
@@ -63,7 +63,7 @@ namespace Ozzyria.ConstructionKit
                         MapFactory.Reinitialize();
                         MapMetaDataFactory.InitializeMetaData();
                     }
-                    else if(result == DialogResult.No)
+                    else if (result == DialogResult.No)
                     {
                         MapFactory.SaveMaps();
                         MapMetaDataFactory.SaveMetaData();
@@ -107,20 +107,20 @@ namespace Ozzyria.ConstructionKit
                     foreach (var tile in layer.Value)
                     {
                         graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), tile.TextureCoordX * Game.Tile.DIMENSION, tile.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
-                        if(tile.Decals != null)
-                            foreach(var decal in tile.Decals)
+                        if (tile.Decals != null)
+                            foreach (var decal in tile.Decals)
                                 graphics.DrawImage(_currentTileSetImage, new Rectangle((int)mapEditorX + tile.X * Game.Tile.DIMENSION, (int)mapEditorY + tile.Y * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION), decal.TextureCoordX * Game.Tile.DIMENSION, decal.TextureCoordY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION, GraphicsUnit.Pixel);
                     }
                 }
 
                 var mouseMapX = (currentMousePosition.X / zoom);
                 var mouseMapY = (currentMousePosition.Y / zoom);
-                graphics.DrawLine(redPen, mouseMapX-10, mouseMapY, mouseMapX+10, mouseMapY);
-                graphics.DrawLine(redPen, mouseMapX, mouseMapY-10, mouseMapX, mouseMapY+10);
+                graphics.DrawLine(redPen, mouseMapX - 10, mouseMapY, mouseMapX + 10, mouseMapY);
+                graphics.DrawLine(redPen, mouseMapX, mouseMapY - 10, mouseMapX, mouseMapY + 10);
 
                 var tileX = (int)System.Math.Floor((mouseMapX - mapEditorX) / Game.Tile.DIMENSION);
                 var tileY = (int)System.Math.Floor((mouseMapY - mapEditorY) / Game.Tile.DIMENSION);
-                if(tileX >= 0 && tileX < _currentTileMap.Width && tileY >= 0 && tileY < _currentTileMap.Height)
+                if (tileX >= 0 && tileX < _currentTileMap.Width && tileY >= 0 && tileY < _currentTileMap.Height)
                     graphics.DrawRectangle(bluePen, new Rectangle((int)mapEditorX + tileX * Game.Tile.DIMENSION, (int)mapEditorY + tileY * Game.Tile.DIMENSION, Game.Tile.DIMENSION, Game.Tile.DIMENSION));
             }
             else
@@ -139,9 +139,9 @@ namespace Ozzyria.ConstructionKit
                 _currentTileMap = MapFactory.LoadMap(_currentMap);
 
                 dataLayers.Rows.Clear();
-                for(int layer = 0; layer < metaData.Layers; layer++)
+                for (int layer = 0; layer < metaData.Layers; layer++)
                 {
-                    dataLayers.Rows.Add(new object[] { true, null, "Layer " + (layer+1), "Delete" });
+                    dataLayers.Rows.Add(new object[] { true, null, "Layer " + (layer + 1), "Delete" });
                 }
                 dataLayers.Columns["deleteLayer"].Visible = metaData.Layers > 1;
 
@@ -183,7 +183,7 @@ namespace Ozzyria.ConstructionKit
 
                 panelMapEditor.Refresh();
             }
-            else if(mapName == "")
+            else if (mapName == "")
             {
                 _currentMap = mapName;
                 _currentTileMap = null;
@@ -223,7 +223,7 @@ namespace Ozzyria.ConstructionKit
                 mapEditorStartY = mapEditorY;
                 middleMousePressed = true;
             }
-            else if(e.Button == MouseButtons.Left && !leftMousePressed)
+            else if (e.Button == MouseButtons.Left && !leftMousePressed)
             {
                 mouseDrawStart = e.Location;
                 leftMousePressed = true;
@@ -242,7 +242,7 @@ namespace Ozzyria.ConstructionKit
                 mapEditorX = (int)(mapEditorStartX + (deltaX / zoom));
                 mapEditorY = (int)(mapEditorStartY + (deltaY / zoom));
             }
-            else if(e.Button == MouseButtons.Left && leftMousePressed && _currentTileMap != null)
+            else if (e.Button == MouseButtons.Left && leftMousePressed && _currentTileMap != null)
             {
                 var mouseMapX = (currentMousePosition.X / zoom);
                 var mouseMapY = (currentMousePosition.Y / zoom);
@@ -278,7 +278,7 @@ namespace Ozzyria.ConstructionKit
             else if (e.Button == MouseButtons.Left && leftMousePressed)
             {
                 leftMousePressed = false;
-                if(toolFill.Checked && _currentTileMap != null)
+                if (toolFill.Checked && _currentTileMap != null)
                 {
                     var mouseMapX = (currentMousePosition.X / zoom);
                     var mouseMapY = (currentMousePosition.Y / zoom);
@@ -320,7 +320,7 @@ namespace Ozzyria.ConstructionKit
             if (e.ColumnIndex == 3 && MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
             {
                 var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
-                if (metaData.Layers <= 1 || MessageBox.Show("Are you sure you want to remove Layer " + (e.RowIndex+1) + "?", "Confirm Delete", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                if (metaData.Layers <= 1 || MessageBox.Show("Are you sure you want to remove Layer " + (e.RowIndex + 1) + "?", "Confirm Delete", MessageBoxButtons.YesNo) != DialogResult.Yes)
                     return;
 
                 metaData.Layers--;
@@ -329,7 +329,7 @@ namespace Ozzyria.ConstructionKit
                 _currentTileMap.Layers.Remove(e.RowIndex);
                 var reIndexedLayers = new Dictionary<int, List<Game.Tile>>();
                 int layerIndex = 0;
-                foreach(var layerGroup in _currentTileMap.Layers)
+                foreach (var layerGroup in _currentTileMap.Layers)
                 {
                     reIndexedLayers[layerIndex] = layerGroup.Value;
                     layerIndex++;
@@ -378,7 +378,7 @@ namespace Ozzyria.ConstructionKit
                     e.CellStyle.ForeColor = Color.Red;
                 }
             }
-            else if(e.ColumnIndex == 2)
+            else if (e.ColumnIndex == 2)
             {
                 e.Value = "Layer " + (e.RowIndex + 1);
             }
@@ -393,7 +393,7 @@ namespace Ozzyria.ConstructionKit
             {
                 if (dragBoxForLayerControl != Rectangle.Empty &&
                     !dragBoxForLayerControl.Contains(e.X, e.Y))
-                {                  
+                {
                     DragDropEffects dropEffect = dataLayers.DoDragDrop(
                     dataLayers.Rows[layerIndexDragStart],
                     DragDropEffects.Move);
@@ -404,11 +404,13 @@ namespace Ozzyria.ConstructionKit
         private void dataLayers_MouseDown(object sender, MouseEventArgs e)
         {
             layerIndexDragStart = dataLayers.HitTest(e.X, e.Y).RowIndex;
-            if (layerIndexDragStart != -1) {        
+            if (layerIndexDragStart != -1)
+            {
                 Size dragSize = SystemInformation.DragSize;
                 dragBoxForLayerControl = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
             }
-            else {
+            else
+            {
                 dragBoxForLayerControl = Rectangle.Empty;
             }
         }
@@ -430,7 +432,8 @@ namespace Ozzyria.ConstructionKit
                 dataLayers.Rows.RemoveAt(layerIndexDragStart);
                 dataLayers.Rows.Insert(layerIndexDropEnd, rowToMove);
 
-                if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap)) {
+                if (MapMetaDataFactory.mapMetaDatas.ContainsKey(_currentMap))
+                {
                     var metaData = MapMetaDataFactory.mapMetaDatas[_currentMap];
 
                     var tempLayer = _currentTileMap.Layers.ContainsKey(layerIndexDropEnd)
