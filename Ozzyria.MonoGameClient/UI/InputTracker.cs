@@ -43,7 +43,6 @@ namespace Ozzyria.MonoGameClient.UI
         int prevHorizontalMouseScroll = -1;
         int horizontalMouseScroll = -1;
 
-
         public enum MouseButton
         {
             Left,
@@ -59,6 +58,11 @@ namespace Ozzyria.MonoGameClient.UI
         public event MouseScrollEvent OnMouseVerticalScroll;
         public event MouseScrollEvent OnMouseHorizontalScroll;
 
+        public delegate void KeyboardEvent(InputTracker tracker);
+        public event KeyboardEvent OnKeysPressed;
+        public event KeyboardEvent OnKeysHeld;
+        public event KeyboardEvent OnKeysReleased;
+
 
         public InputTracker(Camera camera)
         {
@@ -73,7 +77,7 @@ namespace Ozzyria.MonoGameClient.UI
 
         private void TrackKeyboard(float deltaTime)
         {
-            // Pressed => Freshly downed Keys
+            // Pressed => Freshly downed Keys (is a sub-set of held Down keys)
             // Down => Currently held down keys
             // Released => Freshly released keys
             var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys().ToList();
@@ -96,6 +100,19 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 _pressedKeys.Add(key);
                 _downKeys.Add(key);
+            }
+
+            if( _pressedKeys.Count > 0 )
+            {
+                OnKeysPressed?.Invoke(this);
+            }
+            if (_downKeys.Count > 0)
+            {
+                OnKeysHeld?.Invoke(this);
+            }
+            if (_releasedKeys.Count > 0)
+            {
+                OnKeysReleased?.Invoke(this);
             }
         }
 

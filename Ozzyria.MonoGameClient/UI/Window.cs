@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 
 namespace Ozzyria.MonoGameClient.UI
@@ -35,6 +36,9 @@ namespace Ozzyria.MonoGameClient.UI
 
         // Game Instance
         protected MainGame _game;
+
+        // Managed Variables
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         // Configs
         public bool HasCloseButton { get; set; } = false;
@@ -116,11 +120,11 @@ namespace Ozzyria.MonoGameClient.UI
         protected int dragYOffset = 0;
         protected bool mStartedOnExit = false;
 
-        public void HandleMouseDown(MouseButton button, int x, int y)
+        public bool HandleMouseDown(MouseButton button, int x, int y)
         {
             if (!IsVisible || !WindowArea.Contains(x, y))
             {
-                return;
+                return false;
             }
 
             if(button == MouseButton.Left && HasVerticalScroll && vScrollHandleArea.Contains(x, y))
@@ -159,6 +163,7 @@ namespace Ozzyria.MonoGameClient.UI
                 {
                     VerticalScrollPercent = 1;
                 }
+                return true;
             }
 
             if (dragHorzScroll)
@@ -172,6 +177,7 @@ namespace Ozzyria.MonoGameClient.UI
                 {
                     HorizontalScrollPercent = 1;
                 }
+                return true;
             }
 
             if (button == MouseButton.Left && headerArea.Contains(x, y))
@@ -179,15 +185,19 @@ namespace Ozzyria.MonoGameClient.UI
                 dragWindow = true;
                 dragXOffset = x - headerArea.Left;
                 dragYOffset = y - headerArea.Top;
+                return true;
             }
 
             if (HasCloseButton && button == MouseButton.Left && closeButton.Contains(x,y))
             {
                 mStartedOnExit = true;
+                return true;
             }
+
+            return WindowArea.Contains(x, y);
         }
 
-        public void HandleMouseUp(MouseButton button, int x, int y)
+        public bool HandleMouseUp(MouseButton button, int x, int y)
         {
 
             dragVertScroll = false;
@@ -201,14 +211,15 @@ namespace Ozzyria.MonoGameClient.UI
 
             mStartedOnExit = false;
             this.OnMouseClick(button, x, y);
+            return false;
         }
 
-        public void HandleMouseMove(int previousX, int previousY, int x, int y)
+        public bool HandleMouseMove(int previousX, int previousY, int x, int y)
         {
             if (!IsVisible)
             {
                 this.OnMouseMove(previousX, previousY, x, y);
-                return;
+                return false;
             }
 
             if (dragVertScroll)
@@ -222,6 +233,7 @@ namespace Ozzyria.MonoGameClient.UI
                 {
                     VerticalScrollPercent = 1;
                 }
+                return true;
             }
             else if (dragHorzScroll)
             {
@@ -234,23 +246,26 @@ namespace Ozzyria.MonoGameClient.UI
                 {
                     HorizontalScrollPercent = 1;
                 }
+                return true;
             }
             else if (dragWindow)
             {
                 X = x - dragXOffset - PADDING;
                 Y = y - dragYOffset - PADDING;
+                return true;
             }
             else
             {
                 this.OnMouseMove(previousX, previousY, x, y);
+                return WindowArea.Contains(x, y);
             }
         }
 
-        public void HandleVerticalScroll(int x, int y, float delta)
+        public bool HandleVerticalScroll(int x, int y, float delta)
         {
             if (!HasVerticalScroll || !IsVisible || !WindowArea.Contains(x, y))
             {
-                return;
+                return false;
             }
 
             VerticalScrollPercent -= delta;
@@ -262,13 +277,15 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 VerticalScrollPercent = 1;
             }
+
+            return true;
         }
 
-        public void HandleHorizontalScroll(int x, int y, float delta)
+        public bool HandleHorizontalScroll(int x, int y, float delta)
         {
             if (!HasHorizontalScroll || !IsVisible || !WindowArea.Contains(x, y))
             {
-                return;
+                return false;
             }
 
             HorizontalScrollPercent -= delta;
@@ -280,6 +297,8 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 HorizontalScrollPercent = 1;
             }
+
+            return true;
         }
 
         ///
