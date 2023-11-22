@@ -34,6 +34,7 @@ namespace Ozzyria.MonoGameClient
         internal TileMap TileMap = null;
         internal WorldPersistence WorldLoader;
         internal LocalState LocalState;
+        internal bool DEBUG_SHAPES = false;
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;
@@ -230,8 +231,17 @@ namespace Ozzyria.MonoGameClient
             {
                 _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
 
-                // debug shapes
-                // _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y + drawls.Height, drawls.Width, 1), new Rectangle(905,87,4,4), Color.White);
+                if (DEBUG_SHAPES)
+                {
+                    // bottom
+                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y + drawls.Height, drawls.Width, 1), new Rectangle(905,87,4,4), Color.White);
+                    // right
+                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X + drawls.Width, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Red);
+                    // left
+                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Yellow);
+                    // top
+                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, 1), new Rectangle(905, 87, 4, 4), Color.Green);
+                }
             }
         }
 

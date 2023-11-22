@@ -36,6 +36,7 @@ namespace Ozzyria.MonoGameClient.UI
 
         public void AddWindow(Window window)
         {
+            window.Manager = this;
             _windows.Add(window);
         }
 
@@ -55,6 +56,56 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 window.Draw(spriteBatch);
             }
+        }
+
+        public void ToggleWindowVisibility(Window window)
+        {
+            if (window == null)
+                return;
+
+            if (window.IsVisible)
+            {
+                if (_focusedWindow == window.Guid)
+                {
+                    // Close window and focus on other open window
+                    window.IsVisible = false;
+                    _focusedWindow = _windows.FirstOrDefault(w => w.Guid != window.Guid && w.IsVisible)?.Guid ?? Guid.Empty;
+                }
+                else
+                {
+                    // Bring window back into focus
+                    _focusedWindow = window.Guid;
+                }
+            }
+            else
+            {
+                // Open and Focus Window
+                window.IsVisible = true;
+                _focusedWindow = window.Guid;
+            }
+        }
+
+        public void CloseWindow(Window window)
+        {
+            if (window == null)
+                return;
+
+            // Close and Refocus Manager
+            window.IsVisible = false;
+            if(_focusedWindow == window.Guid)
+            {
+                _focusedWindow = _windows.FirstOrDefault(w => w.Guid != window.Guid && w.IsVisible)?.Guid ?? Guid.Empty;
+            }
+        }
+
+        public void OpenWindow(Window window)
+        {
+            if (window == null)
+                return;
+
+            // Open and Focus Window
+            window.IsVisible = true;
+            _focusedWindow = window.Guid;
         }
 
         public void OnMouseDown(MouseButton button, int x, int y)
@@ -110,7 +161,8 @@ namespace Ozzyria.MonoGameClient.UI
         {
             foreach (var window in _windows.OrderByDescending(w => w.IsVisible && w.Guid == _focusedWindow))
             {
-                // TODO UI wire up into Window class
+                if (window.HandleKeysPressed(tracker))
+                    break;
             }
         }
 
@@ -118,7 +170,8 @@ namespace Ozzyria.MonoGameClient.UI
         {
             foreach (var window in _windows.OrderByDescending(w => w.IsVisible && w.Guid == _focusedWindow))
             {
-                // TODO UI wire up into Window class
+                if (window.HandleKeysHeld(tracker))
+                    break;
             }
         }
 
@@ -128,10 +181,9 @@ namespace Ozzyria.MonoGameClient.UI
             {
                 if (_windows.Any(w => w.IsVisible))
                 {
-                    _focusedWindow = Guid.Empty;
                     foreach (var window in _windows)
                     {
-                        window.IsVisible = false;
+                        CloseWindow(window);
                     }
                 }
                 else
@@ -144,32 +196,8 @@ namespace Ozzyria.MonoGameClient.UI
 
             foreach (var window in _windows.OrderByDescending(w => w.IsVisible && w.Guid == _focusedWindow))
             {
-                // TODO UI move key handling logic into Window class itself, Also centralize _focusedWindow handling / focus requests
-                if((window is InventoryWindow && tracker.IsKeyReleased(Keys.I)) || (window is ConsoleWindow && tracker.IsKeyReleased(Keys.OemTilde)))
-                {
-                    if (window.IsVisible)
-                    {
-                        if (_focusedWindow == window.Guid)
-                        {
-                            // Close window and focus on other open window
-                            window.IsVisible = false;
-                            _focusedWindow = _windows.FirstOrDefault(w => w.Guid != window.Guid && w.IsVisible)?.Guid ?? Guid.Empty;
-                        }
-                        else
-                        {
-                            // Bring window back into focus
-                            _focusedWindow = window.Guid;
-                        }
-                    }
-                    else
-                    {
-                        // Open and Focus Window
-                        window.IsVisible = true;
-                        _focusedWindow = window.Guid;
-                    }
-
+                if (window.HandleKeysReleased(tracker))
                     break;
-                }
             }
         }
 

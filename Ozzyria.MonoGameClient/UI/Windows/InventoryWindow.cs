@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using System;
@@ -84,6 +85,16 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             {
                 _contextActionWindow.CloseContextMenu();
             }
+        }
+
+        protected override bool OnKeysReleased(InputTracker tracker)
+        {
+            if (tracker.IsKeyReleased(Keys.I))
+            {
+                Manager?.ToggleWindowVisibility(this);
+            }
+
+            return false;
         }
 
         protected override void RenderContent(SpriteBatch spriteBatch)

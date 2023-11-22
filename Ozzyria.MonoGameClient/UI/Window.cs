@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 
@@ -38,6 +39,7 @@ namespace Ozzyria.MonoGameClient.UI
         protected MainGame _game;
 
         // Managed Variables
+        public WindowManager Manager { get; set; } = null;
         public Guid Guid { get; set; } = Guid.NewGuid();
 
         // Configs
@@ -56,9 +58,13 @@ namespace Ozzyria.MonoGameClient.UI
                 {
                     _isVisible = value;
                     if (_isVisible)
+                    {
                         OnWindowOpen();
+                    }
                     else
+                    {
                         OnWindowClose();
+                    }
                 }
             }
         }
@@ -207,6 +213,7 @@ namespace Ozzyria.MonoGameClient.UI
             if (HasCloseButton && button == MouseButton.Left && mStartedOnExit && closeButton.Contains(x, y))
             {
                 IsVisible = false;
+                Manager?.CloseWindow(this);
             }
 
             mStartedOnExit = false;
@@ -301,6 +308,21 @@ namespace Ozzyria.MonoGameClient.UI
             return true;
         }
 
+        public bool HandleKeysPressed(InputTracker tracker)
+        {
+            return OnKeysPressed(tracker);
+        }
+
+        public bool HandleKeysHeld(InputTracker tracker)
+        {
+            return OnKeysHeld(tracker);
+        }
+
+        public bool HandleKeysReleased(InputTracker tracker)
+        {
+            return OnKeysReleased(tracker);
+        }
+
         ///
         /// Overridable Event Handlers
         ///     These are only called if Window hasn't completely handled event
@@ -320,6 +342,18 @@ namespace Ozzyria.MonoGameClient.UI
         protected virtual void OnMouseClick(MouseButton button, int x, int y)
         {
             return;
+        }
+        protected virtual bool OnKeysPressed(InputTracker inputTracker)
+        {
+            return false;
+        }
+        protected virtual bool OnKeysHeld(InputTracker inputTracker)
+        {
+            return false;
+        }
+        protected virtual bool OnKeysReleased(InputTracker inputTracker)
+        {
+            return false;
         }
 
         protected void CalculateInternals()
