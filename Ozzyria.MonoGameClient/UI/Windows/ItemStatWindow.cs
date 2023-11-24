@@ -42,7 +42,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                 X = x;
                 Y = y;
 
-                // TODO UI resize ContentWidth and ContentHeight here possibly
                 CalculateInternals();
             }
             else
@@ -64,7 +63,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             ContentDraw(spriteBatch, _uiTexture, contentArea, new Rectangle(ContentX, ContentY, ContentWidth, ContentHeight), darkRedImg);
             spriteBatch.DrawString(_font, "Some details\nabout:\n  " + item.Name + "!!", new Vector2(ContentX + MARGIN, ContentY + MARGIN), Color.White);
             
-            // TODO UI make combat based on stats of equipped gear!
+            // TODO OZ-55 make combat based on stats of equipped gear and pull in actual stats here!!
         }
     }
 }

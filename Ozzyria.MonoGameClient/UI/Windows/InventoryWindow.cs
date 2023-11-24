@@ -26,7 +26,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
         public InventoryWindow(MainGame game, Texture2D uiTexture, SpriteFont font) : base(game, uiTexture, font)
         {
-            // TODO UI move the ui textures into the Resource Registry!
             _resources = Registry.GetInstance();
             _itemStatWindow = new ItemStatWindow(game, uiTexture, font);
             _contextActionWindow = new ContextActionWindow(game, uiTexture, font);

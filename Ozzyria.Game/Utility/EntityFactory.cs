@@ -54,7 +54,7 @@ namespace Ozzyria.Game.Utility
             hatItem.Name = "Green Hat";
             hatItem.Icon = "green_hat_icon";
             hatItem.ItemId = "green_hat";
-            hatItem.EquipmentSlot = "hat"; // TODO UI gross
+            hatItem.EquipmentSlot = "hat"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             hatItem.IsEquipped = true;
             greenHat.AddComponent(hatItem);
             bag.AddItem(greenHat);
@@ -64,7 +64,7 @@ namespace Ozzyria.Game.Utility
             bikerJacketItem.Name = "Biker Jacket";
             bikerJacketItem.Icon = "biker_jacket_icon";
             bikerJacketItem.ItemId = "biker_jacket";
-            bikerJacketItem.EquipmentSlot = "armor"; // TODO UI gross
+            bikerJacketItem.EquipmentSlot = "armor"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             bikerJacketItem.IsEquipped = true;
             bikerJacket.AddComponent(bikerJacketItem);
             bag.AddItem(bikerJacket);
@@ -74,7 +74,7 @@ namespace Ozzyria.Game.Utility
             shadesItem.Name = "Biker Shades";
             shadesItem.Icon = "shades_icon";
             shadesItem.ItemId = "shades";
-            shadesItem.EquipmentSlot = "mask"; // TODO UI gross
+            shadesItem.EquipmentSlot = "mask"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             shadesItem.IsEquipped = true;
             shades.AddComponent(shadesItem);
             bag.AddItem(shades);
@@ -84,7 +84,7 @@ namespace Ozzyria.Game.Utility
             gladiusItem.Name = "Gladius";
             gladiusItem.Icon = "gladius_icon";
             gladiusItem.ItemId = "gladius";
-            gladiusItem.EquipmentSlot = "weapon"; // TODO UI gross
+            gladiusItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             gladiusItem.IsEquipped = true;
             gladius.AddComponent(gladiusItem);
             bag.AddItem(gladius);
@@ -95,7 +95,7 @@ namespace Ozzyria.Game.Utility
             cowboyHatItem.Name = "Cowboy Hat";
             cowboyHatItem.Icon = "cowboy_hat_icon";
             cowboyHatItem.ItemId = "cowboy_hat";
-            cowboyHatItem.EquipmentSlot = "hat"; // TODO UI gross
+            cowboyHatItem.EquipmentSlot = "hat"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             cowboyHatItem.IsEquipped = false;
             cowboyHat.AddComponent(cowboyHatItem);
             bag.AddItem(cowboyHat);
@@ -105,7 +105,7 @@ namespace Ozzyria.Game.Utility
             cyanArmorItem.Name = "Cyan Armor";
             cyanArmorItem.Icon = "cyan_armor_icon";
             cyanArmorItem.ItemId = "cyan_armor";
-            cyanArmorItem.EquipmentSlot = "armor"; // TODO UI gross
+            cyanArmorItem.EquipmentSlot = "armor"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             cyanArmorItem.IsEquipped = false;
             cyanArmor.AddComponent(cyanArmorItem);
             bag.AddItem(cyanArmor);
@@ -115,7 +115,7 @@ namespace Ozzyria.Game.Utility
             pinkSwordItem.Name = "Pink Sword";
             pinkSwordItem.Icon = "pink_sword_icon";
             pinkSwordItem.ItemId = "pink_sword";
-            pinkSwordItem.EquipmentSlot = "weapon"; // TODO UI gross
+            pinkSwordItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             pinkSwordItem.IsEquipped = false;
             pinkSword.AddComponent(pinkSwordItem);
             bag.AddItem(pinkSword);
@@ -125,7 +125,7 @@ namespace Ozzyria.Game.Utility
             greySwordItem.Name = "Grey Sword";
             greySwordItem.Icon = "grey_sword_icon";
             greySwordItem.ItemId = "grey_sword";
-            greySwordItem.EquipmentSlot = "weapon"; // TODO UI gross
+            greySwordItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
             bag.AddItem(greySword);
