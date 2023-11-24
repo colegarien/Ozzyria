@@ -199,7 +199,7 @@ namespace Ozzyria.MonoGameClient
 
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
-            var equippedWeapon = LocalState.InventoryContents.FirstOrDefault(i =>
+            var equippedWeapon = LocalState.BagContents[LocalState.InventoryEntityId].FirstOrDefault(i =>
             {
                 var ii = (Item)i.GetComponent(typeof(Item));
                 return ii != null && ii.IsEquipped && ii.EquipmentSlot == "weapon";

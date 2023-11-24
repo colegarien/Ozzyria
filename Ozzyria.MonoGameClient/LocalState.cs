@@ -12,6 +12,6 @@ namespace Ozzyria.MonoGameClient
         public int MaxExperience { get; set; }
 
         public uint InventoryEntityId { get; set; }
-        public List<Entity> InventoryContents { get; set; }
+        public Dictionary<uint, List<Entity>> BagContents { get; set; } = new Dictionary<uint, List<Entity>>();
     }
 }

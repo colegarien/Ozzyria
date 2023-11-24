@@ -64,7 +64,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
         {
             if(IsVisible && button == MouseButton.Right)
             {
-                var inventoryContents = _game.LocalState.InventoryContents;
+                var inventoryContents = _game.LocalState.BagContents[_game.LocalState.InventoryEntityId];
                 var mouseIndex = mouseGridX + mouseGridY * GRID_WIDTH;
                 if (mouseIndex >= 0 && mouseIndex < inventoryContents.Count)
                 {
@@ -99,7 +99,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
         protected override void RenderContent(SpriteBatch spriteBatch)
         {
-            var inventoryContents = _game.LocalState.InventoryContents;
+            var inventoryContents = _game.LocalState.BagContents[_game.LocalState.InventoryEntityId];
             ContentDraw(spriteBatch, _uiTexture, contentArea, contentArea, greyImg);
             for (var i = 0; i < GRID_WIDTH; i++)
             {

@@ -23,9 +23,10 @@ namespace Ozzyria.MonoGameClient.Systems
                 _game.LocalState.Experience = localStats.Experience;
                 _game.LocalState.MaxExperience = localStats.MaxExperience;
                 
+                // TODO UI make a separate Tick System for bag tracking!!
                 var bag = (Bag)localPlayer.GetComponent(typeof(Bag));
                 _game.LocalState.InventoryEntityId = localPlayer.id;
-                _game.LocalState.InventoryContents = bag.Contents;
+                _game.LocalState.BagContents[localPlayer.id] = bag.Contents;
             }
         }
 

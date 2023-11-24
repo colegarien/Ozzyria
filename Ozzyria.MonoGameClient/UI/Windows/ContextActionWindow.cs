@@ -52,8 +52,8 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             if (subject.HasComponent(typeof(Item)))
             {
                 var item = (Item)subject.GetComponent(typeof(Item));
-                // TODO UI decouple inventory and context action from the Players ineventory specifically (ideally just change localstate to any container player knows about??)
-                if (_game.LocalState.InventoryContents.Contains(subject))
+                // TODO UI add inventory entity id into this context window class (maybe even inventory window)
+                if (_game.LocalState.BagContents[_game.LocalState.InventoryEntityId].Contains(subject))
                 {
                     if (item.EquipmentSlot != "")
                     {

@@ -137,6 +137,31 @@ namespace Ozzyria.MonoGameClient.UI
                     break;
             }
 
+            /*
+            // TODO UI move this code somewhere to sync down bags and open them up (.. or periodically just request bags?)
+            if (button == MouseButton.Right)
+            {
+                var clickedBag = context.GetEntities().FirstOrDefault(e =>
+                {
+                    if (!e.HasComponent(typeof(Ozzyria.Game.Components.Movement)) || !e.HasComponent(typeof(Game.Components.Bag)))
+                    {
+                        return false;
+                    }
+
+                    var m = (Game.Components.Movement)e.GetComponent(typeof(Game.Components.Movement));
+                    if (Math.Pow(m.X - mouseState.X / 2, 2) + Math.Pow(m.Y - mouseState.Y / 2, 2) <= 100)
+                    {
+                        return true;
+                    }
+                    return false;
+                });
+
+                if (clickedBag != null)
+                {
+                    game.Client?.RequestBagContents(clickedBag.id);
+                }
+            }
+            */
         }
 
         public void OnMouseVerticalScroll(int x, int y, float delta)
