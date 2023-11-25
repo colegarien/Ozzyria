@@ -161,6 +161,8 @@ namespace Ozzyria.MonoGameClient.UI
                 }
             }
             */
+
+            // TODO UI maybe just add like a static "GameWindow" to pipe-back-out unhandled events into MainGame so can do stuff like open context menus and open game-world bags and such
         }
 
         public void OnMouseVerticalScroll(int x, int y, float delta)

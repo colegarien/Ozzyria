@@ -89,6 +89,13 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
         protected override void RenderContent(SpriteBatch spriteBatch)
         {
+            if (!_game.LocalState.HasBag(BagEntityId))
+            {
+                // bag went missing, close out window
+                Manager?.CloseWindow(this);
+                return;
+            }
+
             var localBagState = _game.LocalState.GetBag(BagEntityId);
             Header = localBagState.Name;
 

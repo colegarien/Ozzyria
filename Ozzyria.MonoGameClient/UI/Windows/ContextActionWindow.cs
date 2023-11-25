@@ -38,7 +38,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             ContentTotalHeight = ContentHeight;
         }
 
-        public void OpenContextMenu(int x, int y, uint bagEntityId, Entity subject)
+        public void OpenContextMenu(int x, int y, uint ownerId, Entity subject)
         {
             // Reposition window
             X = x; Y = y - (HEADER_HEIGHT/2);
@@ -52,7 +52,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             if (subject.HasComponent(typeof(Item)))
             {
                 var item = (Item)subject.GetComponent(typeof(Item));
-                if (_game.LocalState.GetBag(bagEntityId).Contents.Contains(subject))
+                if (_game.LocalState.GetBag(ownerId).Contents.Contains(subject))
                 {
                     if (item.EquipmentSlot != "")
                     {
@@ -64,7 +64,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                                 RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                                 Action = () =>
                                 {
-                                    _game.Client.RequestEquipItem(bagEntityId, item.Slot);
+                                    _game.Client.RequestEquipItem(ownerId, item.Slot);
                                 }
                             });
                             renderY += 14;
@@ -77,26 +77,55 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                                 RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                                 Action = () =>
                                 {
-                                    _game.Client.RequestUnequipItem(bagEntityId, item.Slot);
+                                    _game.Client.RequestUnequipItem(ownerId, item.Slot);
                                 }
                             });
                             renderY += 14;
                         }
                     }
 
-                    _actions.Add(new ContextAction
+                    if (ownerId == _game.LocalState.PlayerEntityId)
                     {
-                        Label = "drop",
-                        RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
-                        Action = () =>
+                        // only allow dropping from players inventory
+                        _actions.Add(new ContextAction
                         {
-                            _game.Client.RequestDropItem(bagEntityId, item.Slot);
-                        }
-                    });
-                    renderY += 14;
+                            Label = "drop",
+                            RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                            Action = () =>
+                            {
+                                _game.Client.RequestDropItem(ownerId, item.Slot);
+                            }
+                        });
+                        renderY += 14;
+                    }
                 }
             }
+            else if(subject.HasComponent(typeof(Bag)))
+            {
+                var bag = (Bag)subject.GetComponent(typeof(Bag));
+                _actions.Add(new ContextAction
+                {
+                    Label = "open",
+                    RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                    Action = () =>
+                    {
+                        // TODO UI fix hard-coded BagWindow, might add BagManager or something into WindowManager..?
+                        _game.BagWindow.BagEntityId = subject.id;
+                        Manager?.OpenWindow(_game.BagWindow);
+                    }
+                });
+                renderY += 14;
+            }
 
+            _actions.Add(new ContextAction
+            {
+                Label = "cancel",
+                RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
+                Action = () =>
+                {
+                    CloseContextMenu();
+                }
+            });
             IsVisible = true;
         }
 
