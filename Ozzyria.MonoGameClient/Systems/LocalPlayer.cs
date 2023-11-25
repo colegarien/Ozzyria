@@ -17,11 +17,9 @@ namespace Ozzyria.MonoGameClient.Systems
             var playerLocation = ((Location)localPlayer?.GetComponent(typeof(Location)))?.Area ?? "";
             if ((_game.TileMap == null || playerLocation != _game.TileMap?.Name) && playerLocation != "")
             {
+                _game.LocalState.ForgetBags();
                 _game.TileMap = _game.WorldLoader.LoadMap(playerLocation);
             }
-
-            // re-requst latest inventory contents
-            _game.Client?.RequestBagContents(localPlayer.id);
         }
 
         protected override bool Filter(Entity entity)

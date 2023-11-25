@@ -72,10 +72,12 @@ namespace Ozzyria.MonoGameClient
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator
+                .Add(new Systems.BagSyncing(this))
                 .Add(new Systems.Network(this))
                 .Add(new Systems.LocalPlayer(this, _context))
                 .Add(new Systems.RenderTracking(this, _context))
-                .Add(new Systems.LocalStateTracking(this, _context));
+                .Add(new Systems.LocalStateTracking(this, _context))
+                .Add(new Systems.BagTracking(this, _context));
 
             Client = new Client();
             if (!Client.Connect("127.0.0.1", 13000))
@@ -199,7 +201,7 @@ namespace Ozzyria.MonoGameClient
 
             // equipped weapon
             _spriteBatch.Draw(_uiTexture, new Rectangle(162, 333, 32, 27), new Rectangle(64, 34, 32, 27), Color.White);
-            var equippedWeapon = LocalState.BagContents[LocalState.InventoryEntityId].FirstOrDefault(i =>
+            var equippedWeapon = LocalState.GetBag(LocalState.PlayerEntityId).Contents.FirstOrDefault(i =>
             {
                 var ii = (Item)i.GetComponent(typeof(Item));
                 return ii != null && ii.IsEquipped && ii.EquipmentSlot == "weapon";
