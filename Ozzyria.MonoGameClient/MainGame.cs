@@ -43,7 +43,8 @@ namespace Ozzyria.MonoGameClient
         private Thread _localServerTheard;
 
         private Texture2D _uiTexture;
-        private WindowManager _uiManager;
+        internal WindowManager UiManager;
+        internal BagWindow BagWindow;
 
         public MainGame()
         {
@@ -124,24 +125,31 @@ namespace Ozzyria.MonoGameClient
             };
 
             _uiTexture = Content.Load<Texture2D>("ui_components");
-            _uiManager = new WindowManager(new InputTracker(Camera));
-            _uiManager.AddWindow(new InventoryWindow(this, _uiTexture, _greyFont)
+            UiManager = new WindowManager(new InputTracker(Camera));
+            UiManager.AddWindow(new InventoryWindow(this, _uiTexture, _greyFont)
             {
                 IsVisible = false,
                 X = 140,
                 Y = 30,
             });
-            _uiManager.AddWindow(new ConsoleWindow(this, _uiTexture, _greyFont, _greyMonoFont)
+            UiManager.AddWindow(new ConsoleWindow(this, _uiTexture, _greyFont, _greyMonoFont)
             {
                 IsVisible = false,
                 X = 140,
                 Y = 30,
             });
+            BagWindow = new BagWindow(this, _uiTexture, _greyFont)
+            {
+                IsVisible = false,
+                X = 140,
+                Y = 30,
+            };
+            UiManager.AddWindow(BagWindow);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (!Client.IsConnected() || _uiManager.QuitRequested())
+            if (!Client.IsConnected() || UiManager.QuitRequested())
             {
                 Log($"Disconnecting");
                 Client.Disconnect();
@@ -150,7 +158,7 @@ namespace Ozzyria.MonoGameClient
             }
 
             _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
-            _uiManager.Update((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            UiManager.Update((float)gameTime.ElapsedGameTime.TotalMilliseconds);
 
             base.Update(gameTime);
         }
@@ -221,7 +229,7 @@ namespace Ozzyria.MonoGameClient
             }
 
             // draw windows
-            _uiManager.Draw(_spriteBatch);
+            UiManager.Draw(_spriteBatch);
 
             // custom mouse cursor
             var mousePosition = Mouse.GetState().Position;

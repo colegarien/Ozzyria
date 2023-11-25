@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
+using Ozzyria.MonoGameClient.UI;
 
 namespace Ozzyria.MonoGameClient.Systems
 {
@@ -22,7 +23,12 @@ namespace Ozzyria.MonoGameClient.Systems
                 }
 
                 var bag = (Bag)entity.GetComponent(typeof(Bag));
-                _game.LocalState.SetBagContents(entity.id, bag.Contents);
+                _game.LocalState.SetBagContents(entity.id, bag.Name, bag.Contents);
+
+                if (entity.id != _game.LocalState.PlayerEntityId) {
+                    _game.BagWindow.BagEntityId = entity.id;
+                    _game.UiManager.OpenWindow(_game.BagWindow);
+                }
             }
         }
 

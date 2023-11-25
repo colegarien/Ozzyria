@@ -38,7 +38,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             ContentTotalHeight = ContentHeight;
         }
 
-        public void OpenContextMenu(int x, int y, Entity subject)
+        public void OpenContextMenu(int x, int y, uint bagEntityId, Entity subject)
         {
             // Reposition window
             X = x; Y = y - (HEADER_HEIGHT/2);
@@ -52,8 +52,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             if (subject.HasComponent(typeof(Item)))
             {
                 var item = (Item)subject.GetComponent(typeof(Item));
-                // TODO UI add inventory entity id into this context window class (maybe even inventory window)
-                if (_game.LocalState.GetBag(_game.LocalState.PlayerEntityId).Contents.Contains(subject))
+                if (_game.LocalState.GetBag(bagEntityId).Contents.Contains(subject))
                 {
                     if (item.EquipmentSlot != "")
                     {
@@ -65,7 +64,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                                 RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                                 Action = () =>
                                 {
-                                    _game.Client.RequestEquipItem(_game.LocalState.PlayerEntityId, item.Slot);
+                                    _game.Client.RequestEquipItem(bagEntityId, item.Slot);
                                 }
                             });
                             renderY += 14;
@@ -78,7 +77,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                                 RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                                 Action = () =>
                                 {
-                                    _game.Client.RequestUnequipItem(_game.LocalState.PlayerEntityId, item.Slot);
+                                    _game.Client.RequestUnequipItem(bagEntityId, item.Slot);
                                 }
                             });
                             renderY += 14;
@@ -91,7 +90,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                         RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                         Action = () =>
                         {
-                            _game.Client.RequestDropItem(_game.LocalState.PlayerEntityId, item.Slot);
+                            _game.Client.RequestDropItem(bagEntityId, item.Slot);
                         }
                     });
                     renderY += 14;

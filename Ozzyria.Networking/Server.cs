@@ -155,19 +155,17 @@ namespace Ozzyria.Networking
                                 }
                                 else
                                 {
-                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
-
-                                    
-
-                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
+                                    var sourceBag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < sourceBag.Contents.Count)
                                     {
+                                        Bag bag = sourceBag;
                                         var bagId = bagItemRequest.BagEntityId;
                                         var itemSlot = bagItemRequest.ItemSlot;
                                         var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Game.Components.Player))).FirstOrDefault(e => ((Game.Components.Player)e.GetComponent(typeof(Game.Components.Player))).PlayerId == messageClient);
                                         if (playerEntity.id != bagId)
                                         {
                                             var playerBag = (Bag)playerEntity.GetComponent(typeof(Bag));
-                                            var tranferredEntity = bag.RemoveItem(itemSlot);
+                                            var tranferredEntity = sourceBag.RemoveItem(itemSlot);
 
                                             if (tranferredEntity != null)
                                             {
@@ -175,6 +173,9 @@ namespace Ozzyria.Networking
 
                                                 bagId = playerEntity.id;
                                                 itemSlot = playerBag.Contents.Count - 1;
+
+                                                // equip from players bag now that item is transferred
+                                                bag = playerBag;
                                             }
                                         }
 
@@ -212,7 +213,7 @@ namespace Ozzyria.Networking
                                         item.IsEquipped = true;
 
                                         // send source bag contents back
-                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, sourceBag.Contents.ToArray());
                                         SendToClient(messageClient, bagContentsPacket);
                                         if(bagEntity.id != bagId)
                                         {
@@ -343,6 +344,7 @@ namespace Ozzyria.Networking
                                             var newBagEntity = areaContext.CreateEntity();
 
                                             var newBag = (Bag)newBagEntity.CreateComponent(typeof(Bag));
+                                            newBag.Name = "Bag";
                                             newBag.Capacity = 4;
                                             newBag.AddItem(droppedEntity);
                                             newBagEntity.AddComponent(newBag);
