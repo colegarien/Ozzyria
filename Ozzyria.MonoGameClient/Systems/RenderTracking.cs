@@ -355,6 +355,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
             return Drawables.Min(d => d.GetTop());
         }
+
         public int GetWidth()
         {
             if (Drawables.Count == 0)

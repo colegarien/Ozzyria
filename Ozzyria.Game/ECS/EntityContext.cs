@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace Ozzyria.Game.ECS
@@ -22,6 +21,15 @@ namespace Ozzyria.Game.ECS
             OnComponentAdded = HandleOnComponentAdded;
             OnComponentChanged = HandleOnComponentChanged;
             OnComponentRemoved = HandleOnComponentRemoved;
+        }
+
+        public Entity GetEntity(uint id)
+        {
+            if (!entities.ContainsKey(id)) {
+                return null;
+            }
+
+            return entities[id];
         }
 
         public Entity[] GetEntities()
