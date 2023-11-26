@@ -48,6 +48,7 @@ namespace Ozzyria.MonoGameClient
         private Texture2D _uiTexture;
         internal WindowManager UiManager;
         internal BagWindow BagWindow;
+        internal ContextActionWindow ActionWindow;
 
         public MainGame()
         {
@@ -149,6 +150,13 @@ namespace Ozzyria.MonoGameClient
                 Y = 30,
             };
             UiManager.AddWindow(BagWindow);
+            ActionWindow = new ContextActionWindow(this, _uiTexture, _greyFont)
+            {
+                IsVisible = false,
+                X = 140,
+                Y = 30,
+            };
+            UiManager.AddWindow(ActionWindow);
         }
 
         protected override void Update(GameTime gameTime)
@@ -286,9 +294,8 @@ namespace Ozzyria.MonoGameClient
 
                 if (clickedBag != null)
                 {
-                    // TODO UI use context menu to actually open bags
-                    BagWindow.BagEntityId = clickedBag.id;
-                    UiManager.OpenWindow(BagWindow);
+                    // open context menu for bag
+                    ActionWindow.OpenContextMenu(tracker.MouseX(), tracker.MouseY(), clickedBag.id, clickedBag);
                     return true;
                 }
             }

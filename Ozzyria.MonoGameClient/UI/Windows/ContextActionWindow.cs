@@ -109,7 +109,6 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     RenderArea = new Rectangle(renderX, renderY, ContentWidth - (MARGIN * 2), 14),
                     Action = () =>
                     {
-                        // TODO UI fix hard-coded BagWindow, might add BagManager or something into WindowManager..?
                         _game.BagWindow.BagEntityId = subject.id;
                         Manager?.OpenWindow(_game.BagWindow);
                     }
@@ -126,6 +125,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     CloseContextMenu();
                 }
             });
+            Manager?.OpenWindow(this);
             IsVisible = true;
         }
 

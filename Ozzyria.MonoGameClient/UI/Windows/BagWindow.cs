@@ -101,7 +101,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
 
             var inventoryContents = localBagState.Contents;
             ContentDraw(spriteBatch, _uiTexture, contentArea, contentArea, greyImg);
-            // TODO UI don't hardcode grid size and instead base of bag capacity
+            // TODO don't hardcode grid size and instead base of bag capacity
             for (var i = 0; i < GRID_WIDTH; i++)
             {
                 for (var j = 0; j < GRID_HEIGHT; j++)

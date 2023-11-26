@@ -144,8 +144,7 @@ namespace Ozzyria.Networking
                                 var bagItemRequest = ClientPacketFactory.ParseEquipItemData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
 
-                                // TODO UI add check to make sure that Player has access to the bag!!
-                                // TODO UI might need to track what bags player has open (like what chests and stuff)
+                                // TODO OZ-28 add check to make sure that Player has access to the bag!!
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
                                 if (bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
                                 {
