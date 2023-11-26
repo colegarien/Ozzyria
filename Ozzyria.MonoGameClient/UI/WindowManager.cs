@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Ozzyria.MonoGameClient.UI.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,10 @@ namespace Ozzyria.MonoGameClient.UI
 {
     internal class WindowManager
     {
+        // Event Pipeline
         private InputTracker _inputTracker;
         private bool _quitRequested = false;
+        List<IMouseUpHandler> _mouseUpHandlers = new List<IMouseUpHandler>();
 
         // UI Components
         List<Window> _windows = new List<Window>();
@@ -107,6 +110,14 @@ namespace Ozzyria.MonoGameClient.UI
             _focusedWindow = window.Guid;
         }
 
+        public void SubscribeToEvents(object handler)
+        {
+            if(handler is IMouseUpHandler)
+            {
+                _mouseUpHandlers.Add((IMouseUpHandler)handler);
+            }
+        }
+
         public void OnMouseDown(MouseButton button, int x, int y)
         {
             foreach (var window in _windows.OrderByDescending(w => w.IsVisible && w.Guid == _focusedWindow))
@@ -133,36 +144,14 @@ namespace Ozzyria.MonoGameClient.UI
             foreach (var window in _windows.OrderByDescending(w => w.IsVisible && w.Guid == _focusedWindow))
             {
                 if (window.HandleMouseUp(button, x, y))
-                    break;
+                    return;
             }
 
-            /*
-            // TODO UI move this code somewhere to sync down bags and open them up (.. or periodically just request bags?)
-            if (button == MouseButton.Right)
+            foreach(var mouseUpHanlder in _mouseUpHandlers)
             {
-                var clickedBag = context.GetEntities().FirstOrDefault(e =>
-                {
-                    if (!e.HasComponent(typeof(Ozzyria.Game.Components.Movement)) || !e.HasComponent(typeof(Game.Components.Bag)))
-                    {
-                        return false;
-                    }
-
-                    var m = (Game.Components.Movement)e.GetComponent(typeof(Game.Components.Movement));
-                    if (Math.Pow(m.X - mouseState.X / 2, 2) + Math.Pow(m.Y - mouseState.Y / 2, 2) <= 100)
-                    {
-                        return true;
-                    }
-                    return false;
-                });
-
-                if (clickedBag != null)
-                {
-                    game.Client?.RequestBagContents(clickedBag.id);
-                }
+                if (mouseUpHanlder.HandleMouseUp(_inputTracker, button, x, y))
+                    return;
             }
-            */
-
-            // TODO UI maybe just add like a static "GameWindow" to pipe-back-out unhandled events into MainGame so can do stuff like open context menus and open game-world bags and such
         }
 
         public void OnMouseVerticalScroll(int x, int y, float delta)

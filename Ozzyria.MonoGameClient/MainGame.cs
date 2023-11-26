@@ -8,16 +8,19 @@ using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Systems;
 using Ozzyria.MonoGameClient.UI;
+using Ozzyria.MonoGameClient.UI.Handlers;
 using Ozzyria.MonoGameClient.UI.Windows;
 using Ozzyria.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
+using static Ozzyria.MonoGameClient.UI.InputTracker;
 
 namespace Ozzyria.MonoGameClient
 {
-    public class MainGame : Microsoft.Xna.Framework.Game
+    public class MainGame : Microsoft.Xna.Framework.Game, IMouseUpHandler
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -126,6 +129,7 @@ namespace Ozzyria.MonoGameClient
 
             _uiTexture = Content.Load<Texture2D>("ui_components");
             UiManager = new WindowManager(new InputTracker(Camera));
+            UiManager.SubscribeToEvents(this);
             UiManager.AddWindow(new InventoryWindow(this, _uiTexture, _greyFont)
             {
                 IsVisible = false,
@@ -261,5 +265,35 @@ namespace Ozzyria.MonoGameClient
             }
         }
 
+        bool IMouseUpHandler.HandleMouseUp(InputTracker tracker, MouseButton button, int x, int y)
+        {
+            if (button == MouseButton.Right)
+            {
+                var clickedBag = _context.GetEntities().FirstOrDefault(e =>
+                {
+                    if (e.id == LocalState.PlayerEntityId || !e.HasComponent(typeof(Ozzyria.Game.Components.Movement)) || !e.HasComponent(typeof(Game.Components.Bag)))
+                    {
+                        return false;
+                    }
+
+                    var m = (Game.Components.Movement)e.GetComponent(typeof(Game.Components.Movement));
+                    if (Math.Pow(m.X - tracker.MouseX(), 2) + Math.Pow(m.Y - tracker.MouseY(), 2) <= 100)
+                    {
+                        return true;
+                    }
+                    return false;
+                });
+
+                if (clickedBag != null)
+                {
+                    // TODO UI use context menu to actually open bags
+                    BagWindow.BagEntityId = clickedBag.id;
+                    UiManager.OpenWindow(BagWindow);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

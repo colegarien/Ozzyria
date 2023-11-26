@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Ozzyria.MonoGameClient.UI.Handlers;
 using System;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 
@@ -200,7 +200,7 @@ namespace Ozzyria.MonoGameClient.UI
                 return true;
             }
 
-            return WindowArea.Contains(x, y);
+            return IsVisible && WindowArea.Contains(x, y);
         }
 
         public bool HandleMouseUp(MouseButton button, int x, int y)
@@ -218,7 +218,7 @@ namespace Ozzyria.MonoGameClient.UI
 
             mStartedOnExit = false;
             this.OnMouseClick(button, x, y);
-            return false;
+            return IsVisible && WindowArea.Contains(x, y);
         }
 
         public bool HandleMouseMove(int previousX, int previousY, int x, int y)
@@ -264,7 +264,7 @@ namespace Ozzyria.MonoGameClient.UI
             else
             {
                 this.OnMouseMove(previousX, previousY, x, y);
-                return WindowArea.Contains(x, y);
+                return IsVisible && WindowArea.Contains(x, y);
             }
         }
 

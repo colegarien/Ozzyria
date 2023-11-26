@@ -24,12 +24,6 @@ namespace Ozzyria.MonoGameClient.Systems
 
                 var bag = (Bag)entity.GetComponent(typeof(Bag));
                 _game.LocalState.SetBagContents(entity.id, bag.Name, bag.Contents);
-
-                if (entity.id != _game.LocalState.PlayerEntityId) {
-                    // TODO UI use context menu to actually open bags
-                    _game.BagWindow.BagEntityId = entity.id;
-                    _game.UiManager.OpenWindow(_game.BagWindow);
-                }
             }
         }
 
