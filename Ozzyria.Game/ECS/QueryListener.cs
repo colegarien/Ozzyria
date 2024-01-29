@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ozzyria.Game.ECS
 {
@@ -16,23 +17,23 @@ namespace Ozzyria.Game.ECS
         public bool ListenToRemoved { get; set; } = false;
 
         protected EntityQuery _query;
-        protected List<Entity> _entities;
+        protected Dictionary<uint, Entity> _entities;
 
 
         public QueryListener(EntityQuery query)
         {
             _query = query;
-            _entities = new List<Entity>();
+            _entities = new Dictionary<uint, Entity>();
         }
 
         public void Detach(Entity entity)
         {
-            _entities.Remove(entity);
+            _entities.Remove(entity.id);
         }
 
         public Entity[] Gather()
         {
-            var result = _entities.ToArray();
+            var result = _entities.Values.ToArray();
             _entities.Clear();
 
             return result;
@@ -50,15 +51,16 @@ namespace Ozzyria.Game.ECS
 
             if (_query.Matches(entity))
             {
-                if (!_entities.Contains(entity))
-                    _entities.Add(entity);
+                if (!_entities.ContainsKey(entity.id))
+                    _entities[entity.id] = entity;
             }
-            else if (type == QueryEventType.Removed && ListenToRemoved && !_entities.Contains(entity))
+            else if (type == QueryEventType.Removed && ListenToRemoved && !_entities.ContainsKey(entity.id))
             {
-                _entities.Add(entity);
+                _entities[entity.id] = entity;
             }
-            else if (!ListenToRemoved && _entities.Contains(entity)) {
-                _entities.Remove(entity);
+            else if (!ListenToRemoved && _entities.ContainsKey(entity.id))
+            {
+                _entities.Remove(entity.id);
             }
         }
     }
