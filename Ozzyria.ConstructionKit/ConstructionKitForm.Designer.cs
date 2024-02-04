@@ -160,6 +160,21 @@ namespace Ozzyria.ConstructionKit
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // btnMapSave
+            // 
+            btnMapSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            btnMapSave.Image = (System.Drawing.Image)resources.GetObject("btnMapSave.Image");
+            btnMapSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnMapSave.Name = "btnMapSave";
+            btnMapSave.Size = new System.Drawing.Size(23, 22);
+            btnMapSave.Text = "&Save";
+            btnMapSave.Click += btnMapSave_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolPaint
             // 
             this.toolPaint.CheckOnClick = true;
@@ -193,7 +208,12 @@ namespace Ozzyria.ConstructionKit
             this.toolErase.Text = "&Erase";
             this.toolErase.CheckedChanged += new System.EventHandler(this.toolErase_CheckedChanged);
             // 
-            // btnMapSave
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
             // 
             this.btnMapSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnMapSave.Image = ((System.Drawing.Image)(resources.GetObject("btnMapSave.Image")));
