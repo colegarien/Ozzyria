@@ -44,6 +44,13 @@
 /processorParam:TextureFormat=Compressed
 /build:sf_greyfont.spritefont
 
+#begin sf_monogreyfont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:sf_monogreyfont.spritefont
+
 #begin ui_components.png
 /importer:TextureImporter
 /processor:TextureProcessor

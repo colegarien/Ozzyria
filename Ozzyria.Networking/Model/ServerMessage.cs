@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Ozzyria.Networking.Model
@@ -11,12 +12,20 @@ namespace Ozzyria.Networking.Model
         EntityUpdate = 2,
         EntityRemoval = 3,
         AreaChanged = 4,
+        BagContents = 5,
     }
 
     class ServerPacket
     {
         public ServerMessage Type { get; set; }
         public byte[] Data { get; set; }
+    }
+
+    class BagContentsResponse
+    {
+        public bool Failed { get; set; }
+        public uint BagEntityId { get; set; }
+        public List<Entity> Contents { get; set; }
     }
 
     class ServerPacketFactory
@@ -166,6 +175,60 @@ namespace Ozzyria.Networking.Model
                     }
                 }
             }
+        }
+
+        public static byte[] BagContents(uint bagEntityId, Entity[] entities)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ServerMessage.BagContents);
+                    writer.Write(bagEntityId);
+                    writer.Write(false);
+                    foreach (var entity in entities)
+                    {
+                        WorldPersistence.WriteDetachedEntity(writer, entity);
+                    }
+                }
+
+                return m.ToArray();
+            }
+        }
+
+        public static byte[] CannotOpenBagContents(uint bagEntityId)
+        {
+            using (MemoryStream m = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(m))
+                {
+                    writer.Write((int)ServerMessage.BagContents);
+                    writer.Write(bagEntityId);
+                    writer.Write(true);
+                }
+
+                return m.ToArray();
+            }
+        }
+
+        public static BagContentsResponse ParseBagContents(byte[] packet)
+        {
+            var response = new BagContentsResponse();
+            using (MemoryStream m = new MemoryStream(packet))
+            {
+                using (BinaryReader reader = new BinaryReader(m))
+                {
+                    response.BagEntityId = reader.ReadUInt32();
+                    response.Failed = reader.ReadBoolean();
+                    response.Contents = new List<Entity>();
+                    while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    {
+                        response.Contents.Add(WorldPersistence.ReadDetachedEntity(reader));
+                    }
+                }
+            }
+
+            return response;
         }
     }
 

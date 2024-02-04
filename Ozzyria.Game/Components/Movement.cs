@@ -124,41 +124,49 @@ namespace Ozzyria.Game.Components
 
         public void MoveForward(float deltaTime)
         {
+            LookDirection = AngleHelper.Pi;
             MoveDirection = 0f;
         }
 
         public void MoveForwardRight(float deltaTime)
         {
+            LookDirection = AngleHelper.Pi;
             MoveDirection = -AngleHelper.PiOverFour;
         }
 
         public void MoveRight(float deltaTime)
         {
-            MoveDirection = -AngleHelper.PiOverTwo;
+            LookDirection = AngleHelper.PiOverTwo;
+            MoveDirection = 0f;
         }
 
         public void MoveBackwardRight(float deltaTime)
         {
-            MoveDirection = -AngleHelper.ThreePiOverFour;
+            LookDirection = 0;
+            MoveDirection = AngleHelper.PiOverFour;
         }
 
         public void MoveBackward(float deltaTime)
         {
-            MoveDirection = AngleHelper.Pi;
+            LookDirection = 0f;
+            MoveDirection = 0f;
         }
 
         public void MoveBackwardLeft(float deltaTime)
         {
-            MoveDirection = AngleHelper.ThreePiOverFour;
+            LookDirection = 0;
+            MoveDirection = -AngleHelper.PiOverFour;
         }
 
         public void MoveLeft(float deltaTime)
         {
-            MoveDirection = AngleHelper.PiOverTwo;
+            LookDirection = -AngleHelper.PiOverTwo;
+            MoveDirection = 0f;
         }
 
         public void MoveForwardLeft(float deltaTime)
         {
+            LookDirection = AngleHelper.Pi;
             MoveDirection = AngleHelper.PiOverFour;
         }
 

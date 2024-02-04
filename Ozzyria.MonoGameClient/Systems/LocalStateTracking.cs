@@ -16,6 +16,7 @@ namespace Ozzyria.MonoGameClient.Systems
             if(entities.Length > 0 && entities[0].HasComponent(typeof(Stats)))
             {
                 var localPlayer = entities[0];
+                _game.LocalState.PlayerEntityId = localPlayer.id;
 
                 var localStats = (Stats)localPlayer.GetComponent(typeof(Stats));
                 _game.LocalState.Health = localStats.Health;

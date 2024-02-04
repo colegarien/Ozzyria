@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.ECS;
 using Ozzyria.Networking.Model;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -81,6 +82,78 @@ namespace Ozzyria.Networking
             }
         }
 
+        public void RequestBagContents(uint bagEntityId)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var openBagPacket = ClientPacketFactory.OpenBag(Id, bagEntityId);
+                udpClient.Send(openBagPacket, openBagPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
+        public void RequestEquipItem(uint bagEntityId, int itemSlot)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var equipItemPacket = ClientPacketFactory.EquipItem(Id, bagEntityId, itemSlot);
+                udpClient.Send(equipItemPacket, equipItemPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
+        public void RequestUnequipItem(uint bagEntityId, int itemSlot)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var equipItemPacket = ClientPacketFactory.UnequipItem(Id, bagEntityId, itemSlot);
+                udpClient.Send(equipItemPacket, equipItemPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
+        public void RequestDropItem(uint bagEntityId, int itemSlot)
+        {
+            if (!connected)
+            {
+                return;
+            }
+
+            try
+            {
+                var equipItemPacket = ClientPacketFactory.DropItem(Id, bagEntityId, itemSlot);
+                udpClient.Send(equipItemPacket, equipItemPacket.Length);
+            }
+            catch (SocketException)
+            {
+                Disconnect();
+            }
+        }
+
         public void HandleIncomingMessages(EntityContext context)
         {
             if (!connected)
@@ -107,6 +180,18 @@ namespace Ozzyria.Networking
                             break;
                         case ServerMessage.AreaChanged:
                             ServerPacketFactory.ParseAreaChanged(context, messageData);
+                            break;
+                        case ServerMessage.BagContents:
+                            var response = ServerPacketFactory.ParseBagContents(messageData);
+                            if (!response.Failed)
+                            {
+                                var bagEntity = context.GetEntity(response.BagEntityId);
+                                if (bagEntity != null && bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                {
+                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
+                                    bag.Contents = response.Contents;
+                                }
+                            }
                             break;
                     }
                 }
