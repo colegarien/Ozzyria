@@ -193,6 +193,7 @@ namespace Ozzyria.Networking
                                         }
 
                                         // equip gear into appropriate slot
+                                        var weapon = (Weapon)playerEntity.GetComponent(typeof(Weapon));
                                         var equippedGear = (EquippedGear)playerEntity.GetComponent(typeof(EquippedGear));
                                         switch (item.EquipmentSlot)
                                         {
@@ -206,7 +207,9 @@ namespace Ozzyria.Networking
                                                 equippedGear.Mask = item.ItemId;
                                                 break;
                                             case "weapon":
-                                                equippedGear.Weapon = item.ItemId;
+                                                // TODO support more than swords?
+                                                weapon.WeaponType = WeaponType.Sword;
+                                                weapon.WeaponId = item.ItemId;
                                                 break;
                                         }
                                         item.IsEquipped = true;
@@ -256,6 +259,7 @@ namespace Ozzyria.Networking
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear from the appropriate slot
+                                        var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
                                         var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
                                         switch (item.EquipmentSlot)
                                         {
@@ -269,7 +273,8 @@ namespace Ozzyria.Networking
                                                 equippedGear.Mask = "";
                                                 break;
                                             case "weapon":
-                                                equippedGear.Weapon = "";
+                                                weapon.WeaponType = WeaponType.Empty;
+                                                weapon.WeaponId = "";
                                                 break;
                                         }
                                         item.IsEquipped = false;
@@ -315,6 +320,7 @@ namespace Ozzyria.Networking
                                         // unequip gear from the appropriate slot
                                         if (item.IsEquipped)
                                         {
+                                            var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
                                             var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
                                             switch (item.EquipmentSlot)
                                             {
@@ -328,7 +334,8 @@ namespace Ozzyria.Networking
                                                     equippedGear.Mask = "";
                                                     break;
                                                 case "weapon":
-                                                    equippedGear.Weapon = "";
+                                                    weapon.WeaponType = WeaponType.Empty;
+                                                    weapon.WeaponId = "";
                                                     break;
                                             }
                                             item.IsEquipped = false;

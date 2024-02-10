@@ -10,8 +10,6 @@ namespace Ozzyria.Game.Components
         private string _hat = ""; // cowboy_hat || green_hat
         private string _armor = ""; // cyan_armor || biker_jacket
         private string _mask = ""; // shades
-        private string _weapon = ""; // gladius || pink_sword || grey_sword
-        private string _weaponEffect = ""; // basic_slash
 
 
         [Savable]
@@ -58,30 +56,6 @@ namespace Ozzyria.Game.Components
                 if (_mask != value)
                 {
                     _mask = value;
-                    Owner?.TriggerComponentChanged(this);
-                }
-            }
-        }
-        [Savable]
-        public string Weapon
-        {
-            get => _weapon; set
-            {
-                if (_weapon != value)
-                {
-                    _weapon = value;
-                    Owner?.TriggerComponentChanged(this);
-                }
-            }
-        }
-        [Savable]
-        public string WeaponEffect
-        {
-            get => _weaponEffect; set
-            {
-                if (_weaponEffect != value)
-                {
-                    _weaponEffect = value;
                     Owner?.TriggerComponentChanged(this);
                 }
             }

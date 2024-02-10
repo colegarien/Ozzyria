@@ -6,7 +6,9 @@ using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
+using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.MonoGameClient.Systems;
+using Ozzyria.MonoGameClient.Systems.Rendering;
 using Ozzyria.MonoGameClient.UI;
 using Ozzyria.MonoGameClient.UI.Handlers;
 using Ozzyria.MonoGameClient.UI.Windows;
@@ -26,6 +28,7 @@ namespace Ozzyria.MonoGameClient
         private SpriteBatch _spriteBatch;
         private SpriteFont _greyFont;
         private SpriteFont _greyMonoFont;
+        private GraphicsPipeline _pipeline;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
@@ -77,12 +80,16 @@ namespace Ozzyria.MonoGameClient
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator
-                .Add(new Systems.BagSyncing(this))
-                .Add(new Systems.Network(this))
-                .Add(new Systems.LocalPlayer(this, _context))
-                .Add(new Systems.RenderTracking(this, _context))
-                .Add(new Systems.LocalStateTracking(this, _context))
-                .Add(new Systems.BagTracking(this, _context));
+                .Add(new AnimatorSystem())
+                .Add(new BagSyncing(this))
+                .Add(new Network(this))
+                .Add(new LocalPlayer(this, _context))
+                .Add(new RenderTracking(this, _context))
+                .Add(new LocalStateTracking(this, _context))
+                .Add(new BagTracking(this, _context))
+                .Add(new SkeletonSystem(_context)).Add(new GraphicsSystem(_context));
+
+            _pipeline = GraphicsPipeline.Get();
 
             Client = new Client();
             if (!Client.Connect("127.0.0.1", 13000))
@@ -171,12 +178,14 @@ namespace Ozzyria.MonoGameClient
 
             _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
             UiManager.Update((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            _pipeline.SwapBuffer();
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            var resources = Registry.GetInstance();
             GraphicsDevice.Clear(Color.Black);
 
             ///
@@ -198,6 +207,20 @@ namespace Ozzyria.MonoGameClient
                     }
                 }
 
+            }
+
+            foreach(var graphic in _pipeline.GetGraphics(Camera))
+            {
+                if (!graphic.Hidden)
+                {
+                    var effect = SpriteEffects.None;
+                    if (graphic.FlipHorizontally)
+                        effect |= SpriteEffects.FlipHorizontally;
+                    if (graphic.FlipVertically)
+                        effect |= SpriteEffects.FlipVertically;
+
+                    _spriteBatch.Draw(TextureResources[resources.Resources[graphic.Resource]], graphic.Destination, graphic.Source, graphic.Colour, graphic.Angle, graphic.Origin, effect, 0);
+                }
             }
             _spriteBatch.End();
 
@@ -228,7 +251,6 @@ namespace Ozzyria.MonoGameClient
             })?.GetComponent(typeof(Item)) as Item;
             if (equippedWeapon != null)
             {
-                var resources = Registry.GetInstance();
                 if (resources.FrameSources.ContainsKey(equippedWeapon.Icon))
                 {
                     var source = resources.FrameSources[equippedWeapon.Icon];

@@ -106,21 +106,6 @@ namespace Ozzyria.MonoGameClient.Systems
                 var complexDrawable = new ComplexDrawableInfo();
 
                 var direction = state.GetDirectionVariable("Direction");
-                if (direction == "north" || direction == "west")
-                {
-                    if (gear.Weapon != "")
-                    {
-                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weapon_{state.State}_{direction}");
-                        if (clip != null)
-                            complexDrawable.Drawables.Add(clip);
-                    }
-                    if (gear.WeaponEffect != "")
-                    {
-                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weaponfx_{state.State}_{direction}");
-                        if (clip != null)
-                            complexDrawable.Drawables.Add(clip);
-                    }
-                }
 
                 if (gear.Body != "")
                 {
@@ -150,24 +135,6 @@ namespace Ozzyria.MonoGameClient.Systems
                         complexDrawable.Drawables.Add(clip);
                 }
 
-
-                if (direction == "south" || direction == "east")
-                {
-                    if (gear.Weapon != "")
-                    {
-                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weapon_{state.State}_{direction}");
-                        if (clip != null)
-                            complexDrawable.Drawables.Add(clip);
-                    }
-                    if (gear.WeaponEffect != "")
-                    {
-                        var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-weaponfx_{state.State}_{direction}");
-                        if (clip != null)
-                            complexDrawable.Drawables.Add(clip);
-                    }
-
-                }
-
                 if (complexDrawable.Drawables.Count > 0)
                     PushEntityDrawable(existingItemIndex, complexDrawable);
             }
@@ -195,10 +162,6 @@ namespace Ozzyria.MonoGameClient.Systems
                 sourceId = gear.Armor + "_" + state.GetDirectionVariable("Direction");
             else if (sourceId == "**MASK**")
                 sourceId = gear.Mask + "_" + state.GetDirectionVariable("Direction");
-            else if (sourceId == "**WEAPON**")
-                sourceId = gear.Weapon;
-            else if (sourceId == "**WEAPONFX**")
-                sourceId = gear.WeaponEffect + "_" + state.GetDirectionVariable("Direction");
 
             if (!ResourceRegistry.FrameSources.ContainsKey(sourceId))
                 return null;

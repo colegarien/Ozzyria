@@ -1,8 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Systems;
-using System.ComponentModel;
-using System.Drawing;
 
 namespace Ozzyria.Game.Utility
 {
@@ -39,8 +37,6 @@ namespace Ozzyria.Game.Utility
             equippedGear.Body = "body_white";
             equippedGear.Armor = "biker_jacket";
             equippedGear.Mask = "shades";
-            equippedGear.Weapon = "gladius";
-            equippedGear.WeaponEffect = "basic_slash";
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
@@ -129,6 +125,11 @@ namespace Ozzyria.Game.Utility
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
             bag.AddItem(greySword);
+
+            player.AddComponent(new Animator{NumberOfFrames = 3});
+            player.AddComponent(new Skeleton{});
+            player.AddComponent(new Body { BodyType= BodyType.Human });
+            player.AddComponent(new Weapon { WeaponType = WeaponType.Sword, WeaponId="gladius" });
 
             player.AddComponent(animationState);
             player.AddComponent(equippedGear);

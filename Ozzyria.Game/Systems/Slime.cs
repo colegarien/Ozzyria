@@ -41,7 +41,7 @@ namespace Ozzyria.Game.Systems
                 if (closestPlayer == null)
                 {
                     Think(deltaTime, thought, movement);
-                    combat.Update(deltaTime, false);
+                    combat.WantToAttack = false;
                     movement.Update(deltaTime);
                     continue;
                 }
@@ -52,7 +52,7 @@ namespace Ozzyria.Game.Systems
                 if (distance > MAX_FOLLOW_DISTANCE)
                 {
                     Think(deltaTime, thought, movement);
-                    combat.Update(deltaTime, false);
+                    combat.WantToAttack = false;
                     movement.Update(deltaTime);
                     continue;
                 }
@@ -69,7 +69,8 @@ namespace Ozzyria.Game.Systems
                 }
                 movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
 
-                combat.Update(deltaTime, attack);
+
+                combat.WantToAttack = attack;
                 movement.Update(deltaTime);
             }
         }

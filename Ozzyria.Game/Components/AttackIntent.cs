@@ -1,59 +1,16 @@
-﻿using Ozzyria.Game.Components.Attribute;
-using Ozzyria.Game.ECS;
+﻿using Ozzyria.Game.ECS;
 
 namespace Ozzyria.Game.Components
 {
-    public class Combat : Component
+    public class AttackIntent : Component
     {
-        // State Flags
-        private bool _wantsToAttack = false;
-        private bool _startedAttack = false;
-        private bool _attacking = false;
-
-        // Attack Progress
         private int _frame = 0;
         private int _decayFrame = 3;
         private int _damageFrame = 1;
 
-        // Attack Timing
         private float _frameTimer = 0f;
-        private float _timePerFrame = 0.100f; // 100ms per frame
+        private float _timePerFrame = 100f; // 100ms per frame
 
-        [Savable]
-        public bool WantToAttack
-        {
-            get => _wantsToAttack; set
-            {
-                if (_wantsToAttack != value)
-                {
-                    _wantsToAttack = value;
-                    Owner?.TriggerComponentChanged(this);
-                }
-            }
-        }
-        [Savable]
-        public bool StartedAttack
-        {
-            get => _startedAttack; set
-            {
-                if (_startedAttack != value)
-                {
-                    _startedAttack = value;
-                    Owner?.TriggerComponentChanged(this);
-                }
-            }
-        }
-        [Savable]
-        public bool Attacking { get => _attacking; set
-            {
-                if (_attacking != value)
-                {
-                    _attacking = value;
-                    Owner?.TriggerComponentChanged(this);
-                }
-            }
-        }
-        [Savable]
         public int Frame
         {
             get => _frame; set
@@ -65,7 +22,7 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
-        [Savable]
+
         public int DecayFrame
         {
             get => _decayFrame; set
@@ -77,7 +34,7 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
-        [Savable]
+
         public int DamageFrame
         {
             get => _damageFrame; set
@@ -89,7 +46,7 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
-        [Savable]
+
         public float FrameTimer
         {
             get => _frameTimer; set
@@ -101,7 +58,7 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
-        [Savable]
+
         public float TimePerFrame
         {
             get => _timePerFrame; set
@@ -114,12 +71,5 @@ namespace Ozzyria.Game.Components
             }
         }
 
-
-
-
-
-        public float AttackAngle { get; set; } = 0.78f; // forty-five degrees-ish
-        public float AttackRange { get; set; } = 21f;
-        public int AttackDamage { get; set; } = 5;
     }
 }
