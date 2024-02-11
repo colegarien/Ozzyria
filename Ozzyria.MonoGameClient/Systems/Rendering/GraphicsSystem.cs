@@ -18,6 +18,9 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                 .Chain(new ArmorRenderer())
                 .Chain(new HatRenderer())
                 .Chain(new MaskRenderer())
+                .Chain(new ExperienceOrbRenderer())
+                .Chain(new DoorRenderer())
+                .Chain(new BagRenderer())
 
                 .Chain(new DebugRenderer());
         }

@@ -13,8 +13,7 @@ namespace Ozzyria.Game.Animation
         public Dictionary<uint, string> Resources { get; set; }
         public Dictionary<string, SkeletonOffsets> SkeletonOffsets { get; set; }
         public Dictionary<string, Drawable> Drawables { get; set; }
-        public Dictionary<string, FrameSource> FrameSources { get; set; }
-        public Dictionary<string, Clip> Clips { get; set; }
+        public Dictionary<string, Drawable> UIIcons { get; set; }
 
         public static Registry GetInstance()
         {

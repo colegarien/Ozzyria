@@ -13,6 +13,7 @@ namespace Ozzyria.Game.Components
     {
         Humanoid,
         Slime,
+        Static,
     }
 
     public enum Direction

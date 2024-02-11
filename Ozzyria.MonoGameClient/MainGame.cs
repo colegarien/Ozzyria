@@ -251,9 +251,9 @@ namespace Ozzyria.MonoGameClient
             })?.GetComponent(typeof(Item)) as Item;
             if (equippedWeapon != null)
             {
-                if (resources.FrameSources.ContainsKey(equippedWeapon.Icon))
+                if (resources.UIIcons.ContainsKey(equippedWeapon.Icon))
                 {
-                    var source = resources.FrameSources[equippedWeapon.Icon];
+                    var source = resources.UIIcons[equippedWeapon.Icon];
                     var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
                     var slotRectangle = new Rectangle(162, 331, 32, 32);
 

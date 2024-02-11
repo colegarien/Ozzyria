@@ -8,12 +8,10 @@ using System.Linq;
 
 namespace Ozzyria.MonoGameClient.Systems
 {
-    // TODO OZ-23 how to do debug shapes... that's a tough one lol
     internal class RenderTracking : TriggerSystem
     {
         public static List<IDrawableInfo> finalDrawables = new List<IDrawableInfo>();
         public static List<IDrawableInfo> tileMapDrawables = new List<IDrawableInfo>();
-        public static List<IDrawableInfo> entityDrawables = new List<IDrawableInfo>();
 
         public Registry ResourceRegistry;
 
@@ -30,8 +28,6 @@ namespace Ozzyria.MonoGameClient.Systems
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
-                var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
 
                 if (entity.HasComponent(typeof(Player)) && ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id && movement != null)
                 {
@@ -42,18 +38,9 @@ namespace Ozzyria.MonoGameClient.Systems
                     RebuildTileMapGraphics();
                 }
 
-                if (movement == null || renderable == null)
-                {
-                    entityDrawables.RemoveAll(d => d.GetEntityId() != null && d.GetEntityId() == entity.id);
-                }
-                else
-                {
-                    UpdateEntityDrawables(entity, movement, renderable, state);
-                }
             }
 
             finalDrawables = tileMapDrawables
-                .Concat(entityDrawables)
                 .Where(d => _game.Camera.IsInView(d.GetLeft(), d.GetTop(), d.GetWidth(), d.GetHeight()))
                 .OrderBy(d => d.GetLayer())
                 .ThenBy(d => d.GetZ())
@@ -63,6 +50,8 @@ namespace Ozzyria.MonoGameClient.Systems
 
         private void RebuildTileMapGraphics()
         {
+            // TODO use the graphicsPipeline to render tielsets
+
             tileMapDrawables = new List<IDrawableInfo>();
             foreach (var layer in _game.TileMap?.Layers)
             {
@@ -95,84 +84,6 @@ namespace Ozzyria.MonoGameClient.Systems
             }
         }
 
-        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable, AnimationState state)
-        {
-            var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.GetEntityId() != null && e.GetEntityId() == entity.id);
-
-            if (renderable.IsDynamic)
-            {
-                // TODO OZ-23 try using the ComplexDrawableInfo and then try the Z instead!!!
-                var complexDrawable = new ComplexDrawableInfo();
-                var direction = state.GetDirectionVariable("Direction");
-                if (complexDrawable.Drawables.Count > 0)
-                    PushEntityDrawable(existingItemIndex, complexDrawable);
-            }
-            else
-            {
-                PushClip(entity, movement, renderable, existingItemIndex, renderable.StaticClip);
-            }
-        }
-
-        private DrawableInfo BuildSubClip(Entity entity, Movement movement, Renderable renderable, AnimationState state, string clip)
-        {
-            if (!ResourceRegistry.Clips.ContainsKey(clip))
-                return null;
-
-            var currentClip = ResourceRegistry.Clips[clip];
-            var frame = currentClip.GetFrame(renderable.CurrentFrame);
-            var transform = frame.Transform;
-            var sourceId = frame.SourceId;
-
-            if (!ResourceRegistry.FrameSources.ContainsKey(sourceId))
-                return null;
-
-            var source = ResourceRegistry.FrameSources[sourceId]; // TODO OZ-23 cross-reference item-id with sources
-
-            return BuildDrawable(entity.id, movement.Layer, renderable.Z, movement.X, movement.Y, movement.LookDirection, transform, source);
-        }
-
-        private void PushClip(Entity entity, Movement movement, Renderable renderable, int itemIndex, string clip)
-        {
-            if (!ResourceRegistry.Clips.ContainsKey(clip))
-                return;
-
-            var currentClip = ResourceRegistry.Clips[clip];
-            var frame = currentClip.GetFrame(renderable.CurrentFrame);
-            var transform = frame.Transform;
-            var source = ResourceRegistry.FrameSources[frame.SourceId];
-
-            var drawable = BuildDrawable(entity.id, movement.Layer, renderable.Z, movement.X, movement.Y, movement.LookDirection, transform, source);
-            PushEntityDrawable(itemIndex, drawable);
-        }
-
-        private DrawableInfo BuildDrawable(uint entityId, int layer, int z, float x, float y, float rotation, FrameTransform transform, FrameSource source)
-        {
-            return new DrawableInfo
-            {
-                EntityId = entityId,
-                Sheet = ResourceRegistry.Resources[source.Resource],
-                Layer = layer,
-                Position = new Vector2(x - (transform.DestinationW * 0.5f) + transform.RelativeX, y - (transform.DestinationH * 0.5f) + transform.RelativeY),
-                Rotation = (transform.RelativeRotation ? -rotation : 0) + transform.Rotation,
-                Width = transform.DestinationW,
-                Height = transform.DestinationH,
-                Z = z,
-                Color = new Color(transform.Red, transform.Green, transform.Blue, transform.Alpha),
-                TextureRect = new Rectangle[] { new Rectangle(source.Left, source.Top, source.Width, source.Height) },
-                FlipHorizontally = transform.FlipHorizontally,
-                FlipVertically = transform.FlipVertically,
-                Origin = new Vector2((transform.DestinationW * 0.5f) + transform.OriginOffsetX, (transform.DestinationH * 0.5f) + transform.OriginOffsetY)
-            };
-        }
-
-        private void PushEntityDrawable(int index, IDrawableInfo drawable)
-        {
-            if (index > -1 && entityDrawables.Count > index)
-                entityDrawables[index] = drawable;
-            else
-                entityDrawables.Add(drawable);
-        }
-
         protected override bool Filter(Entity entity)
         {
             return true;
@@ -180,7 +91,7 @@ namespace Ozzyria.MonoGameClient.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Movement), typeof(Renderable));
+            var query = new EntityQuery().And(typeof(Movement), typeof(Player));
             var listener = context.CreateListener(query);
 
             listener.ListenToAdded = true;

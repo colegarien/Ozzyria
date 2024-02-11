@@ -28,9 +28,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Doors())
                 .Add(new Systems.Combat())
                 .Add(new Systems.Death(_context))
-                .Add(new Systems.AreaChange(world, _context))
-                .Add(new Systems.AnimationStateSync(_context))
-                .Add(new Systems.Animation());
+                .Add(new Systems.AreaChange(world, _context));
 
             world.WorldLoader.LoadContext(_context, template.EntityTemplate);
         }

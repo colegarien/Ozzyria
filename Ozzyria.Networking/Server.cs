@@ -301,7 +301,7 @@ namespace Ozzyria.Networking
                         case ClientMessage.DropItem:
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
-                                var bagItemRequest = ClientPacketFactory.ParseUnequipItemData(messageData);
+                                var bagItemRequest = ClientPacketFactory.ParseDropItemData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
 
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
@@ -361,18 +361,15 @@ namespace Ozzyria.Networking
                                             newBag.AddItem(droppedEntity);
                                             newBagEntity.AddComponent(newBag);
 
-                                            var newBagRenderable = (Renderable)newBagEntity.CreateComponent(typeof(Renderable));
-                                            newBagRenderable.IsDynamic = false;
-                                            newBagRenderable.StaticClip = "static_bag";
-                                            newBagRenderable.Z = (int)ZLayer.Middleground;
-                                            newBagEntity.AddComponent(newBagRenderable);
-
                                             var newBagMovement = (Movement)newBagEntity.CreateComponent(typeof(Movement));
                                             newBagMovement.X = bagMovement.X;
                                             newBagMovement.Y = bagMovement.Y;
                                             newBagMovement.PreviousX = bagMovement.X;
                                             newBagMovement.PreviousY = bagMovement.Y;
                                             newBagEntity.AddComponent(newBagMovement);
+
+                                            newBagEntity.AddComponent(new Skeleton { Type = SkeletonType.Static });
+                                            newBagEntity.AddComponent(new Animator { Type = ClipType.Stall });
 
                                             areaContext.AttachEntity(newBagEntity);
                                         }

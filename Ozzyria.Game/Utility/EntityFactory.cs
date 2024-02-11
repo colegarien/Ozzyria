@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Systems;
+using System.Drawing;
 using System.Numerics;
 
 namespace Ozzyria.Game.Utility
@@ -11,10 +12,6 @@ namespace Ozzyria.Game.Utility
         public static void CreatePlayer(EntityContext context, int playerId)
         {
             var player = context.CreateEntity();
-
-            var renderable = (Renderable)player.CreateComponent(typeof(Renderable));
-            renderable.IsDynamic = true;
-            renderable.Z = (int)ZLayer.Middleground;
 
             var playerTag = (Components.Player)player.CreateComponent(typeof(Components.Player));
             playerTag.PlayerId = playerId;
@@ -35,8 +32,6 @@ namespace Ozzyria.Game.Utility
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
-
-            var animationState = player.CreateComponent(typeof(AnimationState));
 
             var bag = (Bag)player.CreateComponent(typeof(Bag));
 
@@ -130,8 +125,6 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(new Mask { MaskId = "shades" });
             player.AddComponent(new Armor { ArmorId = "biker_jacket" });
 
-            player.AddComponent(animationState);
-            player.AddComponent(renderable);
             player.AddComponent(playerTag);
             player.AddComponent(playerLocation);
             player.AddComponent(thought);
@@ -145,10 +138,6 @@ namespace Ozzyria.Game.Utility
         public static void CreateSlime(EntityContext context, float x, float y)
         {
             var slime = context.CreateEntity();
-
-            var renderable = (Renderable)slime.CreateComponent(typeof(Renderable));
-            renderable.IsDynamic = true;
-            renderable.Z = (int)ZLayer.Middleground;
 
             slime.AddComponent(new Animator { NumberOfFrames = 3 });
             slime.AddComponent(new Skeleton { Type = SkeletonType.Slime });
@@ -174,10 +163,6 @@ namespace Ozzyria.Game.Utility
             var collision = (BoundingCircle)slime.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
-            var animationState = slime.CreateComponent(typeof(AnimationState));
-
-            slime.AddComponent(animationState);
-            slime.AddComponent(renderable);
             slime.AddComponent(thought);
             slime.AddComponent(movement);
             slime.AddComponent(stats);
@@ -212,25 +197,15 @@ namespace Ozzyria.Game.Utility
             movement.PreviousX = x;
             movement.PreviousY = y;
 
-            // TODO OZ-22 make doors have their own graphic
-            var renderable = (Renderable)door.CreateComponent(typeof(Renderable));
-            renderable.IsDynamic = false;
-            renderable.StaticClip = "static_door";
-            renderable.Z = (int)ZLayer.Items;
-
+            door.AddComponent(new Animator { Type = ClipType.Stall });
+            door.AddComponent(new Skeleton { Type = SkeletonType.Static});
             door.AddComponent(doorComponent);
             door.AddComponent(movement);
-            door.AddComponent(renderable);
         }
 
         public static void CreateExperienceOrb(EntityContext context, float x, float y, int value)
         {
             var orb = context.CreateEntity();
-
-            var renderable = (Renderable)orb.CreateComponent(typeof(Renderable));
-            renderable.IsDynamic = false;
-            renderable.StaticClip = "static_exp_orb";
-            renderable.Z = (int)ZLayer.Items;
 
             var thought = (ExperienceOrbThought)orb.CreateComponent(typeof(ExperienceOrbThought));
 
@@ -245,7 +220,8 @@ namespace Ozzyria.Game.Utility
             var boost = (ExperienceBoost)orb.CreateComponent(typeof(ExperienceBoost));
             boost.Experience = value;
 
-            orb.AddComponent(renderable);
+            orb.AddComponent(new Skeleton { Type = SkeletonType.Static });
+            orb.AddComponent(new Animator { Type = ClipType.Stall });
             orb.AddComponent(thought);
             orb.AddComponent(movement);
             orb.AddComponent(boost);
