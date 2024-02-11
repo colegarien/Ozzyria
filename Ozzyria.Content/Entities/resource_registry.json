@@ -114,7 +114,255 @@
     }
   },
   "Drawables": {
-
+    "Pixel": {
+      "Resource": 0,
+      "Left": 943,
+      "Top": 56,
+      "Width": 1,
+      "Height": 1
+    },
+    "Human": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Down_0": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Down_1": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Down_2": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Up_0": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Up_1": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Up_2": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Left_0": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Left_1": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Left_2": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Right_0": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Right_1": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Idle_Right_2": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Down": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Down_1": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Up": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Up_1": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Left": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Left_1": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 3,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Right": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Human_Attack_Right_1": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 0,
+      "OriginX": 16,
+      "OriginY": 32
+    },
+    "Slime": {
+      "Resource": 0,
+      "Left": 7,
+      "Top": 331,
+      "Width": 18,
+      "Height": 20,
+      "Subspace": 0,
+      "OriginX": 0,
+      "OriginY": 0
+    },
+    "Sword_gladius": {
+      "Resource": 0,
+      "Left": 32,
+      "Top": 109,
+      "Width": 21,
+      "Height": 6,
+      "Subspace": 2,
+      "OriginX": 0,
+      "OriginY": 3,
+      "AttachmentType": 1
+    },
+    "Sword_Trail_Basic": {
+      "Resource": 0,
+      "Left": 914,
+      "Top": 33,
+      "Width": 11,
+      "Height": 28,
+      "Subspace": 1,
+      "OriginX": -5.5,
+      "OriginY": 28,
+      "AttachmentType": 1
+    }
   },
   "FrameSources": {
     "exp_orb": {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 
@@ -16,24 +17,24 @@ namespace Ozzyria.MonoGameClient.Rendering
             var x = skeleton.RootX;
             var y = skeleton.RootY;
             var angle = drawable.BaseAngle;
-            switch (drawable.SkeletonOffset)
+            switch (drawable.AttachmentType)
             {
-                case DrawableOffsetType.Weapon:
+                case DrawableAttachmentType.Weapon:
                     x += skeleton.WeaponOffsetX;
                     y += skeleton.WeaponOffsetY;
                     angle += skeleton.WeaponOffsetAngle;
                     break;
-                case DrawableOffsetType.Armor:
+                case DrawableAttachmentType.Armor:
                     x += skeleton.ArmorOffsetX;
                     y += skeleton.ArmorOffsetY;
                     angle += skeleton.ArmorOffsetAngle;
                     break;
-                case DrawableOffsetType.Mask:
+                case DrawableAttachmentType.Mask:
                     x += skeleton.MaskOffsetX;
                     y += skeleton.MaskOffsetY;
                     angle += skeleton.MaskOffsetAngle;
                     break;
-                case DrawableOffsetType.Hat:
+                case DrawableAttachmentType.Hat:
                     x += skeleton.HatOffsetX;
                     y += skeleton.HatOffsetY;
                     angle += skeleton.HatOffsetAngle;
@@ -45,10 +46,10 @@ namespace Ozzyria.MonoGameClient.Rendering
             graphic.Layer = skeleton.Layer;
             graphic.SubLayer = skeleton.SubLayer;
             graphic.SubSubLayer = drawable.Subspace;
-            graphic.Destination = new Rectangle(x, y, drawable.Source.Width, drawable.Source.Height);
-            graphic.Source = drawable.Source;
+            graphic.Destination = new Rectangle(x, y, drawable.Width, drawable.Height);
+            graphic.Source = new Rectangle(drawable.Left, drawable.Top, drawable.Width, drawable.Height);
             graphic.Angle = angle;
-            graphic.Origin = drawable.Origin;
+            graphic.Origin = new Vector2(drawable.OriginX, drawable.OriginY);
             graphic.Colour = color;
             graphic.FlipVertically = drawable.FlipVertically;
             graphic.FlipHorizontally = drawable.FlipHorizontally;

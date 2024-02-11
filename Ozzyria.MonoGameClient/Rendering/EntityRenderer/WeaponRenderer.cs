@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
+using Ozzyria.MonoGameClient.Rendering.Resolver;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
 {
@@ -18,18 +20,14 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 return;
 
             var weapon = (Weapon)entity.GetComponent(typeof(Weapon));
-            switch (weapon.WeaponType)
-            {
-                case WeaponType.Sword:
-                    var drawable = Drawable.WEAPON_DAGGER;
-                    drawable.FlipVertically = skeleton.Direction == Direction.Left || skeleton.Direction == Direction.Up;
-                    PushDrawable(graphicsPipeline, entity, skeleton, drawable, combat.Frame == combat.DamageFrame ? Color.Red : Color.White);
+            var weaponDrawable = WeaponDrawableResolver.GetWeapon(weapon.WeaponType, weapon.WeaponId);
+            weaponDrawable.FlipVertically = skeleton.Direction == Direction.Left || skeleton.Direction == Direction.Up;
+            PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable, combat.Frame == combat.DamageFrame ? Color.Red : Color.White);
 
-                    if (combat.Frame == combat.DamageFrame) {
-                        var effectDrawable = Drawable.WEAPON_TRAIL;
-                        PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable, Color.White);
-                    }
-                    break;
+            if (combat.Frame == combat.DamageFrame)
+            {
+                var effectDrawable = WeaponDrawableResolver.GetWeaponTrail(weapon.WeaponType, weapon.WeaponId);
+                PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable, Color.White);
             }
         }
     }

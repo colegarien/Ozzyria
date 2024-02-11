@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 
-namespace Ozzyria.MonoGameClient
+namespace Ozzyria.MonoGameClient.Rendering.Resolver
 {
     internal class SkeletonOffsetResolver
     {

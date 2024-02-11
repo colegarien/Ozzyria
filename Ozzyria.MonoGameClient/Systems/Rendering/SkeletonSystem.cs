@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
+using Ozzyria.MonoGameClient.Rendering.Resolver;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering
 {
