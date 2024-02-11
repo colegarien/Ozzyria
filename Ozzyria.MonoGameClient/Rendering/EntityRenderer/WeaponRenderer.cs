@@ -20,13 +20,13 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 return;
 
             var weapon = (Weapon)entity.GetComponent(typeof(Weapon));
-            var weaponDrawable = WeaponDrawableResolver.GetWeapon(weapon.WeaponType, weapon.WeaponId);
+            var weaponDrawable = ItemDrawableResolver.Get(weapon.WeaponId, skeleton.Direction, skeleton.Frame);
             weaponDrawable.FlipVertically = skeleton.Direction == Direction.Left || skeleton.Direction == Direction.Up;
             PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable, combat.Frame == combat.DamageFrame ? Color.Red : Color.White);
 
             if (combat.Frame == combat.DamageFrame)
             {
-                var effectDrawable = WeaponDrawableResolver.GetWeaponTrail(weapon.WeaponType, weapon.WeaponId);
+                var effectDrawable = ItemDrawableResolver.Get("basic-trail", skeleton.Direction, skeleton.Frame);
                 PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable, Color.White);
             }
         }

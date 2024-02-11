@@ -341,7 +341,7 @@
       "OriginX": 0,
       "OriginY": 0
     },
-    "Sword_gladius": {
+    "gladius": {
       "Resource": 0,
       "Left": 32,
       "Top": 109,
@@ -352,7 +352,29 @@
       "OriginY": 3,
       "AttachmentType": 1
     },
-    "Sword_Trail_Basic": {
+    "pink_sword": {
+      "Resource": 0,
+      "Left": 64,
+      "Top": 109,
+      "Width": 32,
+      "Height": 6,
+      "Subspace": 2,
+      "OriginX": 0,
+      "OriginY": 3,
+      "AttachmentType": 1
+    },
+    "grey_sword": {
+      "Resource": 0,
+      "Left": 96,
+      "Top": 109,
+      "Width": 20,
+      "Height": 4,
+      "Subspace": 2,
+      "OriginX": 0,
+      "OriginY": 2,
+      "AttachmentType": 1
+    },
+    "basic-trail": {
       "Resource": 0,
       "Left": 914,
       "Top": 33,

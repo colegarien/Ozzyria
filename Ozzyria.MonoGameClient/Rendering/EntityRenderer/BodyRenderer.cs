@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
