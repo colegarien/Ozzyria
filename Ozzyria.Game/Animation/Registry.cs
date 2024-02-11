@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Persistence;
+﻿using Ozzyria.Game.Components;
+using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -10,6 +11,7 @@ namespace Ozzyria.Game.Animation
         protected static Registry _instance;
 
         public Dictionary<uint, string> Resources { get; set; }
+        public Dictionary<string, SkeletonOffsets> SkeletonOffsets { get; set; }
         public Dictionary<string, FrameSource> FrameSources { get; set; }
         public Dictionary<string, Clip> Clips { get; set; }
 

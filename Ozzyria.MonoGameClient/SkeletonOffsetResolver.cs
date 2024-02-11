@@ -1,52 +1,37 @@
 ﻿using Ozzyria.Game.Components;
-using System.Collections.Generic;
 
 namespace Ozzyria.MonoGameClient
 {
     internal class SkeletonOffsetResolver
     {
-        private static Dictionary<string, SkeletonOffsets> offsets = new Dictionary<string, SkeletonOffsets>
-        {
-            { "0", SkeletonOffsets.HUMANOID_IDLE },
-            { "0_2_1_0", SkeletonOffsets.HUMANOID_ATTACK_UP_0 },
-            { "0_2_1_1", SkeletonOffsets.HUMANOID_ATTACK_UP_1 },
-            { "0_2_1_2", SkeletonOffsets.HUMANOID_ATTACK_UP_2 },
-            { "0_2_2_0", SkeletonOffsets.HUMANOID_ATTACK_DOWN_0 },
-            { "0_2_2_1", SkeletonOffsets.HUMANOID_ATTACK_DOWN_1 },
-            { "0_2_2_2", SkeletonOffsets.HUMANOID_ATTACK_DOWN_2 },
-            { "0_2_3_0", SkeletonOffsets.HUMANOID_ATTACK_LEFT_0 },
-            { "0_2_3_1", SkeletonOffsets.HUMANOID_ATTACK_LEFT_1 },
-            { "0_2_3_2", SkeletonOffsets.HUMANOID_ATTACK_LEFT_2 },
-            { "0_2_4_0", SkeletonOffsets.HUMANOID_ATTACK_RIGHT_0 },
-            { "0_2_4_1", SkeletonOffsets.HUMANOID_ATTACK_RIGHT_1 },
-            { "0_2_4_2", SkeletonOffsets.HUMANOID_ATTACK_RIGHT_2 },
-
-            { "1", SkeletonOffsets.SLIME_IDLE }
-        };
-
-
         public static SkeletonOffsets Get(SkeletonType type, SkeletonPose pose, Direction direction, int frame)
         {
-            var guessA = $"{(int)type}_{(int)pose}_{(int)direction}_{frame}";
-            var guessB = $"{(int)type}_{(int)pose}_{(int)direction}";
-            var guessC = $"{(int)type}_{(int)pose}";
-            var guessD = $"{(int)type}";
+            var resourceRegistry = Game.Animation.Registry.GetInstance();
 
-            if (offsets.ContainsKey(guessA))
+            var typeKey = type.ToString();
+            var poseKey = pose.ToString();
+            var directionKey = direction.ToString();
+
+            var guessA = $"{typeKey}_{poseKey}_{directionKey}_{frame}";
+            var guessB = $"{typeKey}_{poseKey}_{directionKey}";
+            var guessC = $"{typeKey}_{poseKey}";
+            var guessD = $"{typeKey}";
+
+            if (resourceRegistry.SkeletonOffsets.ContainsKey(guessA))
             {
-                return offsets[guessA];
+                return resourceRegistry.SkeletonOffsets[guessA];
             }
-            else if (offsets.ContainsKey(guessB))
+            else if (resourceRegistry.SkeletonOffsets.ContainsKey(guessB))
             {
-                return offsets[guessB];
+                return resourceRegistry.SkeletonOffsets[guessB];
             }
-            else if (offsets.ContainsKey(guessC))
+            else if (resourceRegistry.SkeletonOffsets.ContainsKey(guessC))
             {
-                return offsets[guessC];
+                return resourceRegistry.SkeletonOffsets[guessC];
             }
-            else if (offsets.ContainsKey(guessD))
+            else if (resourceRegistry.SkeletonOffsets.ContainsKey(guessD))
             {
-                return offsets[guessD];
+                return resourceRegistry.SkeletonOffsets[guessD];
             }
 
             return new SkeletonOffsets();

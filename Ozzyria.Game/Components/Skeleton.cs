@@ -320,130 +320,14 @@ namespace Ozzyria.Game.Components
         public int WeaponOffsetX { get; set; }
         public int WeaponOffsetY { get; set; }
         public float WeaponOffsetAngle { get; set; }
-
-        // TODO pull this from a registry of some kind instead, one for each skeleton?
-        public static SkeletonOffsets SLIME_IDLE = new SkeletonOffsets
-        {
-            RootOffsetX = 0,
-            RootOffsetY = 0,
-            RenderOffsetY = 20,
-        };
-        public static SkeletonOffsets HUMANOID_IDLE = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 24 - 16,
-            WeaponOffsetY = 14 - 32,
-            WeaponOffsetAngle = -1.570796f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_RIGHT_0 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 24 - 16,
-            WeaponOffsetY = 14 - 32,
-            WeaponOffsetAngle = -1.570796f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_RIGHT_1 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 29 - 16,
-            WeaponOffsetY = 14 - 32,
-            WeaponOffsetAngle = -0.5323254f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_RIGHT_2 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 28 - 16,
-            WeaponOffsetY = 21 - 32,
-            WeaponOffsetAngle = 0.20944f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_LEFT_0 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 8 - 16,
-            WeaponOffsetY = 14 - 32,
-            WeaponOffsetAngle = -1.580796f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_LEFT_1 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 3 - 16,
-            WeaponOffsetY = 14 - 32,
-            WeaponOffsetAngle = 3.7001f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_LEFT_2 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 4 - 16,
-            WeaponOffsetY = 21 - 32,
-            WeaponOffsetAngle = 2.9059732f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_DOWN_0 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 22 - 16,
-            WeaponOffsetY = 19 - 32,
-            WeaponOffsetAngle = 0.418879f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_DOWN_1 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 18 - 16,
-            WeaponOffsetY = 25 - 32,
-            WeaponOffsetAngle = 2.0612338f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_DOWN_2 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 8 - 16,
-            WeaponOffsetY = 20 - 32,
-            WeaponOffsetAngle = 2.58309f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_UP_0 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 22 - 16,
-            WeaponOffsetY = 19 - 32,
-            WeaponOffsetAngle = 3.56047f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_UP_1 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 18 - 16,
-            WeaponOffsetY = 25 - 32,
-            WeaponOffsetAngle = 5.202826f,
-        };
-        public static SkeletonOffsets HUMANOID_ATTACK_UP_2 = new SkeletonOffsets
-        {
-            RootOffsetX = -16,
-            RootOffsetY = 0,
-            RenderOffsetY = 0,
-            WeaponOffsetX = 8 - 16,
-            WeaponOffsetY = 20 - 32,
-            WeaponOffsetAngle = 5.724682f,
-        };
+        public int ArmorOffsetX { get; set; }
+        public int ArmorOffsetY { get; set; }
+        public float ArmorOffsetAngle { get; set; }
+        public int HatOffsetX { get; set; }
+        public int HatOffsetY { get; set; }
+        public float HatOffsetAngle { get; set; }
+        public int MaskOffsetX { get; set; }
+        public int MaskOffsetY { get; set; }
+        public float MaskOffsetAngle { get; set; }
     }
 }
