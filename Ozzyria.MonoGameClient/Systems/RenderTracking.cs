@@ -32,7 +32,6 @@ namespace Ozzyria.MonoGameClient.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var renderable = (Renderable)entity.GetComponent(typeof(Renderable));
                 var state = (AnimationState)entity.GetComponent(typeof(AnimationState));
-                var gear = (EquippedGear)entity.GetComponent(typeof(EquippedGear));
 
                 if (entity.HasComponent(typeof(Player)) && ((Player)entity.GetComponent(typeof(Player))).PlayerId == _game.Client.Id && movement != null)
                 {
@@ -49,7 +48,7 @@ namespace Ozzyria.MonoGameClient.Systems
                 }
                 else
                 {
-                    UpdateEntityDrawables(entity, movement, renderable, state, gear);
+                    UpdateEntityDrawables(entity, movement, renderable, state);
                 }
             }
 
@@ -96,7 +95,7 @@ namespace Ozzyria.MonoGameClient.Systems
             }
         }
 
-        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable, AnimationState state, EquippedGear gear)
+        private void UpdateEntityDrawables(Entity entity, Movement movement, Renderable renderable, AnimationState state)
         {
             var existingItemIndex = entityDrawables.FindIndex(0, entityDrawables.Count, e => e.GetEntityId() != null && e.GetEntityId() == entity.id);
 
@@ -104,37 +103,7 @@ namespace Ozzyria.MonoGameClient.Systems
             {
                 // TODO OZ-23 try using the ComplexDrawableInfo and then try the Z instead!!!
                 var complexDrawable = new ComplexDrawableInfo();
-
                 var direction = state.GetDirectionVariable("Direction");
-
-                if (gear.Body != "")
-                {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"{gear.Body}_{state.State}_{direction}");
-                    if (clip != null)
-                        complexDrawable.Drawables.Add(clip);
-                }
-
-                if (gear.Armor != "")
-                {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-armor_{state.State}_{direction}");
-                    if (clip != null)
-                        complexDrawable.Drawables.Add(clip);
-                }
-
-                if (gear.Mask != "")
-                {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-mask_{state.State}_{direction}");
-                    if (clip != null)
-                        complexDrawable.Drawables.Add(clip);
-                }
-
-                if (gear.Hat != "")
-                {
-                    var clip = BuildSubClip(entity, movement, renderable, state, gear, $"generic-hat_{state.State}_{direction}");
-                    if (clip != null)
-                        complexDrawable.Drawables.Add(clip);
-                }
-
                 if (complexDrawable.Drawables.Count > 0)
                     PushEntityDrawable(existingItemIndex, complexDrawable);
             }
@@ -144,7 +113,7 @@ namespace Ozzyria.MonoGameClient.Systems
             }
         }
 
-        private DrawableInfo BuildSubClip(Entity entity, Movement movement, Renderable renderable, AnimationState state, EquippedGear gear, string clip)
+        private DrawableInfo BuildSubClip(Entity entity, Movement movement, Renderable renderable, AnimationState state, string clip)
         {
             if (!ResourceRegistry.Clips.ContainsKey(clip))
                 return null;
@@ -153,15 +122,6 @@ namespace Ozzyria.MonoGameClient.Systems
             var frame = currentClip.GetFrame(renderable.CurrentFrame);
             var transform = frame.Transform;
             var sourceId = frame.SourceId;
-            
-            // TODO OZ-23 make it so that "body" can have generic animation as well!! (3 frame idle, 4 frame attack, etc)
-            // TODO OZ-23 decouple the name of the gear with the name of the frame-itself
-            if(sourceId == "**HAT**")
-                sourceId = gear.Hat + "_" + state.GetDirectionVariable("Direction");
-            else if (sourceId == "**ARMOR**")
-                sourceId = gear.Armor + "_" + state.GetDirectionVariable("Direction");
-            else if (sourceId == "**MASK**")
-                sourceId = gear.Mask + "_" + state.GetDirectionVariable("Direction");
 
             if (!ResourceRegistry.FrameSources.ContainsKey(sourceId))
                 return null;

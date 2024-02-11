@@ -33,12 +33,6 @@ namespace Ozzyria.Game.Utility
             var stats = (Stats)player.CreateComponent(typeof(Stats));
             var combat = (Components.Combat)player.CreateComponent(typeof(Components.Combat));
 
-            var equippedGear = (EquippedGear)player.CreateComponent(typeof(EquippedGear));
-            equippedGear.Hat = "green_hat";
-            equippedGear.Body = "body_white";
-            equippedGear.Armor = "biker_jacket";
-            equippedGear.Mask = "shades";
-
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
@@ -127,13 +121,16 @@ namespace Ozzyria.Game.Utility
             greySword.AddComponent(greySwordItem);
             bag.AddItem(greySword);
 
+            // Skeleton and Initial Equipment Setup
             player.AddComponent(new Animator{NumberOfFrames = 3});
             player.AddComponent(new Skeleton{ Type= SkeletonType.Humanoid });
             player.AddComponent(new Body { BodyType= BodyType.Human });
             player.AddComponent(new Weapon { WeaponType = WeaponType.Sword, WeaponId="gladius" });
+            player.AddComponent(new Hat { HatId = "green_hat" });
+            player.AddComponent(new Mask { MaskId = "shades" });
+            player.AddComponent(new Armor { ArmorId = "biker_jacket" });
 
             player.AddComponent(animationState);
-            player.AddComponent(equippedGear);
             player.AddComponent(renderable);
             player.AddComponent(playerTag);
             player.AddComponent(playerLocation);
@@ -174,16 +171,12 @@ namespace Ozzyria.Game.Utility
 
             var combat = (Components.Combat)slime.CreateComponent(typeof(Components.Combat));
 
-            var equippedGear = (EquippedGear)slime.CreateComponent(typeof(EquippedGear));
-            equippedGear.Body = "slime";
-
             var collision = (BoundingCircle)slime.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
             var animationState = slime.CreateComponent(typeof(AnimationState));
 
             slime.AddComponent(animationState);
-            slime.AddComponent(equippedGear);
             slime.AddComponent(renderable);
             slime.AddComponent(thought);
             slime.AddComponent(movement);

@@ -15,6 +15,9 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
             graphicsPipeline = GraphicsPipeline.Get();
             entityPipeline = new BodyRenderer()
                 .Chain(new WeaponRenderer())
+                .Chain(new ArmorRenderer())
+                .Chain(new HatRenderer())
+                .Chain(new MaskRenderer())
 
                 .Chain(new DebugRenderer());
         }

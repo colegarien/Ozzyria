@@ -194,17 +194,19 @@ namespace Ozzyria.Networking
 
                                         // equip gear into appropriate slot
                                         var weapon = (Weapon)playerEntity.GetComponent(typeof(Weapon));
-                                        var equippedGear = (EquippedGear)playerEntity.GetComponent(typeof(EquippedGear));
+                                        var hat = (Hat)playerEntity.GetComponent(typeof(Hat));
+                                        var armor = (Armor)playerEntity.GetComponent(typeof(Armor));
+                                        var mask = (Mask)playerEntity.GetComponent(typeof(Mask));
                                         switch (item.EquipmentSlot)
                                         {
                                             case "hat":
-                                                equippedGear.Hat = item.ItemId;
+                                                hat.HatId = item.ItemId;
                                                 break;
                                             case "armor":
-                                                equippedGear.Armor = item.ItemId;
+                                                armor.ArmorId = item.ItemId;
                                                 break;
                                             case "mask":
-                                                equippedGear.Mask = item.ItemId;
+                                                mask.MaskId = item.ItemId;
                                                 break;
                                             case "weapon":
                                                 // TODO support more than swords?
@@ -260,17 +262,19 @@ namespace Ozzyria.Networking
 
                                         // unequip gear from the appropriate slot
                                         var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
-                                        var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                        var hat = (Hat)bagEntity.GetComponent(typeof(Hat));
+                                        var armor = (Armor)bagEntity.GetComponent(typeof(Armor));
+                                        var mask = (Mask)bagEntity.GetComponent(typeof(Mask));
                                         switch (item.EquipmentSlot)
                                         {
                                             case "hat":
-                                                equippedGear.Hat = "";
+                                                hat.HatId = "";
                                                 break;
                                             case "armor":
-                                                equippedGear.Armor = "";
+                                                armor.ArmorId = "";
                                                 break;
                                             case "mask":
-                                                equippedGear.Mask = "";
+                                                mask.MaskId = "";
                                                 break;
                                             case "weapon":
                                                 weapon.WeaponType = WeaponType.Empty;
@@ -321,17 +325,19 @@ namespace Ozzyria.Networking
                                         if (item.IsEquipped)
                                         {
                                             var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
-                                            var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                            var hat = (Hat)bagEntity.GetComponent(typeof(Hat));
+                                            var armor = (Armor)bagEntity.GetComponent(typeof(Armor));
+                                            var mask = (Mask)bagEntity.GetComponent(typeof(Mask));
                                             switch (item.EquipmentSlot)
                                             {
                                                 case "hat":
-                                                    equippedGear.Hat = "";
+                                                    hat.HatId = "";
                                                     break;
                                                 case "armor":
-                                                    equippedGear.Armor = "";
+                                                    armor.ArmorId = "";
                                                     break;
                                                 case "mask":
-                                                    equippedGear.Mask = "";
+                                                    mask.MaskId = "";
                                                     break;
                                                 case "weapon":
                                                     weapon.WeaponType = WeaponType.Empty;
