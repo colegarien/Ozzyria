@@ -802,7 +802,7 @@
       "Top": 96,
       "Width": 32,
       "Height": 32,
-      "Subspace": 1,
+      "Subspace": 2,
       "OriginX": 16,
       "OriginY": 16,
       "AttachmentType": 4
@@ -813,9 +813,9 @@
       "Top": 96,
       "Width": 32,
       "Height": 32,
-      "Subspace": 1,
+      "Subspace": 2,
       "OriginX": 16,
-      "OriginY": 16,
+      "OriginY": 15,
       "AttachmentType": 4
     },
     "cowboy_hat_Left": {
@@ -824,7 +824,7 @@
       "Top": 96,
       "Width": 32,
       "Height": 32,
-      "Subspace": 5,
+      "Subspace": 6,
       "OriginX": 16,
       "OriginY": 16,
       "AttachmentType": 4
@@ -835,9 +835,9 @@
       "Top": 96,
       "Width": 32,
       "Height": 32,
-      "Subspace": 5,
+      "Subspace": 6,
       "OriginX": 16,
-      "OriginY": 16,
+      "OriginY": 15,
       "AttachmentType": 4
     },
     "cyan_armor_Right": {
