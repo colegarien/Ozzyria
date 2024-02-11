@@ -51,6 +51,15 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                 skeleton.WeaponOffsetX = offsets.WeaponOffsetX;
                 skeleton.WeaponOffsetY = offsets.WeaponOffsetY;
                 skeleton.WeaponOffsetAngle = offsets.WeaponOffsetAngle;
+                skeleton.ArmorOffsetX =     offsets.ArmorOffsetX;
+                skeleton.ArmorOffsetY =     offsets.ArmorOffsetY;
+                skeleton.ArmorOffsetAngle = offsets.ArmorOffsetAngle;
+                skeleton.HatOffsetX =     offsets.HatOffsetX;
+                skeleton.HatOffsetY =     offsets.HatOffsetY;
+                skeleton.HatOffsetAngle = offsets.HatOffsetAngle;
+                skeleton.MaskOffsetX =     offsets.MaskOffsetX;
+                skeleton.MaskOffsetY =     offsets.MaskOffsetY;
+                skeleton.MaskOffsetAngle = offsets.MaskOffsetAngle;
             }
         }
 

@@ -11,13 +11,131 @@
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796
     },
+    "Humanoid_Idle_Down_0": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -21,
+      "HatOffsetY":  -28
+    },
+    "Humanoid_Idle_Down_1": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -20,
+      "HatOffsetY": -27
+    },
+    "Humanoid_Idle_Down_2": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -19,
+      "HatOffsetY": -26
+    },
+    "Humanoid_Idle_Up_0": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
+    },
+    "Humanoid_Idle_Up_1": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -20,"HatOffsetY": -27
+    },
+    "Humanoid_Idle_Up_2": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetY": -19,"HatOffsetY": -26
+    },
+    "Humanoid_Idle_Left_0": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
+    },
+    "Humanoid_Idle_Left_1": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -20,"HatOffsetY": -27
+    },
+    "Humanoid_Idle_Left_2": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -19,"HatOffsetY": -26
+    },
+    "Humanoid_Idle_Right_0": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
+    },
+    "Humanoid_Idle_Right_1": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -20,"HatOffsetY": -27
+    },
+    "Humanoid_Idle_Right_2": {
+      "RootOffsetX": -16,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 8,
+      "WeaponOffsetY": -18,
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -19,"HatOffsetY": -26
+    },
     "Humanoid_Attack_Up_0": {
       "RootOffsetX": -16,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -6,
       "WeaponOffsetY": -13,
-      "WeaponOffsetAngle": 3.56047
+      "WeaponOffsetAngle": 3.56047,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Up_1": {
       "RootOffsetX": -16,
@@ -25,7 +143,8 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": -2,
       "WeaponOffsetY": -7,
-      "WeaponOffsetAngle": 5.202826
+      "WeaponOffsetAngle": 5.202826,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Up_2": {
       "RootOffsetX": -16,
@@ -33,7 +152,8 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -12,
-      "WeaponOffsetAngle": 5.724682
+      "WeaponOffsetAngle": 5.724682,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Down_0": {
       "RootOffsetX": -16,
@@ -41,7 +161,8 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 6,
       "WeaponOffsetY": -13,
-      "WeaponOffsetAngle": 0.418879
+      "WeaponOffsetAngle": 0.418879,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Down_1": {
       "RootOffsetX": -16,
@@ -49,7 +170,8 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 2,
       "WeaponOffsetY": -7,
-      "WeaponOffsetAngle": 2.0612338
+      "WeaponOffsetAngle": 2.0612338,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Down_2": {
       "RootOffsetX": -16,
@@ -57,7 +179,8 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": -8,
       "WeaponOffsetY": -12,
-      "WeaponOffsetAngle": 2.58309
+      "WeaponOffsetAngle": 2.58309,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Left_0": {
       "RootOffsetX": -16,
@@ -65,7 +188,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": -8,
       "WeaponOffsetY": -18,
-      "WeaponOffsetAngle": -1.580796
+      "WeaponOffsetAngle": -1.580796,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Left_1": {
       "RootOffsetX": -16,
@@ -73,7 +198,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": -13,
       "WeaponOffsetY": -18,
-      "WeaponOffsetAngle": 3.7001
+      "WeaponOffsetAngle": 3.7001,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Left_2": {
       "RootOffsetX": -16,
@@ -81,7 +208,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": -12,
       "WeaponOffsetY": -11,
-      "WeaponOffsetAngle": 2.9059732
+      "WeaponOffsetAngle": 2.9059732,
+      "MaskOffsetX": -8,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Right_0": {
       "RootOffsetX": -16,
@@ -89,7 +218,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
-      "WeaponOffsetAngle": -1.570796
+      "WeaponOffsetAngle": -1.570796,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Right_1": {
       "RootOffsetX": -16,
@@ -97,7 +228,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 13,
       "WeaponOffsetY": -18,
-      "WeaponOffsetAngle": -0.5323254
+      "WeaponOffsetAngle": -0.5323254,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Right_2": {
       "RootOffsetX": -16,
@@ -105,7 +238,9 @@
       "RenderOffsetY": 0,
       "WeaponOffsetX": 12,
       "WeaponOffsetY": -11,
-      "WeaponOffsetAngle": 0.20944
+      "WeaponOffsetAngle": 0.20944,
+      "MaskOffsetX": 9,
+      "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Slime": {
       "RootOffsetX": -16,
@@ -624,8 +759,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "green_hat_Down": {
@@ -635,8 +770,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "green_hat_Left": {
@@ -646,8 +781,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "green_hat_Up": {
@@ -657,8 +792,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "cowboy_hat_Right": {
@@ -668,8 +803,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "cowboy_hat_Down": {
@@ -679,8 +814,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "cowboy_hat_Left": {
@@ -690,8 +825,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "cowboy_hat_Up": {
@@ -701,8 +836,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 16,
       "AttachmentType": 4
     },
     "cyan_armor_Right": {
@@ -712,8 +847,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "cyan_armor_Down": {
@@ -723,8 +858,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "cyan_armor_Left": {
@@ -734,8 +869,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "cyan_armor_Up": {
@@ -745,8 +880,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "biker_jacket_Right": {
@@ -756,8 +891,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "biker_jacket_Down": {
@@ -767,8 +902,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "biker_jacket_Left": {
@@ -778,8 +913,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "biker_jacket_Up": {
@@ -789,8 +924,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 32,
       "AttachmentType": 2
     },
     "shades_Right": {
@@ -800,8 +935,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 16,
-      "OriginY": 32,
+      "OriginX": 25,
+      "OriginY": 15,
       "AttachmentType": 3
     },
     "shades_Down": {
@@ -811,8 +946,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 15,
       "AttachmentType": 3
     },
     "shades_Left": {
@@ -822,8 +957,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 16,
-      "OriginY": 32,
+      "OriginX": 8,
+      "OriginY": 15,
       "AttachmentType": 3
     },
     "shades_Up": {
@@ -833,8 +968,8 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 0,
-      "OriginY": 0,
+      "OriginX": 16,
+      "OriginY": 15,
       "AttachmentType": 3
     }
   },
