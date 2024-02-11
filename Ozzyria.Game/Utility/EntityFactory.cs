@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Systems;
+using System.Numerics;
 
 namespace Ozzyria.Game.Utility
 {
@@ -127,7 +128,7 @@ namespace Ozzyria.Game.Utility
             bag.AddItem(greySword);
 
             player.AddComponent(new Animator{NumberOfFrames = 3});
-            player.AddComponent(new Skeleton{});
+            player.AddComponent(new Skeleton{ Type= SkeletonType.Humanoid });
             player.AddComponent(new Body { BodyType= BodyType.Human });
             player.AddComponent(new Weapon { WeaponType = WeaponType.Sword, WeaponId="gladius" });
 
@@ -151,6 +152,11 @@ namespace Ozzyria.Game.Utility
             var renderable = (Renderable)slime.CreateComponent(typeof(Renderable));
             renderable.IsDynamic = true;
             renderable.Z = (int)ZLayer.Middleground;
+
+            slime.AddComponent(new Animator { NumberOfFrames = 3 });
+            slime.AddComponent(new Skeleton { Type = SkeletonType.Slime });
+            slime.AddComponent(new Body { BodyType = BodyType.Slime });
+            slime.AddComponent(new Weapon { WeaponType = WeaponType.Empty, WeaponId = "" });
 
             var thought = (SlimeThought)slime.CreateComponent(typeof(SlimeThought));
 
