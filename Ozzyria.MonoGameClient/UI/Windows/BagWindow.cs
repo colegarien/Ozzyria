@@ -124,9 +124,9 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                         {
                             var item = (Item)itemEntity.GetComponent(typeof(Item));
 
-                            if (_resources.FrameSources.ContainsKey(item.Icon))
+                            if (_resources.UIIcons.ContainsKey(item.Icon))
                             {
-                                var source = _resources.FrameSources[item.Icon];
+                                var source = _resources.UIIcons[item.Icon];
                                 var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
 
                                 // center source rect into slot center

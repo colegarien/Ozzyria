@@ -1,5 +1,4 @@
-﻿
-using Ozzyria.Game.ECS;
+﻿using Ozzyria.Game.ECS;
 using System;
 using System.Collections.Generic;
 

@@ -6,7 +6,9 @@ using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
 using Ozzyria.Game.ECS;
 using Ozzyria.Game.Persistence;
+using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.MonoGameClient.Systems;
+using Ozzyria.MonoGameClient.Systems.Rendering;
 using Ozzyria.MonoGameClient.UI;
 using Ozzyria.MonoGameClient.UI.Handlers;
 using Ozzyria.MonoGameClient.UI.Windows;
@@ -26,6 +28,7 @@ namespace Ozzyria.MonoGameClient
         private SpriteBatch _spriteBatch;
         private SpriteFont _greyFont;
         private SpriteFont _greyMonoFont;
+        private GraphicsPipeline _pipeline;
 
         private EntityContext _context;
         private SystemCoordinator _coordinator;
@@ -77,12 +80,16 @@ namespace Ozzyria.MonoGameClient
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator
-                .Add(new Systems.BagSyncing(this))
-                .Add(new Systems.Network(this))
-                .Add(new Systems.LocalPlayer(this, _context))
-                .Add(new Systems.RenderTracking(this, _context))
-                .Add(new Systems.LocalStateTracking(this, _context))
-                .Add(new Systems.BagTracking(this, _context));
+                .Add(new AnimatorSystem())
+                .Add(new BagSyncing(this))
+                .Add(new Network(this))
+                .Add(new LocalPlayer(this, _context))
+                .Add(new CameraTracking(this, _context))
+                .Add(new LocalStateTracking(this, _context))
+                .Add(new BagTracking(this, _context))
+                .Add(new SkeletonSystem(_context)).Add(new GraphicsSystem(_context));
+
+            _pipeline = GraphicsPipeline.Get();
 
             Client = new Client();
             if (!Client.Connect("127.0.0.1", 13000))
@@ -171,33 +178,32 @@ namespace Ozzyria.MonoGameClient
 
             _coordinator.Execute((float)gameTime.ElapsedGameTime.TotalMilliseconds, _context);
             UiManager.Update((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+            _pipeline.SwapBuffer();
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            var resources = Registry.GetInstance();
             GraphicsDevice.Clear(Color.Black);
 
             ///
             /// Render Game World
             ///
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Camera.GetViewMatrix());
-            foreach (var drawls in Systems.RenderTracking.finalDrawables)
+            foreach(var graphic in _pipeline.GetGraphics(Camera))
             {
-                if (drawls is DrawableInfo)
+                if (!graphic.Hidden)
                 {
-                    DrawDrawableInfo((DrawableInfo)drawls);
-                }
-                else
-                {
-                    var drawlsList = ((ComplexDrawableInfo)drawls).Drawables;
-                    foreach(var subDrawls in drawlsList)
-                    {
-                        DrawDrawableInfo(subDrawls);
-                    }
-                }
+                    var effect = SpriteEffects.None;
+                    if (graphic.FlipHorizontally)
+                        effect |= SpriteEffects.FlipHorizontally;
+                    if (graphic.FlipVertically)
+                        effect |= SpriteEffects.FlipVertically;
 
+                    _spriteBatch.Draw(TextureResources[resources.Resources[graphic.Resource]], graphic.Destination, graphic.Source, graphic.Colour, graphic.Angle, graphic.Origin, effect, 0);
+                }
             }
             _spriteBatch.End();
 
@@ -228,10 +234,9 @@ namespace Ozzyria.MonoGameClient
             })?.GetComponent(typeof(Item)) as Item;
             if (equippedWeapon != null)
             {
-                var resources = Registry.GetInstance();
-                if (resources.FrameSources.ContainsKey(equippedWeapon.Icon))
+                if (resources.UIIcons.ContainsKey(equippedWeapon.Icon))
                 {
-                    var source = resources.FrameSources[equippedWeapon.Icon];
+                    var source = resources.UIIcons[equippedWeapon.Icon];
                     var sourceRect = new Rectangle(source.Left, source.Top, source.Width, source.Height);
                     var slotRectangle = new Rectangle(162, 331, 32, 32);
 
@@ -250,27 +255,6 @@ namespace Ozzyria.MonoGameClient
 
             _spriteBatch.End();
             base.Draw(gameTime);
-        }
-
-        protected void DrawDrawableInfo(DrawableInfo drawls)
-        {
-            var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
-            foreach (var rect in drawls.TextureRect)
-            {
-                _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
-
-                if (DEBUG_SHAPES)
-                {
-                    // bottom
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y + drawls.Height, drawls.Width, 1), new Rectangle(905,87,4,4), Color.White);
-                    // right
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X + drawls.Width, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Red);
-                    // left
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Yellow);
-                    // top
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, 1), new Rectangle(905, 87, 4, 4), Color.Green);
-                }
-            }
         }
 
         bool IMouseUpHandler.HandleMouseUp(InputTracker tracker, MouseButton button, int x, int y)

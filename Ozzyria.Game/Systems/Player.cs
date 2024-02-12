@@ -32,7 +32,7 @@ namespace Ozzyria.Game.Systems
 
                 HandleInput(deltaTime, input, movement);
 
-                combat.Update(deltaTime, input.Attack);
+                combat.WantToAttack = input.Attack;
                 movement.Update(deltaTime);
             }
         }

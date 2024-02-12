@@ -170,11 +170,6 @@ namespace Ozzyria.ConstructionKit
             btnMapSave.Text = "&Save";
             btnMapSave.Click += btnMapSave_Click;
             // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolPaint
             // 
             this.toolPaint.CheckOnClick = true;
@@ -207,11 +202,6 @@ namespace Ozzyria.ConstructionKit
             this.toolErase.Size = new System.Drawing.Size(23, 22);
             this.toolErase.Text = "&Erase";
             this.toolErase.CheckedChanged += new System.EventHandler(this.toolErase_CheckedChanged);
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripLabel1
             // 

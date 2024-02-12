@@ -64,6 +64,14 @@ namespace Ozzyria.Game.ECS
                 : null;
         }
 
+        public T GetComponent<T>()
+        {
+            IComponent component = GetComponent(typeof(T));
+            return component != null
+                ? (T)component
+                : default(T);
+        }
+
         public IComponent CreateComponent<T>() where T : new()
         {
             IComponent c = (IComponent)new T();

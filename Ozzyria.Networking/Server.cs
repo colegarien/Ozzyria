@@ -193,20 +193,25 @@ namespace Ozzyria.Networking
                                         }
 
                                         // equip gear into appropriate slot
-                                        var equippedGear = (EquippedGear)playerEntity.GetComponent(typeof(EquippedGear));
+                                        var weapon = (Weapon)playerEntity.GetComponent(typeof(Weapon));
+                                        var hat = (Hat)playerEntity.GetComponent(typeof(Hat));
+                                        var armor = (Armor)playerEntity.GetComponent(typeof(Armor));
+                                        var mask = (Mask)playerEntity.GetComponent(typeof(Mask));
                                         switch (item.EquipmentSlot)
                                         {
                                             case "hat":
-                                                equippedGear.Hat = item.ItemId;
+                                                hat.HatId = item.ItemId;
                                                 break;
                                             case "armor":
-                                                equippedGear.Armor = item.ItemId;
+                                                armor.ArmorId = item.ItemId;
                                                 break;
                                             case "mask":
-                                                equippedGear.Mask = item.ItemId;
+                                                mask.MaskId = item.ItemId;
                                                 break;
                                             case "weapon":
-                                                equippedGear.Weapon = item.ItemId;
+                                                // TODO support more than swords?
+                                                weapon.WeaponType = WeaponType.Sword;
+                                                weapon.WeaponId = item.ItemId;
                                                 break;
                                         }
                                         item.IsEquipped = true;
@@ -256,20 +261,24 @@ namespace Ozzyria.Networking
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear from the appropriate slot
-                                        var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                        var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
+                                        var hat = (Hat)bagEntity.GetComponent(typeof(Hat));
+                                        var armor = (Armor)bagEntity.GetComponent(typeof(Armor));
+                                        var mask = (Mask)bagEntity.GetComponent(typeof(Mask));
                                         switch (item.EquipmentSlot)
                                         {
                                             case "hat":
-                                                equippedGear.Hat = "";
+                                                hat.HatId = "";
                                                 break;
                                             case "armor":
-                                                equippedGear.Armor = "";
+                                                armor.ArmorId = "";
                                                 break;
                                             case "mask":
-                                                equippedGear.Mask = "";
+                                                mask.MaskId = "";
                                                 break;
                                             case "weapon":
-                                                equippedGear.Weapon = "";
+                                                weapon.WeaponType = WeaponType.Empty;
+                                                weapon.WeaponId = "";
                                                 break;
                                         }
                                         item.IsEquipped = false;
@@ -292,7 +301,7 @@ namespace Ozzyria.Networking
                         case ClientMessage.DropItem:
                             if (IsValidEndPoint(messageClient, clientEndPoint))
                             {
-                                var bagItemRequest = ClientPacketFactory.ParseUnequipItemData(messageData);
+                                var bagItemRequest = ClientPacketFactory.ParseDropItemData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
 
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
@@ -315,20 +324,24 @@ namespace Ozzyria.Networking
                                         // unequip gear from the appropriate slot
                                         if (item.IsEquipped)
                                         {
-                                            var equippedGear = (EquippedGear)bagEntity.GetComponent(typeof(EquippedGear));
+                                            var weapon = (Weapon)bagEntity.GetComponent(typeof(Weapon));
+                                            var hat = (Hat)bagEntity.GetComponent(typeof(Hat));
+                                            var armor = (Armor)bagEntity.GetComponent(typeof(Armor));
+                                            var mask = (Mask)bagEntity.GetComponent(typeof(Mask));
                                             switch (item.EquipmentSlot)
                                             {
                                                 case "hat":
-                                                    equippedGear.Hat = "";
+                                                    hat.HatId = "";
                                                     break;
                                                 case "armor":
-                                                    equippedGear.Armor = "";
+                                                    armor.ArmorId = "";
                                                     break;
                                                 case "mask":
-                                                    equippedGear.Mask = "";
+                                                    mask.MaskId = "";
                                                     break;
                                                 case "weapon":
-                                                    equippedGear.Weapon = "";
+                                                    weapon.WeaponType = WeaponType.Empty;
+                                                    weapon.WeaponId = "";
                                                     break;
                                             }
                                             item.IsEquipped = false;
@@ -348,18 +361,15 @@ namespace Ozzyria.Networking
                                             newBag.AddItem(droppedEntity);
                                             newBagEntity.AddComponent(newBag);
 
-                                            var newBagRenderable = (Renderable)newBagEntity.CreateComponent(typeof(Renderable));
-                                            newBagRenderable.IsDynamic = false;
-                                            newBagRenderable.StaticClip = "static_bag";
-                                            newBagRenderable.Z = (int)ZLayer.Middleground;
-                                            newBagEntity.AddComponent(newBagRenderable);
-
                                             var newBagMovement = (Movement)newBagEntity.CreateComponent(typeof(Movement));
                                             newBagMovement.X = bagMovement.X;
                                             newBagMovement.Y = bagMovement.Y;
                                             newBagMovement.PreviousX = bagMovement.X;
                                             newBagMovement.PreviousY = bagMovement.Y;
                                             newBagEntity.AddComponent(newBagMovement);
+
+                                            newBagEntity.AddComponent(new Skeleton { Type = SkeletonType.Static });
+                                            newBagEntity.AddComponent(new Animator { Type = ClipType.Stall });
 
                                             areaContext.AttachEntity(newBagEntity);
                                         }

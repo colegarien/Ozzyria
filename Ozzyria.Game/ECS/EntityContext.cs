@@ -101,6 +101,7 @@ namespace Ozzyria.Game.ECS
         {
             if (entities.ContainsKey(id))
             {
+                recentlyRemoved.Add(id);
                 entities[id].RemoveAllComponents();
                 entities.Remove(id);
             }
