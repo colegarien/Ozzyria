@@ -17,6 +17,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
         {
             uint pixelResource = 0;
             var pixelSource = new Rectangle(943, 56, 1, 1);
+            var pixelOrigin = Vector2.Zero;
 
             // Draw Position
             var position = (Movement)entity.GetComponent(typeof(Movement));
@@ -27,6 +28,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             positionGraphic.SubSubLayer = 0;
             positionGraphic.Destination = new Rectangle((int)position.X, (int)position.Y, 2, 2);
             positionGraphic.Source = pixelSource;
+            positionGraphic.Origin = pixelOrigin;
             positionGraphic.Angle = 0;
             positionGraphic.Colour = Color.Blue;
 
@@ -40,6 +42,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleLeftGraphic.SubSubLayer = 0;
                 circleLeftGraphic.Destination = new Rectangle((int)(position.X-circle.Radius), (int)(position.Y), 2, 2);
                 circleLeftGraphic.Source = pixelSource;
+                circleLeftGraphic.Origin = pixelOrigin;
                 circleLeftGraphic.Angle = 0;
                 circleLeftGraphic.Colour = Color.Yellow;
 
@@ -50,6 +53,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleRightGraphic.SubSubLayer = 0;
                 circleRightGraphic.Destination = new Rectangle((int)(position.X + circle.Radius), (int)(position.Y), 2, 2);
                 circleRightGraphic.Source = pixelSource;
+                circleRightGraphic.Origin = pixelOrigin;
                 circleRightGraphic.Angle = 0;
                 circleRightGraphic.Colour = Color.Yellow;
 
@@ -60,6 +64,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleTopGraphic.SubSubLayer = 0;
                 circleTopGraphic.Destination = new Rectangle((int)(position.X), (int)(position.Y - circle.Radius), 2, 2);
                 circleTopGraphic.Source = pixelSource;
+                circleTopGraphic.Origin = pixelOrigin;
                 circleTopGraphic.Angle = 0;
                 circleTopGraphic.Colour = Color.Yellow;
 
@@ -70,6 +75,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleBottomGraphic.SubSubLayer = 0;
                 circleBottomGraphic.Destination = new Rectangle((int)(position.X), (int)(position.Y + circle.Radius), 2, 2);
                 circleBottomGraphic.Source = pixelSource;
+                circleBottomGraphic.Origin = pixelOrigin;
                 circleBottomGraphic.Angle = 0;
                 circleBottomGraphic.Colour = Color.Yellow;
             }
@@ -82,6 +88,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             rootGraphic.SubSubLayer = 0;
             rootGraphic.Destination = new Rectangle(skeleton.RootX, skeleton.RootY, 2, 2);
             rootGraphic.Source = pixelSource;
+            rootGraphic.Origin = pixelOrigin;
             rootGraphic.Angle = 0;
             rootGraphic.Colour = Color.Green;
 
@@ -93,6 +100,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             weaponRootGraphic.SubSubLayer = 0;
             weaponRootGraphic.Destination = new Rectangle(skeleton.RootX + skeleton.WeaponOffsetX, skeleton.RootY + skeleton.WeaponOffsetY, 2, 2);
             weaponRootGraphic.Source = pixelSource;
+            weaponRootGraphic.Origin = pixelOrigin;
             weaponRootGraphic.Angle = 0;
             weaponRootGraphic.Colour = Color.Magenta;
             var weaponAngleGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
@@ -102,6 +110,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             weaponAngleGraphic.SubSubLayer = 0;
             weaponAngleGraphic.Destination = new Rectangle(skeleton.RootX + skeleton.WeaponOffsetX + (int)(Math.Cos(skeleton.WeaponOffsetAngle) * 10), skeleton.RootY + skeleton.WeaponOffsetY + (int)(Math.Sin(skeleton.WeaponOffsetAngle) * 10), 2, 2);
             weaponAngleGraphic.Source = pixelSource;
+            weaponAngleGraphic.Origin = pixelOrigin;
             weaponAngleGraphic.Angle = 0;
             weaponAngleGraphic.Colour = Color.DarkMagenta;
         }

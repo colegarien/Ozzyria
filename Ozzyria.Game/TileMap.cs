@@ -100,6 +100,7 @@ namespace Ozzyria.Game
     {
         public string Name { get; set; } = "";
         public string TileSet { get; set; } = "";
+        public uint Resource { get; set; } = 1;
         public int Width { get; set; } = 32;
         public int Height { get; set; } = 32;
 

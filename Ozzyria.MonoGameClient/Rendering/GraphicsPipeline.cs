@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Ozzyria.MonoGameClient.Rendering
 {
@@ -17,6 +19,7 @@ namespace Ozzyria.MonoGameClient.Rendering
         }
         #endregion
 
+        private long nextTileIndex = -1;
         private long tick = 0;
         private Dictionary<long, Graphic> _graphicsPool = new Dictionary<long, Graphic>();
         private Dictionary<uint, long> _entityLastTick = new Dictionary<uint, long>();
@@ -62,6 +65,35 @@ namespace Ozzyria.MonoGameClient.Rendering
                 index++;
             }
             _entityLastTick.Remove(entityId);
+        }
+
+        public Graphic GetTileGraphic()
+        {
+            if (!_graphicsPool.ContainsKey(nextTileIndex))
+            {
+                // instantiate new Graphic if there isn't an available hidden on in the pool
+                _graphicsPool[nextTileIndex] = new Graphic();
+            }
+
+            // show the graphic and return it
+            _graphicsPool[nextTileIndex].Hidden = false;
+            var graphic = _graphicsPool[nextTileIndex];
+            graphic.Hidden = false;
+            nextTileIndex--;
+
+            return graphic;
+        }
+
+        public void ClearTileGraphics()
+        {
+            long index = -1;
+            while (_graphicsPool.ContainsKey(index))
+            {
+                _graphicsPool.Remove(index);
+                index--;
+            }
+
+            nextTileIndex = -1;
         }
 
         public IEnumerable<Graphic> GetGraphics(Camera camera)

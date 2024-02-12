@@ -1,6 +1,7 @@
 {
   "Resources": {
-    "0": "entity_set_001"
+    "0": "entity_set_001",
+    "1": "outside_tileset_001"
   },
   "SkeletonOffsets": {
     "Humanoid": {

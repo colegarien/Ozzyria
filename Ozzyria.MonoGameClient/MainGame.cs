@@ -84,7 +84,7 @@ namespace Ozzyria.MonoGameClient
                 .Add(new BagSyncing(this))
                 .Add(new Network(this))
                 .Add(new LocalPlayer(this, _context))
-                .Add(new RenderTracking(this, _context))
+                .Add(new CameraTracking(this, _context))
                 .Add(new LocalStateTracking(this, _context))
                 .Add(new BagTracking(this, _context))
                 .Add(new SkeletonSystem(_context)).Add(new GraphicsSystem(_context));
@@ -192,23 +192,6 @@ namespace Ozzyria.MonoGameClient
             /// Render Game World
             ///
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Camera.GetViewMatrix());
-            foreach (var drawls in Systems.RenderTracking.finalDrawables)
-            {
-                if (drawls is DrawableInfo)
-                {
-                    DrawDrawableInfo((DrawableInfo)drawls);
-                }
-                else
-                {
-                    var drawlsList = ((ComplexDrawableInfo)drawls).Drawables;
-                    foreach(var subDrawls in drawlsList)
-                    {
-                        DrawDrawableInfo(subDrawls);
-                    }
-                }
-
-            }
-
             foreach(var graphic in _pipeline.GetGraphics(Camera))
             {
                 if (!graphic.Hidden)
@@ -272,27 +255,6 @@ namespace Ozzyria.MonoGameClient
 
             _spriteBatch.End();
             base.Draw(gameTime);
-        }
-
-        protected void DrawDrawableInfo(DrawableInfo drawls)
-        {
-            var spriteEffectFlags = (drawls.FlipHorizontally ? SpriteEffects.FlipHorizontally : SpriteEffects.None) | (drawls.FlipVertically ? SpriteEffects.FlipVertically : SpriteEffects.None);
-            foreach (var rect in drawls.TextureRect)
-            {
-                _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, drawls.Height), rect, drawls.Color, drawls.Rotation, drawls.Origin, spriteEffectFlags, 0);
-
-                if (DEBUG_SHAPES)
-                {
-                    // bottom
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y + drawls.Height, drawls.Width, 1), new Rectangle(905,87,4,4), Color.White);
-                    // right
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X + drawls.Width, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Red);
-                    // left
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, 1, drawls.Height), new Rectangle(905, 87, 4, 4), Color.Yellow);
-                    // top
-                    _spriteBatch.Draw(TextureResources[drawls.Sheet], new Rectangle((int)drawls.Position.X, (int)drawls.Position.Y, drawls.Width, 1), new Rectangle(905, 87, 4, 4), Color.Green);
-                }
-            }
         }
 
         bool IMouseUpHandler.HandleMouseUp(InputTracker tracker, MouseButton button, int x, int y)
