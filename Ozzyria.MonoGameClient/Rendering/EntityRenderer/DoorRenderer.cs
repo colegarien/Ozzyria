@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer

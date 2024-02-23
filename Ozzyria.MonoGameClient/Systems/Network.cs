@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game;
-using Ozzyria.Game.ECS;
+using Grecs;
 
 namespace Ozzyria.MonoGameClient.Systems
 {

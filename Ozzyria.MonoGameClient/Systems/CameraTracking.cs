@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game;
-using Ozzyria.Game.ECS;
+using Grecs;
 
 namespace Ozzyria.MonoGameClient.Systems
 {

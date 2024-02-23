@@ -1,7 +1,7 @@
 ﻿using Ozzyria.Game.Components.Attribute;
 using Ozzyria.Game.Utility;
 using System;
-using Ozzyria.Game.ECS;
+using Grecs;
 
 namespace Ozzyria.Game.Components
 {

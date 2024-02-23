@@ -1,5 +1,5 @@
 ﻿using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 
 namespace Ozzyria.MonoGameClient.UI.Windows
 {

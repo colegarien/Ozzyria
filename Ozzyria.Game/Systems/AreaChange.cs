@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.ECS;
+﻿using Grecs;
 
 namespace Ozzyria.Game.Systems
 {

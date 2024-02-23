@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 using System.Collections.Generic;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game;
 using Ozzyria.Game.Animation;
 using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 using Ozzyria.Game.Persistence;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.MonoGameClient.Systems;

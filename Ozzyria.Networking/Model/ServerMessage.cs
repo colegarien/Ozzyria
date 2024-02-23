@@ -1,4 +1,4 @@
-﻿using Ozzyria.Game.ECS;
+﻿using Grecs;
 using Ozzyria.Game.Persistence;
 using System.Collections.Generic;
 using System.IO;

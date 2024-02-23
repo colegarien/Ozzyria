@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Game;
 using Ozzyria.Game.Components;
-using Ozzyria.Game.ECS;
+using Grecs;
 using Ozzyria.Networking.Model;
 using System;
 using System.Diagnostics;
