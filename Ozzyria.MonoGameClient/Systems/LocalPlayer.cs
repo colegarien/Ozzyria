@@ -40,7 +40,7 @@ namespace Ozzyria.MonoGameClient.Systems
                     var x = tile.X * Tile.DIMENSION;
                     var y = tile.Y * Tile.DIMENSION;
                     var subLayer = y + Tile.DIMENSION;
-                    var origin = new Vector2(Tile.DIMENSION / 2, Tile.DIMENSION / 2);
+                    var origin = Vector2.Zero;//new Vector2(Tile.DIMENSION / 2, Tile.DIMENSION / 2);
 
                     var subSpace = 0;
                     var baseGraphic = pipeline.GetTileGraphic();

@@ -5,7 +5,7 @@
   },
   "SkeletonOffsets": {
     "Humanoid": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -13,7 +13,7 @@
       "WeaponOffsetAngle": -1.570796
     },
     "Humanoid_Idle_Down_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -23,7 +23,7 @@
       "HatOffsetY":  -28
     },
     "Humanoid_Idle_Down_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -33,7 +33,7 @@
       "HatOffsetY": -27
     },
     "Humanoid_Idle_Down_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -43,7 +43,7 @@
       "HatOffsetY": -26
     },
     "Humanoid_Idle_Up_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -52,7 +52,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Idle_Up_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -61,7 +61,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Idle_Up_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -70,7 +70,7 @@
       "MaskOffsetY": -19,"HatOffsetY": -26
     },
     "Humanoid_Idle_Left_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -80,7 +80,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Idle_Left_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -90,7 +90,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Idle_Left_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -100,7 +100,7 @@
       "MaskOffsetY": -19,"HatOffsetY": -26
     },
     "Humanoid_Idle_Right_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -110,7 +110,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Idle_Right_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -120,7 +120,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Idle_Right_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -130,7 +130,7 @@
       "MaskOffsetY": -19,"HatOffsetY": -26
     },
     "Humanoid_Attack_Up_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -6,
@@ -139,7 +139,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Up_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -2,
@@ -148,7 +148,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Up_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -157,7 +157,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Down_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 6,
@@ -166,7 +166,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Down_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 2,
@@ -175,7 +175,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Down_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -8,
@@ -184,7 +184,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Left_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -8,
@@ -194,7 +194,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Left_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -13,
@@ -204,7 +204,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Left_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -12,
@@ -214,7 +214,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Right_0": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 8,
@@ -224,7 +224,7 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Humanoid_Attack_Right_1": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 13,
@@ -234,7 +234,7 @@
       "MaskOffsetY": -21,"HatOffsetY":  -28
     },
     "Humanoid_Attack_Right_2": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 12,
@@ -244,12 +244,12 @@
       "MaskOffsetY": -20,"HatOffsetY": -27
     },
     "Slime": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0
     },
     "Slime_Attack_Up": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -2,
@@ -257,7 +257,7 @@
       "WeaponOffsetAngle": 5.202826
     },
     "Slime_Attack_Down": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 2,
@@ -265,7 +265,7 @@
       "WeaponOffsetAngle": 2.0612338
     },
     "Slime_Attack_Left": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": -13,
@@ -273,7 +273,7 @@
       "WeaponOffsetAngle": 3.7001
     },
     "Slime_Attack_Right": {
-      "RootOffsetX": -16,
+      "RootOffsetX": 0,
       "RootOffsetY": 0,
       "RenderOffsetY": 0,
       "WeaponOffsetX": 13,
