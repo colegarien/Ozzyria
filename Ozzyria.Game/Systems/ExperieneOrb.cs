@@ -7,7 +7,7 @@ namespace Ozzyria.Game.Systems
     internal class ExperieneOrb : TickSystem
     {
         const float MAX_FOLLOW_DISTANCE = 200;
-        const float ABSORBTION_DISTANCE = 4;
+        const float ABSORBTION_DISTANCE = 6;
 
         protected EntityQuery query;
         protected EntityQuery playerQuery;
@@ -77,7 +77,7 @@ namespace Ozzyria.Game.Systems
                     continue;
                 }
 
-                movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
+                movement.TurnToward(deltaTime, playerMovement);
             }
         }
     }

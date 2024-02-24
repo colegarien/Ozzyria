@@ -40,7 +40,7 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
 
         public void RenderEntity(Entity entity)
         {
-            entityPipeline.Render(graphicsPipeline, entity, (Skeleton)entity.GetComponent(typeof(Skeleton)));
+            entityPipeline.Render(graphicsPipeline, entity, entity.GetComponent<Skeleton>());
         }
 
         protected override bool Filter(Entity entity)
@@ -50,7 +50,7 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var listener = context.CreateListener(new EntityQuery().And(typeof(Skeleton)));
+            var listener = context.CreateListener(new EntityQuery().Or(typeof(Movement), typeof(Skeleton)));
             listener.ListenToAdded = true;
             listener.ListenToChanged = true;
             listener.ListenToRemoved = true;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Ozzyria.MonoGameClient.Rendering;
 
 namespace Ozzyria.MonoGameClient.UI.Windows
 {
@@ -259,7 +260,7 @@ namespace Ozzyria.MonoGameClient.UI.Windows
             var parts = input.Trim().ToUpper().Split(" ");
             if (parts[0] == "TOGGLE" && parts[1] == "DEBUG")
             {
-                _game.DEBUG_SHAPES = !_game.DEBUG_SHAPES;
+                Settings.DebugRendering = !Settings.DebugRendering;
                 return;
             }
 

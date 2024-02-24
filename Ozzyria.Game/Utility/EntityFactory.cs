@@ -24,6 +24,7 @@ namespace Ozzyria.Game.Utility
             var movement = (Movement)player.CreateComponent(typeof(Movement));
             movement.X = 140;
             movement.Y = 140;
+            movement.CollisionOffsetY = -8;
             movement.PreviousX = 140;
             movement.PreviousY = 140;
 
@@ -149,6 +150,7 @@ namespace Ozzyria.Game.Utility
             movement.ACCELERATION = 300f;
             movement.X = x;
             movement.Y = y;
+            movement.CollisionOffsetY = -8;
             movement.PreviousX = x;
             movement.PreviousY = y;
 

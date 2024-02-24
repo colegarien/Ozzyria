@@ -39,7 +39,7 @@ namespace Ozzyria.MonoGameClient.Systems
                     var tileSetResource = _game.TileMap?.Resource ?? 1;
                     var x = tile.X * Tile.DIMENSION;
                     var y = tile.Y * Tile.DIMENSION;
-                    var subLayer = y + Tile.DIMENSION;
+                    var subLayer = y - Tile.DIMENSION;
                     var origin = Vector2.Zero;//new Vector2(Tile.DIMENSION / 2, Tile.DIMENSION / 2);
 
                     var subSpace = 0;

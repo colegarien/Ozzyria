@@ -39,7 +39,6 @@ namespace Ozzyria.MonoGameClient
         internal TileMap TileMap = null;
         internal WorldPersistence WorldLoader;
         internal LocalState LocalState;
-        internal bool DEBUG_SHAPES = false;
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;

@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Systems
                     continue;
                 }
 
-                movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
+                movement.TurnToward(deltaTime, playerMovement);
 
                 // Initiate attack
                 if (!entity.HasComponent(typeof(AttackIntent)) && distanceToPlayer <= weapon.AttackRange)

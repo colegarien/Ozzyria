@@ -12,6 +12,7 @@ namespace Ozzyria.Game.Components
         private int _layer = 1;
         private float _x = 0f;
         private float _y = 0f;
+        private float _collisionOffsetY = 0f;
         private float _speed = 0f;
         private float _moveDirection = 0f;
         private float _lookDirection = 0f;
@@ -71,6 +72,18 @@ namespace Ozzyria.Game.Components
             }
         }
         [Savable]
+        public float CollisionOffsetY
+        {
+            get => _collisionOffsetY; set
+            {
+                if (_collisionOffsetY != value)
+                {
+                    _collisionOffsetY = value;
+                    Owner?.TriggerComponentChanged(this);
+                }
+            }
+        }
+        [Savable]
         public float Speed { get => _speed; set
             {
                 if (_speed != value)
@@ -103,7 +116,7 @@ namespace Ozzyria.Game.Components
 
         public float DistanceTo(Movement target)
         {
-            return (float)Math.Sqrt(Math.Pow(target.X - X, 2) + Math.Pow(target.Y - Y, 2));
+            return (float)Math.Sqrt(Math.Pow(target.X - X, 2) + Math.Pow((target.Y + target.CollisionOffsetY) - (Y + CollisionOffsetY), 2));
         }
 
         public Direction GetLookDirection()
@@ -129,13 +142,18 @@ namespace Ozzyria.Game.Components
             return direction;
         }
 
-        public void TurnToward(float deltaTime, float targetX, float targetY)
+        public void TurnToward(float deltaTime, Movement otherMovement)
         {
+            var x = X;
+            var y = Y + CollisionOffsetY;
+            var otherX = otherMovement.X;
+            var otherY = otherMovement.Y + otherMovement.CollisionOffsetY;
+
             var intent = MovementIntent.GetInstance();
-            intent.MoveLeft = targetX + 1 < X;
-            intent.MoveRight = targetX - 1 > X;
-            intent.MoveUp = targetY + 1f < Y;
-            intent.MoveDown = targetY - 1f > Y;
+            intent.MoveLeft = otherX + 1 < x;
+            intent.MoveRight = otherX - 1 > x;
+            intent.MoveUp = otherY + 1f < y;
+            intent.MoveDown = otherY - 1f > y;
             Owner.AddComponent(intent);
 
         }

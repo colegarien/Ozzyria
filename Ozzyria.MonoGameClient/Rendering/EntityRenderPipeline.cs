@@ -57,9 +57,6 @@ namespace Ozzyria.MonoGameClient.Rendering
 
         public void Render(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton)
         {
-            if (skeleton == null || entity == null || graphicsPipeline == null)
-                return;
-
             if (CanRender(entity))
                 DoRender(graphicsPipeline, entity, skeleton);
 

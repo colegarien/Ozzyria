@@ -30,42 +30,22 @@ namespace Ozzyria.Game.Components
 
         public float GetLeft()
         {
-            if (OwnerMovement != null)
-            {
-                return OwnerMovement.X - (Width / 2f);
-            }
-
-            return 0;
+            return X - (Width / 2f);
         }
 
         public float GetRight()
         {
-            if (OwnerMovement != null)
-            {
-                return OwnerMovement.X + (Width / 2f);
-            }
-
-            return Width;
+            return X + (Width / 2f);
         }
 
         public float GetTop()
         {
-            if (OwnerMovement != null)
-            {
-                return OwnerMovement.Y - (Height / 2f);
-            }
-
-            return 0;
+            return Y - (Height / 2f);
         }
 
         public float GetBottom()
         {
-            if (OwnerMovement != null)
-            {
-                return OwnerMovement.Y + (Height / 2f);
-            }
-
-            return Height;
+            return Y + (Height / 2f);
         }
     }
 }
