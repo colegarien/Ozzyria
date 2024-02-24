@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Components;
+﻿using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 
@@ -21,13 +20,13 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             {
                 var weaponDrawable = ItemDrawableResolver.Get(weapon.WeaponId, skeleton.Direction, skeleton.Frame);
                 weaponDrawable.FlipVertically = skeleton.Direction == Direction.Left || skeleton.Direction == Direction.Up;
-                PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable, intent.Frame == intent.DamageFrame ? Color.Red : Color.White);
+                PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable);
             }
 
             if (intent.Frame == intent.DamageFrame)
             {
                 var effectDrawable = ItemDrawableResolver.Get("basic-trail", skeleton.Direction, skeleton.Frame);
-                PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable, Color.White);
+                PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable);
             }
         }
     }

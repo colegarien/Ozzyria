@@ -8,7 +8,7 @@ namespace Ozzyria.MonoGameClient
         public const int RENDER_RESOLUTION_W = 640;
         public const int RENDER_RESOLUTION_H = 360;
 
-        private Vector2 Position { get; set; } = new Vector2(0, 0);
+        public Vector2 Position { get; set; } = new Vector2(0, 0);
         private Vector2 ViewSize { get; set; } = new Vector2(0, 0);
         public int ViewPadding = 16;
 

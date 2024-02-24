@@ -426,6 +426,14 @@
       "WeaponOffsetX": 13,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -0.5323254
+    },
+    "Static": {
+      "RootOffsetX": 0,
+      "RootOffsetY": 0,
+      "RenderOffsetY": 0,
+      "WeaponOffsetX": 0,
+      "WeaponOffsetY": 0,
+      "WeaponOffsetAngle": 0
     }
   },
   "Drawables": {
@@ -1361,6 +1369,16 @@
       "AttachmentType": 3
     },
     "exp_orb": {
+      "Resource": 0,
+      "Left": 0,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32,
+      "OriginX": 16,
+      "OriginY": 16,
+      "ColorType":  1
+    },
+    "simple_door": {
       "Resource": 0,
       "Left": 0,
       "Top": 96,

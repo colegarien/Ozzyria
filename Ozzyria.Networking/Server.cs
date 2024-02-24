@@ -368,6 +368,7 @@ namespace Ozzyria.Networking
 
                                             newBagEntity.AddComponent(new Skeleton { Type = SkeletonType.Static });
                                             newBagEntity.AddComponent(new Animator { Type = ClipType.Stall });
+                                            newBagEntity.AddComponent(new Body { BodyId = "simple_bag" });
 
                                             areaContext.AttachEntity(newBagEntity);
                                         }

@@ -78,7 +78,7 @@ namespace Ozzyria.ConstructionKit
             tile.Type = tileType;
             tile.TextureCoordX = tileSetMeta.BaseTileX[tileType];
             tile.TextureCoordY = tileSetMeta.BaseTileY[tileType];
-            tile.Z = tileSetMeta.BaseTileZ.ContainsKey(tileType) ? tileSetMeta.BaseTileZ[tileType] : (int)ZLayer.Background;
+            tile.Z = tileSetMeta.BaseTileZ.ContainsKey(tileType) ? tileSetMeta.BaseTileZ[tileType] : 0;
             
             tile.Decals = new TileDecal[] { };
             tile.EdgeTransition = new Dictionary<int, EdgeTransitionType>();

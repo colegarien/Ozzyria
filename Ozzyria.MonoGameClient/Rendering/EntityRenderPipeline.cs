@@ -12,7 +12,7 @@ namespace Ozzyria.MonoGameClient.Rendering
         protected abstract bool CanRender(Entity entity);
         protected abstract void DoRender(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton);
 
-        protected void PushDrawable(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton, Drawable drawable, Color color)
+        protected void PushDrawable(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton, Drawable drawable)
         {
             var x = skeleton.RootX;
             var y = skeleton.RootY;
@@ -38,6 +38,16 @@ namespace Ozzyria.MonoGameClient.Rendering
                     x += skeleton.HatOffsetX;
                     y += skeleton.HatOffsetY;
                     angle += skeleton.HatOffsetAngle;
+                    break;
+            }
+
+            var color = Color.White;
+            switch (drawable.ColorType)
+            {
+                case DrawableColorType.Yellow:
+                    color = Color.Yellow;
+                    break;
+                case DrawableColorType.White:
                     break;
             }
 

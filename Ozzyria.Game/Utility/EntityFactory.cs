@@ -119,7 +119,7 @@ namespace Ozzyria.Game.Utility
             // Skeleton and Initial Equipment Setup
             player.AddComponent(new Animator{NumberOfFrames = 3});
             player.AddComponent(new Skeleton{ Type= SkeletonType.Humanoid });
-            player.AddComponent(new Body { BodyType= BodyType.Human });
+            player.AddComponent(new Body { BodyId = "Human" });
             player.AddComponent(new Weapon { WeaponType = WeaponType.Sword, WeaponId="gladius" });
             player.AddComponent(new Hat { HatId = "green_hat" });
             player.AddComponent(new Mask { MaskId = "shades" });
@@ -140,7 +140,7 @@ namespace Ozzyria.Game.Utility
 
             slime.AddComponent(new Animator { NumberOfFrames = 3 });
             slime.AddComponent(new Skeleton { Type = SkeletonType.Slime });
-            slime.AddComponent(new Body { BodyType = BodyType.Slime });
+            slime.AddComponent(new Body { BodyId = "Slime" });
             slime.AddComponent(new Weapon { WeaponType = WeaponType.Empty, WeaponId = "" });
 
             var thought = (SlimeThought)slime.CreateComponent(typeof(SlimeThought));
@@ -196,6 +196,7 @@ namespace Ozzyria.Game.Utility
 
             door.AddComponent(new Animator { Type = ClipType.Stall });
             door.AddComponent(new Skeleton { Type = SkeletonType.Static});
+            door.AddComponent(new Body { BodyId = "simple_door" });
             door.AddComponent(doorComponent);
             door.AddComponent(movement);
         }
@@ -219,6 +220,7 @@ namespace Ozzyria.Game.Utility
 
             orb.AddComponent(new Skeleton { Type = SkeletonType.Static });
             orb.AddComponent(new Animator { Type = ClipType.Stall });
+            orb.AddComponent(new Body { BodyId = "exp_orb" });
             orb.AddComponent(thought);
             orb.AddComponent(movement);
             orb.AddComponent(boost);

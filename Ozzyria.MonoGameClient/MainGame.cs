@@ -261,17 +261,13 @@ namespace Ozzyria.MonoGameClient
             {
                 var clickedBag = _context.GetEntities().FirstOrDefault(e =>
                 {
-                    if (e.id == LocalState.PlayerEntityId || !e.HasComponent(typeof(Ozzyria.Game.Components.Movement)) || !e.HasComponent(typeof(Game.Components.Bag)))
+                    if (e.id == LocalState.PlayerEntityId || !e.HasComponent(typeof(Movement)) || !e.HasComponent(typeof(Bag)))
                     {
                         return false;
                     }
 
-                    var m = (Game.Components.Movement)e.GetComponent(typeof(Game.Components.Movement));
-                    if (Math.Pow(m.X - tracker.MouseX(), 2) + Math.Pow(m.Y - tracker.MouseY(), 2) <= 100)
-                    {
-                        return true;
-                    }
-                    return false;
+                    var m = e.GetComponent<Movement>();
+                    return Math.Pow(m.X - tracker.WorldMouseX(), 2) + Math.Pow(m.Y - tracker.WorldMouseY(), 2) <= 100;
                 });
 
                 if (clickedBag != null)

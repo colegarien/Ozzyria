@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Components;
+﻿using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 
@@ -15,8 +14,11 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
         protected override void DoRender(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton)
         {
             var body = (Body)entity.GetComponent(typeof(Body));
-            var bodyDrawable = BodyDrawableResolver.Get(body.BodyType, skeleton.Pose, skeleton.Direction, skeleton.Frame);
-            PushDrawable(graphicsPipeline, entity, skeleton, bodyDrawable, Color.White);
+            if (body.BodyId == "")
+                return;
+
+            var bodyDrawable = BodyDrawableResolver.Get(body.BodyId, skeleton.Pose, skeleton.Direction, skeleton.Frame);
+            PushDrawable(graphicsPipeline, entity, skeleton, bodyDrawable);
         }
     }
 }

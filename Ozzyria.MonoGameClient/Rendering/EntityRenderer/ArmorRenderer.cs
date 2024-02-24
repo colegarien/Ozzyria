@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Components;
+﻿using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 
@@ -18,7 +17,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             if (armor.ArmorId == "")
                 return;
 
-            PushDrawable(graphicsPipeline, entity, skeleton, ItemDrawableResolver.Get(armor.ArmorId, skeleton.Direction, skeleton.Frame), Color.White);
+            PushDrawable(graphicsPipeline, entity, skeleton, ItemDrawableResolver.Get(armor.ArmorId, skeleton.Direction, skeleton.Frame));
         }
     }
 }

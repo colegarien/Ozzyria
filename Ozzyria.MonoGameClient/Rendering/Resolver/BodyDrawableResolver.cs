@@ -5,18 +5,17 @@ namespace Ozzyria.MonoGameClient.Rendering.Resolver
 {
     internal class BodyDrawableResolver
     {
-        public static Drawable Get(BodyType type, SkeletonPose pose, Direction direction, int frame)
+        public static Drawable Get(string bodyId, SkeletonPose pose, Direction direction, int frame)
         {
             var resourceRegistry = Registry.GetInstance();
 
-            var typeKey = type.ToString();
             var poseKey = pose.ToString();
             var directionKey = direction.ToString();
 
-            var guessA = $"{typeKey}_{poseKey}_{directionKey}_{frame}";
-            var guessB = $"{typeKey}_{poseKey}_{directionKey}";
-            var guessC = $"{typeKey}_{poseKey}";
-            var guessD = $"{typeKey}";
+            var guessA = $"{bodyId}_{poseKey}_{directionKey}_{frame}";
+            var guessB = $"{bodyId}_{poseKey}_{directionKey}";
+            var guessC = $"{bodyId}_{poseKey}";
+            var guessD = $"{bodyId}";
 
             if (resourceRegistry.Drawables.ContainsKey(guessA))
             {

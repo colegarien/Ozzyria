@@ -22,7 +22,8 @@ namespace Ozzyria.ConstructionKit
             var tileSetNames = metaData.Keys;
             comboBoxTileSet.Items.AddRange(tileSetNames.ToArray());
 
-            dropDownZDepth.Items.AddRange(Enum.GetValues(typeof(ZLayer)).Cast<ZLayer>().Select(z => new ComboBoxItem { Id = (int)z, Name = z.ToString() }).ToArray());
+            dropDownZDepth.Items.Add(new ComboBoxItem { Id = 0, Name = "Background" });
+            dropDownZDepth.Items.Add(new ComboBoxItem { Id = 32, Name = "Middleground" });
 
             comboBoxTileSet.SelectedIndex = 0;
         }

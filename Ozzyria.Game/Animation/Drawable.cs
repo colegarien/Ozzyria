@@ -10,6 +10,12 @@ namespace Ozzyria.Game.Animation
         Hat
     }
 
+    public enum DrawableColorType
+    {
+        White,
+        Yellow,
+    }
+
     public struct Drawable
     {
         public uint Resource { get; set; }
@@ -22,6 +28,7 @@ namespace Ozzyria.Game.Animation
         public float OriginX { get; set; }
         public float OriginY { get; set; }
         public DrawableAttachmentType AttachmentType { get; set; }
+        public DrawableColorType ColorType { get; set; }
 
         public float BaseAngle { get; set; }
         public bool FlipHorizontally { get; set; }

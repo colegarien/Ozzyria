@@ -32,7 +32,7 @@ namespace Ozzyria.ConstructionKit
             {
                 X = 0,
                 Y = 0,
-                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : (int)ZLayer.Background,
+                Z = BaseTileZ.ContainsKey(tileType) ? BaseTileZ[tileType] : 0,
                 TextureCoordX = BaseTileX[tileType],
                 TextureCoordY = BaseTileY[tileType],
                 Decals = new TileDecal[] { },
@@ -231,7 +231,7 @@ namespace Ozzyria.ConstructionKit
             tileSetMetaDatas[tileSetId].TileNames[type] = name;
             tileSetMetaDatas[tileSetId].BaseTileX[type] = 0;
             tileSetMetaDatas[tileSetId].BaseTileY[type] = 0;
-            tileSetMetaDatas[tileSetId].BaseTileZ[type] = (int)ZLayer.Background;
+            tileSetMetaDatas[tileSetId].BaseTileZ[type] = 0;
         }
 
         public static void EnsureInitializedMetaData()

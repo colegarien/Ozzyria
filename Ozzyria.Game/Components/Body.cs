@@ -3,24 +3,18 @@ using Grecs;
 
 namespace Ozzyria.Game.Components
 {
-    public enum BodyType
-    {
-        Human,
-        Slime,
-    }
-
     public class Body : Component
     {
-        private BodyType _bodyType;
+        private string _bodyId;
 
         [Savable]
-        public BodyType BodyType
+        public string BodyId
         {
-            get => _bodyType; set
+            get => _bodyId; set
             {
-                if (_bodyType != value)
+                if (_bodyId != value)
                 {
-                    _bodyType = value;
+                    _bodyId = value;
                     Owner?.TriggerComponentChanged(this);
                 }
             }

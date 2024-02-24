@@ -21,6 +21,10 @@ namespace Ozzyria.MonoGameClient.UI
         int prevMouseY = -1;
         int mouseX = -1;
         int mouseY = -1;
+        float prevWorldMouseX = -1;
+        float prevWorldMouseY = -1;
+        float worldMouseX = -1;
+        float worldMouseY = -1;
 
         bool prevLeftMouseDown = false;
         bool leftMouseDown = false;
@@ -124,6 +128,10 @@ namespace Ozzyria.MonoGameClient.UI
             prevMouseY = mouseY;
             mouseX = (int)System.Math.Floor(mouseState.X / _camera.hScale);
             mouseY = (int)System.Math.Floor(mouseState.Y / _camera.vScale);
+            prevWorldMouseX = worldMouseX;
+            prevWorldMouseY = worldMouseY;
+            worldMouseX = (mouseState.X / _camera.hScale) + _camera.Position.X;
+            worldMouseY = (mouseState.Y / _camera.vScale) + _camera.Position.Y;
 
             prevLeftMouseDown = leftMouseDown;
             prevRightMouseDown = rightMouseDown;
@@ -232,6 +240,14 @@ namespace Ozzyria.MonoGameClient.UI
         public int MouseY()
         {
             return mouseY;
+        }
+        public float WorldMouseX()
+        {
+            return worldMouseX;
+        }
+        public float WorldMouseY()
+        {
+            return worldMouseY;
         }
         public bool IsLeftMouseDown()
         {
