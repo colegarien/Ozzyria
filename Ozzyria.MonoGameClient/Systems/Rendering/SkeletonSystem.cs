@@ -14,27 +14,11 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
         {
             foreach (var entity in entities)
             {
-                var position = (Movement)entity.GetComponent(typeof(Movement));
+                var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var animator = (Animator)entity.GetComponent(typeof(Animator));
                 var skeleton = (Skeleton)entity.GetComponent(typeof(Skeleton));
 
-                Direction direction;
-                if (position.LookDirection <= 0.78 || position.LookDirection >= 5.48)
-                {
-                    direction = Direction.Down;
-                }
-                else if (position.LookDirection > 0.78 && position.LookDirection < 2.36)
-                {
-                    direction = Direction.Right;
-                }
-                else if (position.LookDirection >= 2.36 && position.LookDirection <= 3.94)
-                {
-                    direction = Direction.Up;
-                }
-                else
-                {
-                    direction = Direction.Left;
-                }
+                Direction direction = movement.GetLookDirection();
 
                 // Calculate New/Current Offsets
                 SkeletonOffsets offsets = SkeletonOffsetResolver.Get(skeleton.Type, animator.CurrentPose, direction, animator.Frame);
@@ -42,11 +26,11 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                 // Apply Offsets to skeleton
                 skeleton.Pose = animator.CurrentPose;
                 skeleton.Frame = animator.Frame;
-                skeleton.Layer = position.Layer;
-                skeleton.SubLayer = (int)(position.Y + offsets.RootOffsetY + offsets.RenderOffsetY);
+                skeleton.Layer = movement.Layer;
+                skeleton.SubLayer = (int)(movement.Y + offsets.RootOffsetY + offsets.RenderOffsetY);
                 skeleton.Direction = direction;
-                skeleton.RootX = (int)(position.X + offsets.RootOffsetX);
-                skeleton.RootY = (int)(position.Y + offsets.RootOffsetY);
+                skeleton.RootX = (int)(movement.X + offsets.RootOffsetX);
+                skeleton.RootY = (int)(movement.Y + offsets.RootOffsetY);
                 skeleton.RenderOffsetY = offsets.RenderOffsetY;
                 skeleton.WeaponOffsetX = offsets.WeaponOffsetX;
                 skeleton.WeaponOffsetY = offsets.WeaponOffsetY;

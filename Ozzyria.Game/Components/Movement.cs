@@ -106,29 +106,47 @@ namespace Ozzyria.Game.Components
             return (float)Math.Sqrt(Math.Pow(target.X - X, 2) + Math.Pow(target.Y - Y, 2));
         }
 
+        public Direction GetLookDirection()
+        {
+            Direction direction;
+            if (LookDirection <= 0.78 || LookDirection >= 5.48)
+            {
+                direction = Direction.Down;
+            }
+            else if (LookDirection > 0.78 && LookDirection < 2.36)
+            {
+                direction = Direction.Right;
+            }
+            else if (LookDirection >= 2.36 && LookDirection <= 3.94)
+            {
+                direction = Direction.Up;
+            }
+            else
+            {
+                direction = Direction.Left;
+            }
+
+            return direction;
+        }
 
         public void TurnToward(float deltaTime, float targetX, float targetY)
         {
-            LookDirection = AngleHelper.AngleTo(X, Y, targetX, targetY);
+            var intent = MovementIntent.GetInstance();
+            intent.MoveLeft = targetX + 1 < X;
+            intent.MoveRight = targetX - 1 > X;
+            intent.MoveUp = targetY + 1f < Y;
+            intent.MoveDown = targetY - 1f > Y;
+            Owner.AddComponent(intent);
+
         }
 
-        public void TurnLeft(float deltaTime)
-        {
-            LookDirection += (TURN_SPEED * deltaTime);
-        }
-
-        public void TurnRight(float deltaTime)
-        {
-            LookDirection -= (TURN_SPEED * deltaTime);
-        }
-
-        public void MoveForward(float deltaTime)
+        public void MoveUp(float deltaTime)
         {
             LookDirection = AngleHelper.Pi;
             MoveDirection = 0f;
         }
 
-        public void MoveForwardRight(float deltaTime)
+        public void MoveUpRight(float deltaTime)
         {
             LookDirection = AngleHelper.Pi;
             MoveDirection = -AngleHelper.PiOverFour;
@@ -140,19 +158,19 @@ namespace Ozzyria.Game.Components
             MoveDirection = 0f;
         }
 
-        public void MoveBackwardRight(float deltaTime)
+        public void MoveDownRight(float deltaTime)
         {
             LookDirection = 0;
             MoveDirection = AngleHelper.PiOverFour;
         }
 
-        public void MoveBackward(float deltaTime)
+        public void MoveDown(float deltaTime)
         {
             LookDirection = 0f;
             MoveDirection = 0f;
         }
 
-        public void MoveBackwardLeft(float deltaTime)
+        public void MoveDownLeft(float deltaTime)
         {
             LookDirection = 0;
             MoveDirection = -AngleHelper.PiOverFour;
@@ -164,10 +182,15 @@ namespace Ozzyria.Game.Components
             MoveDirection = 0f;
         }
 
-        public void MoveForwardLeft(float deltaTime)
+        public void MoveUpLeft(float deltaTime)
         {
             LookDirection = AngleHelper.Pi;
             MoveDirection = AngleHelper.PiOverFour;
+        }
+
+        public bool IsMoving()
+        {
+            return Speed != 0;
         }
 
         public void SlowDown(float deltaTime)

@@ -25,8 +25,8 @@ namespace Ozzyria.Game.Systems
             var players = context.GetEntities(playerQuery);
             foreach (var entity in entities)
             {
-                var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var boost = (ExperienceBoost)entity.GetComponent(typeof(ExperienceBoost));
+                var movement = entity.GetComponent<Movement>();
+                var boost = entity.GetComponent<ExperienceBoost>();
 
                 if (boost.HasBeenAbsorbed)
                 {
@@ -35,25 +35,41 @@ namespace Ozzyria.Game.Systems
                 }
 
                 var closestPlayer = players
-                    .OrderBy(e => movement.DistanceTo((Movement)e.GetComponent(typeof(Movement))))
+                    .OrderBy(e => movement.DistanceTo(e.GetComponent<Movement>()))
                     .FirstOrDefault();
                 if (closestPlayer == null)
                 {
-                    movement.SlowDown(deltaTime);
+                    if (movement.IsMoving())
+                    {
+                        // slow down
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = false;
+                        intent.MoveRight = false;
+                        intent.MoveUp = false;
+                        intent.MoveDown = false;
+                        entity.AddComponent(intent);
+                    }
                     continue;
                 }
 
-                var playerMovement = (Movement)closestPlayer.GetComponent(typeof(Movement));
-                var playerStats = (Stats)closestPlayer.GetComponent(typeof(Stats));
+                var playerMovement = closestPlayer.GetComponent<Movement>();
+                var playerStats = closestPlayer.GetComponent<Stats>();
 
                 var distance = movement.DistanceTo(playerMovement);
                 if (distance > MAX_FOLLOW_DISTANCE)
                 {
-                    movement.SlowDown(deltaTime);
+                    if (movement.IsMoving())
+                    {
+                        // slow down
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = false;
+                        intent.MoveRight = false;
+                        intent.MoveUp = false;
+                        intent.MoveDown = false;
+                        entity.AddComponent(intent);
+                    }
                     continue;
                 }
-
-                movement.SpeedUp(deltaTime);
 
                 if (distance <= ABSORBTION_DISTANCE)
                 {
@@ -62,7 +78,6 @@ namespace Ozzyria.Game.Systems
                 }
 
                 movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
-                movement.Update(deltaTime);
             }
         }
     }

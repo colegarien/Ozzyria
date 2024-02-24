@@ -24,9 +24,10 @@ namespace Ozzyria.Game
                 .Add(new Systems.Slime())
                 .Add(new Systems.Spawner())
                 .Add(new Systems.ExperieneOrb())
+                .Add(new Systems.MovementSystem())
                 .Add(new Systems.Physics())
                 .Add(new Systems.Doors())
-                .Add(new Systems.Combat())
+                .Add(new Systems.AttackSystem())
                 .Add(new Systems.Death(_context))
                 .Add(new Systems.AreaChange(world, _context));
 

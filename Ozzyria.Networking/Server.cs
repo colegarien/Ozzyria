@@ -108,8 +108,6 @@ namespace Ozzyria.Networking
                                 world.WorldState.PlayerInputBuffer[messageClient].MoveDown = input.MoveDown;
                                 world.WorldState.PlayerInputBuffer[messageClient].MoveLeft = input.MoveLeft;
                                 world.WorldState.PlayerInputBuffer[messageClient].MoveRight = input.MoveRight;
-                                world.WorldState.PlayerInputBuffer[messageClient].TurnLeft = input.TurnLeft;
-                                world.WorldState.PlayerInputBuffer[messageClient].TurnRight = input.TurnRight;
                                 world.WorldState.PlayerInputBuffer[messageClient].Attack = input.Attack;
 
                                 clientLastHeardFrom[messageClient] = DateTime.Now;
@@ -209,7 +207,7 @@ namespace Ozzyria.Networking
                                                 mask.MaskId = item.ItemId;
                                                 break;
                                             case "weapon":
-                                                // TODO support more than swords?
+                                                // TODO OZ-55 support more than swords? (load weapon based on itemId!)
                                                 weapon.WeaponType = WeaponType.Sword;
                                                 weapon.WeaponId = item.ItemId;
                                                 break;

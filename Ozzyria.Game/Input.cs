@@ -6,8 +6,6 @@
         public bool MoveDown { get; set; }
         public bool MoveLeft { get; set; }
         public bool MoveRight { get; set; }
-        public bool TurnLeft { get; set; }
-        public bool TurnRight { get; set; }
         public bool Attack { get; set; }
     }
 }

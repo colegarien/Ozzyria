@@ -42,16 +42,6 @@ namespace Ozzyria.MonoGameClient.Systems
                 inputChanged = true;
                 lastSentInput.MoveRight = !lastSentInput.MoveRight;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Q) != lastSentInput.TurnLeft)
-            {
-                inputChanged = true;
-                lastSentInput.TurnLeft = !lastSentInput.TurnLeft;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.E) != lastSentInput.TurnRight)
-            {
-                inputChanged = true;
-                lastSentInput.TurnRight = !lastSentInput.TurnRight;
-            }
             if (Keyboard.GetState().IsKeyDown(Keys.Space) != lastSentInput.Attack)
             {
                 inputChanged = true;

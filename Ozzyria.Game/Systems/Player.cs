@@ -20,72 +20,37 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 // Death Check
-                if (entity.HasComponent(typeof(Stats)) && ((Stats)entity.GetComponent(typeof(Stats))).IsDead())
+                if (entity.HasComponent(typeof(Stats)) && entity.GetComponent<Stats>().IsDead())
                 {
                     continue;
                 }
 
-                var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
+                var playerId = entity.GetComponent<Components.Player>().PlayerId;
                 var input = _world.WorldState.PlayerInputBuffer.ContainsKey(playerId) ? _world.WorldState.PlayerInputBuffer[playerId] : new Input();
-                var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
+                var movement = entity.GetComponent<Movement>();
 
-                HandleInput(deltaTime, input, movement);
+                if (input.MoveUp || input.MoveDown || input.MoveLeft || input.MoveRight || movement.IsMoving())
+                {
+                    // if player is trying to move OR they are trying not too move but are moving
+                    var intent = MovementIntent.GetInstance();
+                    intent.MoveLeft = input.MoveLeft;
+                    intent.MoveRight = input.MoveRight;
+                    intent.MoveUp = input.MoveUp;
+                    intent.MoveDown = input.MoveDown;
+                    entity.AddComponent(intent);
+                }
 
-                combat.WantToAttack = input.Attack;
-                movement.Update(deltaTime);
+                if (input.Attack && !entity.HasComponent(typeof(AttackIntent)))
+                {
+                    var intent = AttackIntent.GetInstance();
+                    intent.Frame = 0;
+                    intent.DecayFrame = 3;
+                    intent.DamageFrame = 1;
+                    intent.FrameTimer = 0f;
+                    entity.AddComponent(intent);
+                }
             }
         }
 
-        private void HandleInput(float deltaTime, Input input, Movement movement)
-        {
-            if (input.TurnLeft)
-            {
-                movement.TurnLeft(deltaTime);
-            }
-            if (input.TurnRight)
-            {
-                movement.TurnRight(deltaTime);
-            }
-
-            if (input.MoveUp || input.MoveDown || input.MoveLeft || input.MoveRight)
-            {
-                movement.SpeedUp(deltaTime);
-            }
-            if (!input.MoveDown && !input.MoveUp && !input.MoveRight && !input.MoveLeft)
-            {
-                movement.SlowDown(deltaTime);
-            }
-
-            if (input.MoveUp && !input.MoveLeft && !input.MoveRight && !input.MoveDown)
-            {
-                movement.MoveForward(deltaTime);
-            }
-            else if (input.MoveDown && !input.MoveLeft && !input.MoveRight && !input.MoveUp)
-            {
-                movement.MoveBackward(deltaTime);
-            }
-            else if (!input.MoveUp && !input.MoveDown)
-            {
-                if (input.MoveRight)
-                    movement.MoveRight(deltaTime);
-                else if (input.MoveLeft)
-                    movement.MoveLeft(deltaTime);
-            }
-            else if (input.MoveUp && !input.MoveDown)
-            {
-                if (input.MoveRight)
-                    movement.MoveForwardRight(deltaTime);
-                else if (input.MoveLeft)
-                    movement.MoveForwardLeft(deltaTime);
-            }
-            else if (input.MoveDown && !input.MoveUp)
-            {
-                if (input.MoveRight)
-                    movement.MoveBackwardRight(deltaTime);
-                else if (input.MoveLeft)
-                    movement.MoveBackwardLeft(deltaTime);
-            }
-        }
     }
 }

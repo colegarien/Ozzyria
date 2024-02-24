@@ -28,7 +28,6 @@ namespace Ozzyria.Game.Utility
             movement.PreviousY = 140;
 
             var stats = (Stats)player.CreateComponent(typeof(Stats));
-            var combat = (Components.Combat)player.CreateComponent(typeof(Components.Combat));
 
             var collision = (BoundingCircle)player.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
@@ -130,7 +129,6 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(thought);
             player.AddComponent(movement);
             player.AddComponent(stats);
-            player.AddComponent(combat);
             player.AddComponent(collision);
             player.AddComponent(bag);
         }
@@ -158,15 +156,12 @@ namespace Ozzyria.Game.Utility
             stats.Health = 30;
             stats.MaxHealth = 30;
 
-            var combat = (Components.Combat)slime.CreateComponent(typeof(Components.Combat));
-
             var collision = (BoundingCircle)slime.CreateComponent(typeof(BoundingCircle));
             collision.Radius = 10;
 
             slime.AddComponent(thought);
             slime.AddComponent(movement);
             slime.AddComponent(stats);
-            slime.AddComponent(combat);
             slime.AddComponent(collision);
 
         }

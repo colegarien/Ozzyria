@@ -132,13 +132,23 @@ namespace Ozzyria.Game.Persistence
         {
             var id = reader.ReadUInt32();
             var entity = context.CreateEntity(id);
+            // remove components that don't get updated
 
             var numberOfComponents = reader.ReadInt32();
-            var componentsRead = 0;
-            while (numberOfComponents != componentsRead && reader.BaseStream.Position < reader.BaseStream.Length)
+            var i = 0;
+            var componentsRead = new IComponent[numberOfComponents];
+            while (numberOfComponents != i && reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                ReadComponent(entity, reader);
-                componentsRead++;
+                componentsRead[i] = ReadComponent(entity, reader);
+                i++;
+            }
+
+            foreach (var component in entity.GetComponents())
+            {
+                if (!componentsRead.Contains(component))
+                {
+                    entity.RemoveComponent(component);
+                }
             }
 
             return entity;

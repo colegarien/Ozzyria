@@ -39,5 +39,10 @@ namespace Ozzyria.Game.Components
                 }
             }
         }
+
+        // TODO actually make these component propertly, load/save from file
+        public float AttackAngle { get; set; } = 0.78f; // forty-five degrees-ish
+        public float AttackRange { get; set; } = 21f;
+        public int AttackDamage { get; set; } = 5;
     }
 }

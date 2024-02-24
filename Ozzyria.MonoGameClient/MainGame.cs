@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Xml.Linq;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 
 namespace Ozzyria.MonoGameClient

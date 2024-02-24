@@ -31,6 +31,7 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                                 break;
                             case ClipType.Decay:
                                 animator.CurrentPose = SkeletonPose.Idle;
+                                animator.Type = ClipType.Loop;
                                 animator.Frame = 0;
                                 animator.NumberOfFrames = 3;
                                 break;
@@ -41,17 +42,30 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                     }
                 }
 
-                if (entity.HasComponent(typeof(Combat))) {
+                if (entity.HasComponent(typeof(AttackIntent))) {
                     // fall in and out of combat animation
-                    var combat = (Combat)entity.GetComponent(typeof(Combat));
-                    if (combat.StartedAttack && animator.CurrentPose != SkeletonPose.Attack)
+                    var intent = entity.GetComponent<AttackIntent>();
+                    if (animator.CurrentPose != SkeletonPose.Attack)
                     {
                         animator.CurrentPose = SkeletonPose.Attack;
                         animator.Type = ClipType.Decay;
-                        animator.Frame = 0;
-                        animator.FrameTimer = 0;
-                        animator.NumberOfFrames = 3;
+                        animator.Frame = intent.Frame;
+                        animator.NumberOfFrames = intent.DecayFrame;
                     }
+                }
+                else if (animator.CurrentPose != SkeletonPose.Walk && entity.HasComponent(typeof(Movement)) && entity.GetComponent<Movement>().IsMoving())
+                {
+                    animator.CurrentPose = SkeletonPose.Walk;
+                    animator.Type = ClipType.Decay;
+                    animator.Frame = 0;
+                    animator.NumberOfFrames = 3;
+                }
+                else if(animator.CurrentPose != SkeletonPose.Idle && !(entity.HasComponent(typeof(Movement)) && entity.GetComponent<Movement>().IsMoving()))
+                {
+                    animator.CurrentPose = SkeletonPose.Idle;
+                    animator.Type = ClipType.Loop;
+                    animator.Frame = 0;
+                    animator.NumberOfFrames = 3;
                 }
             }
         }

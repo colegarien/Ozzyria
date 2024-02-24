@@ -2,7 +2,7 @@
 
 namespace Ozzyria.Game.Components
 {
-    public class Dead : Component
+    public class Dead : PooledComponent<Dead>
     {
     }
 }

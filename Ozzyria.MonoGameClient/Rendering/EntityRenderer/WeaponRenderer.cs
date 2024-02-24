@@ -9,24 +9,22 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
     {
         protected override bool CanRender(Entity entity)
         {
-            return entity.HasComponent(typeof(Combat)) && entity.HasComponent(typeof(Weapon));
+            return entity.HasComponent(typeof(AttackIntent)) && entity.HasComponent(typeof(Weapon));
         }
 
         protected override void DoRender(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton)
         {
-            var combat = (Combat)entity.GetComponent(typeof(Combat));
-            if (!combat.Attacking)
-                return;
+            var intent = (AttackIntent)entity.GetComponent(typeof(AttackIntent));
 
             var weapon = (Weapon)entity.GetComponent(typeof(Weapon));
             if (weapon.WeaponType != WeaponType.Empty)
             {
                 var weaponDrawable = ItemDrawableResolver.Get(weapon.WeaponId, skeleton.Direction, skeleton.Frame);
                 weaponDrawable.FlipVertically = skeleton.Direction == Direction.Left || skeleton.Direction == Direction.Up;
-                PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable, combat.Frame == combat.DamageFrame ? Color.Red : Color.White);
+                PushDrawable(graphicsPipeline, entity, skeleton, weaponDrawable, intent.Frame == intent.DamageFrame ? Color.Red : Color.White);
             }
 
-            if (combat.Frame == combat.DamageFrame)
+            if (intent.Frame == intent.DamageFrame)
             {
                 var effectDrawable = ItemDrawableResolver.Get("basic-trail", skeleton.Direction, skeleton.Frame);
                 PushDrawable(graphicsPipeline, entity, skeleton, effectDrawable, Color.White);

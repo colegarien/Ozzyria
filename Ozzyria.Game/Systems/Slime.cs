@@ -26,52 +26,39 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 // Death Check
-                if (entity.HasComponent(typeof(Stats)) && ((Stats)entity.GetComponent(typeof(Stats))).IsDead())
+                if (entity.HasComponent(typeof(Stats)) && entity.GetComponent<Stats>().IsDead())
                 {
                     continue;
                 }
 
-                var thought = (SlimeThought)entity.GetComponent(typeof(SlimeThought));
-                var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var combat = (Components.Combat)entity.GetComponent(typeof(Components.Combat));
+                var thought = entity.GetComponent<SlimeThought>();
+                var movement = entity.GetComponent<Movement>();
+                var weapon = entity.GetComponent<Weapon>();
 
                 var closestPlayer = players
-                    .OrderBy(p => movement.DistanceTo((Movement)p.GetComponent(typeof(Movement))))
+                    .OrderBy(p => movement.DistanceTo(p.GetComponent<Movement>()))
                     .FirstOrDefault();
-                if (closestPlayer == null)
+                var playerMovement = closestPlayer?.GetComponent<Movement>();
+                var distanceToPlayer = playerMovement == null ? float.PositiveInfinity : movement.DistanceTo(playerMovement);
+                if (closestPlayer == null || distanceToPlayer > MAX_FOLLOW_DISTANCE)
                 {
                     Think(deltaTime, thought, movement);
-                    combat.WantToAttack = false;
-                    movement.Update(deltaTime);
                     continue;
                 }
 
-                var playerMovement = (Movement)closestPlayer.GetComponent(typeof(Movement));
-
-                var distance = movement.DistanceTo(playerMovement);
-                if (distance > MAX_FOLLOW_DISTANCE)
-                {
-                    Think(deltaTime, thought, movement);
-                    combat.WantToAttack = false;
-                    movement.Update(deltaTime);
-                    continue;
-                }
-
-                var attack = false;
-                if (distance <= combat.AttackRange)
-                {
-                    movement.SlowDown(deltaTime);
-                    attack = true;
-                }
-                else
-                {
-                    movement.SpeedUp(deltaTime);
-                }
                 movement.TurnToward(deltaTime, playerMovement.X, playerMovement.Y);
 
+                // Initiate attack
+                if (!entity.HasComponent(typeof(AttackIntent)) && distanceToPlayer <= weapon.AttackRange)
+                {
+                    var intent = AttackIntent.GetInstance();
+                    intent.Frame = 0;
+                    intent.DecayFrame = 3;
+                    intent.DamageFrame = 1;
+                    intent.FrameTimer = 0f;
 
-                combat.WantToAttack = attack;
-                movement.Update(deltaTime);
+                    entity.AddComponent(intent);
+                }
             }
         }
 
@@ -84,22 +71,66 @@ namespace Ozzyria.Game.Systems
                 thought.ThinkAction = RandomHelper.Random(0, 5);
             }
 
+            Direction direction = movement.GetLookDirection();
             switch (thought.ThinkAction)
             {
                 case 0:
-                    movement.SlowDown(deltaTime);
+                    if (movement.IsMoving())
+                    {
+                        // slow down
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = false;
+                        intent.MoveRight = false;
+                        intent.MoveUp = false;
+                        intent.MoveDown = false;
+                        movement.Owner.AddComponent(intent);
+                    }
                     break;
                 case 1:
-                    movement.TurnLeft(deltaTime);
+                    {
+                        // rotate direction to the left
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = direction == Direction.Up;
+                        intent.MoveRight = direction == Direction.Down;
+                        intent.MoveUp = direction == Direction.Right;
+                        intent.MoveDown = direction == Direction.Left;
+                        movement.Owner.AddComponent(intent);
+                    }
+                    thought.ThinkAction = 0;
                     break;
                 case 2:
-                    movement.TurnRight(deltaTime);
+                    {
+                        // rotate direction to the right
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = direction == Direction.Down;
+                        intent.MoveRight = direction == Direction.Up;
+                        intent.MoveUp = direction == Direction.Left;
+                        intent.MoveDown = direction == Direction.Right;
+                        movement.Owner.AddComponent(intent);
+                    }
+                    thought.ThinkAction = 0;
                     break;
                 case 3:
-                    movement.SpeedUp(deltaTime);
+                    {
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = direction == Direction.Left;
+                        intent.MoveRight = direction == Direction.Right;
+                        intent.MoveUp = direction == Direction.Up;
+                        intent.MoveDown = direction == Direction.Down;
+                        movement.Owner.AddComponent(intent);
+                    }
                     break;
                 default:
-                    movement.SlowDown(deltaTime);
+                    if (movement.IsMoving())
+                    {
+                        // slow down
+                        var intent = MovementIntent.GetInstance();
+                        intent.MoveLeft = false;
+                        intent.MoveRight = false;
+                        intent.MoveUp = false;
+                        intent.MoveDown = false;
+                        movement.Owner.AddComponent(intent);
+                    }
                     break;
             }
         }

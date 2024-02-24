@@ -64,8 +64,6 @@ namespace Ozzyria.Networking.Model
                     writer.Write(input.MoveDown);
                     writer.Write(input.MoveLeft);
                     writer.Write(input.MoveRight);
-                    writer.Write(input.TurnLeft);
-                    writer.Write(input.TurnRight);
                     writer.Write(input.Attack);
                 }
                 return m.ToArray();
@@ -84,8 +82,6 @@ namespace Ozzyria.Networking.Model
                         MoveDown = reader.ReadBoolean(),
                         MoveLeft = reader.ReadBoolean(),
                         MoveRight = reader.ReadBoolean(),
-                        TurnLeft = reader.ReadBoolean(),
-                        TurnRight = reader.ReadBoolean(),
                         Attack = reader.ReadBoolean(),
                     };
                 }

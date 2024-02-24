@@ -18,7 +18,6 @@ namespace Ozzyria.Game.Systems
 
         public override void Execute(float deltaTime, EntityContext context)
         {
-            // TODO OZ-24 : consider the "Layer" in movement the entities are on when doing collision and such
             var entities = context.GetEntities(query);
             foreach (var entity in entities)
             {
@@ -26,7 +25,7 @@ namespace Ozzyria.Game.Systems
                 var collision = (Collision)(entity.GetComponent(typeof(BoundingBox)) ?? entity.GetComponent(typeof(BoundingCircle)));
                 if (collision.IsDynamic)
                 {
-                    var possibleCollisions = entities.Where(e => e.id != entity.id);
+                    var possibleCollisions = entities.Where(e => e.id != entity.id && e.GetComponent<Movement>().Layer == movement.Layer);
                     var depthVector = Vector2.Zero;
                     foreach (var collidedEntity in possibleCollisions)
                     {
