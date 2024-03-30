@@ -1,0 +1,11 @@
+﻿namespace Ozzyria.Gryp.Models.Form
+{
+    /// <summary>
+    /// Minimal Settings required for the basic new map creation/initialization
+    /// </summary>
+    internal class NewMapSettings
+    {
+        public int Width { get; set; } = 1;
+        public int Height { get; set; } = 1;
+    }
+}
