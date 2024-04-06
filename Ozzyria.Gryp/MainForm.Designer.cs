@@ -33,16 +33,18 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
             mainToolbelt = new ToolStrip();
-            newToolStripButton = new ToolStripButton();
-            openToolStripButton = new ToolStripButton();
-            saveToolStripButton = new ToolStripButton();
-            printToolStripButton = new ToolStripButton();
+            toolSelect = new ToolStripButton();
+            toolMove = new ToolStripButton();
+            toolBrush = new ToolStripButton();
+            toolFill = new ToolStripButton();
             toolStripSeparator = new ToolStripSeparator();
-            cutToolStripButton = new ToolStripButton();
+            toolEntity = new ToolStripButton();
             copyToolStripButton = new ToolStripButton();
             pasteToolStripButton = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            helpToolStripButton = new ToolStripButton();
+            toolRectangle = new ToolStripButton();
+            toolFilledRectangle = new ToolStripButton();
+            toolLine = new ToolStripButton();
             mainStatusStrip = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             viewPortPanel = new Panel();
@@ -78,101 +80,129 @@
             // 
             mainToolbelt.Dock = DockStyle.Left;
             mainToolbelt.GripStyle = ToolStripGripStyle.Hidden;
-            mainToolbelt.Items.AddRange(new ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, printToolStripButton, toolStripSeparator, cutToolStripButton, copyToolStripButton, pasteToolStripButton, toolStripSeparator1, helpToolStripButton });
+            mainToolbelt.Items.AddRange(new ToolStripItem[] { toolSelect, toolMove, toolBrush, toolFill, toolStripSeparator, toolEntity, copyToolStripButton, pasteToolStripButton, toolStripSeparator1, toolRectangle, toolFilledRectangle, toolLine });
             mainToolbelt.Location = new Point(0, 24);
             mainToolbelt.Name = "mainToolbelt";
-            mainToolbelt.Size = new Size(24, 426);
+            mainToolbelt.Size = new Size(32, 426);
             mainToolbelt.TabIndex = 1;
             mainToolbelt.Text = "Toolbelt";
             // 
-            // newToolStripButton
+            // toolSelect
             // 
-            newToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            newToolStripButton.Image = (Image)resources.GetObject("newToolStripButton.Image");
-            newToolStripButton.ImageTransparentColor = Color.Magenta;
-            newToolStripButton.Name = "newToolStripButton";
-            newToolStripButton.Size = new Size(21, 20);
-            newToolStripButton.Text = "&New";
+            toolSelect.CheckOnClick = true;
+            toolSelect.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolSelect.Image = (Image)resources.GetObject("toolSelect.Image");
+            toolSelect.ImageTransparentColor = Color.Magenta;
+            toolSelect.Name = "toolSelect";
+            toolSelect.Size = new Size(29, 20);
+            toolSelect.Text = "&Select";
             // 
-            // openToolStripButton
+            // toolMove
             // 
-            openToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            openToolStripButton.Image = (Image)resources.GetObject("openToolStripButton.Image");
-            openToolStripButton.ImageTransparentColor = Color.Magenta;
-            openToolStripButton.Name = "openToolStripButton";
-            openToolStripButton.Size = new Size(21, 20);
-            openToolStripButton.Text = "&Open";
+            toolMove.CheckOnClick = true;
+            toolMove.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolMove.Image = (Image)resources.GetObject("toolMove.Image");
+            toolMove.ImageTransparentColor = Color.Magenta;
+            toolMove.Name = "toolMove";
+            toolMove.Size = new Size(29, 20);
+            toolMove.Text = "&Move";
             // 
-            // saveToolStripButton
+            // toolBrush
             // 
-            saveToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            saveToolStripButton.Image = (Image)resources.GetObject("saveToolStripButton.Image");
-            saveToolStripButton.ImageTransparentColor = Color.Magenta;
-            saveToolStripButton.Name = "saveToolStripButton";
-            saveToolStripButton.Size = new Size(21, 20);
-            saveToolStripButton.Text = "&Save";
+            toolBrush.CheckOnClick = true;
+            toolBrush.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolBrush.Image = (Image)resources.GetObject("toolBrush.Image");
+            toolBrush.ImageTransparentColor = Color.Magenta;
+            toolBrush.Name = "toolBrush";
+            toolBrush.Size = new Size(29, 20);
+            toolBrush.Text = "&Brush";
             // 
-            // printToolStripButton
+            // toolFill
             // 
-            printToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            printToolStripButton.Image = (Image)resources.GetObject("printToolStripButton.Image");
-            printToolStripButton.ImageTransparentColor = Color.Magenta;
-            printToolStripButton.Name = "printToolStripButton";
-            printToolStripButton.Size = new Size(21, 20);
-            printToolStripButton.Text = "&Print";
+            toolFill.CheckOnClick = true;
+            toolFill.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolFill.Image = (Image)resources.GetObject("toolFill.Image");
+            toolFill.ImageTransparentColor = Color.Magenta;
+            toolFill.Name = "toolFill";
+            toolFill.Size = new Size(29, 20);
+            toolFill.Text = "&Fill";
             // 
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new Size(21, 6);
+            toolStripSeparator.Size = new Size(29, 6);
             // 
-            // cutToolStripButton
+            // toolEntity
             // 
-            cutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            cutToolStripButton.Image = (Image)resources.GetObject("cutToolStripButton.Image");
-            cutToolStripButton.ImageTransparentColor = Color.Magenta;
-            cutToolStripButton.Name = "cutToolStripButton";
-            cutToolStripButton.Size = new Size(21, 20);
-            cutToolStripButton.Text = "C&ut";
+            toolEntity.CheckOnClick = true;
+            toolEntity.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolEntity.Image = (Image)resources.GetObject("toolEntity.Image");
+            toolEntity.ImageTransparentColor = Color.Magenta;
+            toolEntity.Name = "toolEntity";
+            toolEntity.Size = new Size(29, 20);
+            toolEntity.Text = "&Entity";
             // 
             // copyToolStripButton
             // 
+            copyToolStripButton.CheckOnClick = true;
             copyToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             copyToolStripButton.Image = (Image)resources.GetObject("copyToolStripButton.Image");
             copyToolStripButton.ImageTransparentColor = Color.Magenta;
             copyToolStripButton.Name = "copyToolStripButton";
-            copyToolStripButton.Size = new Size(21, 20);
-            copyToolStripButton.Text = "&Copy";
+            copyToolStripButton.Size = new Size(29, 20);
+            copyToolStripButton.Text = "&Path";
             // 
             // pasteToolStripButton
             // 
+            pasteToolStripButton.CheckOnClick = true;
             pasteToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             pasteToolStripButton.Image = (Image)resources.GetObject("pasteToolStripButton.Image");
             pasteToolStripButton.ImageTransparentColor = Color.Magenta;
             pasteToolStripButton.Name = "pasteToolStripButton";
-            pasteToolStripButton.Size = new Size(21, 20);
-            pasteToolStripButton.Text = "&Paste";
+            pasteToolStripButton.Size = new Size(29, 20);
+            pasteToolStripButton.Text = "&Wall";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(21, 6);
+            toolStripSeparator1.Size = new Size(29, 6);
             // 
-            // helpToolStripButton
+            // toolRectangle
             // 
-            helpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            helpToolStripButton.Image = (Image)resources.GetObject("helpToolStripButton.Image");
-            helpToolStripButton.ImageTransparentColor = Color.Magenta;
-            helpToolStripButton.Name = "helpToolStripButton";
-            helpToolStripButton.Size = new Size(21, 20);
-            helpToolStripButton.Text = "He&lp";
+            toolRectangle.CheckOnClick = true;
+            toolRectangle.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolRectangle.Image = (Image)resources.GetObject("toolRectangle.Image");
+            toolRectangle.ImageTransparentColor = Color.Magenta;
+            toolRectangle.Name = "toolRectangle";
+            toolRectangle.Size = new Size(29, 20);
+            toolRectangle.Text = "&Rectangle";
+            // 
+            // toolFilledRectangle
+            // 
+            toolFilledRectangle.CheckOnClick = true;
+            toolFilledRectangle.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolFilledRectangle.Image = (Image)resources.GetObject("toolFilledRectangle.Image");
+            toolFilledRectangle.ImageTransparentColor = Color.Magenta;
+            toolFilledRectangle.Name = "toolFilledRectangle";
+            toolFilledRectangle.Size = new Size(29, 20);
+            toolFilledRectangle.Text = "&Filled Rectangle";
+            // 
+            // toolLine
+            // 
+            toolLine.CheckOnClick = true;
+            toolLine.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolLine.Image = (Image)resources.GetObject("toolLine.Image");
+            toolLine.ImageTransparentColor = Color.Magenta;
+            toolLine.Name = "toolLine";
+            toolLine.Size = new Size(29, 20);
+            toolLine.Text = "&Line";
             // 
             // mainStatusStrip
             // 
             mainStatusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            mainStatusStrip.Location = new Point(24, 428);
+            mainStatusStrip.Location = new Point(32, 428);
             mainStatusStrip.Name = "mainStatusStrip";
-            mainStatusStrip.Size = new Size(776, 22);
+            mainStatusStrip.Size = new Size(768, 22);
             mainStatusStrip.SizingGrip = false;
             mainStatusStrip.TabIndex = 4;
             mainStatusStrip.Text = "Main Status Strip";
@@ -221,19 +251,21 @@
         private MenuStrip menuStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStrip mainToolbelt;
-        private ToolStripButton newToolStripButton;
-        private ToolStripButton openToolStripButton;
-        private ToolStripButton saveToolStripButton;
-        private ToolStripButton printToolStripButton;
+        private ToolStripButton toolSelect;
+        private ToolStripButton toolMove;
+        private ToolStripButton toolBrush;
+        private ToolStripButton toolFill;
         private ToolStripSeparator toolStripSeparator;
-        private ToolStripButton cutToolStripButton;
+        private ToolStripButton toolEntity;
         private ToolStripButton copyToolStripButton;
         private ToolStripButton pasteToolStripButton;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton helpToolStripButton;
         private StatusStrip mainStatusStrip;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripMenuItem newToolStripMenuItem;
         private Panel viewPortPanel;
+        private ToolStripButton toolRectangle;
+        private ToolStripButton toolFilledRectangle;
+        private ToolStripButton toolLine;
     }
 }

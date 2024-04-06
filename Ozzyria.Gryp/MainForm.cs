@@ -6,6 +6,7 @@ namespace Ozzyria.Gryp
     public partial class MainGrypWindow : Form
     {
         internal Map _map = new Map();
+        internal Bitmap mapGridImage = null;
 
         public MainGrypWindow()
         {
@@ -30,9 +31,9 @@ namespace Ozzyria.Gryp
         {
             // Draw background Grid
             var canvasSize = e.ClipRectangle.Size;
-            for (var x = 0; x <= canvasSize.Width / 16; x++)
+            for (var x = 0; x <= (canvasSize.Width / 16) ; x++)
             {
-                for (var y = 0; y <= canvasSize.Height / 16; y++)
+                for (var y = 0; y <= (canvasSize.Height / 16); y++)
                 {
                     e.Graphics.DrawLine(new Pen(Color.Blue), (x * 16), 0, (x * 16), canvasSize.Height);
                     e.Graphics.DrawLine(new Pen(Color.Blue), 0, (y * 16), canvasSize.Width, (y * 16));
@@ -40,21 +41,25 @@ namespace Ozzyria.Gryp
             }
 
             // TODO infer graphics to draw
-            if (_map.Width > 0 && _map.Height > 0)
+            if (_map.Width > 0 && _map.Height > 0 && mapGridImage == null)
             {
-                var tileImage = new Bitmap(_map.Width * 32, _map.Height * 32);
-                using (var graphics = Graphics.FromImage(tileImage))
+                mapGridImage = new Bitmap(_map.Width * 32 + 1, _map.Height * 32 + 1);
+                using (var graphics = Graphics.FromImage(mapGridImage))
                 {
                     for (var x = 0; x < _map.Width; x++)
                     {
 
                         for (var y = 0; y < _map.Height; y++)
                         {
-                            e.Graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(x * 32, y * 32, 32, 32));
+                            graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(x * 32, y * 32, 32, 32));
                         }
                     }
                 }
-                e.Graphics.DrawImage(tileImage, new Point(0, 0));
+            }
+
+            if (mapGridImage != null)
+            {
+                e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
             }
 
             // Render Width x Height
