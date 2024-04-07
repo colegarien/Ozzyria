@@ -140,22 +140,6 @@
         oFxaAAYGAI13ef1viaWnAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="toolBrush.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABbSURBVDhPYxh8wCCh6T+USR4AGUA1Q+ztS8g3aHAYAtII
-        MwQqRDqgiiEwA8g2BNkAssID2RsgDBXGBCCFMAwVggNkQ6BCqABZMzYMU4PXBTCArhEE0PlUAgwMAEQ6
-        ZDNOg3V+AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="toolFill.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABVSURBVDhPYxjcwCCh6T+USR6gyACQZhiGCpEGBtYAZM1k
-        GUKRAdg0wzBUCW5gb1+CVSMMg+ShSrEDqhiAyxCYHFQpboDNEKI1wwBMAzKGSlEbMDAAABigiFRYS5DQ
-        AAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="toolEntity.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -178,6 +162,22 @@
         YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABZSURBVDhPYxgcwN6+5L9BQtN/KJcgAKkF6YFyB4sBKAJQ
         QLQ40QqhAKs4SADZGzBn4hKHchGAqgbgYoMA7QwAAZhibArwycEBxQaAAEwhlAsHRGkeAMDAAACNMo9J
         kIipXAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolBrush.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABbSURBVDhPYxh8wCCh6T+USR4AGUA1Q+ztS8g3aHAYAtII
+        MwQqRDqgiiEwA8g2BNkAssID2RsgDBXGBCCFMAwVggNkQ6BCqABZMzYMU4PXBTCArhEE0PlUAgwMAEQ6
+        ZDNOg3V+AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="toolFill.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABVSURBVDhPYxjcwCCh6T+USR6gyACQZhiGCpEGBtYAZM1k
+        GUKRAdg0wzBUCW5gb1+CVSMMg+ShSrEDqhiAyxCYHFQpboDNEKI1wwBMAzKGSlEbMDAAABigiFRYS5DQ
+        AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="toolRectangle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -203,6 +203,9 @@
   </data>
   <metadata name="mainStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>255, 17</value>
+  </metadata>
+  <metadata name="reRenderTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>392, 17</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

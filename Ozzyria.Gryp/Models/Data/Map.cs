@@ -6,7 +6,7 @@ namespace Ozzyria.Gryp.Models.Data
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public List<Layer> Layers {get; set;}
+        public List<Layer> Layers { get; set; }
 
     }
 
