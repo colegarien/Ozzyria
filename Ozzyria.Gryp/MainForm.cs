@@ -37,7 +37,7 @@ namespace Ozzyria.Gryp
             {
                 _map.Width = mapDialog.NewMapResult.Width;
                 _map.Height = mapDialog.NewMapResult.Height;
-                _map.Layers = new List<Layer> { new Layer { Tiles = new int[_map.Width * _map.Height] } };
+                _map.PushLayer();
 
                 mapGridImage = null;
                 layerImages.Clear();
