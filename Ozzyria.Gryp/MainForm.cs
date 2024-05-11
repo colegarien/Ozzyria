@@ -7,7 +7,7 @@ namespace Ozzyria.Gryp
     {
         internal Map _map = new Map();
         internal Bitmap mapGridImage = null;
-        internal List<Bitmap> layerImages = new List<Bitmap>();
+        internal Layer layer = null;
 
         internal Font mapEditorFont;
         internal Pen bluePen;
@@ -40,8 +40,6 @@ namespace Ozzyria.Gryp
                 _map.PushLayer();
 
                 mapGridImage = null;
-                layerImages.Clear();
-
                 mainStatusLabel.Text = "Successfully created map";
             }
             else
@@ -80,47 +78,24 @@ namespace Ozzyria.Gryp
                             }
                         }
                     }
-                }
 
-                if (_map.Layers.Count != layerImages.Count)
-                {
                     for (int i = 0; i < _map.Layers.Count; i++)
                     {
-                        if (i >= layerImages.Count || layerImages[i] == null)
-                        {
-                            if (i >= layerImages.Count)
-                            {
-                                layerImages.Add(new Bitmap(_map.Width * 32 + 1, _map.Height * 32 + 1));
-                            }
-                            else
-                            {
-                                layerImages[i] = new Bitmap(_map.Width * 32 + 1, _map.Height * 32 + 1);
-                            }
-
-                            using (var graphics = Graphics.FromImage(layerImages[i]))
-                            {
-                                for (var x = 0; x < _map.Width; x++)
-                                {
-
-                                    for (var y = 0; y < _map.Height; y++)
-                                    {
-                                        graphics.FillRectangle(greenBrush, new Rectangle(x * 32, y * 32, 32, 32));
-                                    }
-                                }
-                            }
-                        }
+                        // add layer images to layer panel first time around
+                        layerImageList.Images.Add(_map.Layers[i].GetImage());
+                        layerList.Items.Add(new ListViewItem { Text = "Layer " + i, ImageIndex = i });
                     }
                 }
             }
 
-            foreach (var layerImage in layerImages)
+            for (int i = 0; i < _map.Layers.Count; i++)
             {
-                e.Graphics.DrawImage(layerImage, new Point(0, 0));
+                e.Graphics.DrawImage(_map.Layers[i].GetImage(), new Point(0, 0));
             }
 
             if (mapGridImage != null)
             {
-                e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
+             //   e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
             }
 
             // Render Width x Height

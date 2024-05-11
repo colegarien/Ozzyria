@@ -50,6 +50,8 @@
             mainStatusLabel = new ToolStripStatusLabel();
             viewPortPanel = new Panel();
             reRenderTimer = new System.Windows.Forms.Timer(components);
+            layerList = new ListView();
+            layerImageList = new ImageList(components);
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -232,11 +234,29 @@
             reRenderTimer.Interval = 16;
             reRenderTimer.Tick += reRenderTimer_Tick;
             // 
+            // layerList
+            // 
+            layerList.LargeImageList = layerImageList;
+            layerList.Location = new Point(599, 24);
+            layerList.MultiSelect = false;
+            layerList.Name = "layerList";
+            layerList.Size = new Size(189, 205);
+            layerList.SmallImageList = layerImageList;
+            layerList.TabIndex = 7;
+            layerList.UseCompatibleStateImageBehavior = false;
+            // 
+            // layerImageList
+            // 
+            layerImageList.ColorDepth = ColorDepth.Depth32Bit;
+            layerImageList.ImageSize = new Size(16, 16);
+            layerImageList.TransparentColor = Color.Transparent;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(layerList);
             Controls.Add(viewPortPanel);
             Controls.Add(mainStatusStrip);
             Controls.Add(mainToolbelt);
@@ -244,6 +264,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
             Name = "MainGrypWindow";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Gryp";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
@@ -277,5 +298,7 @@
         private ToolStripButton toolFilledRectangle;
         private ToolStripButton toolLine;
         private System.Windows.Forms.Timer reRenderTimer;
+        private ListView layerList;
+        private ImageList layerImageList;
     }
 }
