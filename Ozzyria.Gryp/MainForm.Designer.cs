@@ -244,6 +244,7 @@
             layerList.SmallImageList = layerImageList;
             layerList.TabIndex = 7;
             layerList.UseCompatibleStateImageBehavior = false;
+            layerList.KeyUp += layerList_KeyUp;
             // 
             // layerImageList
             // 

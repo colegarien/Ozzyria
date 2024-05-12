@@ -37,7 +37,13 @@ namespace Ozzyria.Gryp
             {
                 _map.Width = mapDialog.NewMapResult.Width;
                 _map.Height = mapDialog.NewMapResult.Height;
+
+                _map.Layers.Clear();
                 _map.PushLayer();
+                _map.PushLayer();
+                _map.PushLayer();
+
+                RebuildLayerView();
 
                 mapGridImage = null;
                 mainStatusLabel.Text = "Successfully created map";
@@ -79,12 +85,6 @@ namespace Ozzyria.Gryp
                         }
                     }
 
-                    for (int i = 0; i < _map.Layers.Count; i++)
-                    {
-                        // add layer images to layer panel first time around
-                        layerImageList.Images.Add(_map.Layers[i].GetImage());
-                        layerList.Items.Add(new ListViewItem { Text = "Layer " + i, ImageIndex = i });
-                    }
                 }
             }
 
@@ -95,11 +95,23 @@ namespace Ozzyria.Gryp
 
             if (mapGridImage != null)
             {
-             //   e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
+                e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
             }
 
             // Render Width x Height
-            e.Graphics.DrawString($"{_map.Width}x{_map.Height}", mapEditorFont, redBrush, new PointF());
+            e.Graphics.DrawString($"{_map.Width}x{_map.Height}", mapEditorFont, greenBrush, new PointF());
+        }
+
+        private void RebuildLayerView()
+        {
+            layerImageList.Images.Clear();
+            layerList.Items.Clear();
+
+            for (int i = 0; i < _map.Layers.Count; i++)
+            {
+                layerImageList.Images.Add(_map.Layers[i].GetImage());
+                layerList.Items.Add(new ListViewItem { Text = "Layer " + i, ImageIndex = i });
+            }
         }
 
         private void viewPortPanel_Scroll(object sender, ScrollEventArgs e)
@@ -115,6 +127,32 @@ namespace Ozzyria.Gryp
         private void reRenderTimer_Tick(object sender, EventArgs e)
         {
             viewPortPanel.Refresh();
+        }
+
+        private void layerList_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                var rebuildLayerView = false;
+                foreach (ListViewItem selectItem in layerList.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
+                {
+                    rebuildLayerView = true;
+                    _map.Layers.RemoveAt(selectItem.Index);
+                }
+
+                if (rebuildLayerView)
+                {
+                    RebuildLayerView();
+                }
+            }
+            else if (e.KeyCode == Keys.A)
+            {
+                if (_map.Width > 0 && _map.Height > 0)
+                {
+                    _map.PushLayer();
+                    RebuildLayerView();
+                }
+            }
         }
     }
 }
