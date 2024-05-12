@@ -1,3 +1,4 @@
+using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using System.Reflection;
 
@@ -7,7 +8,9 @@ namespace Ozzyria.Gryp
     {
         internal Map _map = new Map();
         internal Bitmap mapGridImage = null;
-        internal Layer layer = null;
+
+        internal Camera camera = new Camera();
+
 
         internal Font mapEditorFont;
         internal Pen bluePen;
@@ -77,25 +80,24 @@ namespace Ozzyria.Gryp
                     {
                         for (var x = 0; x < _map.Width; x++)
                         {
-
                             for (var y = 0; y < _map.Height; y++)
                             {
                                 graphics.DrawRectangle(redPen, new Rectangle(x * 32, y * 32, 32, 32));
                             }
                         }
                     }
-
                 }
             }
 
             for (int i = 0; i < _map.Layers.Count; i++)
             {
-                e.Graphics.DrawImage(_map.Layers[i].GetImage(), new Point(0, 0));
+                var image = _map.Layers[i].GetImage();
+                e.Graphics.DrawImage(image, new RectangleF(camera.WorldX, camera.WorldY, image.Width * camera.Scale, image.Height * camera.Scale));
             }
 
             if (mapGridImage != null)
             {
-                e.Graphics.DrawImage(mapGridImage, new Point(0, 0));
+                e.Graphics.DrawImage(mapGridImage, new RectangleF(camera.WorldX, camera.WorldY, mapGridImage.Width * camera.Scale, mapGridImage.Height * camera.Scale));
             }
 
             // Render Width x Height
@@ -116,7 +118,7 @@ namespace Ozzyria.Gryp
 
         private void viewPortPanel_Scroll(object sender, ScrollEventArgs e)
         {
-            // TODO calculate scale
+            camera.Scale += (e.NewValue - e.OldValue) * 0.001f;
         }
 
         private void viewPortPanel_MouseMove(object sender, MouseEventArgs e)
@@ -143,6 +145,7 @@ namespace Ozzyria.Gryp
                 if (rebuildLayerView)
                 {
                     RebuildLayerView();
+                    mainStatusLabel.Text = "Layer(s) removed";
                 }
             }
             else if (e.KeyCode == Keys.A)
@@ -151,6 +154,7 @@ namespace Ozzyria.Gryp
                 {
                     _map.PushLayer();
                     RebuildLayerView();
+                    mainStatusLabel.Text = "Layer added";
                 }
             }
         }
