@@ -1,6 +1,7 @@
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Form;
+using System.Drawing;
 using System.Reflection;
 
 namespace Ozzyria.Gryp
@@ -75,11 +76,11 @@ namespace Ozzyria.Gryp
                 }
             }
 
-            // TODO infer graphics to draw
             if (_map.Width > 0 && _map.Height > 0)
             {
                 if (mapGridImage == null)
                 {
+                    // re-build mape image
                     mapGridImage = new Bitmap(_map.Width * 32 + 1, _map.Height * 32 + 1);
                     using (var graphics = Graphics.FromImage(mapGridImage))
                     {
@@ -92,6 +93,10 @@ namespace Ozzyria.Gryp
                         }
                     }
                 }
+
+                // render map backing
+                e.Graphics.FillRectangle(Brushes.DarkSlateGray, new RectangleF(camera.ViewX, camera.ViewY, camera.WorldToView(mapGridImage.Width), camera.WorldToView(mapGridImage.Height)));
+
             }
 
             for (int i = 0; i < _map.Layers.Count; i++)
