@@ -1,6 +1,7 @@
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Ozzyria.Gryp
 {
@@ -92,12 +93,12 @@ namespace Ozzyria.Gryp
             for (int i = 0; i < _map.Layers.Count; i++)
             {
                 var image = _map.Layers[i].GetImage();
-                e.Graphics.DrawImage(image, new RectangleF(camera.WorldX, camera.WorldY, image.Width * camera.Scale, image.Height * camera.Scale));
+                e.Graphics.DrawImage(image, new RectangleF(camera.ViewX, camera.ViewY, camera.WorldToView(image.Width), camera.WorldToView(image.Height)));
             }
 
             if (mapGridImage != null)
             {
-                e.Graphics.DrawImage(mapGridImage, new RectangleF(camera.WorldX, camera.WorldY, mapGridImage.Width * camera.Scale, mapGridImage.Height * camera.Scale));
+                e.Graphics.DrawImage(mapGridImage, new RectangleF(camera.ViewX, camera.ViewY, camera.WorldToView(mapGridImage.Width), camera.WorldToView(mapGridImage.Height)));
             }
 
             // Render Width x Height
@@ -119,6 +120,16 @@ namespace Ozzyria.Gryp
         private void viewPortPanel_Scroll(object sender, ScrollEventArgs e)
         {
             camera.Scale += (e.NewValue - e.OldValue) * 0.001f;
+        }
+
+        private void viewPortPanel_MouseWheel(object sender, MouseEventArgs e)
+        {
+            var scale = (e.Delta > 0)
+                ? 0.1f
+                : -0.1f;
+            var targetScale = camera.Scale * (1 + scale);
+
+            camera.ScaleTo(e.X, e.Y, targetScale);
         }
 
         private void viewPortPanel_MouseMove(object sender, MouseEventArgs e)
@@ -155,6 +166,21 @@ namespace Ozzyria.Gryp
                     _map.PushLayer();
                     RebuildLayerView();
                     mainStatusLabel.Text = "Layer added";
+                }
+            }
+        }
+
+        private void onToolChecked_CheckedChanged(object sender, EventArgs e)
+        {
+            // if is a checked-able tool
+            if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
+            {
+                foreach(ToolStripItem item in mainToolbelt.Items) {
+                    if(item is ToolStripButton && item != sender)
+                    {
+                        // Uncheck all other tools in the toolblet
+                        ((ToolStripButton)item).Checked = false;
+                    }
                 }
             }
         }

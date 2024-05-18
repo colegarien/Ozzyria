@@ -63,8 +63,7 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Padding = new Padding(11, 4, 0, 4);
-            menuStrip.Size = new Size(1486, 44);
+            menuStrip.Size = new Size(800, 24);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "Main Menu";
             // 
@@ -72,13 +71,13 @@
             // 
             fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(71, 36);
+            fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
             // 
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(210, 44);
+            newToolStripMenuItem.Size = new Size(107, 22);
             newToolStripMenuItem.Text = "New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
@@ -88,10 +87,10 @@
             mainToolbelt.GripStyle = ToolStripGripStyle.Hidden;
             mainToolbelt.ImageScalingSize = new Size(32, 32);
             mainToolbelt.Items.AddRange(new ToolStripItem[] { toolSelect, toolMove, toolStripSeparator, toolEntity, toolPath, toolWall, toolStripSeparator1, toolBrush, toolFill, toolRectangle, toolFilledRectangle, toolLine });
-            mainToolbelt.Location = new Point(0, 44);
+            mainToolbelt.Location = new Point(0, 24);
             mainToolbelt.Name = "mainToolbelt";
-            mainToolbelt.Padding = new Padding(0, 0, 4, 0);
-            mainToolbelt.Size = new Size(66, 916);
+            mainToolbelt.Padding = new Padding(0, 0, 2, 0);
+            mainToolbelt.Size = new Size(33, 426);
             mainToolbelt.TabIndex = 1;
             mainToolbelt.Text = "Toolbelt";
             // 
@@ -100,119 +99,138 @@
             toolSelect.CheckOnClick = true;
             toolSelect.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolSelect.Image = (Image)resources.GetObject("toolSelect.Image");
+            toolSelect.ImageScaling = ToolStripItemImageScaling.None;
             toolSelect.ImageTransparentColor = Color.Magenta;
             toolSelect.Name = "toolSelect";
-            toolSelect.Size = new Size(57, 36);
+            toolSelect.Size = new Size(28, 20);
             toolSelect.Text = "&Select";
+            toolSelect.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolMove
             // 
             toolMove.CheckOnClick = true;
             toolMove.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolMove.Image = (Image)resources.GetObject("toolMove.Image");
+            toolMove.ImageScaling = ToolStripItemImageScaling.None;
             toolMove.ImageTransparentColor = Color.Magenta;
             toolMove.Name = "toolMove";
-            toolMove.Size = new Size(57, 36);
+            toolMove.Size = new Size(28, 20);
             toolMove.Text = "&Move";
+            toolMove.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new Size(57, 6);
+            toolStripSeparator.Size = new Size(28, 6);
             // 
             // toolEntity
             // 
             toolEntity.CheckOnClick = true;
             toolEntity.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolEntity.Image = (Image)resources.GetObject("toolEntity.Image");
+            toolEntity.ImageScaling = ToolStripItemImageScaling.None;
             toolEntity.ImageTransparentColor = Color.Magenta;
             toolEntity.Name = "toolEntity";
-            toolEntity.Size = new Size(57, 36);
+            toolEntity.Size = new Size(28, 20);
             toolEntity.Text = "&Entity";
+            toolEntity.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolPath
             // 
             toolPath.CheckOnClick = true;
             toolPath.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolPath.Image = (Image)resources.GetObject("toolPath.Image");
+            toolPath.ImageScaling = ToolStripItemImageScaling.None;
             toolPath.ImageTransparentColor = Color.Magenta;
             toolPath.Name = "toolPath";
-            toolPath.Size = new Size(57, 36);
+            toolPath.Size = new Size(28, 20);
             toolPath.Text = "&Path";
+            toolPath.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolWall
             // 
             toolWall.CheckOnClick = true;
             toolWall.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolWall.Image = (Image)resources.GetObject("toolWall.Image");
+            toolWall.ImageScaling = ToolStripItemImageScaling.None;
             toolWall.ImageTransparentColor = Color.Magenta;
             toolWall.Name = "toolWall";
-            toolWall.Size = new Size(57, 36);
+            toolWall.Size = new Size(28, 20);
             toolWall.Text = "&Wall";
+            toolWall.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(57, 6);
+            toolStripSeparator1.Size = new Size(28, 6);
             // 
             // toolBrush
             // 
             toolBrush.CheckOnClick = true;
             toolBrush.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolBrush.Image = (Image)resources.GetObject("toolBrush.Image");
+            toolBrush.ImageScaling = ToolStripItemImageScaling.None;
             toolBrush.ImageTransparentColor = Color.Magenta;
             toolBrush.Name = "toolBrush";
-            toolBrush.Size = new Size(57, 36);
+            toolBrush.Size = new Size(28, 20);
             toolBrush.Text = "&Brush";
+            toolBrush.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolFill
             // 
             toolFill.CheckOnClick = true;
             toolFill.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolFill.Image = (Image)resources.GetObject("toolFill.Image");
+            toolFill.ImageScaling = ToolStripItemImageScaling.None;
             toolFill.ImageTransparentColor = Color.Magenta;
             toolFill.Name = "toolFill";
-            toolFill.Size = new Size(57, 36);
+            toolFill.Size = new Size(28, 20);
             toolFill.Text = "&Fill";
+            toolFill.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolRectangle
             // 
             toolRectangle.CheckOnClick = true;
             toolRectangle.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolRectangle.Image = (Image)resources.GetObject("toolRectangle.Image");
+            toolRectangle.ImageScaling = ToolStripItemImageScaling.None;
             toolRectangle.ImageTransparentColor = Color.Magenta;
             toolRectangle.Name = "toolRectangle";
-            toolRectangle.Size = new Size(57, 36);
+            toolRectangle.Size = new Size(28, 20);
             toolRectangle.Text = "&Rectangle";
+            toolRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolFilledRectangle
             // 
             toolFilledRectangle.CheckOnClick = true;
             toolFilledRectangle.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolFilledRectangle.Image = (Image)resources.GetObject("toolFilledRectangle.Image");
+            toolFilledRectangle.ImageScaling = ToolStripItemImageScaling.None;
             toolFilledRectangle.ImageTransparentColor = Color.Magenta;
             toolFilledRectangle.Name = "toolFilledRectangle";
-            toolFilledRectangle.Size = new Size(57, 36);
+            toolFilledRectangle.Size = new Size(28, 20);
             toolFilledRectangle.Text = "&Filled Rectangle";
+            toolFilledRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolLine
             // 
             toolLine.CheckOnClick = true;
             toolLine.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolLine.Image = (Image)resources.GetObject("toolLine.Image");
+            toolLine.ImageScaling = ToolStripItemImageScaling.None;
             toolLine.ImageTransparentColor = Color.Magenta;
             toolLine.Name = "toolLine";
-            toolLine.Size = new Size(57, 36);
+            toolLine.Size = new Size(28, 20);
             toolLine.Text = "&Line";
+            toolLine.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // mainStatusStrip
             // 
             mainStatusStrip.ImageScalingSize = new Size(32, 32);
             mainStatusStrip.Items.AddRange(new ToolStripItem[] { mainStatusLabel });
-            mainStatusStrip.Location = new Point(66, 918);
+            mainStatusStrip.Location = new Point(33, 428);
             mainStatusStrip.Name = "mainStatusStrip";
-            mainStatusStrip.Padding = new Padding(2, 0, 26, 0);
-            mainStatusStrip.Size = new Size(1420, 42);
+            mainStatusStrip.Size = new Size(767, 22);
             mainStatusStrip.SizingGrip = false;
             mainStatusStrip.TabIndex = 4;
             mainStatusStrip.Text = "Main Status Strip";
@@ -220,20 +238,20 @@
             // mainStatusLabel
             // 
             mainStatusLabel.Name = "mainStatusLabel";
-            mainStatusLabel.Size = new Size(92, 32);
+            mainStatusLabel.Size = new Size(46, 17);
             mainStatusLabel.Text = "Loaded";
             // 
             // viewPortPanel
             // 
             viewPortPanel.BackColor = Color.FromArgb(64, 64, 64);
-            viewPortPanel.Location = new Point(50, 51);
-            viewPortPanel.Margin = new Padding(6, 6, 6, 6);
+            viewPortPanel.Location = new Point(25, 24);
             viewPortPanel.Name = "viewPortPanel";
-            viewPortPanel.Size = new Size(1051, 855);
+            viewPortPanel.Size = new Size(568, 401);
             viewPortPanel.TabIndex = 6;
             viewPortPanel.Scroll += viewPortPanel_Scroll;
             viewPortPanel.Paint += viewPortPanel_Paint;
             viewPortPanel.MouseMove += viewPortPanel_MouseMove;
+            viewPortPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.viewPortPanel_MouseWheel);
             // 
             // reRenderTimer
             // 
@@ -244,11 +262,10 @@
             // layerList
             // 
             layerList.LargeImageList = layerImageList;
-            layerList.Location = new Point(1112, 51);
-            layerList.Margin = new Padding(6, 6, 6, 6);
+            layerList.Location = new Point(599, 24);
             layerList.MultiSelect = false;
             layerList.Name = "layerList";
-            layerList.Size = new Size(348, 433);
+            layerList.Size = new Size(189, 205);
             layerList.SmallImageList = layerImageList;
             layerList.TabIndex = 7;
             layerList.UseCompatibleStateImageBehavior = false;
@@ -262,9 +279,9 @@
             // 
             // MainGrypWindow
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1486, 960);
+            ClientSize = new Size(800, 450);
             Controls.Add(layerList);
             Controls.Add(viewPortPanel);
             Controls.Add(mainStatusStrip);
@@ -272,7 +289,6 @@
             Controls.Add(menuStrip);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
-            Margin = new Padding(6, 6, 6, 6);
             Name = "MainGrypWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Gryp";
