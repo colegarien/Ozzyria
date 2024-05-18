@@ -1,7 +1,7 @@
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
+using Ozzyria.Gryp.Models.Form;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace Ozzyria.Gryp
 {
@@ -11,6 +11,7 @@ namespace Ozzyria.Gryp
         internal Bitmap mapGridImage = null;
 
         internal Camera camera = new Camera();
+        internal MouseState mouseState = new MouseState();
 
 
         internal Font mapEditorFont;
@@ -48,6 +49,9 @@ namespace Ozzyria.Gryp
                 _map.PushLayer();
 
                 RebuildLayerView();
+
+                // Center Camera onto Map
+                camera.MoveToViewCoordinates((_map.Width / 2f) - (viewPortPanel.ClientSize.Width / 2f), (_map.Height / 2f) - (viewPortPanel.ClientSize.Height / 2f));
 
                 mapGridImage = null;
                 mainStatusLabel.Text = "Successfully created map";
@@ -100,9 +104,6 @@ namespace Ozzyria.Gryp
             {
                 e.Graphics.DrawImage(mapGridImage, new RectangleF(camera.ViewX, camera.ViewY, camera.WorldToView(mapGridImage.Width), camera.WorldToView(mapGridImage.Height)));
             }
-
-            // Render Width x Height
-            e.Graphics.DrawString($"{_map.Width}x{_map.Height}", mapEditorFont, greenBrush, new PointF());
         }
 
         private void RebuildLayerView()
@@ -117,24 +118,71 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void viewPortPanel_Scroll(object sender, ScrollEventArgs e)
-        {
-            camera.Scale += (e.NewValue - e.OldValue) * 0.001f;
-        }
-
         private void viewPortPanel_MouseWheel(object sender, MouseEventArgs e)
         {
             var scale = (e.Delta > 0)
                 ? 0.1f
                 : -0.1f;
             var targetScale = camera.Scale * (1 + scale);
-
             camera.ScaleTo(e.X, e.Y, targetScale);
         }
 
         private void viewPortPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            // Track mouse position
+            mouseState.PreviousMouseX = mouseState.MouseX;
+            mouseState.PreviousMouseY = mouseState.MouseY;
+
+            mouseState.MouseX = e.X;
+            mouseState.MouseY = e.Y;
+
+            if(mouseState.IsMiddleDown)
+            {
+                var mouseDeltaX = mouseState.MouseX - mouseState.PreviousMouseX;
+                var mouseDeltaY = mouseState.MouseY - mouseState.PreviousMouseY;
+                camera.MoveToViewCoordinates(camera.ViewX + mouseDeltaX, camera.ViewY + mouseDeltaY);
+            }
+        }
+
+        private void viewPortPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left)
+            {
+                mouseState.IsLeftDown = true;
+                mouseState.LeftDownStartX = e.X;
+                mouseState.LeftDownStartY = e.Y;
+            }
+
+            if(e.Button == MouseButtons.Right)
+            {
+                mouseState.IsRightDown = true;
+                mouseState.RightDownStartX = e.X;
+                mouseState.RightDownStartY = e.Y;
+            }
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                mouseState.IsMiddleDown = true;
+                mouseState.MiddleDownStartX = e.X;
+                mouseState.MiddleDownStartY = e.Y;
+            }
+        }
+
+        private void viewPortPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left && mouseState.IsLeftDown)
+            {
+                mouseState.IsLeftDown = false;
+            }
+
+            if(e.Button == MouseButtons.Right && mouseState.IsRightDown)
+            {
+                mouseState.IsRightDown = false;
+            }
+
+            if(e.Button == MouseButtons.Middle &&  mouseState.IsMiddleDown)
+            {
+                mouseState.IsMiddleDown = false;
+            }
         }
 
         private void reRenderTimer_Tick(object sender, EventArgs e)
@@ -175,8 +223,9 @@ namespace Ozzyria.Gryp
             // if is a checked-able tool
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
-                foreach(ToolStripItem item in mainToolbelt.Items) {
-                    if(item is ToolStripButton && item != sender)
+                foreach (ToolStripItem item in mainToolbelt.Items)
+                {
+                    if (item is ToolStripButton && item != sender)
                     {
                         // Uncheck all other tools in the toolblet
                         ((ToolStripButton)item).Checked = false;
