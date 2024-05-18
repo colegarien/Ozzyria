@@ -66,11 +66,11 @@ namespace Ozzyria.ConstructionKit
                     errorCaption = "ID In Use";
                     errorMessage = "Supplied ID \"" + newTileSetId + "\" is already in use!";
                 }
-                else if (!System.IO.File.Exists(Content.Loader.Root() + "/TileSets/Sprites/" + newTileSetId + ".png"))
+                else if (!System.IO.File.Exists(Content.Loader.Root() + "/Resources/Sprites/" + newTileSetId + ".png"))
                 {
                     if (diaTileSetFile.ShowDialog() == DialogResult.OK)
                     {
-                        System.IO.File.Copy(diaTileSetFile.FileName, Content.Loader.Root() + "/TileSets/Sprites/" + newTileSetId + ".png", true);
+                        System.IO.File.Copy(diaTileSetFile.FileName, Content.Loader.Root() + "/Resources/Sprites/" + newTileSetId + ".png", true);
                     }
                     else
                     {
@@ -183,7 +183,7 @@ namespace Ozzyria.ConstructionKit
                     }
                 }
 
-                _tileSetImage = Image.FromFile(Content.Loader.Root() + "/TileSets/Sprites/" + _currentTileSet + ".png");
+                _tileSetImage = Image.FromFile(Content.Loader.Root() + "/Resources/Sprites/" + _currentTileSet + ".png");
                 if (picTileSet.Image != null) picTileSet.Image.Dispose();
                 picTileSet.Image = _tileSetImage;
 

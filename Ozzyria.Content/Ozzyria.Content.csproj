@@ -8,12 +8,11 @@
     <None Remove="Maps\cool_map.ozz" />
     <None Remove="Maps\cool_map_template.ozz" />
     <None Remove="Maps\map_metadata.json" />
+    <None Remove="Resources\Sprites\entity_set_001.png" />
+    <None Remove="Resources\Sprites\outside_tileset_001.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Entities\Sprites\entity_set_001.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Maps\cool_map.ozz">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -29,7 +28,10 @@
     <Content Include="Maps\test_m.ozz">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TileSets\Sprites\outside_tileset_001.png">
+    <Content Include="Resources\Sprites\entity_set_001.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sprites\outside_tileset_001.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TileSets\tileset_metadata.json">
@@ -38,9 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Entities\resource_registry.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Maps\test_a.ozz">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -51,6 +50,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Maps\test_b_template.ozz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\resource_registry.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

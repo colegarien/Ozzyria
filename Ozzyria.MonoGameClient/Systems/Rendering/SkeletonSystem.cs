@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
+using Ozzyria.Content.Models;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering

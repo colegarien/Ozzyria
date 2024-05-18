@@ -1,5 +1,4 @@
-﻿
-namespace Ozzyria.Game.Animation
+﻿namespace Ozzyria.Content.Models
 {
     public enum DrawableAttachmentType
     {

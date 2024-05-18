@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.Game;
-using Ozzyria.Game.Animation;
+using Ozzyria.Content;
 using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.Game.Persistence;

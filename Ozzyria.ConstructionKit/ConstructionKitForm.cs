@@ -149,7 +149,7 @@ namespace Ozzyria.ConstructionKit
                 {
                     _currentTileSet = metaData.TileSet;
                     _currentTileSetImage?.Dispose();
-                    _currentTileSetImage = Image.FromFile(Content.Loader.Root() + "/TileSets/Sprites/" + _currentTileSet + ".png");
+                    _currentTileSetImage = Image.FromFile(Content.Loader.Root() + "/Resources/Sprites/" + _currentTileSet + ".png");
                 }
 
                 var tileSetMetaData = TileSetMetaDataFactory.tileSetMetaDatas[_currentTileSet];

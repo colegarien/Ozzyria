@@ -1,4 +1,6 @@
 ﻿using Ozzyria.Game.Components;
+using Ozzyria.Content;
+using Ozzyria.Content.Models;
 
 namespace Ozzyria.MonoGameClient.Rendering.Resolver
 {
@@ -6,7 +8,7 @@ namespace Ozzyria.MonoGameClient.Rendering.Resolver
     {
         public static SkeletonOffsets Get(SkeletonType type, SkeletonPose pose, Direction direction, int frame)
         {
-            var resourceRegistry = Game.Animation.Registry.GetInstance();
+            var resourceRegistry = Registry.GetInstance();
 
             var typeKey = type.ToString();
             var poseKey = pose.ToString();

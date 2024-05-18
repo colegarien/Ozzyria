@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Animation;
+using Ozzyria.Content.Models;
 using Ozzyria.Game.Components;
 using Grecs;
 
