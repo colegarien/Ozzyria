@@ -103,7 +103,19 @@ namespace Ozzyria.Gryp
             if (mapGridImage != null)
             {
                 e.Graphics.DrawImage(mapGridImage, new RectangleF(camera.ViewX, camera.ViewY, camera.WorldToView(mapGridImage.Width), camera.WorldToView(mapGridImage.Height)));
+
+                // render highlight square
+                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
+                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
+                var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
+                var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
+                if (mouseTileX >= 0 && mouseTileY >= 0 && mouseTileX < _map.Width && mouseTileY < _map.Height)
+                {
+                    e.Graphics.DrawRectangle(Pens.Green, new RectangleF(camera.ViewX + camera.WorldToView(mouseTileX * 32), camera.ViewY + camera.WorldToView(mouseTileY * 32), camera.WorldToView(32), camera.WorldToView(32)));
+                }
             }
+
+
         }
 
         private void RebuildLayerView()
