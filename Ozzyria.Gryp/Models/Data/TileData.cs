@@ -1,4 +1,6 @@
 ﻿using Ozzyria.Content;
+using SkiaSharp;
+using System.Drawing;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -11,11 +13,19 @@ namespace Ozzyria.Gryp.Models.Data
 
     internal class TileData
     {
-        private static Dictionary<uint, Image> textures = new Dictionary<uint, Image>();
+        private static Dictionary<uint, SKImage> textures = new Dictionary<uint, SKImage>();
 
-        public List<TextureCoords> Images { get; set; } = new List<TextureCoords>();
+        public List<TextureCoords> Images { get; set; } = new List<TextureCoords>
+        {
+            new TextureCoords
+            {
+                Resource = 1,
+                TextureX= 0,
+                TextureY=0
+            }
+        };
 
-        public void Render(Graphics graphics, int x, int y)
+        public void Render(SKCanvas canvas, float x, float y, float width=32, float height=32)
         {
             if (textures.Count <= 0)
             {
@@ -23,7 +33,7 @@ namespace Ozzyria.Gryp.Models.Data
                 var registry = Registry.GetInstance();
                 foreach (var kv in registry.Resources)
                 {
-                    textures[kv.Key] = Bitmap.FromFile(Content.Loader.Root() + "/Resources/Sprites/"+kv.Value+".png");
+                    textures[kv.Key] = SKImage.FromEncodedData(SKData.Create(Content.Loader.Root() + "/Resources/Sprites/"+kv.Value+".png"));
                 }
             }
 
@@ -31,10 +41,19 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 if (textures.ContainsKey(image.Resource))
                 {
-                    graphics.DrawImage(textures[image.Resource], new Rectangle(x, y, 32, 32), new Rectangle(image.TextureX, image.TextureY, 32, 32), GraphicsUnit.Pixel);
+                    canvas.DrawImage(textures[image.Resource], new SKRect(image.TextureX, image.TextureY, image.TextureX+32, image.TextureY+32), new SKRect(x, y, x + width, y + height));
                 } else
                 {
-                    graphics.FillRectangle(Brushes.Pink, new Rectangle(x, y, 32, 32));
+                    canvas.DrawRect(new SKRect(x, y, x+ width, y+ height), new SKPaint
+                    {
+                        Color = new SKColor(
+                        red: (byte)255,
+                        green: (byte)0,
+                        blue: (byte)255,
+                        alpha: (byte)255),
+                        StrokeWidth = 1,
+                        IsAntialias = true
+                    });
                 }
             }
         }

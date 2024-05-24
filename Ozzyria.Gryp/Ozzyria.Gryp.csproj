@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="2.88.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ozzyria.Content\Ozzyria.Content.csproj" />
   </ItemGroup>
 

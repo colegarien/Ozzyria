@@ -1,4 +1,6 @@
-﻿namespace Ozzyria.Gryp.Models.Data
+﻿using SkiaSharp;
+
+namespace Ozzyria.Gryp.Models.Data
 {
     internal class LayerBoundary
     {
@@ -14,14 +16,32 @@
                 && X <= x
                 && Y <= y;
         }
+
+        public bool IsInCamera(Camera camera)
+        {
+            // camera WorldX and ViewX represent the world origin currently
+            var boundaryWorldLeft = camera.WorldX + (X * 32);
+            var boundaryWorldRight = boundaryWorldLeft + (Width * 32);
+            var boundaryWorldTop = camera.WorldY + (Y * 32);
+            var boundaryWorldBottom = boundaryWorldTop + (Height * 32);
+
+            // The world moves not the camera
+            var cameraWorldLeft = 0;
+            var cameraWorldTop = 0;
+            var cameraWorldRight = camera.WorldWidth;
+            var cameraWorldBottom = camera.WorldHeight;
+
+            // easier to check if NOT in camera and then inverse
+            return !((boundaryWorldRight < cameraWorldLeft || boundaryWorldLeft >= cameraWorldRight)
+                || (boundaryWorldBottom < cameraWorldTop || boundaryWorldTop >= cameraWorldBottom));
+        }
     }
 
     internal class Layer
     {
         const int MAX_CAPACITY = 64;
 
-        private Bitmap _compositeRender;
-        private bool _needsRendering = true;
+        private SKBitmap _thumbnailRender;
 
         protected LayerBoundary _boundary;
 
@@ -38,8 +58,6 @@
         {
             _boundary = boundary;
             _parent = parent;
-
-            _compositeRender = new Bitmap(boundary.Width * 32 + 1, boundary.Height * 32 + 1);
 
             // split if big map
             if (boundary.Width * boundary.Height > MAX_CAPACITY)
@@ -108,71 +126,59 @@
             return _boundary.Width > 0 && _boundary.Height > 0;
         }
 
-        public void SignalNeedsRender()
+        public void RenderToCanvas(SKCanvas canvas, Camera camera)
         {
-            _needsRendering = CanRender();
-            if (_needsRendering && _parent != null)
+            if (canvas == null || !CanRender() || !_boundary.IsInCamera(camera))
             {
-                _parent?.SignalNeedsRender();
+                return;
+            }
+
+
+
+            if (IsSplit())
+            {
+                _bottomLeft?.RenderToCanvas(canvas, camera);
+                _bottomRight?.RenderToCanvas(canvas, camera);
+                _topLeft?.RenderToCanvas(canvas, camera);
+                _topRight?.RenderToCanvas(canvas, camera);
+            }
+            else
+            {
+                // draw layer relative to itself (everything off of (0, 0) and bottom up)
+                var dimension = camera.WorldToView(32);
+                var boundaryViewX = camera.WorldToView(_boundary.X * 32);
+                var boundaryViewY = camera.WorldToView(_boundary.Y * 32);
+                for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
+                {
+                    var tileY =camera.ViewY + boundaryViewY + camera.WorldToView(y * 32);
+                    for (var x = 0; x < _tileData.GetLength(0); x++)
+                    {
+                        var tileX =camera.ViewX + boundaryViewX + camera.WorldToView(x * 32);
+                        _tileData[x, y].Render(canvas, tileX, tileY, dimension, dimension);
+                    }
+                }
             }
         }
 
-        public Bitmap GetImage()
+        public SKBitmap GetThumbnail()
         {
-            if (_needsRendering)
+            if (_thumbnailRender == null)
             {
-                _needsRendering = false;
-                if (IsSplit())
+                _thumbnailRender = new SKBitmap(new SKImageInfo(_boundary.Width * 32 + 1, _boundary.Height * 32 + 1));
+
+                using (SKCanvas canvas = new SKCanvas(_thumbnailRender))
                 {
-                    var topLeftImage = _topLeft?.GetImage();
-                    var topRightImage = _topRight?.GetImage();
-                    var bottomLeftImage = _bottomLeft?.GetImage();
-                    var bottomRightImage = _bottomRight?.GetImage();
+                    var dummyCamera = new Camera();
+                    dummyCamera.Scale = 1;
+                    dummyCamera.SizeCamera(_thumbnailRender.Width, _thumbnailRender.Height);
+                    dummyCamera.MoveToViewCoordinates(0, 0);
 
-
-                    using (var graphics = Graphics.FromImage(_compositeRender))
-                    {
-                        // render images bottom up
-                        if (bottomLeftImage != null)
-                        {
-                            graphics.DrawImage(bottomLeftImage, new Point((_bottomLeft._boundary.X - _boundary.X) * 32, (_bottomLeft._boundary.Y - _boundary.Y) * 32));
-                        }
-
-                        if (bottomRightImage != null)
-                        {
-                            graphics.DrawImage(bottomRightImage, new Point((_bottomRight._boundary.X - _boundary.X) * 32, (_bottomRight._boundary.Y - _boundary.Y) * 32));
-                        }
-
-                        if (topLeftImage != null)
-                        {
-                            graphics.DrawImage(topLeftImage, new Point((_topLeft._boundary.X - _boundary.X) * 32, (_topLeft._boundary.Y - _boundary.Y) * 32));
-                        }
-
-                        if (topRightImage != null)
-                        {
-                            graphics.DrawImage(topRightImage, new Point((_topRight._boundary.X - _boundary.X) * 32, (_topRight._boundary.Y - _boundary.Y) * 32));
-                        }
-                    }
+                    RenderToCanvas(canvas, dummyCamera);
                 }
-                else if (CanRender())
-                {
-                    using (var graphics = Graphics.FromImage(_compositeRender))
-                    {
-                        // draw layer relative to itself (everything off of (0, 0) and bottom up)
-                        for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
-                        {
-                            var tileY = y * 32;
-                            for (var x = 0; x < _tileData.GetLength(0); x++)
-                            {
-                                var tileX = x * 32;
-                                _tileData[x, y].Render(graphics, tileX, tileY);
-                            }
-                        }
-                    }
-                }
+                _thumbnailRender = _thumbnailRender.Resize(new SKImageInfo(256, 256), SKFilterQuality.High);
             }
 
-            return _compositeRender;
+            return _thumbnailRender;
         }
     }
 }

@@ -48,10 +48,10 @@
             toolLine = new ToolStripButton();
             mainStatusStrip = new StatusStrip();
             mainStatusLabel = new ToolStripStatusLabel();
-            viewPortPanel = new Panel();
             reRenderTimer = new System.Windows.Forms.Timer(components);
             layerList = new ListView();
             layerImageList = new ImageList(components);
+            mapViewPort = new SkiaSharp.Views.Desktop.SKGLControl();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -241,23 +241,10 @@
             mainStatusLabel.Size = new Size(46, 17);
             mainStatusLabel.Text = "Loaded";
             // 
-            // viewPortPanel
-            // 
-            viewPortPanel.BackColor = Color.FromArgb(64, 64, 64);
-            viewPortPanel.Location = new Point(25, 24);
-            viewPortPanel.Name = "viewPortPanel";
-            viewPortPanel.Size = new Size(568, 401);
-            viewPortPanel.TabIndex = 6;
-            viewPortPanel.Paint += viewPortPanel_Paint;
-            viewPortPanel.MouseDown += viewPortPanel_MouseDown;
-            viewPortPanel.MouseMove += viewPortPanel_MouseMove;
-            viewPortPanel.MouseUp += viewPortPanel_MouseUp;
-            viewPortPanel.MouseWheel += viewPortPanel_MouseWheel;
-            // 
             // reRenderTimer
             // 
             reRenderTimer.Enabled = true;
-            reRenderTimer.Interval = 16;
+            reRenderTimer.Interval = 30;
             reRenderTimer.Tick += reRenderTimer_Tick;
             // 
             // layerList
@@ -278,13 +265,28 @@
             layerImageList.ImageSize = new Size(16, 16);
             layerImageList.TransparentColor = Color.Transparent;
             // 
+            // mapViewPort
+            // 
+            mapViewPort.BackColor = Color.Black;
+            mapViewPort.Location = new Point(29, 24);
+            mapViewPort.Margin = new Padding(4, 3, 4, 3);
+            mapViewPort.Name = "mapViewPort";
+            mapViewPort.Size = new Size(563, 401);
+            mapViewPort.TabIndex = 8;
+            mapViewPort.VSync = false;
+            mapViewPort.PaintSurface += skglControl1_PaintSurface;
+            mapViewPort.MouseDown += skglControl1_MouseDown;
+            mapViewPort.MouseMove += skglControl1_MouseMove;
+            mapViewPort.MouseUp += skglControl1_MouseUp;
+            mapViewPort.MouseWheel += skglControl1_MouseWheel;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(mapViewPort);
             Controls.Add(layerList);
-            Controls.Add(viewPortPanel);
             Controls.Add(mainStatusStrip);
             Controls.Add(mainToolbelt);
             Controls.Add(menuStrip);
@@ -320,12 +322,12 @@
         private StatusStrip mainStatusStrip;
         private ToolStripStatusLabel mainStatusLabel;
         private ToolStripMenuItem newToolStripMenuItem;
-        private Panel viewPortPanel;
         private ToolStripButton toolRectangle;
         private ToolStripButton toolFilledRectangle;
         private ToolStripButton toolLine;
         private System.Windows.Forms.Timer reRenderTimer;
         private ListView layerList;
         private ImageList layerImageList;
+        private SkiaSharp.Views.Desktop.SKGLControl mapViewPort;
     }
 }
