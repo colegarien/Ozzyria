@@ -41,7 +41,7 @@
             // numWidth
             // 
             numWidth.Location = new Point(61, 8);
-            numWidth.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numWidth.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numWidth.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numWidth.Name = "numWidth";
             numWidth.Size = new Size(57, 23);
@@ -69,7 +69,7 @@
             // numHeight
             // 
             numHeight.Location = new Point(61, 37);
-            numHeight.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numHeight.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numHeight.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numHeight.Name = "numHeight";
             numHeight.Size = new Size(57, 23);

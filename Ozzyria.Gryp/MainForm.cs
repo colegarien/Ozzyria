@@ -9,29 +9,14 @@ namespace Ozzyria.Gryp
     public partial class MainGrypWindow : Form
     {
         internal Map _map = new Map();
-        internal Bitmap mapGridImage = null;
 
         internal Camera camera = new Camera();
         internal MouseState mouseState = new MouseState();
-
-
-        internal Font mapEditorFont;
-        internal Pen bluePen;
-        internal Pen redPen;
-        internal Brush greenBrush;
-        internal Brush redBrush;
 
         public MainGrypWindow()
         {
             InitializeComponent();
             camera.SizeCamera(mapViewPort.ClientSize.Width, mapViewPort.ClientSize.Height);
-
-            // Initialize Pens
-            mapEditorFont = new Font(new FontFamily("Arial"), 12);
-            bluePen = new Pen(Color.Blue);
-            redPen = new Pen(Color.Red);
-            greenBrush = new SolidBrush(Color.Green);
-            redBrush = new SolidBrush(Color.Red);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -50,9 +35,8 @@ namespace Ozzyria.Gryp
                 RebuildLayerView();
 
                 // Center Camera onto Map
-                camera.MoveToViewCoordinates((_map.Width / 2f) - (mapViewPort.ClientSize.Width / 2f), (_map.Height / 2f) - (mapViewPort.ClientSize.Height / 2f));
+                camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
 
-                mapGridImage = null;
                 mainStatusLabel.Text = "Successfully created map";
             }
             else
@@ -89,7 +73,7 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void skglControl1_MouseWheel(object sender, MouseEventArgs e)
+        private void mapViewPort_MouseWheel(object sender, MouseEventArgs e)
         {
             var scale = (e.Delta > 0)
                 ? 0.1f
@@ -98,7 +82,7 @@ namespace Ozzyria.Gryp
             camera.ScaleTo(e.X, e.Y, targetScale);
         }
 
-        private void skglControl1_MouseMove(object sender, MouseEventArgs e)
+        private void mapViewPort_MouseMove(object sender, MouseEventArgs e)
         {
             mouseState.PreviousMouseX = mouseState.MouseX;
             mouseState.PreviousMouseY = mouseState.MouseY;
@@ -114,7 +98,7 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void skglControl1_MouseDown(object sender, MouseEventArgs e)
+        private void mapViewPort_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -138,7 +122,7 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void skglControl1_MouseUp(object sender, MouseEventArgs e)
+        private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && mouseState.IsLeftDown)
             {
@@ -205,86 +189,49 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void skglControl1_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintGLSurfaceEventArgs e)
+        private void mapViewPort_PaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
         {
             // Draw background Grid
-            var bluePaint = new SKPaint
-            {
-                Color = new SKColor(
-                red: (byte)0,
-                green: (byte)0,
-                blue: (byte)255,
-                alpha: (byte)255),
-                StrokeWidth = 1,
-                IsAntialias = true
-            };
             var canvasSize = e.Surface.Canvas.DeviceClipBounds.Size;
-            e.Surface.Canvas.Clear(new SKColor(
-                red: (byte)0,
-                green: (byte)0,
-                blue: (byte)0,
-                alpha: (byte)255));
+            e.Surface.Canvas.Clear(Paints.CanvasColor);
             for (var x = 0; x <= (canvasSize.Width / 16); x++)
             {
                 for (var y = 0; y <= (canvasSize.Height / 16); y++)
                 {
-                    e.Surface.Canvas.DrawLine((x * 16), 0, (x * 16), canvasSize.Height, bluePaint);
-                    e.Surface.Canvas.DrawLine(0, (y * 16), canvasSize.Width, (y * 16), bluePaint);
+                    e.Surface.Canvas.DrawLine((x * 16), 0, (x * 16), canvasSize.Height, Paints.CanvasGridPaint);
+                    e.Surface.Canvas.DrawLine(0, (y * 16), canvasSize.Width, (y * 16), Paints.CanvasGridPaint);
                 }
             }
 
             if (_map.Width > 0 && _map.Height > 0)
             {
                 // render map backing
-                e.Surface.Canvas.DrawRect(new SKRect(camera.ViewX, camera.ViewY, camera.ViewX+camera.WorldToView(_map.Width * 32), camera.ViewY+ camera.WorldToView(_map.Height*32)), new SKPaint
+                e.Surface.Canvas.DrawRect(new SKRect(camera.ViewX, camera.ViewY, camera.ViewX+camera.WorldToView(_map.Width * 32), camera.ViewY+ camera.WorldToView(_map.Height*32)), Paints.MapBackingPaint);
+
+                // render layers
+                for (int i = 0; i < _map.Layers.Count; i++)
                 {
-                    Color = new SKColor(
-                    red: (byte)255,
-                    green: (byte)230,
-                    blue: (byte)230,
-                    alpha: (byte)255),
-                    StrokeWidth = 1,
-                    IsAntialias = true
-                });
+                    _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
+                }
 
-            }
-
-            for (int i = 0; i < _map.Layers.Count; i++)
-            {
-                //var image = _map.Layers[i].GetImage();
-                //e.Surface.Canvas.DrawBitmap(image, new SKRect(camera.ViewX, camera.ViewY, camera.ViewX+camera.WorldToView(image.Width), camera.ViewY+camera.WorldToView(image.Height)), null);
-                _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
-            }
-
-
-            for (var x = 0; x < _map.Width; x++)
-            {
-                for (var y = 0; y < _map.Height; y++)
+                // render overlay grid
+                for (var x = 0; x < _map.Width; x++)
                 {
-                    var renderX = camera.ViewX + camera.WorldToView(x * 32);
-                    var renderY = camera.ViewY + camera.WorldToView(y * 32);
-                    var renderRight = renderX + camera.WorldToView(32);
-                    var renderBottom = renderY + camera.WorldToView(32);
-
-                    if (renderRight >= 0 && renderX < camera.ViewWidth && renderBottom >= 0 && renderY < camera.ViewHeight)
+                    for (var y = 0; y < _map.Height; y++)
                     {
-                        e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderRight, renderBottom), new SKPaint
+                        var renderX = camera.ViewX + camera.WorldToView(x * 32);
+                        var renderY = camera.ViewY + camera.WorldToView(y * 32);
+                        var renderRight = renderX + camera.WorldToView(32);
+                        var renderBottom = renderY + camera.WorldToView(32);
+
+                        if (renderRight >= 0 && renderX < camera.ViewWidth && renderBottom >= 0 && renderY < camera.ViewHeight)
                         {
-                            Color = new SKColor(
-                            red: (byte)255,
-                            green: (byte)0,
-                            blue: (byte)0,
-                            alpha: (byte)255),
-                            StrokeWidth = 1,
-                            IsStroke = true,
-                            IsAntialias = false
-                        });
+                            e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderRight, renderBottom), Paints.MapGridOverlayPaint);
+                        }
                     }
                 }
-            }
 
-            if (_map.Width > 0 && _map.Height > 0)
-            {
+                // render mouse hover higlight
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
                 var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
                 var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
@@ -293,17 +240,7 @@ namespace Ozzyria.Gryp
                 {
                     var renderX = camera.ViewX + camera.WorldToView(mouseTileX * 32);
                     var renderY = camera.ViewY + camera.WorldToView(mouseTileY * 32);
-                    e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(32), renderY + camera.WorldToView(32)), new SKPaint
-                    {
-                        Color = new SKColor(
-                        red: (byte)0,
-                        green: (byte)255,
-                        blue: (byte)0,
-                        alpha: (byte)255),
-                        StrokeWidth = 2,
-                        IsStroke = true,
-                        IsAntialias = false
-                    });
+                    e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(32), renderY + camera.WorldToView(32)), Paints.TileHighlightPaint);
                 }
             }
         }

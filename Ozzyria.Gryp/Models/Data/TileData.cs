@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Content;
 using SkiaSharp;
-using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -15,15 +15,7 @@ namespace Ozzyria.Gryp.Models.Data
     {
         private static Dictionary<uint, SKImage> textures = new Dictionary<uint, SKImage>();
 
-        public List<TextureCoords> Images { get; set; } = new List<TextureCoords>
-        {
-            new TextureCoords
-            {
-                Resource = 1,
-                TextureX= 0,
-                TextureY=0
-            }
-        };
+        public List<TextureCoords> Images { get; set; } = new List<TextureCoords>();
 
         public void Render(SKCanvas canvas, float x, float y, float width=32, float height=32)
         {
@@ -44,16 +36,7 @@ namespace Ozzyria.Gryp.Models.Data
                     canvas.DrawImage(textures[image.Resource], new SKRect(image.TextureX, image.TextureY, image.TextureX+32, image.TextureY+32), new SKRect(x, y, x + width, y + height));
                 } else
                 {
-                    canvas.DrawRect(new SKRect(x, y, x+ width, y+ height), new SKPaint
-                    {
-                        Color = new SKColor(
-                        red: (byte)255,
-                        green: (byte)0,
-                        blue: (byte)255,
-                        alpha: (byte)255),
-                        StrokeWidth = 1,
-                        IsAntialias = true
-                    });
+                    canvas.DrawRect(new SKRect(x, y, x+ width, y+ height), Paints.MissingGraphicPaint);
                 }
             }
         }

@@ -274,11 +274,11 @@
             mapViewPort.Size = new Size(563, 401);
             mapViewPort.TabIndex = 8;
             mapViewPort.VSync = false;
-            mapViewPort.PaintSurface += skglControl1_PaintSurface;
-            mapViewPort.MouseDown += skglControl1_MouseDown;
-            mapViewPort.MouseMove += skglControl1_MouseMove;
-            mapViewPort.MouseUp += skglControl1_MouseUp;
-            mapViewPort.MouseWheel += skglControl1_MouseWheel;
+            mapViewPort.PaintSurface += mapViewPort_PaintSurface;
+            mapViewPort.MouseDown += mapViewPort_MouseDown;
+            mapViewPort.MouseMove += mapViewPort_MouseMove;
+            mapViewPort.MouseUp += mapViewPort_MouseUp;
+            mapViewPort.MouseWheel += mapViewPort_MouseWheel;
             // 
             // MainGrypWindow
             // 

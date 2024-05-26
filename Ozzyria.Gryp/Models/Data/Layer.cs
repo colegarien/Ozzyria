@@ -41,8 +41,6 @@ namespace Ozzyria.Gryp.Models.Data
     {
         const int MAX_CAPACITY = 64;
 
-        private SKBitmap _thumbnailRender;
-
         protected LayerBoundary _boundary;
 
         private Layer? _parent;
@@ -52,7 +50,7 @@ namespace Ozzyria.Gryp.Models.Data
         private Layer? _bottomLeft;
         private Layer? _bottomRight;
 
-        private TileData[,] _tileData;
+        private TileData[,]? _tileData;
 
         public Layer(LayerBoundary boundary, Layer? parent = null)
         {
@@ -142,7 +140,7 @@ namespace Ozzyria.Gryp.Models.Data
                 _topLeft?.RenderToCanvas(canvas, camera);
                 _topRight?.RenderToCanvas(canvas, camera);
             }
-            else
+            else if (_tileData != null)
             {
                 // draw layer relative to itself (everything off of (0, 0) and bottom up)
                 var dimension = camera.WorldToView(32);
@@ -162,23 +160,18 @@ namespace Ozzyria.Gryp.Models.Data
 
         public SKBitmap GetThumbnail()
         {
-            if (_thumbnailRender == null)
+            var thumbnailRender = new SKBitmap(new SKImageInfo(32, 32));
+            using (SKCanvas canvas = new SKCanvas(thumbnailRender))
             {
-                _thumbnailRender = new SKBitmap(new SKImageInfo(_boundary.Width * 32 + 1, _boundary.Height * 32 + 1));
+                var dummyCamera = new Camera();
+                dummyCamera.Scale = 32f / ((_boundary.Width > _boundary.Height ? _boundary.Width : _boundary.Height) * 32);
+                dummyCamera.SizeCamera(32, 32);
+                dummyCamera.MoveToViewCoordinates(0, 0);
 
-                using (SKCanvas canvas = new SKCanvas(_thumbnailRender))
-                {
-                    var dummyCamera = new Camera();
-                    dummyCamera.Scale = 1;
-                    dummyCamera.SizeCamera(_thumbnailRender.Width, _thumbnailRender.Height);
-                    dummyCamera.MoveToViewCoordinates(0, 0);
-
-                    RenderToCanvas(canvas, dummyCamera);
-                }
-                _thumbnailRender = _thumbnailRender.Resize(new SKImageInfo(256, 256), SKFilterQuality.High);
+                RenderToCanvas(canvas, dummyCamera);
             }
 
-            return _thumbnailRender;
+            return thumbnailRender;
         }
     }
 }
