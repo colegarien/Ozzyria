@@ -1,3 +1,4 @@
+using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Form;
@@ -11,7 +12,7 @@ namespace Ozzyria.Gryp
         internal Map _map = new Map();
 
         internal Camera camera = new Camera();
-        internal MouseState mouseState = new MouseState();
+        internal ToolBelt toolBelt = new ToolBelt();
 
         public MainGrypWindow()
         {
@@ -84,64 +85,22 @@ namespace Ozzyria.Gryp
 
         private void mapViewPort_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseState.PreviousMouseX = mouseState.MouseX;
-            mouseState.PreviousMouseY = mouseState.MouseY;
-
-            mouseState.MouseX = e.X;
-            mouseState.MouseY = e.Y;
-
-            if (mouseState.IsMiddleDown)
-            {
-                var mouseDeltaX = mouseState.MouseX - mouseState.PreviousMouseX;
-                var mouseDeltaY = mouseState.MouseY - mouseState.PreviousMouseY;
-                camera.MoveToViewCoordinates(camera.ViewX + mouseDeltaX, camera.ViewY + mouseDeltaY);
-            }
+            toolBelt.HandleMouseMove(e, camera, _map);
         }
 
         private void mapViewPort_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                mouseState.IsLeftDown = true;
-                mouseState.LeftDownStartX = e.X;
-                mouseState.LeftDownStartY = e.Y;
-            }
-
-            if (e.Button == MouseButtons.Right)
-            {
-                mouseState.IsRightDown = true;
-                mouseState.RightDownStartX = e.X;
-                mouseState.RightDownStartY = e.Y;
-            }
-
-            if (e.Button == MouseButtons.Middle)
-            {
-                mouseState.IsMiddleDown = true;
-                mouseState.MiddleDownStartX = e.X;
-                mouseState.MiddleDownStartY = e.Y;
-            }
+            toolBelt.HandleMouseDown(e, camera, _map);
         }
 
         private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && mouseState.IsLeftDown)
-            {
-                mouseState.IsLeftDown = false;
-            }
-
-            if (e.Button == MouseButtons.Right && mouseState.IsRightDown)
-            {
-                mouseState.IsRightDown = false;
-            }
-
-            if (e.Button == MouseButtons.Middle && mouseState.IsMiddleDown)
-            {
-                mouseState.IsMiddleDown = false;
-            }
+            toolBelt.HandleMouseUp(e, camera, _map);
         }
 
         private void reRenderTimer_Tick(object sender, EventArgs e)
         {
+            // force a timely rerender
             mapViewPort.Invalidate();
         }
 
@@ -206,7 +165,7 @@ namespace Ozzyria.Gryp
             if (_map.Width > 0 && _map.Height > 0)
             {
                 // render map backing
-                e.Surface.Canvas.DrawRect(new SKRect(camera.ViewX, camera.ViewY, camera.ViewX+camera.WorldToView(_map.Width * 32), camera.ViewY+ camera.WorldToView(_map.Height*32)), Paints.MapBackingPaint);
+                e.Surface.Canvas.DrawRect(new SKRect(camera.ViewX, camera.ViewY, camera.ViewX + camera.WorldToView(_map.Width * 32), camera.ViewY + camera.WorldToView(_map.Height * 32)), Paints.MapBackingPaint);
 
                 // render layers
                 for (int i = 0; i < _map.Layers.Count; i++)
@@ -231,18 +190,13 @@ namespace Ozzyria.Gryp
                     }
                 }
 
-                // render mouse hover higlight
-                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
-                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
-                var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
-                var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
-                if (mouseTileX >= 0 && mouseTileY >= 0 && mouseTileX < _map.Width && mouseTileY < _map.Height)
-                {
-                    var renderX = camera.ViewX + camera.WorldToView(mouseTileX * 32);
-                    var renderY = camera.ViewY + camera.WorldToView(mouseTileY * 32);
-                    e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(32), renderY + camera.WorldToView(32)), Paints.TileHighlightPaint);
-                }
+                toolBelt.RenderOverlay(e.Surface.Canvas, camera, _map);
             }
+        }
+
+        private void logicTimer_Tick(object sender, EventArgs e)
+        {
+            // TODO pipe to toolbelt
         }
     }
 }

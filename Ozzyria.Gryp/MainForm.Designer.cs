@@ -52,6 +52,7 @@
             layerList = new ListView();
             layerImageList = new ImageList(components);
             mapViewPort = new SkiaSharp.Views.Desktop.SKGLControl();
+            logicTimer = new System.Windows.Forms.Timer(components);
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -280,6 +281,12 @@
             mapViewPort.MouseUp += mapViewPort_MouseUp;
             mapViewPort.MouseWheel += mapViewPort_MouseWheel;
             // 
+            // logicTimer
+            // 
+            logicTimer.Enabled = true;
+            logicTimer.Interval = 20;
+            logicTimer.Tick += logicTimer_Tick;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -329,5 +336,6 @@
         private ListView layerList;
         private ImageList layerImageList;
         private SkiaSharp.Views.Desktop.SKGLControl mapViewPort;
+        private System.Windows.Forms.Timer logicTimer;
     }
 }
