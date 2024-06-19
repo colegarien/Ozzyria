@@ -11,8 +11,8 @@
         {
             Layers.Add(new Layer(new LayerBoundary
             {
-                Width = Width,
-                Height = Height
+                TileWidth = Width,
+                TileHeight = Height
             }));
         }
     }

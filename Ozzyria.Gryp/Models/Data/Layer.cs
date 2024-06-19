@@ -2,28 +2,28 @@
 
 namespace Ozzyria.Gryp.Models.Data
 {
-    internal class LayerBoundary
+    internal class LayerBoundary // TODO switch to Boundary
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int TileX { get; set; }
+        public int TileY { get; set; }
+        public int TileWidth { get; set; }
+        public int TileHeight { get; set; }
 
-        public bool contains(int x, int y)
+        public bool contains(int tileX, int tileY)
         {
-            return x < X + Width
-                && y < Y + Height
-                && X <= x
-                && Y <= y;
+            return tileX < TileX + TileWidth
+                && tileY < TileY + TileHeight
+                && TileX <= tileX
+                && TileY <= tileY;
         }
 
         public bool IsInCamera(Camera camera)
         {
             // camera WorldX and ViewX represent the world origin currently
-            var boundaryWorldLeft = camera.WorldX + (X * 32);
-            var boundaryWorldRight = boundaryWorldLeft + (Width * 32);
-            var boundaryWorldTop = camera.WorldY + (Y * 32);
-            var boundaryWorldBottom = boundaryWorldTop + (Height * 32);
+            var boundaryWorldLeft = camera.WorldX + (TileX * 32);
+            var boundaryWorldRight = boundaryWorldLeft + (TileWidth * 32);
+            var boundaryWorldTop = camera.WorldY + (TileY * 32);
+            var boundaryWorldBottom = boundaryWorldTop + (TileHeight * 32);
 
             // The world moves not the camera
             var cameraWorldLeft = 0;
@@ -58,52 +58,52 @@ namespace Ozzyria.Gryp.Models.Data
             _parent = parent;
 
             // split if big map
-            if (boundary.Width * boundary.Height > MAX_CAPACITY)
+            if (boundary.TileWidth * boundary.TileHeight > MAX_CAPACITY)
             {
-                var maxHalfWidth = (int)Math.Ceiling(boundary.Width / 2f);
-                var maxHalfHeight = (int)Math.Ceiling(boundary.Height / 2f);
+                var maxHalfWidth = (int)Math.Ceiling(boundary.TileWidth / 2f);
+                var maxHalfHeight = (int)Math.Ceiling(boundary.TileHeight / 2f);
 
                 // to help account for odd number widths and thin strips (i.e. 1-by-X and X-by-1 size maps)
-                var minHalfWidth = boundary.Width - maxHalfWidth;
-                var minHalfHeight = boundary.Height - maxHalfHeight;
+                var minHalfWidth = boundary.TileWidth - maxHalfWidth;
+                var minHalfHeight = boundary.TileHeight - maxHalfHeight;
 
 
                 _topLeft = new Layer(new LayerBoundary
                 {
-                    X = _boundary.X,
-                    Y = _boundary.Y,
+                    TileX = _boundary.TileX,
+                    TileY = _boundary.TileY,
                     // takes up most potential room
-                    Width = maxHalfWidth,
-                    Height = maxHalfHeight
+                    TileWidth = maxHalfWidth,
+                    TileHeight = maxHalfHeight
                 }, this);
                 _topRight = new Layer(new LayerBoundary
                 {
-                    X = _boundary.X + maxHalfWidth,
-                    Y = _boundary.Y,
+                    TileX = _boundary.TileX + maxHalfWidth,
+                    TileY = _boundary.TileY,
                     // takes up most height, but only left over width
-                    Width = minHalfWidth,
-                    Height = maxHalfHeight,
+                    TileWidth = minHalfWidth,
+                    TileHeight = maxHalfHeight,
                 }, this);
                 _bottomLeft = new Layer(new LayerBoundary
                 {
-                    X = _boundary.X,
-                    Y = _boundary.Y + maxHalfHeight,
+                    TileX = _boundary.TileX,
+                    TileY = _boundary.TileY + maxHalfHeight,
                     // takes up most width, but only left over height
-                    Width = maxHalfWidth,
-                    Height = minHalfHeight,
+                    TileWidth = maxHalfWidth,
+                    TileHeight = minHalfHeight,
                 }, this);
                 _bottomRight = new Layer(new LayerBoundary
                 {
-                    X = _boundary.X + maxHalfWidth,
-                    Y = _boundary.Y + maxHalfHeight,
+                    TileX = _boundary.TileX + maxHalfWidth,
+                    TileY = _boundary.TileY + maxHalfHeight,
                     // takes only left over width and height
-                    Width = minHalfWidth,
-                    Height = minHalfHeight,
+                    TileWidth = minHalfWidth,
+                    TileHeight = minHalfHeight,
                 }, this);
             }
             else
             {
-                _tileData = new TileData[_boundary.Width, _boundary.Height];
+                _tileData = new TileData[_boundary.TileWidth, _boundary.TileHeight];
                 for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
                 {
                     for (var x = 0; x < _tileData.GetLength(0); x++)
@@ -121,7 +121,25 @@ namespace Ozzyria.Gryp.Models.Data
 
         public bool CanRender()
         {
-            return _boundary.Width > 0 && _boundary.Height > 0;
+            return _boundary.TileWidth > 0 && _boundary.TileHeight > 0;
+        }
+
+        public void PushTile(TileData tileData, int tileX, int tileY)
+        {
+            if (!_boundary.contains(tileX, tileY))
+            {
+                return;
+            } else if (IsSplit())
+            {
+                _bottomLeft?.PushTile(tileData, tileX, tileY);
+                _bottomRight?.PushTile(tileData, tileX, tileY);
+                _topLeft?.PushTile(tileData, tileX, tileY);
+                _topRight?.PushTile(tileData, tileX, tileY);
+            }
+            else if (_tileData != null)
+            {
+                _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY] = tileData;
+            }
         }
 
         public void RenderToCanvas(SKCanvas canvas, Camera camera)
@@ -144,8 +162,8 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 // draw layer relative to itself (everything off of (0, 0) and bottom up)
                 var dimension = camera.WorldToView(32);
-                var boundaryViewX = camera.WorldToView(_boundary.X * 32);
-                var boundaryViewY = camera.WorldToView(_boundary.Y * 32);
+                var boundaryViewX = camera.WorldToView(_boundary.TileX * 32);
+                var boundaryViewY = camera.WorldToView(_boundary.TileY * 32);
                 for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
                 {
                     var tileY =camera.ViewY + boundaryViewY + camera.WorldToView(y * 32);
@@ -164,7 +182,7 @@ namespace Ozzyria.Gryp.Models.Data
             using (SKCanvas canvas = new SKCanvas(thumbnailRender))
             {
                 var dummyCamera = new Camera();
-                dummyCamera.Scale = 32f / ((_boundary.Width > _boundary.Height ? _boundary.Width : _boundary.Height) * 32);
+                dummyCamera.Scale = 32f / ((_boundary.TileWidth > _boundary.TileHeight ? _boundary.TileWidth : _boundary.TileHeight) * 32);
                 dummyCamera.SizeCamera(32, 32);
                 dummyCamera.MoveToViewCoordinates(0, 0);
 

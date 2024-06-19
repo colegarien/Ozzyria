@@ -15,6 +15,8 @@ namespace Ozzyria.Gryp.MapTools
             tools = new ITool[]
             {
                 new PanTool(),
+                new SelectTool(),
+                new BrushTool(),
             };
         }
 
@@ -98,6 +100,21 @@ namespace Ozzyria.Gryp.MapTools
                 var renderX = camera.ViewX + camera.WorldToView(mouseTileX * 32);
                 var renderY = camera.ViewY + camera.WorldToView(mouseTileY * 32);
                 canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(32), renderY + camera.WorldToView(32)), Paints.TileHighlightPaint);
+            }
+
+            foreach (var tool in tools)
+            {
+                if (tool is SelectTool)
+                {
+                    var selectTool = tool as SelectTool;
+
+                    if (selectTool.Selection.WorldWidth != 0 && selectTool.Selection.WorldHeight != 0)
+                    {
+                        var renderX = camera.ViewX + camera.WorldToView(selectTool.Selection.WorldX);
+                        var renderY = camera.ViewY + camera.WorldToView(selectTool.Selection.WorldY);
+                        canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(selectTool.Selection.WorldWidth), renderY + camera.WorldToView(selectTool.Selection.WorldHeight)), Paints.TileHighlightPaint);
+                    }
+                }
             }
         }
     }

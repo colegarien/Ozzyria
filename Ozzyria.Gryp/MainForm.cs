@@ -141,7 +141,7 @@ namespace Ozzyria.Gryp
                 {
                     if (item is ToolStripButton && item != sender)
                     {
-                        // Uncheck all other tools in the toolblet
+                        // Uncheck all other tools in the toolbelt
                         ((ToolStripButton)item).Checked = false;
                     }
                 }
