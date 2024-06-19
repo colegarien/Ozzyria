@@ -102,6 +102,13 @@ namespace Ozzyria.Gryp.MapTools
                 canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(32), renderY + camera.WorldToView(32)), Paints.TileHighlightPaint);
             }
 
+            if(map.SelectedRegion != null)
+            {
+                var renderX = camera.ViewX + camera.WorldToView(map.SelectedRegion.TileX * 32);
+                var renderY = camera.ViewY + camera.WorldToView(map.SelectedRegion.TileY * 32);
+                canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(map.SelectedRegion.TileWidth*32)-1, renderY + camera.WorldToView(map.SelectedRegion.TileHeight * 32) -1), Paints.TileSelectionPaint);
+            }
+
             foreach (var tool in tools)
             {
                 if (tool is SelectTool)

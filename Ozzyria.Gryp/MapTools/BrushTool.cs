@@ -7,12 +7,13 @@ namespace Ozzyria.Gryp.MapTools
     internal class BrushTool : ITool
     {
         public uint BrushResource { get; set; } = 1;
-        public int BrushTextureX { get; set; } = 1;
-        public int BrushTextureY { get; set; } = 1;
+        public int BrushTextureX { get; set; } = 0;
+        public int BrushTextureY { get; set; } = 0;
 
 
         public void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
+            // nothing special to be done
         }
 
         public void OnMouseMove(MouseState mouseState, Camera camera, Map map)
@@ -26,8 +27,7 @@ namespace Ozzyria.Gryp.MapTools
 
                 if (map.Layers.Count > 0)
                 {
-                    // TODO get list of "active" layers
-                    map.Layers[0].PushTile(new TileData
+                    map.PushTile(new TileData
                     {
                         Images = new List<TextureCoords>() {
                             new TextureCoords()
@@ -44,6 +44,7 @@ namespace Ozzyria.Gryp.MapTools
 
         public void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
+            // nothing special to be done
         }
     }
 }

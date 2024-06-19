@@ -2,46 +2,11 @@
 
 namespace Ozzyria.Gryp.Models.Data
 {
-    internal class LayerBoundary // TODO switch to Boundary
-    {
-        public int TileX { get; set; }
-        public int TileY { get; set; }
-        public int TileWidth { get; set; }
-        public int TileHeight { get; set; }
-
-        public bool contains(int tileX, int tileY)
-        {
-            return tileX < TileX + TileWidth
-                && tileY < TileY + TileHeight
-                && TileX <= tileX
-                && TileY <= tileY;
-        }
-
-        public bool IsInCamera(Camera camera)
-        {
-            // camera WorldX and ViewX represent the world origin currently
-            var boundaryWorldLeft = camera.WorldX + (TileX * 32);
-            var boundaryWorldRight = boundaryWorldLeft + (TileWidth * 32);
-            var boundaryWorldTop = camera.WorldY + (TileY * 32);
-            var boundaryWorldBottom = boundaryWorldTop + (TileHeight * 32);
-
-            // The world moves not the camera
-            var cameraWorldLeft = 0;
-            var cameraWorldTop = 0;
-            var cameraWorldRight = camera.WorldWidth;
-            var cameraWorldBottom = camera.WorldHeight;
-
-            // easier to check if NOT in camera and then inverse
-            return !((boundaryWorldRight < cameraWorldLeft || boundaryWorldLeft >= cameraWorldRight)
-                || (boundaryWorldBottom < cameraWorldTop || boundaryWorldTop >= cameraWorldBottom));
-        }
-    }
-
     internal class Layer
     {
         const int MAX_CAPACITY = 64;
 
-        protected LayerBoundary _boundary;
+        protected TileBoundary _boundary;
 
         private Layer? _parent;
 
@@ -52,7 +17,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         private TileData[,]? _tileData;
 
-        public Layer(LayerBoundary boundary, Layer? parent = null)
+        public Layer(TileBoundary boundary, Layer? parent = null)
         {
             _boundary = boundary;
             _parent = parent;
@@ -68,7 +33,7 @@ namespace Ozzyria.Gryp.Models.Data
                 var minHalfHeight = boundary.TileHeight - maxHalfHeight;
 
 
-                _topLeft = new Layer(new LayerBoundary
+                _topLeft = new Layer(new TileBoundary
                 {
                     TileX = _boundary.TileX,
                     TileY = _boundary.TileY,
@@ -76,7 +41,7 @@ namespace Ozzyria.Gryp.Models.Data
                     TileWidth = maxHalfWidth,
                     TileHeight = maxHalfHeight
                 }, this);
-                _topRight = new Layer(new LayerBoundary
+                _topRight = new Layer(new TileBoundary
                 {
                     TileX = _boundary.TileX + maxHalfWidth,
                     TileY = _boundary.TileY,
@@ -84,7 +49,7 @@ namespace Ozzyria.Gryp.Models.Data
                     TileWidth = minHalfWidth,
                     TileHeight = maxHalfHeight,
                 }, this);
-                _bottomLeft = new Layer(new LayerBoundary
+                _bottomLeft = new Layer(new TileBoundary
                 {
                     TileX = _boundary.TileX,
                     TileY = _boundary.TileY + maxHalfHeight,
@@ -92,7 +57,7 @@ namespace Ozzyria.Gryp.Models.Data
                     TileWidth = maxHalfWidth,
                     TileHeight = minHalfHeight,
                 }, this);
-                _bottomRight = new Layer(new LayerBoundary
+                _bottomRight = new Layer(new TileBoundary
                 {
                     TileX = _boundary.TileX + maxHalfWidth,
                     TileY = _boundary.TileY + maxHalfHeight,
@@ -126,7 +91,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         public void PushTile(TileData tileData, int tileX, int tileY)
         {
-            if (!_boundary.contains(tileX, tileY))
+            if (!_boundary.Contains(tileX, tileY))
             {
                 return;
             } else if (IsSplit())

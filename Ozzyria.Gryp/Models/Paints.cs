@@ -61,6 +61,19 @@ namespace Ozzyria.Gryp.Models
             IsAntialias = false
         };
 
+        public static SKPaint TileSelectionPaint = new SKPaint
+        {
+            Color = new SKColor(
+                red: (byte)124,
+                green: (byte)232,
+                blue: (byte)72,
+                alpha: (byte)255
+            ),
+            StrokeWidth = 2,
+            IsStroke = true,
+            IsAntialias = false
+        };
+
         public static SKPaint MissingGraphicPaint = new SKPaint
         {
             Color = new SKColor(

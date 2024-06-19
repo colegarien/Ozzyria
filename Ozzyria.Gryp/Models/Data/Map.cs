@@ -7,13 +7,29 @@
 
         public List<Layer> Layers { get; set; } = new List<Layer>();
 
+        public int ActiveLayer { get; set; } = -1;
+        public TileBoundary? SelectedRegion { get; set; } = null;
+
         public void PushLayer()
         {
-            Layers.Add(new Layer(new LayerBoundary
+            Layers.Add(new Layer(new TileBoundary
             {
                 TileWidth = Width,
                 TileHeight = Height
             }));
+        }
+
+        public void PushTile(TileData tileData, int x, int y)
+        {
+            bool isInSelection = SelectedRegion == null
+                || SelectedRegion.TileWidth <= 0
+                || SelectedRegion.TileHeight <= 0
+                || SelectedRegion.Contains(x, y);
+
+            if (isInSelection && ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                Layers[ActiveLayer].PushTile(tileData, x, y);
+            }
         }
     }
 

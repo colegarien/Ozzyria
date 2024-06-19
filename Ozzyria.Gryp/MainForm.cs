@@ -196,7 +196,18 @@ namespace Ozzyria.Gryp
 
         private void logicTimer_Tick(object sender, EventArgs e)
         {
-            // TODO pipe to toolbelt
+            // TODO pipe to toolbelt (will likely need to actually process data in a separate Thread)
+        }
+
+        private void layerList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(layerList?.SelectedIndices?.Count <= 0)
+            {
+                _map.ActiveLayer = 0;
+                return;
+            }
+
+            _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
         }
     }
 }
