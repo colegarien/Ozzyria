@@ -18,7 +18,7 @@ namespace Ozzyria.Gryp.MapTools
 
         public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
-            if (mouseState.IsLeftDown)
+            if (mouseState.IsLeftDown && !doingSelect)
             {
                 doingSelect = true;
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
