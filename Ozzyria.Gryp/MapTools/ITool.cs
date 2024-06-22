@@ -4,10 +4,13 @@ using Ozzyria.Gryp.Models.Form;
 
 namespace Ozzyria.Gryp.MapTools
 {
-    internal interface ITool
+    internal abstract class ITool
     {
-        abstract void OnMouseDown(MouseState mouseState, Camera camera, Map map);
-        abstract void OnMouseMove(MouseState mouseState, Camera camera, Map map);
-        abstract void OnMouseUp(MouseState mouseState, Camera camera, Map map);
+
+        public bool Enabled { get; set; } = false;
+
+        public abstract void OnMouseDown(MouseState mouseState, Camera camera, Map map);
+        public abstract void OnMouseMove(MouseState mouseState, Camera camera, Map map);
+        public abstract void OnMouseUp(MouseState mouseState, Camera camera, Map map);
     }
 }

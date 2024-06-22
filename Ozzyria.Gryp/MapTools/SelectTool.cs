@@ -16,7 +16,7 @@ namespace Ozzyria.Gryp.MapTools
             WorldHeight = 0
         };
 
-        public void OnMouseDown(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
             if (mouseState.IsLeftDown)
             {
@@ -31,7 +31,7 @@ namespace Ozzyria.Gryp.MapTools
             }
         }
 
-        public void OnMouseMove(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseMove(MouseState mouseState, Camera camera, Map map)
         {
             if (mouseState.IsLeftDown && doingSelect)
             {
@@ -42,7 +42,7 @@ namespace Ozzyria.Gryp.MapTools
             }
         }
 
-        public void OnMouseUp(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
             if (!mouseState.IsLeftDown && doingSelect)
             {

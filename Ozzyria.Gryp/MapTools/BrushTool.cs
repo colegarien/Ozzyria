@@ -11,14 +11,14 @@ namespace Ozzyria.Gryp.MapTools
         public int BrushTextureY { get; set; } = 0;
 
 
-        public void OnMouseDown(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
             // nothing special to be done
         }
 
-        public void OnMouseMove(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseMove(MouseState mouseState, Camera camera, Map map)
         {
-            if(mouseState.IsLeftDown)
+            if (mouseState.IsLeftDown)
             {
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
                 var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
@@ -40,9 +40,21 @@ namespace Ozzyria.Gryp.MapTools
                     }, mouseTileX, mouseTileY);
                 }
             }
+            else if (mouseState.IsRightDown)
+            {
+                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
+                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
+                var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
+                var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
+                if (map.Layers.Count > 0)
+                {
+                    // erase tile data
+                    map.PushTile(new TileData {Images = new List<TextureCoords>() {}, }, mouseTileX, mouseTileY);
+                }
+            }
         }
 
-        public void OnMouseUp(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
             // nothing special to be done
         }

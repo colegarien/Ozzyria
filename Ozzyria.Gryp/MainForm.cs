@@ -1,7 +1,6 @@
 using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
-using Ozzyria.Gryp.Models.Form;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 
@@ -137,14 +136,20 @@ namespace Ozzyria.Gryp
             // if is a checked-able tool
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
+                toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", true);
                 foreach (ToolStripItem item in mainToolbelt.Items)
                 {
                     if (item is ToolStripButton && item != sender)
                     {
                         // Uncheck all other tools in the toolbelt
+                        toolBelt.ToogleTool(((ToolStripButton)item).Tag?.ToString() ?? "", false);
                         ((ToolStripButton)item).Checked = false;
                     }
                 }
+            }
+            else if(sender is ToolStripButton)
+            {
+                toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", false);
             }
         }
 

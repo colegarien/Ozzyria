@@ -8,17 +8,27 @@ namespace Ozzyria.Gryp.MapTools
     internal class ToolBelt
     {
         private MouseState mouseState = new MouseState();
-        private ITool[] tools;
+        private Dictionary<string, ITool> tools;
 
         public ToolBelt()
         {
-            tools = new ITool[]
+            tools = new Dictionary<string, ITool>
             {
-                new PanTool(),
-                new SelectTool(),
-                new BrushTool(),
-                new PaintTool(),
+                { "pan", new PanTool { Enabled = true, } },
+                { "select", new SelectTool() },
+                { "brush", new BrushTool() },
+                { "fill", new FillTool() },
             };
+        }
+
+        public void ToogleTool(string toolKey, bool isEnabled)
+        {
+            if (!tools.ContainsKey(toolKey))
+            {
+                return;
+            }
+
+            tools[toolKey].Enabled = isEnabled;
         }
 
         public void HandleMouseDown(MouseEventArgs e, Camera camera, Map map)
@@ -46,7 +56,8 @@ namespace Ozzyria.Gryp.MapTools
 
             foreach (var tool in tools)
             {
-                tool.OnMouseDown(mouseState, camera, map);
+                if(tool.Value.Enabled)
+                    tool.Value.OnMouseDown(mouseState, camera, map);
             }
         }
 
@@ -60,7 +71,8 @@ namespace Ozzyria.Gryp.MapTools
 
             foreach(var tool in tools)
             {
-                tool.OnMouseMove(mouseState, camera, map);
+                if (tool.Value.Enabled)
+                    tool.Value.OnMouseMove(mouseState, camera, map);
             }
         }
 
@@ -83,7 +95,8 @@ namespace Ozzyria.Gryp.MapTools
 
             foreach (var tool in tools)
             {
-                tool.OnMouseUp(mouseState, camera, map);
+                if (tool.Value.Enabled)
+                    tool.Value.OnMouseUp(mouseState, camera, map);
             }
         }
 
@@ -112,9 +125,12 @@ namespace Ozzyria.Gryp.MapTools
 
             foreach (var tool in tools)
             {
-                if (tool is SelectTool)
+                if (!tool.Value.Enabled)
+                    continue;
+
+                if (tool.Value is SelectTool)
                 {
-                    var selectTool = tool as SelectTool;
+                    var selectTool = tool.Value as SelectTool;
 
                     if (selectTool.Selection.WorldWidth != 0 && selectTool.Selection.WorldHeight != 0)
                     {

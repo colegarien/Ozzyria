@@ -4,31 +4,31 @@ using Ozzyria.Gryp.Models.Form;
 
 namespace Ozzyria.Gryp.MapTools
 {
-    internal class PaintTool : ITool
+    internal class FillTool : ITool
     {
         public uint BrushResource { get; set; } = 1;
         public int BrushTextureX { get; set; } = 0;
         public int BrushTextureY { get; set; } = 0;
 
-        protected bool wantsToPaint = false;
+        protected bool wantsToFill = false;
 
-        public void OnMouseDown(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
-            if(mouseState.IsRightDown)
+            if(mouseState.IsLeftDown)
             {
-                wantsToPaint = true;
+                wantsToFill = true;
             }
         }
 
-        public void OnMouseMove(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseMove(MouseState mouseState, Camera camera, Map map)
         {
         }
 
-        public void OnMouseUp(MouseState mouseState, Camera camera, Map map)
+        public override void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
-            if(!mouseState.IsRightDown && wantsToPaint)
+            if(!mouseState.IsLeftDown && wantsToFill)
             {
-                wantsToPaint = false;
+                wantsToFill = false;
 
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
                 var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
