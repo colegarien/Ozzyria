@@ -108,11 +108,6 @@ namespace Ozzyria.Gryp.Models.Data
         }
         public void PaintArea(TileBoundary? region, TileData tileData, int originX, int originY)
         {
-            if (!_boundary.Contains(originX, originY) || (region != null && !region.Contains(originX, originY)))
-            {
-                return;
-            }
-
             var toFill = new List<Tuple<int, int>>
             {
                 Tuple.Create(originX, originY)
@@ -122,6 +117,13 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 var toFillX = toFill[0].Item1;
                 var toFillY = toFill[0].Item2;
+                if (!_boundary.Contains(toFillX, toFillY) || (region != null && !region.Contains(toFillX, toFillY)))
+                {
+                    // nothing to fill, keep on keeping on
+                    toFill.RemoveAt(0);
+                    continue;
+                }
+
                 var toFillTile = GetTileData(toFillX, toFillY);
                 if (toFillTile == null || toFillTile.Equal(tileData))
                 {
