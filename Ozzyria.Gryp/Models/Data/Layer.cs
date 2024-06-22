@@ -216,7 +216,7 @@ namespace Ozzyria.Gryp.Models.Data
             else if (_tileData != null)
             {
                 // draw layer relative to itself (everything off of (0, 0) and bottom up)
-                var dimension = camera.WorldToView(32);
+                var dimension = Math.Max(1, camera.WorldToView(32));
                 var boundaryViewX = camera.WorldToView(_boundary.TileX * 32);
                 var boundaryViewY = camera.WorldToView(_boundary.TileY * 32);
                 for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
