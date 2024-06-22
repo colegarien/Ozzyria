@@ -113,36 +113,48 @@ namespace Ozzyria.Gryp.Models.Data
                 return;
             }
 
-            var originTile = GetTileData(originX, originY);
-            if(originTile == null || originTile.Equal(tileData))
+            var toFill = new List<Tuple<int, int>>
             {
-                // nothing to fill
-                return;
-            }
+                Tuple.Create(originX, originY)
+            };
 
-            var fillRight = GetTileData(originX + 1, originY)?.Equal(originTile) ?? false;
-            var fillLeft = GetTileData(originX - 1, originY)?.Equal(originTile) ?? false;
-            var fillDown = GetTileData(originX, originY + 1)?.Equal(originTile) ?? false;
-            var fillUp = GetTileData(originX, originY - 1)?.Equal(originTile) ?? false;
+            while (toFill.Count > 0)
+            {
+                var toFillX = toFill[0].Item1;
+                var toFillY = toFill[0].Item2;
+                var toFillTile = GetTileData(toFillX, toFillY);
+                if (toFillTile == null || toFillTile.Equal(tileData))
+                {
+                    // nothing to fill, keep on keeping on
+                    toFill.RemoveAt(0);
+                    continue;
+                }
 
-            PushTile(tileData, originX, originY);
-            if(fillRight)
-            {
-                PaintArea(region, tileData, originX + 1, originY);
-            }
-            if(fillLeft)
-            {
-                PaintArea(region, tileData, originX - 1, originY);
-            }
-            if (fillDown)
-            {
-                PaintArea(region, tileData, originX, originY + 1);
-            }
-            if (fillUp)
-            {
-                PaintArea(region, tileData, originX, originY - 1);
-            }
+                var fillRight = GetTileData(toFillX + 1, toFillY)?.Equal(toFillTile) ?? false;
+                var fillLeft = GetTileData(toFillX - 1, toFillY)?.Equal(toFillTile) ?? false;
+                var fillDown = GetTileData(toFillX, toFillY + 1)?.Equal(toFillTile) ?? false;
+                var fillUp = GetTileData(toFillX, toFillY - 1)?.Equal(toFillTile) ?? false;
 
+                PushTile(tileData, toFillX, toFillY);
+                toFill.RemoveAt(0);
+
+                if (fillRight)
+                {
+                    toFill.Add(Tuple.Create(toFillX + 1, toFillY));
+                }
+                if (fillLeft)
+                {
+                    toFill.Add(Tuple.Create(toFillX - 1, toFillY));
+                }
+                if (fillDown)
+                {
+                    toFill.Add(Tuple.Create(toFillX, toFillY + 1));
+                }
+                if (fillUp)
+                {
+                    toFill.Add(Tuple.Create(toFillX, toFillY - 1));
+                }
+            }
         }
 
         public TileData? GetTileData(int tileX, int tileY)
