@@ -55,7 +55,8 @@ namespace Ozzyria.Gryp
             for (int i = 0; i < _map.Layers.Count; i++)
             {
                 layerImageList.Images.Add(_map.Layers[i].GetThumbnail().ToBitmap());
-                layerList.Items.Add(new ListViewItem { Text = "Layer " + i, ImageIndex = i });
+                var layerName = _map.IsLayerVisible(_map.ActiveLayer) ? ("Layer " + i) : ("*Layer " + i);
+                layerList.Items.Add(new ListViewItem { Text = layerName, ImageIndex = i });
             }
 
             foreach (var index in selectedIndices)
@@ -103,34 +104,6 @@ namespace Ozzyria.Gryp
             mapViewPort.Invalidate();
         }
 
-        private void layerList_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                var rebuildLayerView = false;
-                foreach (ListViewItem selectItem in layerList.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
-                {
-                    rebuildLayerView = true;
-                    _map.Layers.RemoveAt(selectItem.Index);
-                }
-
-                if (rebuildLayerView)
-                {
-                    RebuildLayerView();
-                    mainStatusLabel.Text = "Layer(s) removed";
-                }
-            }
-            else if (e.KeyCode == Keys.A)
-            {
-                if (_map.Width > 0 && _map.Height > 0)
-                {
-                    _map.PushLayer();
-                    RebuildLayerView();
-                    mainStatusLabel.Text = "Layer added";
-                }
-            }
-        }
-
         private void onToolChecked_CheckedChanged(object sender, EventArgs e)
         {
             // if is a checked-able tool
@@ -147,7 +120,7 @@ namespace Ozzyria.Gryp
                     }
                 }
             }
-            else if(sender is ToolStripButton)
+            else if (sender is ToolStripButton)
             {
                 toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", false);
             }
@@ -175,7 +148,10 @@ namespace Ozzyria.Gryp
                 // render layers
                 for (int i = 0; i < _map.Layers.Count; i++)
                 {
-                    _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
+                    if (_map.IsLayerVisible(i))
+                    {
+                        _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
+                    }
                 }
 
                 // render overlay grid
@@ -201,18 +177,70 @@ namespace Ozzyria.Gryp
 
         private void logicTimer_Tick(object sender, EventArgs e)
         {
-            // TODO pipe to toolbelt (will likely need to actually process data in a separate Thread)
+            // TODO pipe commands to/from toolbelt (will likely need to actually process data in a separate Thread)
+            // TODO also "regularly" rebuild thumbas for layer-list
         }
 
         private void layerList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(layerList?.SelectedIndices?.Count <= 0)
+            if (layerList?.SelectedIndices?.Count <= 0)
             {
                 _map.ActiveLayer = 0;
                 return;
             }
 
             _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
+            btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
+        }
+
+        private void btnNewLayer_Click(object sender, EventArgs e)
+        {
+            if (_map.Width > 0 && _map.Height > 0)
+            {
+                _map.PushLayer();
+                RebuildLayerView();
+                mainStatusLabel.Text = "Layer added";
+            }
+        }
+
+        private void btnRemoveLayer_Click(object sender, EventArgs e)
+        {
+            var rebuildLayerView = false;
+            foreach (ListViewItem selectItem in layerList.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
+            {
+                rebuildLayerView = true;
+                _map.Layers.RemoveAt(selectItem.Index);
+            }
+
+            if (rebuildLayerView)
+            {
+                RebuildLayerView();
+                mainStatusLabel.Text = "Layer(s) removed";
+            }
+        }
+
+        private void btnHideShowLayer_Click(object sender, EventArgs e)
+        {
+            if(_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            {
+                return;
+            }
+
+            if(_map.IsLayerVisible(_map.ActiveLayer))
+            {
+                _map.IsLayerHidden[_map.ActiveLayer] = true;
+                layerList.Items[_map.ActiveLayer].Text = "*Layer " + _map.ActiveLayer; 
+                btnHideShowLayer.Text = "Show";
+                mainStatusLabel.Text = "Layer " + _map.ActiveLayer + " hidden";
+            }
+            else
+            {
+                _map.IsLayerHidden[_map.ActiveLayer] = false;
+                layerList.Items[_map.ActiveLayer].Text = "Layer " + _map.ActiveLayer;
+                btnHideShowLayer.Text = "Hide";
+                mainStatusLabel.Text = "Layer " + _map.ActiveLayer + " shown";
+            }
+
         }
     }
 }

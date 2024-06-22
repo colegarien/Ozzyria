@@ -53,6 +53,9 @@
             layerImageList = new ImageList(components);
             mapViewPort = new SkiaSharp.Views.Desktop.SKGLControl();
             logicTimer = new System.Windows.Forms.Timer(components);
+            btnNewLayer = new Button();
+            btnRemoveLayer = new Button();
+            btnHideShowLayer = new Button();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -91,7 +94,7 @@
             mainToolbelt.Location = new Point(0, 24);
             mainToolbelt.Name = "mainToolbelt";
             mainToolbelt.Padding = new Padding(0, 0, 2, 0);
-            mainToolbelt.Size = new Size(33, 426);
+            mainToolbelt.Size = new Size(25, 426);
             mainToolbelt.TabIndex = 1;
             mainToolbelt.Tag = "select";
             mainToolbelt.Text = "Toolbelt";
@@ -104,7 +107,7 @@
             toolSelect.ImageScaling = ToolStripItemImageScaling.None;
             toolSelect.ImageTransparentColor = Color.Magenta;
             toolSelect.Name = "toolSelect";
-            toolSelect.Size = new Size(28, 20);
+            toolSelect.Size = new Size(20, 20);
             toolSelect.Tag = "select";
             toolSelect.Text = "&Select";
             toolSelect.CheckedChanged += onToolChecked_CheckedChanged;
@@ -117,7 +120,7 @@
             toolMove.ImageScaling = ToolStripItemImageScaling.None;
             toolMove.ImageTransparentColor = Color.Magenta;
             toolMove.Name = "toolMove";
-            toolMove.Size = new Size(28, 20);
+            toolMove.Size = new Size(20, 20);
             toolMove.Tag = "move";
             toolMove.Text = "&Move";
             toolMove.CheckedChanged += onToolChecked_CheckedChanged;
@@ -125,7 +128,7 @@
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new Size(28, 6);
+            toolStripSeparator.Size = new Size(20, 6);
             // 
             // toolEntity
             // 
@@ -135,7 +138,7 @@
             toolEntity.ImageScaling = ToolStripItemImageScaling.None;
             toolEntity.ImageTransparentColor = Color.Magenta;
             toolEntity.Name = "toolEntity";
-            toolEntity.Size = new Size(28, 20);
+            toolEntity.Size = new Size(20, 20);
             toolEntity.Text = "&Entity";
             toolEntity.CheckedChanged += onToolChecked_CheckedChanged;
             // 
@@ -147,7 +150,7 @@
             toolPath.ImageScaling = ToolStripItemImageScaling.None;
             toolPath.ImageTransparentColor = Color.Magenta;
             toolPath.Name = "toolPath";
-            toolPath.Size = new Size(28, 20);
+            toolPath.Size = new Size(20, 20);
             toolPath.Text = "&Path";
             toolPath.CheckedChanged += onToolChecked_CheckedChanged;
             // 
@@ -159,14 +162,14 @@
             toolWall.ImageScaling = ToolStripItemImageScaling.None;
             toolWall.ImageTransparentColor = Color.Magenta;
             toolWall.Name = "toolWall";
-            toolWall.Size = new Size(28, 20);
+            toolWall.Size = new Size(20, 20);
             toolWall.Text = "&Wall";
             toolWall.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(28, 6);
+            toolStripSeparator1.Size = new Size(20, 6);
             // 
             // toolBrush
             // 
@@ -176,7 +179,7 @@
             toolBrush.ImageScaling = ToolStripItemImageScaling.None;
             toolBrush.ImageTransparentColor = Color.Magenta;
             toolBrush.Name = "toolBrush";
-            toolBrush.Size = new Size(28, 20);
+            toolBrush.Size = new Size(20, 20);
             toolBrush.Tag = "brush";
             toolBrush.Text = "&Brush";
             toolBrush.CheckedChanged += onToolChecked_CheckedChanged;
@@ -189,7 +192,7 @@
             toolFill.ImageScaling = ToolStripItemImageScaling.None;
             toolFill.ImageTransparentColor = Color.Magenta;
             toolFill.Name = "toolFill";
-            toolFill.Size = new Size(28, 20);
+            toolFill.Size = new Size(20, 20);
             toolFill.Tag = "fill";
             toolFill.Text = "&Fill";
             toolFill.CheckedChanged += onToolChecked_CheckedChanged;
@@ -202,7 +205,7 @@
             toolRectangle.ImageScaling = ToolStripItemImageScaling.None;
             toolRectangle.ImageTransparentColor = Color.Magenta;
             toolRectangle.Name = "toolRectangle";
-            toolRectangle.Size = new Size(28, 20);
+            toolRectangle.Size = new Size(20, 20);
             toolRectangle.Text = "&Rectangle";
             toolRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
@@ -214,7 +217,7 @@
             toolFilledRectangle.ImageScaling = ToolStripItemImageScaling.None;
             toolFilledRectangle.ImageTransparentColor = Color.Magenta;
             toolFilledRectangle.Name = "toolFilledRectangle";
-            toolFilledRectangle.Size = new Size(28, 20);
+            toolFilledRectangle.Size = new Size(20, 20);
             toolFilledRectangle.Text = "&Filled Rectangle";
             toolFilledRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
@@ -226,7 +229,7 @@
             toolLine.ImageScaling = ToolStripItemImageScaling.None;
             toolLine.ImageTransparentColor = Color.Magenta;
             toolLine.Name = "toolLine";
-            toolLine.Size = new Size(28, 20);
+            toolLine.Size = new Size(20, 20);
             toolLine.Text = "&Line";
             toolLine.CheckedChanged += onToolChecked_CheckedChanged;
             // 
@@ -234,9 +237,9 @@
             // 
             mainStatusStrip.ImageScalingSize = new Size(32, 32);
             mainStatusStrip.Items.AddRange(new ToolStripItem[] { mainStatusLabel });
-            mainStatusStrip.Location = new Point(33, 428);
+            mainStatusStrip.Location = new Point(25, 428);
             mainStatusStrip.Name = "mainStatusStrip";
-            mainStatusStrip.Size = new Size(767, 22);
+            mainStatusStrip.Size = new Size(775, 22);
             mainStatusStrip.SizingGrip = false;
             mainStatusStrip.TabIndex = 4;
             mainStatusStrip.Text = "Main Status Strip";
@@ -264,7 +267,6 @@
             layerList.TabIndex = 7;
             layerList.UseCompatibleStateImageBehavior = false;
             layerList.SelectedIndexChanged += layerList_SelectedIndexChanged;
-            layerList.KeyUp += layerList_KeyUp;
             // 
             // layerImageList
             // 
@@ -293,11 +295,44 @@
             logicTimer.Interval = 20;
             logicTimer.Tick += logicTimer_Tick;
             // 
+            // btnNewLayer
+            // 
+            btnNewLayer.Location = new Point(599, 235);
+            btnNewLayer.Name = "btnNewLayer";
+            btnNewLayer.Size = new Size(54, 23);
+            btnNewLayer.TabIndex = 10;
+            btnNewLayer.Text = "Add";
+            btnNewLayer.UseVisualStyleBackColor = true;
+            btnNewLayer.Click += btnNewLayer_Click;
+            // 
+            // btnRemoveLayer
+            // 
+            btnRemoveLayer.Location = new Point(659, 235);
+            btnRemoveLayer.Name = "btnRemoveLayer";
+            btnRemoveLayer.Size = new Size(69, 23);
+            btnRemoveLayer.TabIndex = 11;
+            btnRemoveLayer.Text = "Remove";
+            btnRemoveLayer.UseVisualStyleBackColor = true;
+            btnRemoveLayer.Click += btnRemoveLayer_Click;
+            // 
+            // btnHideShowLayer
+            // 
+            btnHideShowLayer.Location = new Point(734, 235);
+            btnHideShowLayer.Name = "btnHideShowLayer";
+            btnHideShowLayer.Size = new Size(54, 23);
+            btnHideShowLayer.TabIndex = 12;
+            btnHideShowLayer.Text = "Hide";
+            btnHideShowLayer.UseVisualStyleBackColor = true;
+            btnHideShowLayer.Click += btnHideShowLayer_Click;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnHideShowLayer);
+            Controls.Add(btnRemoveLayer);
+            Controls.Add(btnNewLayer);
             Controls.Add(mapViewPort);
             Controls.Add(layerList);
             Controls.Add(mainStatusStrip);
@@ -343,5 +378,8 @@
         private ImageList layerImageList;
         private SkiaSharp.Views.Desktop.SKGLControl mapViewPort;
         private System.Windows.Forms.Timer logicTimer;
+        private Button btnNewLayer;
+        private Button btnRemoveLayer;
+        private Button btnHideShowLayer;
     }
 }

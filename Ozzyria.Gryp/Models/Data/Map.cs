@@ -8,7 +8,14 @@
         public List<Layer> Layers { get; set; } = new List<Layer>();
 
         public int ActiveLayer { get; set; } = -1;
+        public Dictionary<int, bool> IsLayerHidden { get; set; } = new Dictionary<int, bool>();
+
         public TileBoundary? SelectedRegion { get; set; } = null;
+
+        public bool IsLayerVisible(int layer)
+        {
+            return !IsLayerHidden.ContainsKey(layer) || !IsLayerHidden[layer];
+        }
 
         public void PushLayer()
         {
