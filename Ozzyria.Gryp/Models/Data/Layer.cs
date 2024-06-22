@@ -106,6 +106,84 @@ namespace Ozzyria.Gryp.Models.Data
                 _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY] = tileData;
             }
         }
+        public void PaintArea(TileBoundary? region, TileData tileData, int originX, int originY)
+        {
+            if (!_boundary.Contains(originX, originY) || (region != null && !region.Contains(originX, originY)))
+            {
+                return;
+            }
+
+            var originTile = GetTileData(originX, originY);
+            if(originTile == null || originTile.Equal(tileData))
+            {
+                // nothing to fill
+                return;
+            }
+
+            var fillRight = GetTileData(originX + 1, originY)?.Equal(originTile) ?? false;
+            var fillLeft = GetTileData(originX - 1, originY)?.Equal(originTile) ?? false;
+            var fillDown = GetTileData(originX, originY + 1)?.Equal(originTile) ?? false;
+            var fillUp = GetTileData(originX, originY - 1)?.Equal(originTile) ?? false;
+
+            PushTile(tileData, originX, originY);
+            if(fillRight)
+            {
+                PaintArea(region, tileData, originX + 1, originY);
+            }
+            if(fillLeft)
+            {
+                PaintArea(region, tileData, originX - 1, originY);
+            }
+            if (fillDown)
+            {
+                PaintArea(region, tileData, originX, originY + 1);
+            }
+            if (fillUp)
+            {
+                PaintArea(region, tileData, originX, originY - 1);
+            }
+
+        }
+
+        public TileData? GetTileData(int tileX, int tileY)
+        {
+            if (!_boundary.Contains(tileX, tileY))
+            {
+                return null;
+            }
+            else if (IsSplit())
+            {
+                var bottomLeft = _bottomLeft?.GetTileData(tileX, tileY);
+                if (bottomLeft != null)
+                {
+                    return bottomLeft;
+                }
+
+                var bottomRight = _bottomRight?.GetTileData(tileX, tileY);
+                if (bottomRight != null)
+                {
+                    return bottomRight;
+                }
+
+                var topLeft = _topLeft?.GetTileData(tileX, tileY);
+                if (topLeft != null)
+                {
+                    return topLeft;
+                }
+
+                var topRight = _topRight?.GetTileData(tileX, tileY);
+                if (topRight != null)
+                {
+                    return topRight;
+                }
+            }
+            else if (_tileData != null)
+            {
+                return _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY];
+            }
+
+            return null;
+        }
 
         public void RenderToCanvas(SKCanvas canvas, Camera camera)
         {

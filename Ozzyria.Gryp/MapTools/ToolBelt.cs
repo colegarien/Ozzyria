@@ -17,6 +17,7 @@ namespace Ozzyria.Gryp.MapTools
                 new PanTool(),
                 new SelectTool(),
                 new BrushTool(),
+                new PaintTool(),
             };
         }
 

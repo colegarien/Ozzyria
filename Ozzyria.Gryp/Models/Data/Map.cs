@@ -31,6 +31,14 @@
                 Layers[ActiveLayer].PushTile(tileData, x, y);
             }
         }
+
+        public void PaintArea(TileData tileData, int originX, int originY)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                Layers[ActiveLayer].PaintArea(SelectedRegion, tileData, originX, originY);
+            }
+        }
     }
 
 }
