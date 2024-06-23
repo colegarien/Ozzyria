@@ -60,6 +60,7 @@
             listCurrentBrush = new ListView();
             btnRemoveBrush = new Button();
             btnAddBrush = new Button();
+            btnBrushPreset = new Button();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -356,7 +357,7 @@
             // 
             // btnRemoveBrush
             // 
-            btnRemoveBrush.Location = new Point(659, 401);
+            btnRemoveBrush.Location = new Point(659, 402);
             btnRemoveBrush.Name = "btnRemoveBrush";
             btnRemoveBrush.Size = new Size(69, 23);
             btnRemoveBrush.TabIndex = 16;
@@ -374,11 +375,22 @@
             btnAddBrush.UseVisualStyleBackColor = true;
             btnAddBrush.Click += btnAddBrush_Click;
             // 
+            // btnBrushPreset
+            // 
+            btnBrushPreset.Location = new Point(734, 401);
+            btnBrushPreset.Name = "btnBrushPreset";
+            btnBrushPreset.Size = new Size(54, 23);
+            btnBrushPreset.TabIndex = 17;
+            btnBrushPreset.Text = "Preset";
+            btnBrushPreset.UseVisualStyleBackColor = true;
+            btnBrushPreset.Click += btnBrushPreset_Click;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnBrushPreset);
             Controls.Add(btnRemoveBrush);
             Controls.Add(btnAddBrush);
             Controls.Add(listCurrentBrush);
@@ -438,5 +450,7 @@
         private ListView listCurrentBrush;
         private Button btnRemoveBrush;
         private Button btnAddBrush;
+        private ComboBox comboBox1;
+        private Button btnBrushPreset;
     }
 }

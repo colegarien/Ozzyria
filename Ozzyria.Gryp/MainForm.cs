@@ -246,8 +246,13 @@ namespace Ozzyria.Gryp
 
         private void listCurrentBrush_DoubleClick(object sender, EventArgs e)
         {
+            if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            {
+                return;
+            }
+
             var selectedIndex = listCurrentBrush.SelectedIndices.Cast<int>().FirstOrDefault();
-            if(selectedIndex >= _map.CurrentBrush.Count() || selectedIndex < 0)
+            if (selectedIndex >= _map.CurrentBrush.Count() || selectedIndex < 0)
             {
                 return;
             }
@@ -275,6 +280,11 @@ namespace Ozzyria.Gryp
 
         private void btnAddBrush_Click(object sender, EventArgs e)
         {
+            if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            {
+                return;
+            }
+
             _map.CurrentBrush.Add(new TextureCoords
             {
                 Resource = 1,
@@ -286,6 +296,11 @@ namespace Ozzyria.Gryp
 
         private void btnRemoveBrush_Click(object sender, EventArgs e)
         {
+            if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            {
+                return;
+            }
+
             var rebuildBrushView = false;
             foreach (ListViewItem selectItem in listCurrentBrush.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
             {
@@ -305,7 +320,7 @@ namespace Ozzyria.Gryp
             var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
 
             listCurrentBrush.Items.Clear();
-            foreach(var texture in _map.CurrentBrush)
+            foreach (var texture in _map.CurrentBrush)
             {
                 listCurrentBrush.Items.Add(new ListViewItem
                 {
@@ -325,6 +340,28 @@ namespace Ozzyria.Gryp
             {
                 // if no items were re-selected and there are items, select the first in the list
                 listCurrentBrush.SelectedIndices.Add(0);
+            }
+        }
+
+        private void btnBrushPreset_Click(object sender, EventArgs e)
+        {
+            if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            {
+                return;
+            }
+
+            var presetDialog = new BrushPresetDialog();
+            if (presetDialog.ShowDialog() == DialogResult.OK)
+            {
+                _map.CurrentBrush.Clear();
+                _map.CurrentBrush.AddRange(presetDialog.PresetResult);
+
+                mainStatusLabel.Text = "Brush preset selected";
+                RebuildBrushView();
+            }
+            else
+            {
+                mainStatusLabel.Text = "Preset selection canceled";
             }
         }
     }

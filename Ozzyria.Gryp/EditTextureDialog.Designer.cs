@@ -137,7 +137,7 @@
             ShowInTaskbar = false;
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
-            Text = "EditTextureDialog";
+            Text = "Edit Brush";
             TopMost = true;
             ((System.ComponentModel.ISupportInitialize)numResource).EndInit();
             ((System.ComponentModel.ISupportInitialize)numTextureX).EndInit();
