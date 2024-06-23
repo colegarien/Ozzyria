@@ -25,17 +25,9 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
-                map.PushTile(new TileData
-                {
-                    Images = new List<TextureCoords>() {
-                        new TextureCoords()
-                        {
-                            Resource = BrushResource,
-                            TextureX = BrushTextureX,
-                            TextureY = BrushTextureY,
-                        }
-                    },
-                }, mouseTileX, mouseTileY);
+                var tileData = new TileData();
+                tileData.Images.AddRange(map.CurrentBrush);
+                map.PushTile(tileData, mouseTileX, mouseTileY);
             }
             else if (mouseState.IsRightDown)
             {

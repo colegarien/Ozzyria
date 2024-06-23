@@ -69,17 +69,9 @@ namespace Ozzyria.Gryp.MapTools
                     {
                         for (int tileY = snappedTop; tileY <= snappedBottom; tileY++)
                         {
-                            map.PushTile(new TileData
-                            {
-                                Images = new List<TextureCoords>() {
-                                    new TextureCoords()
-                                    {
-                                        Resource = BrushResource,
-                                        TextureX = BrushTextureX,
-                                        TextureY = BrushTextureY,
-                                    }
-                                },
-                            }, tileX, tileY);
+                            var tileData = new TileData();
+                            tileData.Images.AddRange(map.CurrentBrush);
+                            map.PushTile(tileData, tileX, tileY);
                         }
                     }
                 }

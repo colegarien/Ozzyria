@@ -23,15 +23,15 @@ namespace Ozzyria.Gryp
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            this.PopulateResult();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            PopulateResult();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

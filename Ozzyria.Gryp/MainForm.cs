@@ -33,6 +33,7 @@ namespace Ozzyria.Gryp
                 _map.PushLayer();
 
                 RebuildLayerView();
+                RebuildBrushView();
 
                 // Center Camera onto Map
                 camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
@@ -221,15 +222,15 @@ namespace Ozzyria.Gryp
 
         private void btnHideShowLayer_Click(object sender, EventArgs e)
         {
-            if(_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
+            if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
             {
                 return;
             }
 
-            if(_map.IsLayerVisible(_map.ActiveLayer))
+            if (_map.IsLayerVisible(_map.ActiveLayer))
             {
                 _map.IsLayerHidden[_map.ActiveLayer] = true;
-                layerList.Items[_map.ActiveLayer].Text = "*Layer " + _map.ActiveLayer; 
+                layerList.Items[_map.ActiveLayer].Text = "*Layer " + _map.ActiveLayer;
                 btnHideShowLayer.Text = "Show";
                 mainStatusLabel.Text = "Layer " + _map.ActiveLayer + " hidden";
             }
@@ -241,6 +242,90 @@ namespace Ozzyria.Gryp
                 mainStatusLabel.Text = "Layer " + _map.ActiveLayer + " shown";
             }
 
+        }
+
+        private void listCurrentBrush_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listCurrentBrush.SelectedIndices.Cast<int>().FirstOrDefault();
+            if(selectedIndex >= _map.CurrentBrush.Count() || selectedIndex < 0)
+            {
+                return;
+            }
+
+            var currentTexture = _map.CurrentBrush[selectedIndex];
+
+            var textureDialog = new EditTextureDialog(currentTexture.Resource, currentTexture.TextureX, currentTexture.TextureY);
+            if (textureDialog.ShowDialog() == DialogResult.OK)
+            {
+                _map.CurrentBrush[selectedIndex] = new TextureCoords
+                {
+                    Resource = textureDialog.TextureResult.Resource,
+                    TextureX = textureDialog.TextureResult.TextureX,
+                    TextureY = textureDialog.TextureResult.TextureY,
+                };
+
+                mainStatusLabel.Text = "Successfully edited texture";
+                RebuildBrushView();
+            }
+            else
+            {
+                mainStatusLabel.Text = "Texture edit canceled";
+            }
+        }
+
+        private void btnAddBrush_Click(object sender, EventArgs e)
+        {
+            _map.CurrentBrush.Add(new TextureCoords
+            {
+                Resource = 1,
+                TextureX = 0,
+                TextureY = 0
+            });
+            RebuildBrushView();
+        }
+
+        private void btnRemoveBrush_Click(object sender, EventArgs e)
+        {
+            var rebuildBrushView = false;
+            foreach (ListViewItem selectItem in listCurrentBrush.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
+            {
+                rebuildBrushView = true;
+                _map.CurrentBrush.RemoveAt(selectItem.Index);
+            }
+
+            if (rebuildBrushView)
+            {
+                RebuildBrushView();
+                mainStatusLabel.Text = "Brush(s) removed";
+            }
+        }
+
+        private void RebuildBrushView()
+        {
+            var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
+
+            listCurrentBrush.Items.Clear();
+            foreach(var texture in _map.CurrentBrush)
+            {
+                listCurrentBrush.Items.Add(new ListViewItem
+                {
+                    Text = $"Brush ({texture.Resource}, {texture.TextureX}, {texture.TextureY})"
+                });
+            }
+
+            foreach (var index in selectedIndices)
+            {
+                if (index >= 0 && index < listCurrentBrush.Items.Count)
+                {
+                    listCurrentBrush.SelectedIndices.Add(index);
+                }
+            }
+
+            if (listCurrentBrush.SelectedIndices.Count <= 0 && listCurrentBrush.Items.Count > 0)
+            {
+                // if no items were re-selected and there are items, select the first in the list
+                listCurrentBrush.SelectedIndices.Add(0);
+            }
         }
     }
 }

@@ -86,18 +86,11 @@ namespace Ozzyria.Gryp.MapTools
                         for (int tileY = snappedTop; tileY <= snappedBottom; tileY++)
                         {
                             // Only paint around stroke
-                            if (tileY - snappedTop <= Stroke || snappedBottom - tileY <= Stroke || tileX - snappedLeft <= Stroke || snappedRight - tileX <= Stroke) {
-                                map.PushTile(new TileData
-                                {
-                                    Images = new List<TextureCoords>() {
-                                    new TextureCoords()
-                                    {
-                                        Resource = BrushResource,
-                                        TextureX = BrushTextureX,
-                                        TextureY = BrushTextureY,
-                                    }
-                                },
-                                }, tileX, tileY);
+                            if (tileY - snappedTop <= Stroke || snappedBottom - tileY <= Stroke || tileX - snappedLeft <= Stroke || snappedRight - tileX <= Stroke)
+                            {
+                                var tileData = new TileData();
+                                tileData.Images.AddRange(map.CurrentBrush);
+                                map.PushTile(tileData, tileX, tileY);
                             }
                         }
                     }

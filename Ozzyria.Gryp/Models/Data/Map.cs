@@ -12,6 +12,8 @@
 
         public TileBoundary? SelectedRegion { get; set; } = null;
 
+        public List<TextureCoords> CurrentBrush { get; set; } = new List<TextureCoords>();
+
         public bool IsLayerVisible(int layer)
         {
             return !IsLayerHidden.ContainsKey(layer) || !IsLayerHidden[layer];

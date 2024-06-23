@@ -49,17 +49,9 @@ namespace Ozzyria.Gryp.MapTools
 
                 foreach (var point in bresenham(tileX1, tileY1, tileX2, tileY2))
                 {
-                    map.PushTile(new TileData
-                    {
-                        Images = new List<TextureCoords>() {
-                        new TextureCoords()
-                        {
-                            Resource = BrushResource,
-                            TextureX = BrushTextureX,
-                            TextureY = BrushTextureY,
-                        }
-                    },
-                    }, point.Item1, point.Item2);
+                    var tileData = new TileData();
+                    tileData.Images.AddRange(map.CurrentBrush);
+                    map.PushTile(tileData, point.Item1, point.Item2);
                 }
 
 

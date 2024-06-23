@@ -110,6 +110,7 @@
             Controls.Add(numHeight);
             Controls.Add(lblWidth);
             Controls.Add(numWidth);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "NewMapDialog";
