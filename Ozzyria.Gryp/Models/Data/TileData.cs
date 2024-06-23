@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace Ozzyria.Gryp.Models.Data
 {
-    internal class TextureCoords
+    internal struct TextureCoords
     {
         public uint Resource { get; set; }
         public int TextureX { get; set; }

@@ -20,6 +20,7 @@ namespace Ozzyria.Gryp.MapTools
                 { "fill", new FillTool() },
                 { "filled_rectangle", new FilledRectangleTool() },
                 { "rectangle", new RectangleTool() },
+                { "line", new LineTool() },
             };
         }
 
@@ -161,6 +162,20 @@ namespace Ozzyria.Gryp.MapTools
                         var renderX = camera.ViewX + camera.WorldToView(rectangleTool.Area.WorldX);
                         var renderY = camera.ViewY + camera.WorldToView(rectangleTool.Area.WorldY);
                         canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(rectangleTool.Area.WorldWidth), renderY + camera.WorldToView(rectangleTool.Area.WorldHeight)), Paints.TileHighlightPaint);
+                    }
+                }
+                else if (tool.Value is LineTool)
+                {
+                    var lineTool = tool.Value as LineTool;
+
+                    if (lineTool.LineEndX != 0 || lineTool.LineStartX != 0 || lineTool.LineEndY != 0 || lineTool.LineStartY != 0)
+                    {
+                        var renderStartX = camera.ViewX + camera.WorldToView(lineTool.LineStartX);
+                        var renderStartY = camera.ViewY + camera.WorldToView(lineTool.LineStartY);
+                        var renderEndX = camera.ViewX + camera.WorldToView(lineTool.LineEndX);
+                        var renderEndY = camera.ViewY + camera.WorldToView(lineTool.LineEndY);
+
+                        canvas.DrawLine(renderStartX, renderStartY, renderEndX, renderEndY, Paints.TileHighlightPaint);
                     }
                 }
             }
