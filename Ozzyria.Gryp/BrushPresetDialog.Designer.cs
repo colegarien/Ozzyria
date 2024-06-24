@@ -36,9 +36,10 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(93, 68);
+            btnCancel.Location = new Point(173, 145);
+            btnCancel.Margin = new Padding(6, 6, 6, 6);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(75, 23);
+            btnCancel.Size = new Size(139, 49);
             btnCancel.TabIndex = 9;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -46,10 +47,11 @@
             // 
             // btnOk
             // 
-            btnOk.Location = new Point(12, 68);
+            btnOk.Location = new Point(22, 145);
+            btnOk.Margin = new Padding(6, 6, 6, 6);
             btnOk.Name = "btnOk";
             btnOk.RightToLeft = RightToLeft.No;
-            btnOk.Size = new Size(75, 23);
+            btnOk.Size = new Size(139, 49);
             btnOk.TabIndex = 8;
             btnOk.Text = "Ok";
             btnOk.UseVisualStyleBackColor = true;
@@ -58,31 +60,34 @@
             // lblPreset
             // 
             lblPreset.AutoSize = true;
-            lblPreset.Location = new Point(12, 9);
+            lblPreset.Location = new Point(22, 19);
+            lblPreset.Margin = new Padding(6, 0, 6, 0);
             lblPreset.Name = "lblPreset";
-            lblPreset.Size = new Size(39, 15);
+            lblPreset.Size = new Size(79, 32);
             lblPreset.TabIndex = 10;
             lblPreset.Text = "Preset";
             // 
             // comboPreset
             // 
             comboPreset.FormattingEnabled = true;
-            comboPreset.Location = new Point(12, 27);
+            comboPreset.Location = new Point(22, 58);
+            comboPreset.Margin = new Padding(6, 6, 6, 6);
             comboPreset.Name = "comboPreset";
-            comboPreset.Size = new Size(156, 23);
+            comboPreset.Size = new Size(286, 40);
             comboPreset.TabIndex = 11;
             // 
             // BrushPresetDialog
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(181, 109);
+            ClientSize = new Size(336, 233);
             ControlBox = false;
             Controls.Add(comboPreset);
             Controls.Add(lblPreset);
             Controls.Add(btnCancel);
             Controls.Add(btnOk);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(6, 6, 6, 6);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "BrushPresetDialog";

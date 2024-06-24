@@ -43,9 +43,10 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(93, 93);
+            btnCancel.Location = new Point(173, 198);
+            btnCancel.Margin = new Padding(6, 6, 6, 6);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(75, 23);
+            btnCancel.Size = new Size(139, 49);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -53,9 +54,10 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(12, 93);
+            btnSave.Location = new Point(22, 198);
+            btnSave.Margin = new Padding(6, 6, 6, 6);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(75, 23);
+            btnSave.Size = new Size(139, 49);
             btnSave.TabIndex = 6;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
@@ -64,62 +66,68 @@
             // lblResource
             // 
             lblResource.AutoSize = true;
-            lblResource.Location = new Point(12, 9);
+            lblResource.Location = new Point(22, 19);
+            lblResource.Margin = new Padding(6, 0, 6, 0);
             lblResource.Name = "lblResource";
-            lblResource.Size = new Size(55, 15);
+            lblResource.Size = new Size(110, 32);
             lblResource.TabIndex = 9;
             lblResource.Text = "Resource";
             // 
             // numResource
             // 
-            numResource.Location = new Point(73, 7);
+            numResource.Location = new Point(136, 15);
+            numResource.Margin = new Padding(6, 6, 6, 6);
             numResource.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numResource.Name = "numResource";
-            numResource.Size = new Size(57, 23);
+            numResource.Size = new Size(106, 39);
             numResource.TabIndex = 8;
             numResource.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // lblTextureX
             // 
             lblTextureX.AutoSize = true;
-            lblTextureX.Location = new Point(12, 38);
+            lblTextureX.Location = new Point(22, 81);
+            lblTextureX.Margin = new Padding(6, 0, 6, 0);
             lblTextureX.Name = "lblTextureX";
-            lblTextureX.Size = new Size(55, 15);
+            lblTextureX.Size = new Size(113, 32);
             lblTextureX.TabIndex = 11;
             lblTextureX.Text = "Texture X";
             // 
             // numTextureX
             // 
-            numTextureX.Location = new Point(73, 36);
+            numTextureX.Location = new Point(136, 77);
+            numTextureX.Margin = new Padding(6, 6, 6, 6);
             numTextureX.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             numTextureX.Name = "numTextureX";
-            numTextureX.Size = new Size(57, 23);
+            numTextureX.Size = new Size(106, 39);
             numTextureX.TabIndex = 10;
             numTextureX.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // lblTextureY
             // 
             lblTextureY.AutoSize = true;
-            lblTextureY.Location = new Point(12, 66);
+            lblTextureY.Location = new Point(22, 141);
+            lblTextureY.Margin = new Padding(6, 0, 6, 0);
             lblTextureY.Name = "lblTextureY";
-            lblTextureY.Size = new Size(55, 15);
+            lblTextureY.Size = new Size(112, 32);
             lblTextureY.TabIndex = 13;
             lblTextureY.Text = "Texture Y";
             // 
             // numTextureY
             // 
-            numTextureY.Location = new Point(73, 64);
+            numTextureY.Location = new Point(136, 137);
+            numTextureY.Margin = new Padding(6, 6, 6, 6);
             numTextureY.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
             numTextureY.Name = "numTextureY";
-            numTextureY.Size = new Size(57, 23);
+            numTextureY.Size = new Size(106, 39);
             numTextureY.TabIndex = 12;
             numTextureY.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // EditTextureDialog
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(176, 126);
+            ClientSize = new Size(327, 269);
             ControlBox = false;
             Controls.Add(lblTextureY);
             Controls.Add(numTextureY);
@@ -129,7 +137,8 @@
             Controls.Add(numResource);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(6, 6, 6, 6);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "EditTextureDialog";
