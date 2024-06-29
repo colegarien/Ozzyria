@@ -3,6 +3,7 @@ using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using System.Reflection;
 
 namespace Ozzyria.Gryp
 {
@@ -17,6 +18,9 @@ namespace Ozzyria.Gryp
         {
             InitializeComponent();
             camera.SizeCamera(mapViewPort.ClientSize.Width, mapViewPort.ClientSize.Height);
+
+            // hackity hack to override DoubleBuffered without making custom class
+            typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, layerList, new object[] { true });
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
