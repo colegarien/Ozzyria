@@ -34,18 +34,18 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
             mainToolbelt = new ToolStrip();
-            toolSelect = new ToolStripButton();
-            toolMove = new ToolStripButton();
+            toolSelect = new PixelToolStripButton();
+            toolMove = new PixelToolStripButton();
             toolStripSeparator = new ToolStripSeparator();
-            toolEntity = new ToolStripButton();
-            toolPath = new ToolStripButton();
-            toolWall = new ToolStripButton();
+            toolEntity = new PixelToolStripButton();
+            toolPath = new PixelToolStripButton();
+            toolWall = new PixelToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            toolBrush = new ToolStripButton();
-            toolFill = new ToolStripButton();
-            toolRectangle = new ToolStripButton();
-            toolFilledRectangle = new ToolStripButton();
-            toolLine = new ToolStripButton();
+            toolBrush = new PixelToolStripButton();
+            toolFill = new PixelToolStripButton();
+            toolRectangle = new PixelToolStripButton();
+            toolFilledRectangle = new PixelToolStripButton();
+            toolLine = new PixelToolStripButton();
             mainStatusStrip = new StatusStrip();
             mainStatusLabel = new ToolStripStatusLabel();
             reRenderTimer = new System.Windows.Forms.Timer(components);
@@ -72,7 +72,7 @@
             menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(800, 24);
+            menuStrip.Size = new Size(860, 24);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "Main Menu";
             // 
@@ -240,7 +240,7 @@
             mainStatusStrip.Items.AddRange(new ToolStripItem[] { mainStatusLabel });
             mainStatusStrip.Location = new Point(38, 428);
             mainStatusStrip.Name = "mainStatusStrip";
-            mainStatusStrip.Size = new Size(762, 22);
+            mainStatusStrip.Size = new Size(822, 22);
             mainStatusStrip.SizingGrip = false;
             mainStatusStrip.TabIndex = 4;
             mainStatusStrip.Text = "Main Status Strip";
@@ -260,7 +260,7 @@
             // layerList
             // 
             layerList.LargeImageList = layerImageList;
-            layerList.Location = new Point(599, 24);
+            layerList.Location = new Point(664, 24);
             layerList.MultiSelect = false;
             layerList.Name = "layerList";
             layerList.Size = new Size(189, 205);
@@ -278,10 +278,10 @@
             // mapViewPort
             // 
             mapViewPort.BackColor = Color.Black;
-            mapViewPort.Location = new Point(29, 24);
+            mapViewPort.Location = new Point(34, 24);
             mapViewPort.Margin = new Padding(4, 3, 4, 3);
             mapViewPort.Name = "mapViewPort";
-            mapViewPort.Size = new Size(563, 401);
+            mapViewPort.Size = new Size(623, 401);
             mapViewPort.TabIndex = 8;
             mapViewPort.VSync = false;
             mapViewPort.PaintSurface += mapViewPort_PaintSurface;
@@ -298,7 +298,7 @@
             // 
             // btnNewLayer
             // 
-            btnNewLayer.Location = new Point(599, 235);
+            btnNewLayer.Location = new Point(664, 235);
             btnNewLayer.Name = "btnNewLayer";
             btnNewLayer.Size = new Size(54, 23);
             btnNewLayer.TabIndex = 10;
@@ -308,7 +308,7 @@
             // 
             // btnRemoveLayer
             // 
-            btnRemoveLayer.Location = new Point(659, 235);
+            btnRemoveLayer.Location = new Point(724, 235);
             btnRemoveLayer.Name = "btnRemoveLayer";
             btnRemoveLayer.Size = new Size(69, 23);
             btnRemoveLayer.TabIndex = 11;
@@ -318,7 +318,7 @@
             // 
             // btnHideShowLayer
             // 
-            btnHideShowLayer.Location = new Point(734, 235);
+            btnHideShowLayer.Location = new Point(799, 235);
             btnHideShowLayer.Name = "btnHideShowLayer";
             btnHideShowLayer.Size = new Size(54, 23);
             btnHideShowLayer.TabIndex = 12;
@@ -329,7 +329,7 @@
             // lblBrush
             // 
             lblBrush.AutoSize = true;
-            lblBrush.Location = new Point(599, 277);
+            lblBrush.Location = new Point(664, 277);
             lblBrush.Name = "lblBrush";
             lblBrush.Size = new Size(37, 15);
             lblBrush.TabIndex = 13;
@@ -337,7 +337,7 @@
             // 
             // listCurrentBrush
             // 
-            listCurrentBrush.Location = new Point(599, 295);
+            listCurrentBrush.Location = new Point(664, 295);
             listCurrentBrush.MultiSelect = false;
             listCurrentBrush.Name = "listCurrentBrush";
             listCurrentBrush.Size = new Size(189, 100);
@@ -347,7 +347,7 @@
             // 
             // btnRemoveBrush
             // 
-            btnRemoveBrush.Location = new Point(659, 402);
+            btnRemoveBrush.Location = new Point(724, 402);
             btnRemoveBrush.Name = "btnRemoveBrush";
             btnRemoveBrush.Size = new Size(69, 23);
             btnRemoveBrush.TabIndex = 16;
@@ -357,7 +357,7 @@
             // 
             // btnAddBrush
             // 
-            btnAddBrush.Location = new Point(599, 401);
+            btnAddBrush.Location = new Point(664, 401);
             btnAddBrush.Name = "btnAddBrush";
             btnAddBrush.Size = new Size(54, 23);
             btnAddBrush.TabIndex = 15;
@@ -367,7 +367,7 @@
             // 
             // btnBrushPreset
             // 
-            btnBrushPreset.Location = new Point(734, 401);
+            btnBrushPreset.Location = new Point(799, 401);
             btnBrushPreset.Name = "btnBrushPreset";
             btnBrushPreset.Size = new Size(54, 23);
             btnBrushPreset.TabIndex = 17;
@@ -379,7 +379,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(860, 450);
             Controls.Add(btnBrushPreset);
             Controls.Add(btnRemoveBrush);
             Controls.Add(btnAddBrush);
@@ -413,21 +413,11 @@
         private MenuStrip menuStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStrip mainToolbelt;
-        private ToolStripButton toolSelect;
-        private ToolStripButton toolMove;
-        private ToolStripButton toolBrush;
-        private ToolStripButton toolFill;
         private ToolStripSeparator toolStripSeparator;
-        private ToolStripButton toolEntity;
-        private ToolStripButton toolPath;
-        private ToolStripButton toolWall;
         private ToolStripSeparator toolStripSeparator1;
         private StatusStrip mainStatusStrip;
         private ToolStripStatusLabel mainStatusLabel;
         private ToolStripMenuItem newToolStripMenuItem;
-        private ToolStripButton toolRectangle;
-        private ToolStripButton toolFilledRectangle;
-        private ToolStripButton toolLine;
         private System.Windows.Forms.Timer reRenderTimer;
         private ListView layerList;
         private ImageList layerImageList;
@@ -442,5 +432,15 @@
         private Button btnAddBrush;
         private ComboBox comboBox1;
         private Button btnBrushPreset;
+        private PixelToolStripButton toolSelect;
+        private PixelToolStripButton toolMove;
+        private PixelToolStripButton toolBrush;
+        private PixelToolStripButton toolFill;
+        private PixelToolStripButton toolEntity;
+        private PixelToolStripButton toolPath;
+        private PixelToolStripButton toolWall;
+        private PixelToolStripButton toolRectangle;
+        private PixelToolStripButton toolFilledRectangle;
+        private PixelToolStripButton toolLine;
     }
 }
