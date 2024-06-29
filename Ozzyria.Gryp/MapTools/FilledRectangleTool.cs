@@ -65,6 +65,20 @@ namespace Ozzyria.Gryp.MapTools
                     var snappedRight = (int)Math.Floor((Area.WorldX + Area.WorldWidth - 1) / 32);
                     var snappedBottom = (int)Math.Floor((Area.WorldY + Area.WorldHeight - 1) / 32);
 
+                    if (snappedRight < snappedLeft)
+                    {
+                        var temp = snappedLeft;
+                        snappedLeft = snappedRight;
+                        snappedRight = temp;
+                    }
+
+                    if (snappedBottom < snappedTop)
+                    {
+                        var temp = snappedBottom;
+                        snappedBottom = snappedTop;
+                        snappedTop = temp;
+                    }
+
                     for (int tileX = snappedLeft; tileX <= snappedRight; tileX++)
                     {
                         for (int tileY = snappedTop; tileY <= snappedBottom; tileY++)
