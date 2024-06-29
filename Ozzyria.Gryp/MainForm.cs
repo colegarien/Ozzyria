@@ -55,7 +55,7 @@ namespace Ozzyria.Gryp
 
             for (int i = 0; i < _map.Layers.Count; i++)
             {
-                layerImageList.Images.Add(_map.Layers[i].GetThumbnail().ToBitmap());
+                layerImageList.Images.Add(_map.Layers[i].GetThumbnail(layerImageList.ImageSize.Width).ToBitmap());
                 var layerName = _map.IsLayerVisible(_map.ActiveLayer) ? ("Layer " + i) : ("*Layer " + i);
                 layerList.Items.Add(new ListViewItem { Text = layerName, ImageIndex = i });
             }
@@ -179,7 +179,22 @@ namespace Ozzyria.Gryp
         private void logicTimer_Tick(object sender, EventArgs e)
         {
             // TODO pipe commands to/from toolbelt (will likely need to actually process data in a separate Thread)
-            // TODO also "regularly" rebuild thumbas for layer-list
+
+            // Check if thumbnails need refreshed
+            bool refreshLayers = false;
+            for (int i = 0; i < _map.Layers.Count; i++)
+            {
+                if (i < layerImageList.Images.Count && _map.Layers[i].HasChanged())
+                {
+                    refreshLayers = true;
+                    layerImageList.Images[i] = _map.Layers[i].GetThumbnail(layerImageList.ImageSize.Width).ToBitmap();
+                }
+            }
+
+            if (refreshLayers)
+            {
+                layerList.Invalidate();
+            }
         }
 
         private void layerList_SelectedIndexChanged(object sender, EventArgs e)

@@ -40,52 +40,47 @@
             // 
             // numWidth
             // 
-            numWidth.Location = new Point(113, 17);
-            numWidth.Margin = new Padding(6);
+            numWidth.Location = new Point(61, 8);
             numWidth.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numWidth.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numWidth.Name = "numWidth";
-            numWidth.Size = new Size(106, 39);
+            numWidth.Size = new Size(57, 23);
             numWidth.TabIndex = 0;
             numWidth.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // lblWidth
             // 
             lblWidth.AutoSize = true;
-            lblWidth.Location = new Point(22, 21);
-            lblWidth.Margin = new Padding(6, 0, 6, 0);
+            lblWidth.Location = new Point(12, 10);
             lblWidth.Name = "lblWidth";
-            lblWidth.Size = new Size(78, 32);
+            lblWidth.Size = new Size(39, 15);
             lblWidth.TabIndex = 1;
             lblWidth.Text = "Width";
             // 
             // lblHeight
             // 
             lblHeight.AutoSize = true;
-            lblHeight.Location = new Point(22, 79);
-            lblHeight.Margin = new Padding(6, 0, 6, 0);
+            lblHeight.Location = new Point(12, 37);
             lblHeight.Name = "lblHeight";
-            lblHeight.Size = new Size(86, 32);
+            lblHeight.Size = new Size(43, 15);
             lblHeight.TabIndex = 3;
             lblHeight.Text = "Height";
             // 
             // numHeight
             // 
-            numHeight.Location = new Point(113, 79);
-            numHeight.Margin = new Padding(6);
+            numHeight.Location = new Point(61, 37);
             numHeight.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numHeight.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numHeight.Name = "numHeight";
-            numHeight.Size = new Size(106, 39);
+            numHeight.Size = new Size(57, 23);
             numHeight.TabIndex = 2;
             numHeight.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // btnNew
             // 
-            btnNew.Location = new Point(13, 141);
-            btnNew.Margin = new Padding(6);
+            btnNew.Location = new Point(7, 66);
             btnNew.Name = "btnNew";
-            btnNew.Size = new Size(139, 49);
+            btnNew.Size = new Size(75, 23);
             btnNew.TabIndex = 4;
             btnNew.Text = "New";
             btnNew.UseVisualStyleBackColor = true;
@@ -93,10 +88,9 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(163, 141);
-            btnCancel.Margin = new Padding(6);
+            btnCancel.Location = new Point(88, 66);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(139, 49);
+            btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 5;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -105,10 +99,10 @@
             // NewMapDialog
             // 
             AcceptButton = btnNew;
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
-            ClientSize = new Size(325, 211);
+            ClientSize = new Size(173, 97);
             ControlBox = false;
             Controls.Add(btnCancel);
             Controls.Add(btnNew);
@@ -117,7 +111,6 @@
             Controls.Add(lblWidth);
             Controls.Add(numWidth);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Margin = new Padding(6);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "NewMapDialog";

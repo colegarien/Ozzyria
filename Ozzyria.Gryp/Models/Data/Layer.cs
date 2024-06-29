@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System.Drawing;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -16,6 +17,8 @@ namespace Ozzyria.Gryp.Models.Data
         private Layer? _bottomRight;
 
         private TileData[,]? _tileData;
+
+        protected bool _hasChanged = false;
 
         public Layer(TileBoundary boundary, Layer? parent = null)
         {
@@ -103,6 +106,7 @@ namespace Ozzyria.Gryp.Models.Data
             }
             else if (_tileData != null)
             {
+                ToggleChanged(true);
                 _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY] = tileData;
             }
         }
@@ -233,20 +237,45 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public SKBitmap GetThumbnail()
+        public SKBitmap GetThumbnail(int size)
         {
-            var thumbnailRender = new SKBitmap(new SKImageInfo(32, 32));
+            ToggleChanged(false);
+            var thumbnailRender = new SKBitmap(new SKImageInfo(size, size));
             using (SKCanvas canvas = new SKCanvas(thumbnailRender))
             {
                 var dummyCamera = new Camera();
-                dummyCamera.Scale = 32f / ((_boundary.TileWidth > _boundary.TileHeight ? _boundary.TileWidth : _boundary.TileHeight) * 32);
-                dummyCamera.SizeCamera(32, 32);
+                dummyCamera.Scale = (float)size / ((_boundary.TileWidth > _boundary.TileHeight ? _boundary.TileWidth : _boundary.TileHeight) * 32);
+                dummyCamera.SizeCamera(size, size);
                 dummyCamera.MoveToViewCoordinates(0, 0);
 
                 RenderToCanvas(canvas, dummyCamera);
             }
 
             return thumbnailRender;
+        }
+
+        protected void ToggleChanged(bool changed)
+        {
+            if (_parent != null)
+            {
+                _parent.ToggleChanged(changed);
+            }
+            else
+            {
+                _hasChanged = changed;
+            }
+        }
+
+        public bool HasChanged()
+        {
+            if (_parent != null)
+            {
+                return _parent.HasChanged();
+            }
+            else
+            {
+                return _hasChanged;
+            }
         }
     }
 }
