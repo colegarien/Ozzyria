@@ -131,37 +131,16 @@ namespace Ozzyria.Gryp.MapTools
                 if (!tool.Value.Enabled)
                     continue;
 
-                if (tool.Value is SelectTool)
+                if(tool.Value is IAreaTool)
                 {
-                    var selectTool = tool.Value as SelectTool;
+                    var areaTool = tool.Value as IAreaTool;
+                    var area = areaTool.GetWorldArea();
 
-                    if (selectTool.Selection.WorldWidth != 0 && selectTool.Selection.WorldHeight != 0)
+                    if (area.WorldWidth != 0 && area.WorldHeight != 0)
                     {
-                        var renderX = camera.ViewX + camera.WorldToView(selectTool.Selection.WorldX);
-                        var renderY = camera.ViewY + camera.WorldToView(selectTool.Selection.WorldY);
-                        canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(selectTool.Selection.WorldWidth), renderY + camera.WorldToView(selectTool.Selection.WorldHeight)), Paints.TileHighlightPaint);
-                    }
-                }
-                else if (tool.Value is FilledRectangleTool)
-                {
-                    var filledRectangleTool = tool.Value as FilledRectangleTool;
-
-                    if (filledRectangleTool.Area.WorldWidth != 0 && filledRectangleTool.Area.WorldHeight != 0)
-                    {
-                        var renderX = camera.ViewX + camera.WorldToView(filledRectangleTool.Area.WorldX);
-                        var renderY = camera.ViewY + camera.WorldToView(filledRectangleTool.Area.WorldY);
-                        canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(filledRectangleTool.Area.WorldWidth), renderY + camera.WorldToView(filledRectangleTool.Area.WorldHeight)), Paints.TileHighlightPaint);
-                    }
-                }
-                else if (tool.Value is RectangleTool)
-                {
-                    var rectangleTool = tool.Value as RectangleTool;
-
-                    if (rectangleTool.Area.WorldWidth != 0 && rectangleTool.Area.WorldHeight != 0)
-                    {
-                        var renderX = camera.ViewX + camera.WorldToView(rectangleTool.Area.WorldX);
-                        var renderY = camera.ViewY + camera.WorldToView(rectangleTool.Area.WorldY);
-                        canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(rectangleTool.Area.WorldWidth), renderY + camera.WorldToView(rectangleTool.Area.WorldHeight)), Paints.TileHighlightPaint);
+                        var renderX = camera.ViewX + camera.WorldToView(area.WorldX);
+                        var renderY = camera.ViewY + camera.WorldToView(area.WorldY);
+                        canvas.DrawRect(new SKRect(renderX, renderY, renderX + camera.WorldToView(area.WorldWidth), renderY + camera.WorldToView(area.WorldHeight)), Paints.TileHighlightPaint);
                     }
                 }
                 else if (tool.Value is LineTool)
