@@ -15,9 +15,9 @@ namespace Ozzyria.Gryp.MapTools
         {
             var tileArea = GetTileArea();
 
-            for (int tileX = tileArea.TileX; tileX <= tileArea.TileX + tileArea.TileWidth; tileX++)
+            for (int tileX = tileArea.TileX; tileX < tileArea.TileX + tileArea.TileWidth; tileX++)
             {
-                for (int tileY = tileArea.TileY; tileY <= tileArea.TileY + tileArea.TileHeight; tileY++)
+                for (int tileY = tileArea.TileY; tileY < tileArea.TileY + tileArea.TileHeight; tileY++)
                 {
                     var tileData = new TileData();
                     tileData.Images.AddRange(map.CurrentBrush);

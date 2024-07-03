@@ -1,5 +1,4 @@
 ﻿using SkiaSharp;
-using System.Drawing;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -17,6 +16,7 @@ namespace Ozzyria.Gryp.Models.Data
         private Layer? _bottomRight;
 
         private TileData[,]? _tileData;
+        private List<WorldBoundary> _walls;
 
         protected bool _hasChanged = false;
 
@@ -24,6 +24,10 @@ namespace Ozzyria.Gryp.Models.Data
         {
             _boundary = boundary;
             _parent = parent;
+            if(_parent == null)
+            {
+                _walls = new List<WorldBoundary>();
+            }
 
             // split if big map
             if (boundary.TileWidth * boundary.TileHeight > MAX_CAPACITY)
@@ -90,6 +94,38 @@ namespace Ozzyria.Gryp.Models.Data
         public bool CanRender()
         {
             return _boundary.TileWidth > 0 && _boundary.TileHeight > 0;
+        }
+
+        public void AddWall(WorldBoundary wall)
+        {
+            if(_parent == null)
+            {
+                ToggleChanged(true);
+                _walls.Add(wall);
+            }
+            else
+            {
+                _parent.AddWall(wall);
+            }
+        }
+
+        public void RemoveWalls(float worldX, float worldY)
+        {
+            if (_parent == null)
+            {
+                for(int i = _walls.Count - 1; i >= 0; i--)
+                {
+                    if (_walls[i].Contains(worldX, worldY))
+                    {
+                        ToggleChanged(true);
+                        _walls.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                _parent.RemoveWalls(worldX, worldY);
+            }
         }
 
         public void PushTile(TileData tileData, int tileX, int tileY)
@@ -233,6 +269,18 @@ namespace Ozzyria.Gryp.Models.Data
                         var tileX =camera.ViewX + boundaryViewX + camera.WorldToView(x * 32);
                         _tileData[x, y].Render(canvas, tileX, tileY, dimension, dimension);
                     }
+                }
+            }
+
+            if(_parent == null)
+            {
+                foreach(var wall in _walls)
+                {
+                    var wallX = camera.ViewX + camera.WorldToView(wall.WorldX);
+                    var wallY = camera.ViewY + camera.WorldToView(wall.WorldY);
+                    var wallWidth = camera.WorldToView(wall.WorldWidth);
+                    var wallHeight = camera.WorldToView(wall.WorldHeight);
+                    canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.WallEntityPaint);
                 }
             }
         }

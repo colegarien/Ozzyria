@@ -1,8 +1,5 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
-using Ozzyria.Game.Systems;
-using System.Drawing;
-using System.Numerics;
 
 namespace Ozzyria.Game.Utility
 {

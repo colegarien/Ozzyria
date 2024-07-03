@@ -48,6 +48,22 @@
                 Layers[ActiveLayer].PaintArea(SelectedRegion, tileData, originX, originY);
             }
         }
+
+        public void AddWall(WorldBoundary wall)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                Layers[ActiveLayer].AddWall(wall);
+            }
+        }
+
+        public void RemoveWalls(float worldX, float worldY)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                Layers[ActiveLayer].RemoveWalls(worldX, worldY);
+            }
+        }
     }
 
 }

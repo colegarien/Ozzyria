@@ -21,7 +21,13 @@ namespace Ozzyria.Gryp.MapTools
 
         public WorldBoundary GetWorldArea()
         {
-            return Area;
+            return new WorldBoundary
+            {
+                WorldX = Area.WorldX,
+                WorldY = Area.WorldY,
+                WorldWidth = Area.WorldWidth,
+                WorldHeight = Area.WorldHeight
+            };
         }
 
         public TileBoundary GetTileArea()
@@ -29,15 +35,15 @@ namespace Ozzyria.Gryp.MapTools
             // convert to tile-space
             var snappedLeft = (int)Math.Floor(Area.WorldX / 32);
             var snappedTop = (int)Math.Floor(Area.WorldY / 32);
-            var snappedRight = (int)Math.Floor((Area.WorldX + Area.WorldWidth - 1) / 32);
-            var snappedBottom = (int)Math.Floor((Area.WorldY + Area.WorldHeight - 1) / 32);
+            var snappedRight = (int)Math.Floor((Area.WorldX + Area.WorldWidth) / 32);
+            var snappedBottom = (int)Math.Floor((Area.WorldY + Area.WorldHeight) / 32);
 
             return new TileBoundary
             {
                 TileX = snappedLeft,
                 TileY = snappedTop,
-                TileWidth = snappedRight - snappedLeft,
-                TileHeight = snappedBottom - snappedTop
+                TileWidth = snappedRight - snappedLeft + 1,
+                TileHeight = snappedBottom - snappedTop + 1
             };
         }
 

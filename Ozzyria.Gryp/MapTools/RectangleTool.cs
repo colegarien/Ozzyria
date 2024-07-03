@@ -17,12 +17,12 @@ namespace Ozzyria.Gryp.MapTools
         {
             var tileArea = GetTileArea();
 
-            for (int tileX = tileArea.TileX; tileX <= tileArea.TileX + tileArea.TileWidth; tileX++)
+            for (int tileX = tileArea.TileX; tileX < tileArea.TileX + tileArea.TileWidth; tileX++)
             {
-                for (int tileY = tileArea.TileY; tileY <= tileArea.TileY + tileArea.TileHeight; tileY++)
+                for (int tileY = tileArea.TileY; tileY < tileArea.TileY + tileArea.TileHeight; tileY++)
                 {
                     // Only paint around stroke
-                    if (tileY - tileArea.TileY <= Stroke || (tileArea.TileY + tileArea.TileHeight) - tileY <= Stroke || tileX - tileArea.TileX <= Stroke || (tileArea.TileX + tileArea.TileWidth) - tileX <= Stroke)
+                    if (tileY - tileArea.TileY <= Stroke || (tileArea.TileY + tileArea.TileHeight - 1) - tileY <= Stroke || tileX - tileArea.TileX <= Stroke || (tileArea.TileX + tileArea.TileWidth - 1) - tileX <= Stroke)
                     {
                         var tileData = new TileData();
                         tileData.Images.AddRange(map.CurrentBrush);

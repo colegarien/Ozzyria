@@ -21,6 +21,7 @@ namespace Ozzyria.Gryp.MapTools
                 { "filled_rectangle", new FilledRectangleTool() },
                 { "rectangle", new RectangleTool() },
                 { "line", new LineTool() },
+                { "wall", new WallTool() },
             };
         }
 
@@ -134,7 +135,7 @@ namespace Ozzyria.Gryp.MapTools
                 if(tool.Value is IAreaTool)
                 {
                     var areaTool = tool.Value as IAreaTool;
-                    var area = areaTool.GetWorldArea();
+                    var area = areaTool?.GetWorldArea() ?? new WorldBoundary();
 
                     if (area.WorldWidth != 0 && area.WorldHeight != 0)
                     {
