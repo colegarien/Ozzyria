@@ -4,7 +4,7 @@ namespace Ozzyria.Gryp
 {
     public partial class BrushPresetDialog : Form
     {
-        internal List<TextureCoords> PresetResult { get; set; } = new List<TextureCoords>();
+        internal List<string> PresetResult { get; set; } = new List<string>();
 
         public BrushPresetDialog()
         {
@@ -21,20 +21,10 @@ namespace Ozzyria.Gryp
         {
             switch (comboPreset.SelectedItem?.ToString()?.ToLower() ?? "") {
                 case "grass":
-                    PresetResult.Add(new TextureCoords
-                    {
-                        Resource = 1,
-                        TextureX = 0,
-                        TextureY = 128
-                    });
+                    PresetResult.Add("grass");
                     break;
                 case "water":
-                    PresetResult.Add(new TextureCoords
-                    {
-                        Resource = 1,
-                        TextureX = 0,
-                        TextureY = 160
-                    });
+                    PresetResult.Add("water");
                     break;
             }
         }

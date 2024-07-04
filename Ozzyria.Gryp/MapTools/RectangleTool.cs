@@ -25,7 +25,7 @@ namespace Ozzyria.Gryp.MapTools
                     if (tileY - tileArea.TileY <= Stroke || (tileArea.TileY + tileArea.TileHeight - 1) - tileY <= Stroke || tileX - tileArea.TileX <= Stroke || (tileArea.TileX + tileArea.TileWidth - 1) - tileX <= Stroke)
                     {
                         var tileData = new TileData();
-                        tileData.Images.AddRange(map.CurrentBrush);
+                        tileData.DrawableIds.AddRange(map.CurrentBrush);
                         map.PushTile(tileData, tileX, tileY);
                     }
                 }

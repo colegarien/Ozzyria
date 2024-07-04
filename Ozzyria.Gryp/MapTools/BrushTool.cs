@@ -24,7 +24,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
                 var tileData = new TileData();
-                tileData.Images.AddRange(map.CurrentBrush);
+                tileData.DrawableIds.AddRange(map.CurrentBrush);
                 map.PushTile(tileData, mouseTileX, mouseTileY);
             }
             else if(mouseState.IsRightDown && !isErasing)
@@ -36,7 +36,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
                 // erase tile data
-                map.PushTile(new TileData { Images = new List<TextureCoords>() { }, }, mouseTileX, mouseTileY);
+                map.PushTile(new TileData { DrawableIds = new List<string>() { }, }, mouseTileX, mouseTileY);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
                 var tileData = new TileData();
-                tileData.Images.AddRange(map.CurrentBrush);
+                tileData.DrawableIds.AddRange(map.CurrentBrush);
                 map.PushTile(tileData, mouseTileX, mouseTileY);
             }
             else if (mouseState.IsRightDown && isErasing)
@@ -61,7 +61,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
                 // erase tile data
-                map.PushTile(new TileData {Images = new List<TextureCoords>() {}, }, mouseTileX, mouseTileY);
+                map.PushTile(new TileData {DrawableIds = new List<string>() {}, }, mouseTileX, mouseTileY);
             }
         }
 

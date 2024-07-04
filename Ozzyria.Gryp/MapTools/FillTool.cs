@@ -36,7 +36,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
                 var tileData = new TileData();
-                tileData.Images.AddRange(map.CurrentBrush);
+                tileData.DrawableIds.AddRange(map.CurrentBrush);
                 map.PaintArea(tileData, mouseTileX, mouseTileY);
             }
         }

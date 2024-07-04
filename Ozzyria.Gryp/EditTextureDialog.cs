@@ -1,17 +1,17 @@
-﻿using Ozzyria.Gryp.Models.Data;
+﻿using Ozzyria.Content;
 
 namespace Ozzyria.Gryp
 {
     public partial class EditTextureDialog : Form
     {
-        internal TextureCoords TextureResult { get; set; }
+        internal string TextureResult { get; set; }
 
-        public EditTextureDialog(uint resource, int texX, int texY)
+        public EditTextureDialog(string currentDrawableId)
         {
             InitializeComponent();
-            numResource.Value = resource;
-            numTextureX.Value = texX;
-            numTextureY.Value = texY;
+
+            var registry = Registry.GetInstance();
+            cmbDrawables.Items.AddRange(registry.Drawables.Keys.ToArray());
         }
 
         /// <summary>
@@ -19,12 +19,7 @@ namespace Ozzyria.Gryp
         /// </summary>
         private void PopulateResult()
         {
-            TextureResult = new TextureCoords
-            {
-                Resource = (uint)numResource.Value,
-                TextureX = (int)numTextureX.Value,
-                TextureY = (int)numTextureY.Value
-            };
+            TextureResult = cmbDrawables.SelectedItem?.ToString() ?? "";
         }
 
         private void btnSave_Click(object sender, EventArgs e)

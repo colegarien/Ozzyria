@@ -12,7 +12,7 @@
 
         public TileBoundary? SelectedRegion { get; set; } = null;
 
-        public List<TextureCoords> CurrentBrush { get; set; } = new List<TextureCoords>();
+        public List<string> CurrentBrush { get; set; } = new List<string>();
 
         public bool IsLayerVisible(int layer)
         {

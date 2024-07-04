@@ -276,17 +276,12 @@ namespace Ozzyria.Gryp
                 return;
             }
 
-            var currentTexture = _map.CurrentBrush[selectedIndex];
+            var currentDrawableId = _map.CurrentBrush[selectedIndex];
 
-            var textureDialog = new EditTextureDialog(currentTexture.Resource, currentTexture.TextureX, currentTexture.TextureY);
-            if (textureDialog.ShowDialog() == DialogResult.OK)
+            var textureDialog = new EditTextureDialog(currentDrawableId);
+            if (textureDialog.ShowDialog() == DialogResult.OK && textureDialog.TextureResult != "")
             {
-                _map.CurrentBrush[selectedIndex] = new TextureCoords
-                {
-                    Resource = textureDialog.TextureResult.Resource,
-                    TextureX = textureDialog.TextureResult.TextureX,
-                    TextureY = textureDialog.TextureResult.TextureY,
-                };
+                _map.CurrentBrush[selectedIndex] = textureDialog.TextureResult;
 
                 mainStatusLabel.Text = "Successfully edited texture";
                 RebuildBrushView();
@@ -304,12 +299,7 @@ namespace Ozzyria.Gryp
                 return;
             }
 
-            _map.CurrentBrush.Add(new TextureCoords
-            {
-                Resource = 1,
-                TextureX = 0,
-                TextureY = 0
-            });
+            _map.CurrentBrush.Add("grass");
             RebuildBrushView();
         }
 
@@ -339,11 +329,11 @@ namespace Ozzyria.Gryp
             var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
 
             listCurrentBrush.Items.Clear();
-            foreach (var texture in _map.CurrentBrush)
+            foreach (var id in _map.CurrentBrush)
             {
                 listCurrentBrush.Items.Add(new ListViewItem
                 {
-                    Text = $"Brush ({texture.Resource}, {texture.TextureX}, {texture.TextureY})"
+                    Text = $"{id}"
                 });
             }
 

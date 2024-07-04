@@ -20,7 +20,7 @@ namespace Ozzyria.Gryp.MapTools
                 for (int tileY = tileArea.TileY; tileY < tileArea.TileY + tileArea.TileHeight; tileY++)
                 {
                     var tileData = new TileData();
-                    tileData.Images.AddRange(map.CurrentBrush);
+                    tileData.DrawableIds.AddRange(map.CurrentBrush);
                     map.PushTile(tileData, tileX, tileY);
                 }
             }
