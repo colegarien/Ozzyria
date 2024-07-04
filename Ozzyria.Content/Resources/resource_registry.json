@@ -1376,7 +1376,7 @@
       "Height": 32,
       "OriginX": 16,
       "OriginY": 16,
-      "ColorType":  1
+      "ColorType": 1
     },
     "simple_door": {
       "Resource": 0,
@@ -1395,6 +1395,783 @@
       "Height": 20,
       "OriginX": 9,
       "OriginY": 20
+    },
+    "stonewall_nsew": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_ew": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_sew": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_new": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_se": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_sw": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_nse": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_ne": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_nw": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_ns": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_nsw": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_n": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_s": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_w": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "stonewall_e": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_nsew": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_ew": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_sew": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_new": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_se": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_sw": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_nse": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_ne": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_nw": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_ns": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_nsw": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_n": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_s": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_w": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "woodfence_e": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_nsew": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_ew": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_sew": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_new": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 0,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_se": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_sw": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_nse": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 32,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_ne": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_nw": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_ns": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_nsw": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 64,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_n": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_s": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_w": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "dirtpath_e": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 96,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_0": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_1": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_2": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_3": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_4": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_5": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_6": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_7": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_8": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_9": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_10": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_11": {
+      "Resource": 1,
+      "Left": 384,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_12": {
+      "Resource": 1,
+      "Left": 416,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_13": {
+      "Resource": 1,
+      "Left": 448,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_14": {
+      "Resource": 1,
+      "Left": 480,
+      "Top": 128,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_15": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_16": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_17": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_18": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_19": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_20": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_21": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_22": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_23": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_24": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_25": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_26": {
+      "Resource": 1,
+      "Left": 384,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_27": {
+      "Resource": 1,
+      "Left": 416,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_28": {
+      "Resource": 1,
+      "Left": 448,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "grass_29": {
+      "Resource": 1,
+      "Left": 480,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "water": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 160,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone": {
+      "Resource": 1,
+      "Left": 0,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_0": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_1": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_2": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_3": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_4": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_5": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_6": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_7": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_8": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_9": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_10": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_11": {
+      "Resource": 1,
+      "Left": 384,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_12": {
+      "Resource": 1,
+      "Left": 416,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_13": {
+      "Resource": 1,
+      "Left": 448,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_14": {
+      "Resource": 1,
+      "Left": 480,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_15": {
+      "Resource": 1,
+      "Left": 32,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_16": {
+      "Resource": 1,
+      "Left": 64,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_17": {
+      "Resource": 1,
+      "Left": 96,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_18": {
+      "Resource": 1,
+      "Left": 128,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_19": {
+      "Resource": 1,
+      "Left": 160,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_20": {
+      "Resource": 1,
+      "Left": 192,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_21": {
+      "Resource": 1,
+      "Left": 224,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_22": {
+      "Resource": 1,
+      "Left": 256,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_23": {
+      "Resource": 1,
+      "Left": 288,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_24": {
+      "Resource": 1,
+      "Left": 320,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_25": {
+      "Resource": 1,
+      "Left": 352,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_26": {
+      "Resource": 1,
+      "Left": 384,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_27": {
+      "Resource": 1,
+      "Left": 416,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_28": {
+      "Resource": 1,
+      "Left": 448,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
+    },
+    "stone_29": {
+      "Resource": 1,
+      "Left": 480,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32
     }
   },
   "UIIcons": {
