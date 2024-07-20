@@ -61,6 +61,8 @@
             btnRemoveBrush = new Button();
             btnAddBrush = new Button();
             btnBrushPreset = new Button();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -78,7 +80,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, saveToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -86,7 +88,7 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(107, 22);
+            newToolStripMenuItem.Size = new Size(180, 22);
             newToolStripMenuItem.Text = "New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
@@ -375,6 +377,20 @@
             btnBrushPreset.UseVisualStyleBackColor = true;
             btnBrushPreset.Click += btnBrushPreset_Click;
             // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Text = "Open...";
+            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -442,5 +458,7 @@
         private PixelToolStripButton toolRectangle;
         private PixelToolStripButton toolFilledRectangle;
         private PixelToolStripButton toolLine;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem saveToolStripMenuItem;
     }
 }

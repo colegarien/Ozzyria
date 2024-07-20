@@ -58,8 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EntityTemplates\" />
-    <Folder Include="TileMaps\" />
+    <Folder Include="Areas\" />
   </ItemGroup>
 
 </Project>
