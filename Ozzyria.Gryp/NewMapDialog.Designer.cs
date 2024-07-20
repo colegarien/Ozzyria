@@ -101,8 +101,10 @@
             AcceptButton = btnNew;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelButton = btnCancel;
-            ClientSize = new Size(173, 97);
+            ClientSize = new Size(169, 93);
             ControlBox = false;
             Controls.Add(btnCancel);
             Controls.Add(btnNew);
