@@ -58,27 +58,35 @@ namespace Ozzyria.Gryp
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var areaId = "93f8cee1-358f-4f56-b301-dd287523c254";
-            var areaData = AreaData.Retrieve(areaId);
-
-            if(areaData != null && areaData.TileData != null)
+            var mapDialog = new OpenMapDialog();
+            if (mapDialog.ShowDialog() == DialogResult.OK)
             {
-                _map.FromAreaData(areaData);
+                var areaId = mapDialog.AreaId;
+                var areaData = AreaData.Retrieve(areaId);
 
-                RebuildLayerView();
-                RebuildBrushView();
+                if (areaData != null && areaData.TileData != null)
+                {
+                    _map.FromAreaData(areaData);
 
-                // Center Camera onto Map
-                camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
-                mainStatusLabel.Text = "Successfully loaded " + areaId;
-            }
-            else if (areaData != null & areaData?.TileData == null)
-            {
-                mainStatusLabel.Text = "Missing TileData for " + areaId;
+                    RebuildLayerView();
+                    RebuildBrushView();
+
+                    // Center Camera onto Map
+                    camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
+                    mainStatusLabel.Text = "Successfully loaded " + areaId;
+                }
+                else if (areaData != null & areaData?.TileData == null)
+                {
+                    mainStatusLabel.Text = "Missing TileData for " + areaId;
+                }
+                else
+                {
+                    mainStatusLabel.Text = "Failed to load " + areaId;
+                }
             }
             else
             {
-                mainStatusLabel.Text = "Failed to load " + areaId;
+                mainStatusLabel.Text = "Canceled";
             }
 
         }

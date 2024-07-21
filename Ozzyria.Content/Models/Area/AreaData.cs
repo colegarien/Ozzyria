@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Content.Util;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace Ozzyria.Content.Models.Area
@@ -11,6 +12,12 @@ namespace Ozzyria.Content.Models.Area
         public TileData TileData { get; set; }
         public WallData WallData { get; set; }
 
+        public static string[] RetrieveAreaIds()
+        {
+            return Directory.EnumerateDirectories(GetRootDirectory())
+                .Select(d => Path.GetFileNameWithoutExtension(d))
+                .ToArray();
+        }
 
         public static AreaData Retrieve(string areaId)
         {
@@ -50,7 +57,7 @@ namespace Ozzyria.Content.Models.Area
 
         protected static T RetrieveData<T>(string areaId, string dataKey)
         {
-            var filePath = GetDirectory(areaId) + "/" + dataKey + ".ozz";
+            var filePath = GetAreaDirectory(areaId) + "/" + dataKey + ".ozz";
             if (File.Exists(filePath))
             {
                 return JsonSerializer.Deserialize<T>(File.ReadAllText(filePath), JsonOptionsFactory.GetOptions());
@@ -61,12 +68,23 @@ namespace Ozzyria.Content.Models.Area
 
         protected static void StoreData<T>(string areaId, string dataKey, T data)
         {
-            File.WriteAllText(GetDirectory(areaId) + "/" + dataKey + ".ozz", JsonSerializer.Serialize(data, JsonOptionsFactory.GetOptions()));
+            File.WriteAllText(GetAreaDirectory(areaId) + "/" + dataKey + ".ozz", JsonSerializer.Serialize(data, JsonOptionsFactory.GetOptions()));
         }
 
-        protected static string GetDirectory(string areaId)
+        protected static string GetAreaDirectory(string areaId)
         {
-            var baseDirectory = Loader.Root() + "/Areas/" + areaId;
+            var baseDirectory = GetRootDirectory() + "/" + areaId;
+            if (!Directory.Exists(baseDirectory))
+            {
+                Directory.CreateDirectory(baseDirectory);
+            }
+
+            return baseDirectory;
+        }
+
+        protected static string GetRootDirectory()
+        {
+            var baseDirectory = Loader.Root() + "/Areas";
             if (!Directory.Exists(baseDirectory))
             {
                 Directory.CreateDirectory(baseDirectory);

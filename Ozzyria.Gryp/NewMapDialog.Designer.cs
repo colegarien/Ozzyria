@@ -80,7 +80,7 @@
             // 
             // btnNew
             // 
-            btnNew.Location = new Point(5, 105);
+            btnNew.Location = new Point(11, 105);
             btnNew.Name = "btnNew";
             btnNew.Size = new Size(75, 23);
             btnNew.TabIndex = 3;
@@ -90,7 +90,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(86, 105);
+            btnCancel.Location = new Point(91, 105);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 4;
@@ -123,7 +123,7 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelButton = btnCancel;
-            ClientSize = new Size(166, 128);
+            ClientSize = new Size(174, 141);
             ControlBox = false;
             Controls.Add(txtDisplayName);
             Controls.Add(lblDisplayName);
