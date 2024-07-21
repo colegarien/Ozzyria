@@ -1,7 +1,10 @@
-﻿namespace Ozzyria.Gryp.Models.Data
+﻿using Ozzyria.Content.Models.Area;
+
+namespace Ozzyria.Gryp.Models.Data
 {
     internal class Map
     {
+        public AreaMetaData MetaData { get; set; } = new AreaMetaData();
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -63,6 +66,70 @@
             {
                 Layers[ActiveLayer].RemoveWalls(worldX, worldY);
             }
+        }
+
+        public AreaData ToAreaData()
+        {
+            var areaData = new AreaData();
+            areaData.AreaMetaData = new AreaMetaData
+            {
+                AreaId = MetaData.AreaId,
+                DisplayName = MetaData.DisplayName,
+                CreatedAt = MetaData.CreatedAt,
+                UpdatedAt = DateTime.Now,
+            };
+
+            areaData.TileData = new Content.Models.Area.TileData
+            {
+                Width = Width,
+                Height = Height,
+            };
+            areaData.TileData.Layers = new string[Layers.Count][][][];
+            for (var layer = 0; layer < Layers.Count; layer++)
+            {
+                areaData.TileData.Layers[layer] = new string[Width][][];
+                for (var x = 0; x < Width; x++)
+                {
+                    areaData.TileData.Layers[layer][x] = new string[Height][];
+                    for (var y = 0; y < Height; y++)
+                    {
+                        areaData.TileData.Layers[layer][x][y] = Layers[layer]?.GetTileData(x, y)?.DrawableIds?.ToArray() ?? [];
+                    }
+                }
+            }
+
+            return areaData;
+        }
+
+        public void FromAreaData(AreaData areaData)
+        {
+            SelectedRegion = null;
+
+            MetaData.AreaId = areaData.AreaMetaData?.AreaId ?? "";
+            MetaData.DisplayName = areaData.AreaMetaData?.DisplayName ?? "";
+            MetaData.CreatedAt = areaData.AreaMetaData?.CreatedAt ?? DateTime.Now;
+            MetaData.UpdatedAt = areaData.AreaMetaData?.UpdatedAt ?? DateTime.Now;
+
+            Width = areaData.TileData.Width;
+            Height = areaData.TileData.Height;
+
+            Layers.Clear();
+            for (var layer = 0; layer < areaData.TileData.Layers.Length; layer++)
+            {
+                PushLayer();
+                ActiveLayer = layer;
+                for (var x = 0; x < areaData.TileData.Layers[layer].Length; x++)
+                {
+                    for (var y = 0; y < areaData.TileData.Layers[layer][x].Length; y++)
+                    {
+                        PushTile(new Models.Data.TileData
+                        {
+                            DrawableIds = areaData.TileData.Layers[layer][x][y].ToList(),
+                        }, x, y);
+                    }
+                }
+            }
+            ActiveLayer = -1;
         }
     }
 

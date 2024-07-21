@@ -29,11 +29,15 @@ namespace Ozzyria.Gryp
             var mapDialog = new NewMapDialog();
             if (mapDialog.ShowDialog() == DialogResult.OK)
             {
+                _map.MetaData.AreaId = Guid.NewGuid().ToString();
+                _map.MetaData.DisplayName = mapDialog.NewMapResult.DisplayName;
+                _map.MetaData.CreatedAt = DateTime.Now;
+                _map.MetaData.UpdatedAt = DateTime.Now;
+
                 _map.Width = mapDialog.NewMapResult.Width;
                 _map.Height = mapDialog.NewMapResult.Height;
 
                 _map.Layers.Clear();
-                _map.PushLayer();
                 _map.PushLayer();
                 _map.PushLayer();
 
@@ -54,69 +58,37 @@ namespace Ozzyria.Gryp
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var areaId = "save_load_test";
-            var areaData = Content.Models.Area.AreaData.Retrieve(areaId);
+            var areaId = "93f8cee1-358f-4f56-b301-dd287523c254";
+            var areaData = AreaData.Retrieve(areaId);
 
-            _map.SelectedRegion = null;
-            _map.Width = areaData.TileData.Width;
-            _map.Height = areaData.TileData.Height;
-
-            _map.Layers.Clear();
-            for(var layer = 0; layer < areaData.TileData.Layers.Length; layer++)
+            if(areaData != null && areaData.TileData != null)
             {
-                _map.PushLayer();
-                _map.ActiveLayer = layer;
-                for(var x = 0; x < areaData.TileData.Layers[layer].Length; x++)
-                {
-                    for (var y = 0; y < areaData.TileData.Layers[layer][x].Length; y++)
-                    {
-                        _map.PushTile(new Models.Data.TileData {
-                            DrawableIds = areaData.TileData.Layers[layer][x][y].ToList(),
-                        }, x, y);
-                    }
-                }
+                _map.FromAreaData(areaData);
+
+                RebuildLayerView();
+                RebuildBrushView();
+
+                // Center Camera onto Map
+                camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
+                mainStatusLabel.Text = "Successfully loaded " + areaId;
             }
-            _map.ActiveLayer = -1;
+            else if (areaData != null & areaData?.TileData == null)
+            {
+                mainStatusLabel.Text = "Missing TileData for " + areaId;
+            }
+            else
+            {
+                mainStatusLabel.Text = "Failed to load " + areaId;
+            }
 
-            RebuildLayerView();
-            RebuildBrushView();
-
-            // Center Camera onto Map
-            camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
-
-            mainStatusLabel.Text = "Successfully created map";
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var areaId = "save_load_test";
-            var areaData = new Content.Models.Area.AreaData();
-            areaData.AreaMetaData = new Content.Models.Area.AreaMetaData
+            if (_map.MetaData.AreaId != "")
             {
-                AreaId = areaId,
-                DisplayName = "Test Area",
-                CreatedAt = System.DateTime.Now,
-            };
-
-            areaData.TileData = new Content.Models.Area.TileData {
-                Width = _map.Width,
-                Height = _map.Height,
-            };
-            areaData.TileData.Layers = new string[_map.Layers.Count][][][];
-            for (var layer = 0; layer < _map.Layers.Count; layer++)
-            {
-                areaData.TileData.Layers[layer] = new string[_map.Width][][];
-                for (var x = 0; x < _map.Width; x++)
-                {
-                    areaData.TileData.Layers[layer][x] = new string[_map.Height][];
-                    for (var y = 0; y < _map.Height; y++)
-                    {
-                        areaData.TileData.Layers[layer][x][y] = _map.Layers[layer].GetTileData(x, y).DrawableIds.ToArray();
-                    }
-                }
+                _map.ToAreaData().Store(_map.MetaData.AreaId);
             }
-
-            areaData.Store(areaId);
         }
 
         private void RebuildLayerView()

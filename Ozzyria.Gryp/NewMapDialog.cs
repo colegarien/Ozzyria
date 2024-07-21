@@ -17,6 +17,7 @@ namespace Ozzyria.Gryp
         /// </summary>
         private void PopulateResult()
         {
+            NewMapResult.DisplayName = txtDisplayName.Text;
             NewMapResult.Width = (int)numWidth.Value;
             NewMapResult.Height = (int)numHeight.Value;
         }

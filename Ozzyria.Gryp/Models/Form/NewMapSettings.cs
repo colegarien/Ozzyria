@@ -5,6 +5,7 @@
     /// </summary>
     internal class NewMapSettings
     {
+        public string DisplayName { get; set; } = "";
         public int Width { get; set; } = 1;
         public int Height { get; set; } = 1;
     }
