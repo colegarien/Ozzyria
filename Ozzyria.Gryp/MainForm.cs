@@ -96,6 +96,11 @@ namespace Ozzyria.Gryp
             if (_map.MetaData.AreaId != "")
             {
                 _map.ToAreaData().Store(_map.MetaData.AreaId);
+                mainStatusLabel.Text = "Saved Map " + _map.MetaData.AreaId;
+            }
+            else
+            {
+                mainStatusLabel.Text = "Nothing to save..";
             }
         }
 
