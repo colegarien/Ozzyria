@@ -96,6 +96,18 @@ namespace Ozzyria.Gryp.Models.Data
             return _boundary.TileWidth > 0 && _boundary.TileHeight > 0;
         }
 
+        public IEnumerable<WorldBoundary> GetWalls()
+        {
+            if (_parent == null)
+            {
+                return _walls;
+            }
+            else
+            {
+                return _parent.GetWalls();
+            }
+        }
+
         public void AddWall(WorldBoundary wall)
         {
             if(_parent == null)

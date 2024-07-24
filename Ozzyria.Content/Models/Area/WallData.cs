@@ -2,6 +2,6 @@
 {
     public class WallData
     {
-
+        public Rectangle[][] Walls { get; set; }
     }
 }

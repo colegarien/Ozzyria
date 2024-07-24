@@ -83,8 +83,12 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 Width = Width,
                 Height = Height,
+                Layers = new string[Layers.Count][][][]
             };
-            areaData.TileData.Layers = new string[Layers.Count][][][];
+            areaData.WallData = new WallData
+            {
+                Walls = new Content.Models.Area.Rectangle[Layers.Count][]
+            };
             for (var layer = 0; layer < Layers.Count; layer++)
             {
                 areaData.TileData.Layers[layer] = new string[Width][][];
@@ -96,6 +100,14 @@ namespace Ozzyria.Gryp.Models.Data
                         areaData.TileData.Layers[layer][x][y] = Layers[layer]?.GetTileData(x, y)?.DrawableIds?.ToArray() ?? [];
                     }
                 }
+
+                areaData.WallData.Walls[layer] = Layers[layer].GetWalls().Select(b => new Content.Models.Area.Rectangle
+                {
+                    X = b.WorldX,
+                    Y = b.WorldY,
+                    Width = b.WorldWidth,
+                    Height = b.WorldHeight,
+                }).ToArray();
             }
 
             return areaData;
@@ -129,7 +141,20 @@ namespace Ozzyria.Gryp.Models.Data
                     }
                 }
             }
-            ActiveLayer = -1;
+            for (var layer = 0; layer < areaData.WallData.Walls.Length; layer++)
+            {
+                ActiveLayer = layer;
+                foreach (var wall in areaData.WallData.Walls[layer]) {
+                    AddWall(new WorldBoundary
+                    {
+                        WorldX = wall.X,
+                        WorldY = wall.Y,
+                        WorldWidth = wall.Width,
+                        WorldHeight = wall.Height,
+                    });
+                }
+            }
+                ActiveLayer = -1;
         }
     }
 
