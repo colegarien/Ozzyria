@@ -4,6 +4,7 @@ namespace Ozzyria.Gryp.Models.Data
 {
     internal class Map
     {
+        public bool IsDirty { get; set; } = false;
         public AreaMetaData MetaData { get; set; } = new AreaMetaData();
         public int Width { get; set; }
         public int Height { get; set; }
@@ -24,6 +25,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         public void PushLayer()
         {
+            IsDirty = true;
             Layers.Add(new Layer(new TileBoundary
             {
                 TileWidth = Width,
@@ -40,6 +42,7 @@ namespace Ozzyria.Gryp.Models.Data
 
             if (isInSelection && ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                IsDirty = true;
                 Layers[ActiveLayer].PushTile(tileData, x, y);
             }
         }
@@ -48,6 +51,7 @@ namespace Ozzyria.Gryp.Models.Data
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                IsDirty = true;
                 Layers[ActiveLayer].PaintArea(SelectedRegion, tileData, originX, originY);
             }
         }
@@ -56,6 +60,7 @@ namespace Ozzyria.Gryp.Models.Data
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                IsDirty = true;
                 Layers[ActiveLayer].AddWall(wall);
             }
         }
@@ -64,12 +69,14 @@ namespace Ozzyria.Gryp.Models.Data
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                IsDirty = true;
                 Layers[ActiveLayer].RemoveWalls(worldX, worldY);
             }
         }
 
         public AreaData ToAreaData()
         {
+            IsDirty = false;
             var areaData = new AreaData();
             areaData.AreaMetaData = new AreaMetaData
             {
@@ -154,7 +161,8 @@ namespace Ozzyria.Gryp.Models.Data
                     });
                 }
             }
-                ActiveLayer = -1;
+            ActiveLayer = -1;
+            IsDirty = false;
         }
     }
 

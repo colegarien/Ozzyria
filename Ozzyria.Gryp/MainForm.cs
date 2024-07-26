@@ -93,7 +93,7 @@ namespace Ozzyria.Gryp
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_map.MetaData.AreaId != "")
+            if (_map.MetaData.AreaId != "" && _map.IsDirty)
             {
                 _map.ToAreaData().Store(_map.MetaData.AreaId);
                 mainStatusLabel.Text = "Saved Map " + _map.MetaData.AreaId;

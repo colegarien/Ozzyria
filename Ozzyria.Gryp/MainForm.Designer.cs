@@ -33,6 +33,8 @@
             menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             newToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            saveToolStripMenuItem = new ToolStripMenuItem();
             mainToolbelt = new ToolStrip();
             toolSelect = new PixelToolStripButton();
             toolMove = new PixelToolStripButton();
@@ -61,8 +63,6 @@
             btnRemoveBrush = new Button();
             btnAddBrush = new Button();
             btnBrushPreset = new Button();
-            openToolStripMenuItem = new ToolStripMenuItem();
-            saveToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -91,6 +91,21 @@
             newToolStripMenuItem.Size = new Size(180, 22);
             newToolStripMenuItem.Text = "New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Text = "Open...";
+            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // saveToolStripMenuItem
+            // 
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // mainToolbelt
             // 
@@ -376,20 +391,6 @@
             btnBrushPreset.Text = "Preset";
             btnBrushPreset.UseVisualStyleBackColor = true;
             btnBrushPreset.Click += btnBrushPreset_Click;
-            // 
-            // openToolStripMenuItem
-            // 
-            openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
-            openToolStripMenuItem.Text = "Open...";
-            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
-            // 
-            // saveToolStripMenuItem
-            // 
-            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
-            saveToolStripMenuItem.Text = "Save";
-            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // MainGrypWindow
             // 
