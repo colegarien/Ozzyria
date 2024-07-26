@@ -427,5 +427,23 @@ namespace Ozzyria.Gryp
                 mainStatusLabel.Text = "Preset selection canceled";
             }
         }
+
+        private void MainGrypWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_map.IsDirty)
+            {
+                var result = MessageBox.Show(
+                    "You have unsaved changes.\r\nWould you like to save before exiting?",
+                    "Unsaved Changes!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if(result == DialogResult.Yes)
+                {
+                    _map.ToAreaData().Store(_map.MetaData.AreaId);
+                }
+            }
+        }
     }
 }

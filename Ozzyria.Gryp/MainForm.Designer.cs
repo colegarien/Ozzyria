@@ -415,6 +415,7 @@
             Name = "MainGrypWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Gryp";
+            FormClosing += MainGrypWindow_FormClosing;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             mainToolbelt.ResumeLayout(false);
