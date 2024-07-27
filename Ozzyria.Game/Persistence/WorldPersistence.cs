@@ -3,78 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace Ozzyria.Game.Persistence
 {
     public class WorldPersistence
     {
         private static Dictionary<Type, Type> _baseTypeCache = new Dictionary<Type, Type>();
-
-        public AreaTemplate[] RetrieveAreaTemplates()
-        {
-            var metaData = JsonSerializer.Deserialize<Dictionary<string, JsonObject>>(File.ReadAllText(Content.Loader.Root() + "/Maps/map_metadata.json"), JsonOptionsFactory.GetOptions());
-            var areaTemplates = new List<AreaTemplate>();
-            foreach(var kv in metaData)
-            {
-                JsonNode jsonProperty;
-                kv.Value.TryGetPropertyValue("EntityTemplate", out jsonProperty);
-                
-                areaTemplates.Add(new AreaTemplate
-                {
-                    Name = kv.Key,
-                    EntityTemplate = jsonProperty.GetValue<string>()
-
-                });
-            }
-            return areaTemplates.ToArray();
-        }
-
-        public TileMap LoadMap(string mapName)
-        {
-            return JsonSerializer.Deserialize<TileMap>(File.ReadAllText(Content.Loader.Root() + "/Maps/" + mapName + ".ozz"), JsonOptionsFactory.GetOptions());
-        }
-
-        public void SaveMap(string resource, TileMap map)
-        {
-            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
-            if (!Directory.Exists(baseMapsDirectory))
-            {
-                Directory.CreateDirectory(baseMapsDirectory);
-            }
-
-            File.WriteAllText(baseMapsDirectory + "/" + resource + ".ozz", JsonSerializer.Serialize(map, JsonOptionsFactory.GetOptions()));
-        }
-
-        public void LoadContext(EntityContext context, string resource)
-        {
-            using (BinaryReader reader = new BinaryReader(File.OpenRead(Content.Loader.Root() + "/Maps/" + resource + ".ozz")))
-            {
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
-                {
-                    ReadEntity(context, reader);
-                }
-            }
-        }
-
-        public void SaveContext(string resource, EntityContext context)
-        {
-            var baseMapsDirectory = Content.Loader.Root() + "/Maps";
-            if (!Directory.Exists(baseMapsDirectory))
-            {
-                Directory.CreateDirectory(baseMapsDirectory);
-            }
-
-            using (BinaryWriter writer = new BinaryWriter(File.Open(baseMapsDirectory + "/" + resource + ".ozz", FileMode.Create)))
-            {
-                foreach (var entity in context.GetEntities())
-                {
-                    WriteEntity(writer, entity);
-                }
-            }
-        }
-
 
         public static void WriteEntity(BinaryWriter writer, Entity entity)
         {

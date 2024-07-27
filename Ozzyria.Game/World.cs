@@ -4,6 +4,7 @@ using Ozzyria.Game.Persistence;
 using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
+using Ozzyria.Content.Models.Area;
 
 namespace Ozzyria.Game
 {
@@ -32,10 +33,10 @@ namespace Ozzyria.Game
 
         public World()
         {
-            // load in all area templates
-            foreach (var template in WorldLoader.RetrieveAreaTemplates())
+            // load in all areas
+            foreach (var areaId in AreaData.RetrieveAreaIds())
             {
-                WorldState.Areas[template.Name] = new Area(this, template);
+                WorldState.Areas[areaId] = new Area(this, areaId);
             }
         }
 

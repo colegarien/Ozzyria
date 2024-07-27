@@ -6,9 +6,6 @@
 
   <ItemGroup>
     <None Remove="Areas\**" />
-    <None Remove="Maps\cool_map.ozz" />
-    <None Remove="Maps\cool_map_template.ozz" />
-    <None Remove="Maps\map_metadata.json" />
     <None Remove="Resources\resource_registry.json" />
     <None Remove="Resources\Sprites\entity_set_001.png" />
     <None Remove="Resources\Sprites\outside_tileset_001.png" />
@@ -16,21 +13,6 @@
 
   <ItemGroup>
     <Content Include="Areas\**\*.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Maps\cool_map.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Maps\cool_map_template.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Maps\map_metadata.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Maps\test_e.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Maps\test_m.ozz">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\resource_registry.json">
@@ -42,24 +24,6 @@
     <Content Include="Resources\Sprites\outside_tileset_001.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TileSets\tileset_metadata.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Maps\test_a.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Maps\test_a_template.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Maps\test_b.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Maps\test_b_template.ozz">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
