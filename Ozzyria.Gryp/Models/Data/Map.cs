@@ -56,6 +56,21 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
+        public Tile? GetTile(int x, int y)
+        {
+            bool isInSelection = SelectedRegion == null
+                || SelectedRegion.TileWidth <= 0
+                || SelectedRegion.TileHeight <= 0
+                || SelectedRegion.Contains(x, y);
+
+            if (isInSelection && ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                return Layers[ActiveLayer].GetTileData(x, y);
+            }
+
+            return null;
+        }
+
         public void AddWall(WorldBoundary wall)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)

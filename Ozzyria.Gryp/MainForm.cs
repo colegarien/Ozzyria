@@ -5,6 +5,7 @@ using Ozzyria.Gryp.Models.Data;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
+using System.Linq;
 
 namespace Ozzyria.Gryp
 {
@@ -157,6 +158,7 @@ namespace Ozzyria.Gryp
         private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
         {
             toolBelt.HandleMouseUp(e, camera, _map);
+            RebuildBrushView(); // TODO this is a hack to handle dropper potentially dropping (remove once using a "command queue"/command pattern)
         }
 
         private void reRenderTimer_Tick(object sender, EventArgs e)
@@ -382,8 +384,27 @@ namespace Ozzyria.Gryp
 
         private void RebuildBrushView()
         {
-            var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
+            if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
+            {
+                // TODO this is a hack to skip excessive calls due to us having to call this all the time to hopefully catch window changes due to DropperTool (should remove once add command pattern)
+                bool match = true;
+                for(int i = 0; i < _map.CurrentBrush.Count; i++)
+                {
+                    if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
+                    {
+                        match = false;
+                        break;
+                    }
+                }
 
+                if(match)
+                {
+                    // don't rebuild if there is no change
+                    return;
+                }
+            }
+
+            var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
             listCurrentBrush.Items.Clear();
             foreach (var id in _map.CurrentBrush)
             {

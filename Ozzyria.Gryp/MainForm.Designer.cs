@@ -63,6 +63,7 @@
             btnRemoveBrush = new Button();
             btnAddBrush = new Button();
             btnBrushPreset = new Button();
+            toolDropper = new PixelToolStripButton();
             menuStrip.SuspendLayout();
             mainToolbelt.SuspendLayout();
             mainStatusStrip.SuspendLayout();
@@ -88,14 +89,14 @@
             // newToolStripMenuItem
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.Size = new Size(180, 22);
+            newToolStripMenuItem.Size = new Size(138, 22);
             newToolStripMenuItem.Text = "New...";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(138, 22);
             openToolStripMenuItem.Text = "Open...";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -103,7 +104,7 @@
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(138, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
@@ -112,11 +113,11 @@
             mainToolbelt.Dock = DockStyle.Left;
             mainToolbelt.GripStyle = ToolStripGripStyle.Hidden;
             mainToolbelt.ImageScalingSize = new Size(32, 32);
-            mainToolbelt.Items.AddRange(new ToolStripItem[] { toolSelect, toolMove, toolStripSeparator, toolEntity, toolPath, toolWall, toolStripSeparator1, toolBrush, toolFill, toolRectangle, toolFilledRectangle, toolLine });
+            mainToolbelt.Items.AddRange(new ToolStripItem[] { toolSelect, toolMove, toolStripSeparator, toolEntity, toolPath, toolWall, toolStripSeparator1, toolDropper, toolBrush, toolFill, toolRectangle, toolFilledRectangle, toolLine });
             mainToolbelt.Location = new Point(0, 24);
             mainToolbelt.Name = "mainToolbelt";
             mainToolbelt.Padding = new Padding(0, 0, 2, 0);
-            mainToolbelt.Size = new Size(38, 426);
+            mainToolbelt.Size = new Size(38, 469);
             mainToolbelt.TabIndex = 1;
             mainToolbelt.Tag = "select";
             mainToolbelt.Text = "Toolbelt";
@@ -255,7 +256,7 @@
             // 
             mainStatusStrip.ImageScalingSize = new Size(32, 32);
             mainStatusStrip.Items.AddRange(new ToolStripItem[] { mainStatusLabel });
-            mainStatusStrip.Location = new Point(38, 428);
+            mainStatusStrip.Location = new Point(38, 471);
             mainStatusStrip.Name = "mainStatusStrip";
             mainStatusStrip.Size = new Size(822, 22);
             mainStatusStrip.SizingGrip = false;
@@ -298,7 +299,7 @@
             mapViewPort.Location = new Point(34, 24);
             mapViewPort.Margin = new Padding(4, 3, 4, 3);
             mapViewPort.Name = "mapViewPort";
-            mapViewPort.Size = new Size(623, 401);
+            mapViewPort.Size = new Size(623, 444);
             mapViewPort.TabIndex = 8;
             mapViewPort.VSync = false;
             mapViewPort.PaintSurface += mapViewPort_PaintSurface;
@@ -357,14 +358,14 @@
             listCurrentBrush.Location = new Point(664, 295);
             listCurrentBrush.MultiSelect = false;
             listCurrentBrush.Name = "listCurrentBrush";
-            listCurrentBrush.Size = new Size(189, 100);
+            listCurrentBrush.Size = new Size(189, 136);
             listCurrentBrush.TabIndex = 14;
             listCurrentBrush.UseCompatibleStateImageBehavior = false;
             listCurrentBrush.DoubleClick += listCurrentBrush_DoubleClick;
             // 
             // btnRemoveBrush
             // 
-            btnRemoveBrush.Location = new Point(724, 402);
+            btnRemoveBrush.Location = new Point(724, 437);
             btnRemoveBrush.Name = "btnRemoveBrush";
             btnRemoveBrush.Size = new Size(69, 23);
             btnRemoveBrush.TabIndex = 16;
@@ -374,7 +375,7 @@
             // 
             // btnAddBrush
             // 
-            btnAddBrush.Location = new Point(664, 401);
+            btnAddBrush.Location = new Point(664, 436);
             btnAddBrush.Name = "btnAddBrush";
             btnAddBrush.Size = new Size(54, 23);
             btnAddBrush.TabIndex = 15;
@@ -384,7 +385,7 @@
             // 
             // btnBrushPreset
             // 
-            btnBrushPreset.Location = new Point(799, 401);
+            btnBrushPreset.Location = new Point(799, 436);
             btnBrushPreset.Name = "btnBrushPreset";
             btnBrushPreset.Size = new Size(54, 23);
             btnBrushPreset.TabIndex = 17;
@@ -392,11 +393,24 @@
             btnBrushPreset.UseVisualStyleBackColor = true;
             btnBrushPreset.Click += btnBrushPreset_Click;
             // 
+            // toolDropper
+            // 
+            toolDropper.CheckOnClick = true;
+            toolDropper.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolDropper.Image = (Image)resources.GetObject("toolDropper.Image");
+            toolDropper.ImageTransparentColor = Color.Magenta;
+            toolDropper.Name = "toolDropper";
+            toolDropper.Size = new Size(33, 36);
+            toolDropper.Tag = "dropper";
+            toolDropper.Text = "&Dropper";
+            toolDropper.ToolTipText = "Dropper";
+            toolDropper.CheckedChanged += onToolChecked_CheckedChanged;
+            // 
             // MainGrypWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(860, 450);
+            ClientSize = new Size(860, 493);
             Controls.Add(btnBrushPreset);
             Controls.Add(btnRemoveBrush);
             Controls.Add(btnAddBrush);
@@ -462,5 +476,6 @@
         private PixelToolStripButton toolLine;
         private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripButton toolDropper;
     }
 }

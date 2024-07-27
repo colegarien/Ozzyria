@@ -23,6 +23,7 @@ namespace Ozzyria.Gryp.MapTools
                 { "line", new LineTool() },
                 { "wall", new WallTool() },
                 { "entity", new EntityTool() },
+                { "dropper", new DropperTool() },
             };
         }
 
