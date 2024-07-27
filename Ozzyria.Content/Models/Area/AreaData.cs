@@ -11,6 +11,7 @@ namespace Ozzyria.Content.Models.Area
         public AreaMetaData AreaMetaData { get; set; }
         public TileData TileData { get; set; }
         public WallData WallData { get; set; }
+        public PrefabData PrefabData { get; set; }
 
         public static string[] RetrieveAreaIds()
         {
@@ -26,6 +27,7 @@ namespace Ozzyria.Content.Models.Area
                 AreaMetaData = RetrieveData<AreaMetaData>(areaId, "metadata"),
                 TileData = RetrieveData<TileData>(areaId, "tiledata"),
                 WallData = RetrieveData<WallData>(areaId, "walldata"),
+                PrefabData = RetrieveData<PrefabData>(areaId, "prefabdata"),
             };
         }
 
@@ -51,6 +53,11 @@ namespace Ozzyria.Content.Models.Area
             if (WallData != null)
             {
                 StoreData(areaId, "walldata", WallData);
+            }
+
+            if(PrefabData != null)
+            {
+                StoreData(areaId, "prefabdata", PrefabData);
             }
         }
 

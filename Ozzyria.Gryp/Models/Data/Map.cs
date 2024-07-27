@@ -74,6 +74,24 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
+        public void AddEntity(Entity entity)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                IsDirty = true;
+                Layers[ActiveLayer].AddEntity(entity);
+            }
+        }
+
+        public void RemoveEntities(float worldX, float worldY)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                IsDirty = true;
+                Layers[ActiveLayer].RemoveEntities(worldX, worldY);
+            }
+        }
+
         public AreaData ToAreaData()
         {
             IsDirty = false;
@@ -96,6 +114,10 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 Walls = new Content.Models.Area.Rectangle[Layers.Count][]
             };
+            areaData.PrefabData = new PrefabData
+            {
+                Prefabs = new Content.Models.Area.PrefabEntry[Layers.Count][]
+            };
             for (var layer = 0; layer < Layers.Count; layer++)
             {
                 areaData.TileData.Layers[layer] = new string[Width][][];
@@ -115,6 +137,13 @@ namespace Ozzyria.Gryp.Models.Data
                     Width = b.WorldWidth,
                     Height = b.WorldHeight,
                 }).ToArray();
+
+                areaData.PrefabData.Prefabs[layer] = Layers[layer].GetEntities().Select(e => new Content.Models.Area.PrefabEntry
+                {
+                    PrefabId = e.PrefabId,
+                    X = e.WorldX,
+                    Y = e.WorldY,
+                }).ToArray();
             }
 
             return areaData;
@@ -133,31 +162,44 @@ namespace Ozzyria.Gryp.Models.Data
             Height = areaData.TileData.Height;
 
             Layers.Clear();
-            for (var layer = 0; layer < areaData.TileData.Layers.Length; layer++)
+            for (var layer = 0; layer < (areaData.TileData?.Layers?.Length ?? 0); layer++)
             {
                 PushLayer();
                 ActiveLayer = layer;
-                for (var x = 0; x < areaData.TileData.Layers[layer].Length; x++)
+                for (var x = 0; x < (areaData.TileData?.Layers[layer]?.Length ?? 0); x++)
                 {
-                    for (var y = 0; y < areaData.TileData.Layers[layer][x].Length; y++)
+                    for (var y = 0; y < (areaData.TileData?.Layers[layer][x]?.Length ?? 0); y++)
                     {
                         PushTile(new Models.Data.TileData
                         {
-                            DrawableIds = areaData.TileData.Layers[layer][x][y].ToList(),
+                            DrawableIds = areaData.TileData?.Layers[layer][x][y]?.ToList() ?? [],
                         }, x, y);
                     }
                 }
             }
-            for (var layer = 0; layer < areaData.WallData.Walls.Length; layer++)
+            for (var layer = 0; layer < (areaData.WallData?.Walls?.Length ?? 0); layer++)
             {
                 ActiveLayer = layer;
-                foreach (var wall in areaData.WallData.Walls[layer]) {
+                foreach (var wall in areaData.WallData?.Walls[layer] ?? []) {
                     AddWall(new WorldBoundary
                     {
                         WorldX = wall.X,
                         WorldY = wall.Y,
                         WorldWidth = wall.Width,
                         WorldHeight = wall.Height,
+                    });
+                }
+            }
+            for (var layer = 0; layer < (areaData.PrefabData?.Prefabs?.Length ?? 0); layer++)
+            {
+                ActiveLayer = layer;
+                foreach (var prefab in areaData.PrefabData?.Prefabs[layer] ?? [])
+                {
+                    AddEntity(new Entity
+                    {
+                        PrefabId = prefab.PrefabId,
+                        WorldX = prefab.X,
+                        WorldY = prefab.Y,
                     });
                 }
             }

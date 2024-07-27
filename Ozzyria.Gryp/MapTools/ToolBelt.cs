@@ -22,6 +22,7 @@ namespace Ozzyria.Gryp.MapTools
                 { "rectangle", new RectangleTool() },
                 { "line", new LineTool() },
                 { "wall", new WallTool() },
+                { "entity", new EntityTool() },
             };
         }
 

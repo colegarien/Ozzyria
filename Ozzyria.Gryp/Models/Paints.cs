@@ -87,6 +87,19 @@ namespace Ozzyria.Gryp.Models
             IsAntialias = false
         };
 
+        public static SKPaint PrefabEntityPaint = new SKPaint
+        {
+            Color = new SKColor(
+                red: (byte)232,
+                green: (byte)86,
+                blue: (byte)215,
+                alpha: (byte)255
+            ),
+            StrokeWidth = 2,
+            IsStroke = true,
+            IsAntialias = false
+        };
+
         public static SKPaint MissingGraphicPaint = new SKPaint
         {
             Color = new SKColor(

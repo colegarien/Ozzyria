@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using OpenTK.Audio.OpenAL;
+using SkiaSharp;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -17,6 +18,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         private TileData[,]? _tileData;
         private List<WorldBoundary> _walls;
+        private List<Entity> _entities;
 
         protected bool _hasChanged = false;
 
@@ -27,6 +29,7 @@ namespace Ozzyria.Gryp.Models.Data
             if(_parent == null)
             {
                 _walls = new List<WorldBoundary>();
+                _entities = new List<Entity>();
             }
 
             // split if big map
@@ -137,6 +140,52 @@ namespace Ozzyria.Gryp.Models.Data
             else
             {
                 _parent.RemoveWalls(worldX, worldY);
+            }
+        }
+
+        public IEnumerable<Entity> GetEntities()
+        {
+            if (_parent == null)
+            {
+                return _entities;
+            }
+            else
+            {
+                return _parent.GetEntities();
+            }
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            if (_parent == null)
+            {
+                ToggleChanged(true);
+                _entities.Add(entity);
+            }
+            else
+            {
+                _parent.AddEntity(entity);
+            }
+        }
+
+        public void RemoveEntities(float worldX, float worldY)
+        {
+            if (_parent == null)
+            {
+                for (int i = _entities.Count - 1; i >= 0; i--)
+                {
+                    // remove close by entities
+                    var distance = Math.Sqrt(Math.Pow(_entities[i].WorldX - worldX, 2) - Math.Pow(_entities[i].WorldY - worldY, 2));
+                    if (distance <= 15)
+                    {
+                        ToggleChanged(true);
+                        _entities.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                _parent.RemoveEntities(worldX, worldY);
             }
         }
 
@@ -293,6 +342,17 @@ namespace Ozzyria.Gryp.Models.Data
                     var wallWidth = camera.WorldToView(wall.WorldWidth);
                     var wallHeight = camera.WorldToView(wall.WorldHeight);
                     canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.WallEntityPaint);
+                }
+
+                foreach (var entity in _entities)
+                {
+                    var entityX = camera.ViewX + camera.WorldToView(entity.WorldX);
+                    var entityY = camera.ViewY + camera.WorldToView(entity.WorldY);
+                    var entityHalfWidth = camera.WorldToView(32) / 2f;
+                    var entityHalfHeight = camera.WorldToView(32) / 2f;
+                    canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, Paints.PrefabEntityPaint);
+                    canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, Paints.PrefabEntityPaint);
+                    canvas.DrawCircle(entityX, entityY, entityHalfWidth, Paints.PrefabEntityPaint);
                 }
             }
         }
