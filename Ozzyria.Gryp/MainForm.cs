@@ -15,6 +15,8 @@ namespace Ozzyria.Gryp
         internal Camera camera = new Camera();
         internal ToolBelt toolBelt = new ToolBelt();
 
+        internal string _lastSelectedPreset = "";
+
         public MainGrypWindow()
         {
             InitializeComponent();
@@ -413,9 +415,10 @@ namespace Ozzyria.Gryp
                 return;
             }
 
-            var presetDialog = new BrushPresetDialog();
+            var presetDialog = new BrushPresetDialog(_lastSelectedPreset);
             if (presetDialog.ShowDialog() == DialogResult.OK)
             {
+                _lastSelectedPreset = presetDialog.SelectedPreset;
                 _map.CurrentBrush.Clear();
                 _map.CurrentBrush.AddRange(presetDialog.PresetResult);
 

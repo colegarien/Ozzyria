@@ -4,6 +4,7 @@ namespace Ozzyria.Gryp
 {
     public partial class BrushPresetDialog : Form
     {
+        internal string SelectedPreset { get; set; } = "";
         internal List<string> PresetResult { get; set; } = new List<string>();
 
         internal Dictionary<string, List<string>> Presets { get; set; } = new Dictionary<string, List<string>>()
@@ -103,11 +104,15 @@ namespace Ozzyria.Gryp
             { "grass_s_abcd", new List<string>() {  "grass", "stone_29" } },
         };
 
-        public BrushPresetDialog()
+        public BrushPresetDialog(string defaultPresetSelection = "")
         {
             InitializeComponent();
 
             comboPreset.Items.AddRange(Presets.Keys.ToArray());
+            if (Presets.ContainsKey(defaultPresetSelection))
+            {
+                comboPreset.SelectedItem = defaultPresetSelection;
+            }
         }
 
         /// <summary>
@@ -118,6 +123,7 @@ namespace Ozzyria.Gryp
             var key = comboPreset.SelectedItem?.ToString() ?? "";
             if(Presets.ContainsKey(key))
             {
+                SelectedPreset = key;
                 PresetResult = Presets[key];
             }
         }

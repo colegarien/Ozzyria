@@ -12,6 +12,10 @@ namespace Ozzyria.Gryp
 
             var registry = Registry.GetInstance();
             cmbDrawables.Items.AddRange(registry.Drawables.Keys.ToArray());
+            if(registry.Drawables.ContainsKey(currentDrawableId))
+            {
+                cmbDrawables.SelectedItem = currentDrawableId;
+            }
         }
 
         /// <summary>
