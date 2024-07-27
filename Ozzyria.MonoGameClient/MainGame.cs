@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Ozzyria.Game;
 using Ozzyria.Content;
 using Ozzyria.Game.Components;
 using Grecs;
@@ -36,9 +35,8 @@ namespace Ozzyria.MonoGameClient
         internal Dictionary<string, Texture2D> TextureResources;
         internal Client Client;
         internal Camera Camera;
-        internal TileMap TileMap = null;
-        internal WorldPersistence WorldLoader;
         internal LocalState LocalState;
+        internal Ozzyria.Content.Models.Area.AreaData AreaData = null;
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;
@@ -74,7 +72,6 @@ namespace Ozzyria.MonoGameClient
             }
 
             LocalState = new LocalState();
-            WorldLoader = new WorldPersistence();
             _context = new EntityContext();
             _coordinator = new SystemCoordinator();
             _coordinator

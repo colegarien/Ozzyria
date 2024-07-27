@@ -23,6 +23,7 @@
         public int Width { get; set; }
         public int Height { get; set; }
 
+        public int RenderOffset { get; set; }
         public int Subspace { get; set; }
         public float OriginX { get; set; }
         public float OriginY { get; set; }

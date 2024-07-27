@@ -1513,112 +1513,128 @@
       "Left": 128,
       "Top": 0,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_ew": {
       "Resource": 1,
       "Left": 160,
       "Top": 0,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_sew": {
       "Resource": 1,
       "Left": 192,
       "Top": 0,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_new": {
       "Resource": 1,
       "Left": 224,
       "Top": 0,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_se": {
       "Resource": 1,
       "Left": 128,
       "Top": 32,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_sw": {
       "Resource": 1,
       "Left": 160,
       "Top": 32,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence": {
       "Resource": 1,
       "Left": 192,
       "Top": 32,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_nse": {
       "Resource": 1,
       "Left": 224,
       "Top": 32,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_ne": {
       "Resource": 1,
       "Left": 128,
       "Top": 64,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_nw": {
       "Resource": 1,
       "Left": 160,
       "Top": 64,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_ns": {
       "Resource": 1,
       "Left": 192,
       "Top": 64,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_nsw": {
       "Resource": 1,
       "Left": 224,
       "Top": 64,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_n": {
       "Resource": 1,
       "Left": 128,
       "Top": 96,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_s": {
       "Resource": 1,
       "Left": 160,
       "Top": 96,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_w": {
       "Resource": 1,
       "Left": 192,
       "Top": 96,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "woodfence_e": {
       "Resource": 1,
       "Left": 224,
       "Top": 96,
       "Width": 32,
-      "Height": 32
+      "Height": 32,
+      "RenderOffset": 32
     },
     "dirtpath_nsew": {
       "Resource": 1,

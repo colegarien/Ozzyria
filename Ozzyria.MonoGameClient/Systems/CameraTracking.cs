@@ -21,7 +21,10 @@ namespace Ozzyria.MonoGameClient.Systems
                 {
                     var movement = entity.GetComponent<Movement>();
                     _game.Camera.CenterView(movement.X, movement.Y);
-                    _game.Camera.ApplyBounds(0, 0, _game.TileMap.Width * Tile.DIMENSION, _game.TileMap.Height * Tile.DIMENSION);
+                    if (_game.AreaData?.TileData != null)
+                    {
+                        _game.Camera.ApplyBounds(0, 0, _game.AreaData.TileData.Width * Tile.DIMENSION, _game.AreaData.TileData.Height * Tile.DIMENSION);
+                    }
 
                     return;
                 }
