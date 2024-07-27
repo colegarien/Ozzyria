@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Ozzyria.Game.Persistence
+namespace Ozzyria.Game.Serialization
 {
-    public class WorldPersistence
+    public class EntitySerializer
     {
         private static Dictionary<Type, Type> _baseTypeCache = new Dictionary<Type, Type>();
 

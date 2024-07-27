@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Ozzyria.Game.Persistence
+namespace Ozzyria.Game.Serialization
 {
     class Reflector
     {
@@ -15,7 +15,6 @@ namespace Ozzyria.Game.Persistence
         private static Dictionary<Type, PropertyInfo[]> componentProperties = new Dictionary<Type, PropertyInfo[]>();
         private static Dictionary<Type, Dictionary<string, Func<object, object?>>> propertyGetters = new Dictionary<Type, Dictionary<string, Func<object, object?>>>();
         private static Dictionary<Type, Dictionary<string, Delegate>> propertySetters = new Dictionary<Type, Dictionary<string, Delegate>>();
-
 
         public static Type  GetTypeForId(string identifier)
         {

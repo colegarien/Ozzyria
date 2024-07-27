@@ -1,6 +1,4 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
-using Ozzyria.Game.Persistence;
+﻿using Grecs;
 using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +26,6 @@ namespace Ozzyria.Game
 
     public class World
     {
-        public WorldPersistence WorldLoader = new WorldPersistence();
         public WorldState WorldState = new WorldState();
 
         public World()
