@@ -6,6 +6,8 @@ namespace Ozzyria.Gryp
 {
     public partial class NewMapDialog : Form
     {
+        internal const string MAP_ID_REGEX = "^[a-z0-9_-]*$";
+        internal const string MAP_NAME_REGEX = "^[a-zA-Z0-9()\', _-]*$";
         internal NewMapSettings NewMapResult;
 
         public NewMapDialog()
@@ -43,9 +45,13 @@ namespace Ozzyria.Gryp
                 errors.Add("ID `"+ NewMapResult.Id + "` is already taken.");
             }
 
-            if(NewMapResult.DisplayName == "")
+            if (NewMapResult.DisplayName == "")
             {
                 errors.Add("Display Name required.");
+            }
+            else if (Regex.Matches(NewMapResult.DisplayName, MAP_NAME_REGEX).Count <= 0)
+            {
+                errors.Add("Display Name must match "+ MAP_NAME_REGEX + ".");
             }
 
             if(NewMapResult.Width <= 0 || NewMapResult.Height <= 0)
