@@ -24,7 +24,7 @@ namespace Ozzyria.Gryp.MapTools
                     // Only paint around stroke
                     if (tileY - tileArea.TileY <= Stroke || (tileArea.TileY + tileArea.TileHeight - 1) - tileY <= Stroke || tileX - tileArea.TileX <= Stroke || (tileArea.TileX + tileArea.TileWidth - 1) - tileX <= Stroke)
                     {
-                        var tileData = new TileData();
+                        var tileData = new Tile();
                         tileData.DrawableIds.AddRange(map.CurrentBrush);
                         map.PushTile(tileData, tileX, tileY);
                     }

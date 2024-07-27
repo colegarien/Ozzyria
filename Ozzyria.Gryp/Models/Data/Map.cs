@@ -33,7 +33,7 @@ namespace Ozzyria.Gryp.Models.Data
             }));
         }
 
-        public void PushTile(TileData tileData, int x, int y)
+        public void PushTile(Tile tileData, int x, int y)
         {
             bool isInSelection = SelectedRegion == null
                 || SelectedRegion.TileWidth <= 0
@@ -47,7 +47,7 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void PaintArea(TileData tileData, int originX, int originY)
+        public void PaintArea(Tile tileData, int originX, int originY)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
@@ -170,7 +170,7 @@ namespace Ozzyria.Gryp.Models.Data
                 {
                     for (var y = 0; y < (areaData.TileData?.Layers[layer][x]?.Length ?? 0); y++)
                     {
-                        PushTile(new Models.Data.TileData
+                        PushTile(new Models.Data.Tile
                         {
                             DrawableIds = areaData.TileData?.Layers[layer][x][y]?.ToList() ?? [],
                         }, x, y);

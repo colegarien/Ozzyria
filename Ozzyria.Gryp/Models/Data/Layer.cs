@@ -16,7 +16,7 @@ namespace Ozzyria.Gryp.Models.Data
         private Layer? _bottomLeft;
         private Layer? _bottomRight;
 
-        private TileData[,]? _tileData;
+        private Tile[,]? _tileData;
         private List<WorldBoundary> _walls;
         private List<Entity> _entities;
 
@@ -78,12 +78,12 @@ namespace Ozzyria.Gryp.Models.Data
             }
             else
             {
-                _tileData = new TileData[_boundary.TileWidth, _boundary.TileHeight];
+                _tileData = new Tile[_boundary.TileWidth, _boundary.TileHeight];
                 for (var y = _tileData.GetLength(1) - 1; y >= 0; y--)
                 {
                     for (var x = 0; x < _tileData.GetLength(0); x++)
                     {
-                        _tileData[x, y] = new TileData();
+                        _tileData[x, y] = new Tile();
                     }
                 }
             }
@@ -189,7 +189,7 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void PushTile(TileData tileData, int tileX, int tileY)
+        public void PushTile(Tile tileData, int tileX, int tileY)
         {
             if (!_boundary.Contains(tileX, tileY))
             {
@@ -207,7 +207,7 @@ namespace Ozzyria.Gryp.Models.Data
                 _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY] = tileData;
             }
         }
-        public void PaintArea(TileBoundary? region, TileData tileData, int originX, int originY)
+        public void PaintArea(TileBoundary? region, Tile tileData, int originX, int originY)
         {
             var toFill = new List<Tuple<int, int>>
             {
@@ -260,7 +260,7 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public TileData? GetTileData(int tileX, int tileY)
+        public Tile? GetTileData(int tileX, int tileY)
         {
             if (!_boundary.Contains(tileX, tileY))
             {

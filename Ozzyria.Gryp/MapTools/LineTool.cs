@@ -49,7 +49,7 @@ namespace Ozzyria.Gryp.MapTools
 
                 foreach (var point in bresenham(tileX1, tileY1, tileX2, tileY2))
                 {
-                    var tileData = new TileData();
+                    var tileData = new Tile();
                     tileData.DrawableIds.AddRange(map.CurrentBrush);
                     map.PushTile(tileData, point.Item1, point.Item2);
                 }

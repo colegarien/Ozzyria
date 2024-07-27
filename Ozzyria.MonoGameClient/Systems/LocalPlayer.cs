@@ -4,6 +4,7 @@ using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.Content;
+using Ozzyria.Content.Models;
 
 namespace Ozzyria.MonoGameClient.Systems
 {
@@ -44,8 +45,8 @@ namespace Ozzyria.MonoGameClient.Systems
                 {
                     for (var y = 0; y < (_game.AreaData.TileData?.Layers[layer][x]?.Length ?? 0); y++)
                     {
-                        var graphicX = x * Tile.DIMENSION;
-                        var graphicY = y * Tile.DIMENSION;
+                        var graphicX = x * Constants.TILE_DIMENSION;
+                        var graphicY = y * Constants.TILE_DIMENSION;
 
                         var subSpace = 0;
                         foreach (var drawableId in _game.AreaData.TileData?.Layers[layer][x][y])
