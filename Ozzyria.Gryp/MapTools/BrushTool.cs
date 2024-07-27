@@ -6,10 +6,6 @@ namespace Ozzyria.Gryp.MapTools
 {
     internal class BrushTool : ITool
     {
-        public uint BrushResource { get; set; } = 1;
-        public int BrushTextureX { get; set; } = 0;
-        public int BrushTextureY { get; set; } = 0;
-
         bool isBrushing = false;
         bool isErasing = true;
 
