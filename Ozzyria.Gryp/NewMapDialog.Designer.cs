@@ -36,24 +36,26 @@
             btnCancel = new Button();
             lblDisplayName = new Label();
             txtDisplayName = new TextBox();
+            txtId = new TextBox();
+            lblId = new Label();
             ((System.ComponentModel.ISupportInitialize)numWidth).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numHeight).BeginInit();
             SuspendLayout();
             // 
             // numWidth
             // 
-            numWidth.Location = new Point(61, 39);
+            numWidth.Location = new Point(58, 70);
             numWidth.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numWidth.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numWidth.Name = "numWidth";
-            numWidth.Size = new Size(57, 23);
-            numWidth.TabIndex = 1;
+            numWidth.Size = new Size(125, 23);
+            numWidth.TabIndex = 2;
             numWidth.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // lblWidth
             // 
             lblWidth.AutoSize = true;
-            lblWidth.Location = new Point(16, 41);
+            lblWidth.Location = new Point(13, 72);
             lblWidth.Name = "lblWidth";
             lblWidth.Size = new Size(39, 15);
             lblWidth.TabIndex = 6;
@@ -62,7 +64,7 @@
             // lblHeight
             // 
             lblHeight.AutoSize = true;
-            lblHeight.Location = new Point(12, 70);
+            lblHeight.Location = new Point(9, 101);
             lblHeight.Name = "lblHeight";
             lblHeight.Size = new Size(43, 15);
             lblHeight.TabIndex = 7;
@@ -70,17 +72,17 @@
             // 
             // numHeight
             // 
-            numHeight.Location = new Point(61, 68);
+            numHeight.Location = new Point(58, 99);
             numHeight.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             numHeight.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numHeight.Name = "numHeight";
-            numHeight.Size = new Size(57, 23);
-            numHeight.TabIndex = 2;
+            numHeight.Size = new Size(125, 23);
+            numHeight.TabIndex = 3;
             numHeight.Value = new decimal(new int[] { 32, 0, 0, 0 });
             // 
             // btnNew
             // 
-            btnNew.Location = new Point(11, 105);
+            btnNew.Location = new Point(13, 136);
             btnNew.Name = "btnNew";
             btnNew.Size = new Size(75, 23);
             btnNew.TabIndex = 3;
@@ -90,7 +92,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(91, 105);
+            btnCancel.Location = new Point(108, 136);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 4;
@@ -101,7 +103,7 @@
             // lblDisplayName
             // 
             lblDisplayName.AutoSize = true;
-            lblDisplayName.Location = new Point(16, 13);
+            lblDisplayName.Location = new Point(13, 44);
             lblDisplayName.Name = "lblDisplayName";
             lblDisplayName.Size = new Size(39, 15);
             lblDisplayName.TabIndex = 5;
@@ -109,11 +111,28 @@
             // 
             // txtDisplayName
             // 
-            txtDisplayName.Location = new Point(61, 10);
+            txtDisplayName.Location = new Point(58, 41);
             txtDisplayName.MaxLength = 256;
             txtDisplayName.Name = "txtDisplayName";
-            txtDisplayName.Size = new Size(100, 23);
-            txtDisplayName.TabIndex = 0;
+            txtDisplayName.Size = new Size(125, 23);
+            txtDisplayName.TabIndex = 1;
+            // 
+            // txtId
+            // 
+            txtId.Location = new Point(58, 12);
+            txtId.MaxLength = 256;
+            txtId.Name = "txtId";
+            txtId.Size = new Size(125, 23);
+            txtId.TabIndex = 0;
+            // 
+            // lblId
+            // 
+            lblId.AutoSize = true;
+            lblId.Location = new Point(35, 15);
+            lblId.Name = "lblId";
+            lblId.Size = new Size(18, 15);
+            lblId.TabIndex = 9;
+            lblId.Text = "ID";
             // 
             // NewMapDialog
             // 
@@ -123,8 +142,10 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelButton = btnCancel;
-            ClientSize = new Size(174, 141);
+            ClientSize = new Size(195, 167);
             ControlBox = false;
+            Controls.Add(txtId);
+            Controls.Add(lblId);
             Controls.Add(txtDisplayName);
             Controls.Add(lblDisplayName);
             Controls.Add(btnCancel);
@@ -159,5 +180,7 @@
         private Button btnCancel;
         private Label lblDisplayName;
         private TextBox txtDisplayName;
+        private TextBox txtId;
+        private Label lblId;
     }
 }

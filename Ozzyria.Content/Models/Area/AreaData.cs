@@ -71,6 +71,11 @@ namespace Ozzyria.Content.Models.Area
             File.WriteAllText(GetAreaDirectory(areaId) + "/" + dataKey + ".ozz", JsonSerializer.Serialize(data, JsonOptionsFactory.GetOptions()));
         }
 
+        public static bool Exists(string areaId)
+        {
+            return Directory.Exists(GetRootDirectory() + "/" + areaId);
+        }
+
         protected static string GetAreaDirectory(string areaId)
         {
             var baseDirectory = GetRootDirectory() + "/" + areaId;

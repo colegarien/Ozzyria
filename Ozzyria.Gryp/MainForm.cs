@@ -29,7 +29,7 @@ namespace Ozzyria.Gryp
             var mapDialog = new NewMapDialog();
             if (mapDialog.ShowDialog() == DialogResult.OK)
             {
-                _map.MetaData.AreaId = Guid.NewGuid().ToString();
+                _map.MetaData.AreaId = mapDialog.NewMapResult.Id;
                 _map.MetaData.DisplayName = mapDialog.NewMapResult.DisplayName;
                 _map.MetaData.CreatedAt = DateTime.Now;
                 _map.MetaData.UpdatedAt = DateTime.Now;
