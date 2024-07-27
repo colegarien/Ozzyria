@@ -439,7 +439,8 @@ namespace Ozzyria.Gryp
                     "You have unsaved changes.\r\nWould you like to save before exiting?",
                     "Unsaved Changes!",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2 // default to no if you enter real hard
                 );
 
                 if(result == DialogResult.Yes)
