@@ -467,7 +467,7 @@ namespace Ozzyria.Gryp
                     "Unsaved Changes!",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2 // default to no if you enter real hard
+                    MessageBoxDefaultButton.Button2 // default to no in-case user enters real hard
                 );
 
                 if (result == DialogResult.Yes)
@@ -499,16 +499,21 @@ namespace Ozzyria.Gryp
 
         private void tableEntityAttributes_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(_map.CurrentEntity.Attributes == null)
+            if (_map.CurrentEntity.Attributes == null)
             {
                 _map.CurrentEntity.Attributes = new Dictionary<string, string>();
             }
 
             _map.CurrentEntity.Attributes.Clear();
-            foreach(DataGridViewRow row in tableEntityAttributes.Rows)
+            foreach (DataGridViewRow row in tableEntityAttributes.Rows)
             {
-                _map.CurrentEntity.Attributes[row.Cells[0].Value.ToString()] = row.Cells[1].Value.ToString();
+                _map.CurrentEntity.Attributes[row.Cells["columnKey"]?.Value?.ToString() ?? ""] = row.Cells["columnValue"]?.Value?.ToString() ?? "";
             }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
