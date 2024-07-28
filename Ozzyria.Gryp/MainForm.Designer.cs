@@ -361,6 +361,8 @@
             mapViewPort.TabIndex = 8;
             mapViewPort.VSync = false;
             mapViewPort.PaintSurface += mapViewPort_PaintSurface;
+            mapViewPort.KeyDown += mapViewPort_KeyDown;
+            mapViewPort.KeyUp += mapViewPort_KeyUp;
             mapViewPort.MouseDown += mapViewPort_MouseDown;
             mapViewPort.MouseMove += mapViewPort_MouseMove;
             mapViewPort.MouseUp += mapViewPort_MouseUp;

@@ -5,7 +5,6 @@ using Ozzyria.Gryp.Models.Data;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
-using System.Linq;
 
 namespace Ozzyria.Gryp
 {
@@ -17,8 +16,9 @@ namespace Ozzyria.Gryp
         internal ToolBelt toolBelt = new ToolBelt();
 
         internal string _lastSelectedPreset = "";
-
         internal bool processingThumbnails = false;
+
+        internal ToolStripButton? _preQuickSwitchTool = null; 
 
         public MainGrypWindow()
         {
@@ -58,6 +58,8 @@ namespace Ozzyria.Gryp
                 // Center Camera onto Map
                 camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
 
+                mapViewPort.Focus();
+
                 ChangeHistory.Clear();
                 mainStatusLabel.Text = "Successfully created map";
             }
@@ -87,6 +89,8 @@ namespace Ozzyria.Gryp
                     // Center Camera onto Map
                     camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
                     mainStatusLabel.Text = "Successfully loaded " + areaId;
+
+                    mapViewPort.Focus();
                 }
                 else if (areaData != null & areaData?.TileData == null)
                 {
@@ -110,6 +114,8 @@ namespace Ozzyria.Gryp
             {
                 _map.ToAreaData().Store(_map.MetaData.AreaId);
                 mainStatusLabel.Text = "Saved Map " + _map.MetaData.AreaId;
+
+                mapViewPort.Focus();
             }
             else
             {
@@ -536,6 +542,44 @@ namespace Ozzyria.Gryp
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Redo(_map);
+        }
+
+        private void mapViewPort_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                _preQuickSwitchTool = null;
+                foreach (ToolStripItem item in mainToolbelt.Items)
+                {
+                    if (item is ToolStripButton && ((ToolStripButton)item).Checked)
+                    {
+                        if(item == toolDropper)
+                        {
+                            // The dropper tool is already selected, don't need todo anything
+                            return;
+                        }
+                        else
+                        {
+                            // track the currently selected tool so it can be reselected on release
+                            _preQuickSwitchTool = (ToolStripButton)item;
+                        }
+                    }
+                }
+                toolDropper.Checked = true;
+            }
+        }
+
+        private void mapViewPort_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                if (_preQuickSwitchTool != null)
+                {
+                    toolDropper.Checked = false;
+                    _preQuickSwitchTool.Checked = true;
+                    _preQuickSwitchTool = null;
+                }
+            }
         }
     }
 }
