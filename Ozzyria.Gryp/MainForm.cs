@@ -480,8 +480,12 @@ namespace Ozzyria.Gryp
         private void cmbPrefab_SelectedIndexChanged(object sender, EventArgs e)
         {
             _map.CurrentEntity.PrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
-            tableEntityAttributes.Rows.Clear();
+            if (_map.CurrentEntity.Attributes == null)
+                _map.CurrentEntity.Attributes = new Dictionary<string, string>();
+            else
+                _map.CurrentEntity.Attributes.Clear();
 
+            tableEntityAttributes.Rows.Clear();
             switch (_map.CurrentEntity.PrefabId)
             {
                 case "slime_spawner":
@@ -499,15 +503,10 @@ namespace Ozzyria.Gryp
 
         private void tableEntityAttributes_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (_map.CurrentEntity.Attributes == null)
+            if(e.RowIndex >= 0 && e.RowIndex <= tableEntityAttributes.Rows.Count)
             {
-                _map.CurrentEntity.Attributes = new Dictionary<string, string>();
-            }
-
-            _map.CurrentEntity.Attributes.Clear();
-            foreach (DataGridViewRow row in tableEntityAttributes.Rows)
-            {
-                _map.CurrentEntity.Attributes[row.Cells["columnKey"]?.Value?.ToString() ?? ""] = row.Cells["columnValue"]?.Value?.ToString() ?? "";
+                var changedRow = tableEntityAttributes.Rows[e.RowIndex];
+                _map.CurrentEntity.Attributes[changedRow.Cells["columnKey"]?.Value?.ToString() ?? ""] = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
             }
         }
 
