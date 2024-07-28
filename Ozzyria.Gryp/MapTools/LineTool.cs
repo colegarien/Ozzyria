@@ -47,13 +47,14 @@ namespace Ozzyria.Gryp.MapTools
                 var tileX2 = (int)Math.Floor(LineEndX / 32);
                 var tileY2 = (int)Math.Floor(LineEndY / 32);
 
+                ChangeHistory.StartTracking();
                 foreach (var point in bresenham(tileX1, tileY1, tileX2, tileY2))
                 {
                     var tileData = new Tile();
                     tileData.DrawableIds.AddRange(map.CurrentBrush);
                     map.PushTile(tileData, point.Item1, point.Item2);
                 }
-
+                ChangeHistory.FinishTracking();
 
                 LineStartX = LineEndX = 0;
                 LineStartY = LineEndY = 0;

@@ -18,6 +18,8 @@ namespace Ozzyria.Gryp
 
         internal string _lastSelectedPreset = "";
 
+        internal bool processingThumbnails = false;
+
         public MainGrypWindow()
         {
             InitializeComponent();
@@ -56,6 +58,7 @@ namespace Ozzyria.Gryp
                 // Center Camera onto Map
                 camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
 
+                ChangeHistory.Clear();
                 mainStatusLabel.Text = "Successfully created map";
             }
             else
@@ -77,6 +80,7 @@ namespace Ozzyria.Gryp
                 {
                     _map.FromAreaData(areaData);
 
+                    ChangeHistory.Clear();
                     RebuildLayerView();
                     RebuildBrushView();
 
@@ -249,19 +253,28 @@ namespace Ozzyria.Gryp
             // TODO pipe commands to/from toolbelt (will likely need to actually process data in a separate Thread)
 
             // Check if thumbnails need refreshed
-            bool refreshLayers = false;
-            for (int i = 0; i < _map.Layers.Count; i++)
+            if (!processingThumbnails)
             {
-                if (i < layerImageList.Images.Count && _map.Layers[i].HasChanged())
+                processingThumbnails = true;
+                Task.Run(() =>
                 {
-                    refreshLayers = true;
-                    layerImageList.Images[i] = _map.Layers[i].GetThumbnail(layerImageList.ImageSize.Width).ToBitmap();
-                }
-            }
+                    bool refreshLayers = false;
+                    for (int i = 0; i < _map.Layers.Count; i++)
+                    {
+                        if (i < layerImageList.Images.Count && _map.Layers[i].HasChanged())
+                        {
+                            refreshLayers = true;
+                            layerImageList.Images[i] = _map.Layers[i].GetThumbnail(layerImageList.ImageSize.Width).ToBitmap();
+                        }
+                    }
 
-            if (refreshLayers)
-            {
-                layerList.Invalidate();
+                    if (refreshLayers)
+                    {
+                        layerList.Invalidate();
+                    }
+
+                    processingThumbnails = false;
+                });
             }
         }
 
@@ -503,7 +516,7 @@ namespace Ozzyria.Gryp
 
         private void tableEntityAttributes_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex >= 0 && e.RowIndex <= tableEntityAttributes.Rows.Count)
+            if (e.RowIndex >= 0 && e.RowIndex <= tableEntityAttributes.Rows.Count)
             {
                 var changedRow = tableEntityAttributes.Rows[e.RowIndex];
                 _map.CurrentEntity.Attributes[changedRow.Cells["columnKey"]?.Value?.ToString() ?? ""] = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
@@ -513,6 +526,16 @@ namespace Ozzyria.Gryp
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeHistory.Undo(_map);
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeHistory.Redo(_map);
         }
     }
 }

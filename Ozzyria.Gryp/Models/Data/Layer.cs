@@ -203,8 +203,20 @@ namespace Ozzyria.Gryp.Models.Data
             }
             else if (_tileData != null)
             {
-                ToggleChanged(true);
-                _tileData[tileX - _boundary.TileX, tileY - _boundary.TileY] = tileData;
+                var tileXIndex = tileX - _boundary.TileX;
+                var tileYIndex = tileY - _boundary.TileY;
+                if (!_tileData[tileXIndex, tileYIndex].Same(tileData))
+                {
+                    ChangeHistory.TrackChange(new TileChange
+                    {
+                        TileX = tileX,
+                        TileY = tileY,
+                        DrawableIds = _tileData[tileXIndex, tileYIndex].DrawableIds
+                    });
+
+                    ToggleChanged(true);
+                    _tileData[tileXIndex, tileYIndex] = tileData;
+                }
             }
         }
         public void PaintArea(TileBoundary? region, Tile tileData, int originX, int originY)

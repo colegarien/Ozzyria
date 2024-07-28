@@ -16,6 +16,22 @@ namespace Ozzyria.Gryp.Models.Data
             return DrawableIds[0] == other.DrawableIds[0];
         }
 
+        public bool Same(Tile other)
+        {
+            if (DrawableIds.Count != other.DrawableIds.Count)
+            {
+                return false;
+            }
+
+            for(int i = 0; i < DrawableIds.Count; i++)
+            {
+                if (DrawableIds[i] != other.DrawableIds[i])
+                    return false;
+            }
+
+            return true;
+        }
+
         public void Render(SKCanvas canvas, float x, float y, float width=32, float height=32)
         {
             var registry = Registry.GetInstance();

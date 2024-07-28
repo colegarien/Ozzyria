@@ -15,6 +15,7 @@ namespace Ozzyria.Gryp.MapTools
         {
             var tileArea = GetTileArea();
 
+            ChangeHistory.StartTracking();
             for (int tileX = tileArea.TileX; tileX < tileArea.TileX + tileArea.TileWidth; tileX++)
             {
                 for (int tileY = tileArea.TileY; tileY < tileArea.TileY + tileArea.TileHeight; tileY++)
@@ -24,6 +25,7 @@ namespace Ozzyria.Gryp.MapTools
                     map.PushTile(tileData, tileX, tileY);
                 }
             }
+            ChangeHistory.FinishTracking();
         }
     }
 }

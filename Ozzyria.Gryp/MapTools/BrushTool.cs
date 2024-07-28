@@ -11,7 +11,7 @@ namespace Ozzyria.Gryp.MapTools
 
         public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
-            if(mouseState.IsLeftDown && !isBrushing)
+            if (mouseState.IsLeftDown && !isBrushing)
             {
                 isBrushing = true;
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
@@ -19,6 +19,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
+                ChangeHistory.StartTracking();
                 var tileData = new Tile();
                 tileData.DrawableIds.AddRange(map.CurrentBrush);
                 map.PushTile(tileData, mouseTileX, mouseTileY);
@@ -45,6 +46,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
+                ChangeHistory.StartTracking();
                 var tileData = new Tile();
                 tileData.DrawableIds.AddRange(map.CurrentBrush);
                 map.PushTile(tileData, mouseTileX, mouseTileY);
@@ -56,6 +58,7 @@ namespace Ozzyria.Gryp.MapTools
                 var mouseTileX = (int)Math.Floor(mouseWorldX / 32);
                 var mouseTileY = (int)Math.Floor(mouseWorldY / 32);
 
+                ChangeHistory.StartTracking();
                 // erase tile data
                 map.PushTile(new Tile {DrawableIds = new List<string>() {}, }, mouseTileX, mouseTileY);
             }
@@ -65,11 +68,13 @@ namespace Ozzyria.Gryp.MapTools
         {
             if (!mouseState.IsLeftDown && isBrushing)
             {
+                ChangeHistory.FinishTracking();
                 isBrushing = false;
             }
 
             if (!mouseState.IsRightDown && isErasing)
             {
+                ChangeHistory.FinishTracking();
                 isErasing = false;
             }
         }
