@@ -18,6 +18,8 @@ namespace Ozzyria.Gryp.Models.Data
 
         public List<string> CurrentBrush { get; set; } = new List<string>();
 
+        public Entity CurrentEntity { get; set; } = new Entity();
+
         public bool IsLayerVisible(int layer)
         {
             return !IsLayerHidden.ContainsKey(layer) || !IsLayerHidden[layer];
@@ -158,6 +160,7 @@ namespace Ozzyria.Gryp.Models.Data
                     PrefabId = e.PrefabId,
                     X = e.WorldX,
                     Y = e.WorldY,
+                    Attributes = e.Attributes,
                 }).ToArray();
             }
 
@@ -215,6 +218,7 @@ namespace Ozzyria.Gryp.Models.Data
                         PrefabId = prefab.PrefabId,
                         WorldX = prefab.X,
                         WorldY = prefab.Y,
+                        Attributes = prefab.Attributes,
                     });
                 }
             }

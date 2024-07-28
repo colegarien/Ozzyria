@@ -6,9 +6,6 @@ namespace Ozzyria.Gryp.MapTools
 {
     internal class EntityTool : ITool
     {
-        // TODO make this configurable
-        public string PrefabId { get; set; } = "slime_spawner";
-
         bool isEntitying = false;
         bool isErasing = false;
 
@@ -39,9 +36,10 @@ namespace Ozzyria.Gryp.MapTools
                 isEntitying = false;
                 map.AddEntity(new Entity
                 {
-                    PrefabId = PrefabId,
+                    PrefabId = map.CurrentEntity.PrefabId,
                     WorldX = mouseWorldX,
                     WorldY = mouseWorldY,
+                    Attributes = map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
                 });
             }
 

@@ -40,10 +40,16 @@ namespace Ozzyria.Game
             {
                 foreach (var prefab in areaData.PrefabData.Prefabs[layer])
                 {
-                    // TODO stop hard-coding this and make them more dynamic
+                    // TODO stop hard-coding this and make them more dynamic (see MainForm.cs in Gryp for these value mappings)
                     switch (prefab.PrefabId) {
                         case "slime_spawner":
                             EntityFactory.CreateSlimeSpawner(_context, prefab.X, prefab.Y);
+                            break;
+                        case "door":
+                            EntityFactory.CreateDoor(_context, prefab.X, prefab.Y, prefab.Attributes?["new_area_id"] ?? "", float.Parse(prefab.Attributes?["new_area_x"] ?? "0"), float.Parse(prefab.Attributes?["new_area_y"] ?? "0"));
+                            break;
+                        case "exp_orb":
+                            EntityFactory.CreateExperienceOrb(_context, prefab.X, prefab.Y, int.Parse(prefab.Attributes?["amount"] ?? "0"));
                             break;
                     }
                 }

@@ -23,6 +23,12 @@ namespace Ozzyria.Gryp
             InitializeComponent();
             camera.SizeCamera(mapViewPort.ClientSize.Width, mapViewPort.ClientSize.Height);
 
+            cmbPrefab.Items.AddRange(new string[] {
+                "slime_spawner",
+                "door",
+                "exp_orb",
+            });
+
             // hackity hack to override DoubleBuffered without making custom class
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, layerList, new object[] { true });
         }
@@ -388,7 +394,7 @@ namespace Ozzyria.Gryp
             {
                 // TODO this is a hack to skip excessive calls due to us having to call this all the time to hopefully catch window changes due to DropperTool (should remove once add command pattern)
                 bool match = true;
-                for(int i = 0; i < _map.CurrentBrush.Count; i++)
+                for (int i = 0; i < _map.CurrentBrush.Count; i++)
                 {
                     if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
                     {
@@ -397,7 +403,7 @@ namespace Ozzyria.Gryp
                     }
                 }
 
-                if(match)
+                if (match)
                 {
                     // don't rebuild if there is no change
                     return;
@@ -464,10 +470,44 @@ namespace Ozzyria.Gryp
                     MessageBoxDefaultButton.Button2 // default to no if you enter real hard
                 );
 
-                if(result == DialogResult.Yes)
+                if (result == DialogResult.Yes)
                 {
                     _map.ToAreaData().Store(_map.MetaData.AreaId);
                 }
+            }
+        }
+
+        private void cmbPrefab_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _map.CurrentEntity.PrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
+            tableEntityAttributes.Rows.Clear();
+
+            switch (_map.CurrentEntity.PrefabId)
+            {
+                case "slime_spawner":
+                    break;
+                case "door":
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", "" });
+                    break;
+                case "exp_orb":
+                    tableEntityAttributes.Rows.Add(new string[] { "amount", "" });
+                    break;
+            }
+        }
+
+        private void tableEntityAttributes_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if(_map.CurrentEntity.Attributes == null)
+            {
+                _map.CurrentEntity.Attributes = new Dictionary<string, string>();
+            }
+
+            _map.CurrentEntity.Attributes.Clear();
+            foreach(DataGridViewRow row in tableEntityAttributes.Rows)
+            {
+                _map.CurrentEntity.Attributes[row.Cells[0].Value.ToString()] = row.Cells[1].Value.ToString();
             }
         }
     }

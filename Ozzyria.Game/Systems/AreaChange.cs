@@ -33,7 +33,7 @@ namespace Ozzyria.Game.Systems
                     _world.WorldState.Areas[location.Area]._context.DetachEntity(entity);
 
                     // update location
-                    location.Area = "test_m";
+                    location.Area = areaChange.NewArea;
 
                     // update player tracking if player
                     if (entity.HasComponent(typeof(Components.Player)))
