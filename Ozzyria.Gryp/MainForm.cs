@@ -548,7 +548,7 @@ namespace Ozzyria.Gryp
         {
             if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
             {
-                _preQuickSwitchTool = null;
+                e.Handled = true;
                 foreach (ToolStripItem item in mainToolbelt.Items)
                 {
                     if (item is ToolStripButton && ((ToolStripButton)item).Checked)
@@ -573,9 +573,10 @@ namespace Ozzyria.Gryp
         {
             if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
             {
+                e.Handled = true;
+                toolDropper.Checked = false;
                 if (_preQuickSwitchTool != null)
                 {
-                    toolDropper.Checked = false;
                     _preQuickSwitchTool.Checked = true;
                     _preQuickSwitchTool = null;
                 }
