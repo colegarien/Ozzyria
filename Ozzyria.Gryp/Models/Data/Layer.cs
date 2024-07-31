@@ -168,15 +168,66 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
+        public Entity? SelectEntity(float worldX, float worldY, Entity? currentlySelectedEntity)
+        {
+            if(_parent == null)
+            {
+                Entity? firstEntity = null;
+                Entity? nextEntity = null;
+                for (int i = _entities.Count - 1; i >= 0; i--)
+                {
+                    // remove close by entities
+                    var distance = Math.Sqrt(Math.Pow(_entities[i].WorldX - worldX, 2) + Math.Pow(_entities[i].WorldY - worldY, 2));
+                    if (distance <= 16)
+                    {
+
+                        if(firstEntity == null || (firstEntity.WorldY > _entities[i].WorldY || (firstEntity.WorldY == _entities[i].WorldY && firstEntity.WorldX >= _entities[i].WorldX)))
+                        {
+                            // the lowest Y or the lowest Y and lowest X, (Y takes precendence)
+                            firstEntity = _entities[i];
+                        }
+
+                        if(currentlySelectedEntity != null && Math.Sqrt(Math.Pow(currentlySelectedEntity.WorldX - worldX, 2) + Math.Pow(currentlySelectedEntity.WorldY - worldY, 2)) <= 16)
+                        {
+                            // try to determine what would be the most next after the currently selected one
+                            var isAfterCurrent = (currentlySelectedEntity.WorldY < _entities[i].WorldY || (currentlySelectedEntity.WorldY == _entities[i].WorldY && currentlySelectedEntity.WorldX < _entities[i].WorldX));
+                            if (nextEntity == null && isAfterCurrent)
+                            {
+                                nextEntity = _entities[i];
+                            } else if(nextEntity != null && isAfterCurrent && (nextEntity.WorldY > _entities[i].WorldY || (nextEntity.WorldY == _entities[i].WorldY && nextEntity.WorldX >= _entities[i].WorldX)))
+                            {
+                                // is before the current next;
+                                nextEntity = _entities[i];
+                            }
+                        }
+                    }
+                }
+
+                if(nextEntity != null)
+                {
+                    return nextEntity;
+                }
+
+                if(firstEntity != null)
+                {
+                    return firstEntity;
+                }
+
+                return null;
+            }
+            else
+            {
+                return _parent.SelectEntity(worldX, worldY, currentlySelectedEntity);
+            }
+        }
+
         public void RemoveEntities(float worldX, float worldY)
         {
             if (_parent == null)
             {
                 for (int i = _entities.Count - 1; i >= 0; i--)
                 {
-                    // remove close by entities
-                    var distance = Math.Sqrt(Math.Pow(_entities[i].WorldX - worldX, 2) - Math.Pow(_entities[i].WorldY - worldY, 2));
-                    if (distance <= 15)
+                    if (_entities[i].WorldX == worldX && _entities[i].WorldY == worldY)
                     {
                         ToggleChanged(true);
                         _entities.RemoveAt(i);

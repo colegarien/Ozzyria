@@ -7,7 +7,7 @@ namespace Ozzyria.Gryp.MapTools
     internal class EntityTool : ITool
     {
         bool isEntitying = false;
-        bool isErasing = false;
+        bool isSelecting = false;
 
         public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
@@ -15,9 +15,9 @@ namespace Ozzyria.Gryp.MapTools
             {
                 isEntitying = true;
             }
-            else if (mouseState.IsRightDown && !isErasing)
+            else if (mouseState.IsRightDown && !isSelecting)
             {
-                isErasing = true;
+                isSelecting = true;
             }
         }
 
@@ -34,19 +34,22 @@ namespace Ozzyria.Gryp.MapTools
             if (!mouseState.IsLeftDown && isEntitying)
             {
                 isEntitying = false;
-                map.AddEntity(new Entity
+                if ((map.CurrentEntity.PrefabId ?? "") != "")
                 {
-                    PrefabId = map.CurrentEntity.PrefabId,
-                    WorldX = mouseWorldX,
-                    WorldY = mouseWorldY,
-                    Attributes = map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
-                });
+                    map.AddEntity(new Entity
+                    {
+                        PrefabId = map.CurrentEntity.PrefabId,
+                        WorldX = mouseWorldX,
+                        WorldY = mouseWorldY,
+                        Attributes = map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
+                    });
+                }
             }
 
-            if (!mouseState.IsRightDown && isErasing)
+            if (!mouseState.IsRightDown && isSelecting)
             {
-                isErasing = false;
-                map.RemoveEntities(mouseWorldX, mouseWorldY);
+                isSelecting = false;
+                map.SelectEntity(mouseWorldX, mouseWorldY);
             }
         }
     }

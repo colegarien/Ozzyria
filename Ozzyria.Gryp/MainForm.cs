@@ -174,7 +174,25 @@ namespace Ozzyria.Gryp
         private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
         {
             toolBelt.HandleMouseUp(e, camera, _map);
-            RebuildBrushView(); // TODO this is a hack to handle dropper potentially dropping (remove once using a "command queue"/command pattern)
+            RebuildBrushView(); // TODO this is a hack to handle dropper potentially dropping (might could just do a simple event situation?)
+            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
+            if(_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntity.PrefabId || _map.CurrentEntity.Attributes != _map.SelectedEntity.Attributes))
+            {
+                // select up current entity and selected
+                _map.CurrentEntity.PrefabId = _map.SelectedEntity.PrefabId;
+                _map.CurrentEntity.Attributes = _map.SelectedEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+
+                // now trigger UI changes
+                cmbPrefab.SelectedItem = _map.CurrentEntity.PrefabId;
+                foreach(DataGridViewRow row in tableEntityAttributes.Rows)
+                {
+                    var rowKey = row.Cells["columnKey"]?.Value?.ToString() ?? "";
+                    if (_map.CurrentEntity.Attributes.ContainsKey(rowKey))
+                    {
+                        var valueKey = row.Cells["columnValue"].Value = _map.CurrentEntity.Attributes[rowKey];
+                    }
+                }
+            }
         }
 
         private void reRenderTimer_Tick(object sender, EventArgs e)
@@ -186,6 +204,7 @@ namespace Ozzyria.Gryp
         private void onToolChecked_CheckedChanged(object sender, EventArgs e)
         {
             // if is a checked-able tool
+            _map.SelectedEntity = null;
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
                 toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", true);
@@ -231,6 +250,17 @@ namespace Ozzyria.Gryp
                     {
                         _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
                     }
+                }
+
+                if(_map.SelectedEntity != null)
+                {
+                    var entityX = camera.ViewX + camera.WorldToView(_map.SelectedEntity.WorldX);
+                    var entityY = camera.ViewY + camera.WorldToView(_map.SelectedEntity.WorldY);
+                    var entityHalfWidth = camera.WorldToView(32) / 2f;
+                    var entityHalfHeight = camera.WorldToView(32) / 2f;
+                    e.Surface.Canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, Paints.TileSelectionPaint);
+                    e.Surface.Canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, Paints.TileSelectionPaint);
+                    e.Surface.Canvas.DrawCircle(entityX, entityY, entityHalfWidth, Paints.TileSelectionPaint);
                 }
 
                 // render overlay grid
@@ -498,11 +528,12 @@ namespace Ozzyria.Gryp
 
         private void cmbPrefab_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _map.CurrentEntity.PrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
+            var newPrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
             if (_map.CurrentEntity.Attributes == null)
                 _map.CurrentEntity.Attributes = new Dictionary<string, string>();
-            else
+            else if (_map.CurrentEntity.PrefabId != newPrefabId)
                 _map.CurrentEntity.Attributes.Clear();
+            _map.CurrentEntity.PrefabId = newPrefabId;
 
             tableEntityAttributes.Rows.Clear();
             switch (_map.CurrentEntity.PrefabId)
@@ -510,13 +541,19 @@ namespace Ozzyria.Gryp
                 case "slime_spawner":
                     break;
                 case "door":
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_id") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_x") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_y") ?? "" });
                     break;
                 case "exp_orb":
-                    tableEntityAttributes.Rows.Add(new string[] { "amount", "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntity.Attributes.GetValueOrDefault("amount") ?? "" });
                     break;
+            }
+
+            if(_map.SelectedEntity != null)
+            {
+                _map.SelectedEntity.PrefabId = _map.CurrentEntity.PrefabId;
+                _map.SelectedEntity.Attributes = _map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
             }
         }
 
@@ -525,7 +562,14 @@ namespace Ozzyria.Gryp
             if (e.RowIndex >= 0 && e.RowIndex <= tableEntityAttributes.Rows.Count)
             {
                 var changedRow = tableEntityAttributes.Rows[e.RowIndex];
-                _map.CurrentEntity.Attributes[changedRow.Cells["columnKey"]?.Value?.ToString() ?? ""] = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
+                var rowKey = changedRow.Cells["columnKey"]?.Value?.ToString() ?? "";
+                var rowValue = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
+
+                _map.CurrentEntity.Attributes[rowKey] = rowValue;
+                if(_map.SelectedEntity != null)
+                {
+                    _map.SelectedEntity.Attributes[rowKey] = rowValue;
+                }
             }
         }
 
@@ -571,6 +615,11 @@ namespace Ozzyria.Gryp
 
         private void mapViewPort_KeyUp(object sender, KeyEventArgs e)
         {
+            if(e.KeyCode == Keys.Delete)
+            {
+                _map.RemoveSelectedEntity();
+            }
+
             if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
             {
                 if (_preQuickSwitchTool != null)

@@ -20,6 +20,8 @@ namespace Ozzyria.Gryp.Models.Data
 
         public Entity CurrentEntity { get; set; } = new Entity();
 
+        public Entity? SelectedEntity { get; set; } = null;
+
         public bool IsLayerVisible(int layer)
         {
             return !IsLayerHidden.ContainsKey(layer) || !IsLayerHidden[layer];
@@ -97,14 +99,30 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 IsDirty = true;
                 Layers[ActiveLayer].AddEntity(entity);
+                SelectedEntity = entity;
             }
         }
 
-        public void RemoveEntities(float worldX, float worldY)
+        public void SelectEntity(float worldX, float worldY)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                SelectedEntity = Layers[ActiveLayer].SelectEntity(worldX, worldY, SelectedEntity);
+            }
+            else
+            {
+                SelectedEntity = null;
+            }
+        }
+
+        public void RemoveSelectedEntity()
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count && SelectedEntity != null)
+            {
                 IsDirty = true;
+                var worldX = SelectedEntity.WorldX;
+                var worldY = SelectedEntity.WorldY;
+                SelectedEntity = null;
                 Layers[ActiveLayer].RemoveEntities(worldX, worldY);
             }
         }
@@ -222,6 +240,7 @@ namespace Ozzyria.Gryp.Models.Data
                     });
                 }
             }
+            SelectedEntity = null;
             ActiveLayer = -1;
             IsDirty = false;
         }
