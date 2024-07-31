@@ -6,41 +6,33 @@ namespace Ozzyria.Gryp.MapTools
 {
     internal class WallTool : IAreaTool
     {
-        private bool isRemoving = false;
+        private bool isSelecting = false;
 
         public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
             base.OnMouseDown(mouseState, camera, map);
-
-            if(mouseState.IsRightDown && !isRemoving)
+            if(mouseState.IsRightDown && !isSelecting)
             {
-                isRemoving = true;
-
-                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
-                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
-                map.RemoveWalls(mouseWorldX, mouseWorldY);
+                isSelecting = true;
             }
         }
 
         public override void OnMouseMove(MouseState mouseState, Camera camera, Map map)
         {
             base.OnMouseMove(mouseState, camera, map);
-
-            if (mouseState.IsRightDown && isRemoving)
-            {
-                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
-                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
-                map.RemoveWalls(mouseWorldX, mouseWorldY);
-            }
         }
 
         public override void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
             base.OnMouseUp(mouseState, camera, map);
 
-            if(!mouseState.IsRightDown && isRemoving)
+            if(!mouseState.IsRightDown && isSelecting)
             {
-                isRemoving = false;
+                isSelecting = false;
+
+                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
+                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
+                map.SelectWall(mouseWorldX, mouseWorldY);
             }
         }
 

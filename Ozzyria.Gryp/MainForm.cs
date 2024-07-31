@@ -205,6 +205,7 @@ namespace Ozzyria.Gryp
         {
             // if is a checked-able tool
             _map.SelectedEntity = null;
+            _map.SelectedWall = null;
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
                 toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", true);
@@ -250,6 +251,15 @@ namespace Ozzyria.Gryp
                     {
                         _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
                     }
+                }
+
+                if(_map.SelectedWall != null)
+                {
+                    var wallX = camera.ViewX + camera.WorldToView(_map.SelectedWall.WorldX);
+                    var wallY = camera.ViewY + camera.WorldToView(_map.SelectedWall.WorldY);
+                    var wallWidth = camera.WorldToView(_map.SelectedWall.WorldWidth);
+                    var wallHeight = camera.WorldToView(_map.SelectedWall.WorldHeight);
+                    e.Surface.Canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.TileSelectionPaint);
                 }
 
                 if(_map.SelectedEntity != null)
@@ -618,6 +628,7 @@ namespace Ozzyria.Gryp
             if(e.KeyCode == Keys.Delete)
             {
                 _map.RemoveSelectedEntity();
+                _map.RemoveSelectedWall();
             }
 
             if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)

@@ -124,13 +124,64 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void RemoveWalls(float worldX, float worldY)
+        public WorldBoundary? SelectWall(float worldX, float worldY, WorldBoundary? currentlySelectedWall)
+        {
+            if (_parent == null)
+            {
+                WorldBoundary? firstWall = null;
+                WorldBoundary? nextWall = null;
+                for (int i = _walls.Count - 1; i >= 0; i--)
+                {
+                    if (_walls[i].Contains(worldX, worldY))
+                    {
+                        if (firstWall == null || (firstWall.WorldY > _walls[i].WorldY || (firstWall.WorldY == _walls[i].WorldY && firstWall.WorldX >= _walls[i].WorldX)))
+                        {
+                            // the lowest Y or the lowest Y and lowest X, (Y takes precendence)
+                            firstWall = _walls[i];
+                        }
+
+                        if (currentlySelectedWall != null && currentlySelectedWall.Contains(worldX, worldY))
+                        {
+                            // try to determine what would be the most next after the currently selected one
+                            var isAfterCurrent = (currentlySelectedWall.WorldY < _walls[i].WorldY || (currentlySelectedWall.WorldY == _walls[i].WorldY && currentlySelectedWall.WorldX < _walls[i].WorldX));
+                            if (nextWall == null && isAfterCurrent)
+                            {
+                                nextWall = _walls[i];
+                            }
+                            else if (nextWall != null && isAfterCurrent && (nextWall.WorldY > _walls[i].WorldY || (nextWall.WorldY == _walls[i].WorldY && nextWall.WorldX >= _entities[i].WorldX)))
+                            {
+                                // is before the current next;
+                                nextWall = _walls[i];
+                            }
+                        }
+                    }
+                }
+
+                if (nextWall != null)
+                {
+                    return nextWall;
+                }
+
+                if (firstWall != null)
+                {
+                    return firstWall;
+                }
+
+                return null;
+            }
+            else
+            {
+                return _parent.SelectWall(worldX, worldY, currentlySelectedWall);
+            }
+        }
+
+        public void RemoveWalls(float worldX, float worldY, float worldWidth, float worldHeight)
         {
             if (_parent == null)
             {
                 for(int i = _walls.Count - 1; i >= 0; i--)
                 {
-                    if (_walls[i].Contains(worldX, worldY))
+                    if (_walls[i].WorldX == worldX && _walls[i].WorldY == worldY && _walls[i].WorldWidth == worldWidth && _walls[i].WorldHeight == worldHeight)
                     {
                         ToggleChanged(true);
                         _walls.RemoveAt(i);
@@ -139,7 +190,7 @@ namespace Ozzyria.Gryp.Models.Data
             }
             else
             {
-                _parent.RemoveWalls(worldX, worldY);
+                _parent.RemoveWalls(worldX, worldY, worldWidth, worldHeight);
             }
         }
 
@@ -176,7 +227,6 @@ namespace Ozzyria.Gryp.Models.Data
                 Entity? nextEntity = null;
                 for (int i = _entities.Count - 1; i >= 0; i--)
                 {
-                    // remove close by entities
                     var distance = Math.Sqrt(Math.Pow(_entities[i].WorldX - worldX, 2) + Math.Pow(_entities[i].WorldY - worldY, 2));
                     if (distance <= 16)
                     {

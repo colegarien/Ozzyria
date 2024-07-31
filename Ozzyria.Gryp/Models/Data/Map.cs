@@ -21,6 +21,7 @@ namespace Ozzyria.Gryp.Models.Data
         public Entity CurrentEntity { get; set; } = new Entity();
 
         public Entity? SelectedEntity { get; set; } = null;
+        public WorldBoundary? SelectedWall { get; set; } = null;
 
         public bool IsLayerVisible(int layer)
         {
@@ -81,15 +82,33 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 IsDirty = true;
                 Layers[ActiveLayer].AddWall(wall);
+                SelectedWall = wall;
             }
         }
 
-        public void RemoveWalls(float worldX, float worldY)
+        public void SelectWall(float worldX, float worldY)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
+                SelectedWall = Layers[ActiveLayer].SelectWall(worldX, worldY, SelectedWall);
+            }
+            else
+            {
+                SelectedWall = null;
+            }
+        }
+
+        public void RemoveSelectedWall()
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count && SelectedWall != null)
+            {
                 IsDirty = true;
-                Layers[ActiveLayer].RemoveWalls(worldX, worldY);
+                var worldX = SelectedWall.WorldX;
+                var worldY = SelectedWall.WorldY;
+                var worldWidth = SelectedWall.WorldWidth;
+                var worldHeight = SelectedWall.WorldHeight;
+                SelectedWall = null;
+                Layers[ActiveLayer].RemoveWalls(worldX, worldY, worldWidth, worldHeight);
             }
         }
 
@@ -241,6 +260,7 @@ namespace Ozzyria.Gryp.Models.Data
                 }
             }
             SelectedEntity = null;
+            SelectedWall = null;
             ActiveLayer = -1;
             IsDirty = false;
         }
