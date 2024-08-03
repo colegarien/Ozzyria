@@ -21,13 +21,7 @@ namespace Ozzyria.Gryp.MapTools
 
         public WorldBoundary GetWorldArea()
         {
-            return new WorldBoundary
-            {
-                WorldX = Area.WorldX,
-                WorldY = Area.WorldY,
-                WorldWidth = Area.WorldWidth,
-                WorldHeight = Area.WorldHeight
-            };
+            return Area.Clone();
         }
 
         public TileBoundary GetTileArea()

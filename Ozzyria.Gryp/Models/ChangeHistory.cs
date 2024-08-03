@@ -10,18 +10,23 @@ namespace Ozzyria.Gryp.Models
         internal List<string> DrawableIds { get; set; }
     }
 
+    internal struct LayerChange
+    {
+        internal int Layer { get; set; }
+    }
+
     internal class ChangeHistory
     {
         private static bool Tracking = false;
-        private static List<List<TileChange>> TileUndos = new List<List<TileChange>>();
-        private static List<List<TileChange>> TileRedos = new List<List<TileChange>>();
+        private static List<List<object>> Undos = new List<List<object>>();
+        private static List<List<object>> Redos = new List<List<object>>();
 
         public static void StartTracking()
         {
             if (!Tracking)
             {
                 Tracking = true;
-                TileUndos.Add(new List<TileChange>());
+                Undos.Add(new List<object>());
             }
         }
 
@@ -30,91 +35,119 @@ namespace Ozzyria.Gryp.Models
             if (Tracking)
             {
                 Tracking = false;
-                if(TileUndos[TileUndos.Count - 1].Count <= 0)
+                if(Undos[Undos.Count - 1].Count <= 0)
                 {
-                    TileUndos.RemoveAt(TileUndos.Count - 1);
+                    Undos.RemoveAt(Undos.Count - 1);
                 }
                 else
                 {
                     // We clear redos after a new change is done
-                    TileRedos.Clear();
+                    Redos.Clear();
                 }
             }
         }
 
-        public static void TrackChange(TileChange change)
+        public static void TrackChange(object change)
         {
-            if (TileUndos.Count <= 0)
+            if (Undos.Count <= 0)
                 return;
 
             if (Tracking)
             {
-                TileUndos[TileUndos.Count - 1].Add(change);
+                Undos[Undos.Count - 1].Add(change);
             }
         }
 
         public static void Undo(Map map)
         {
-            if (TileUndos.Count <= 0)
+            if (Undos.Count <= 0)
                 return;
 
             if (!Tracking)
             {
-                var changes = TileUndos[TileUndos.Count - 1];
+                var changes = Undos[Undos.Count - 1];
 
-                TileRedos.Add(new List<TileChange>());
+                Redos.Add(new List<object>());
                 foreach (var change in changes)
                 {
-                    var tile = map.GetTile(change.TileX, change.TileY);
-                    TileRedos[TileRedos.Count - 1].Add(new TileChange
+                    if (change is TileChange)
                     {
-                        TileX = change.TileX,
-                        TileY = change.TileY,
-                        DrawableIds = tile?.DrawableIds ?? []
-                    });
+                        var tileChange = (TileChange)change;
 
-                    map.PushTile(new Tile
+                        var tile = map.GetTile(tileChange.TileX, tileChange.TileY);
+                        Redos[Redos.Count - 1].Add(new TileChange
+                        {
+                            TileX = tileChange.TileX,
+                            TileY = tileChange.TileY,
+                            DrawableIds = tile?.DrawableIds ?? []
+                        });
+
+                        map.PushTile(new Tile
+                        {
+                            DrawableIds = tileChange.DrawableIds
+                        }, tileChange.TileX, tileChange.TileY);
+                    }
+                    else if (change is LayerChange)
                     {
-                        DrawableIds = change.DrawableIds
-                    }, change.TileX, change.TileY);
+                        var layerChange = (LayerChange)change;
+
+                        Redos[Redos.Count - 1].Add(new LayerChange
+                        {
+                            Layer = map.ActiveLayer
+                        });
+                        map.ActiveLayer = layerChange.Layer;
+                    }
                 }
-                TileUndos.RemoveAt(TileUndos.Count - 1);
+                Undos.RemoveAt(Undos.Count - 1);
             }
         }
 
         public static void Redo(Map map)
         {
-            if (TileRedos.Count <= 0)
+            if (Redos.Count <= 0)
                 return;
 
             if (!Tracking)
             {
-                var changes = TileRedos[TileRedos.Count - 1];
-
-                TileUndos.Add(new List<TileChange>());
+                var changes = Redos[Redos.Count - 1];
+                Undos.Add(new List<object>());
                 foreach (var change in changes)
                 {
-                    var tile = map.GetTile(change.TileX, change.TileY);
-                    TileUndos[TileUndos.Count - 1].Add(new TileChange
+                    if (change is TileChange)
                     {
-                        TileX = change.TileX,
-                        TileY = change.TileY,
-                        DrawableIds = tile?.DrawableIds ?? []
-                    });
+                        var tileChange = (TileChange)change;
+                        var tile = map.GetTile(tileChange.TileX, tileChange.TileY);
+                        Undos[Undos.Count - 1].Add(new TileChange
+                        {
+                            TileX = tileChange.TileX,
+                            TileY = tileChange.TileY,
+                            DrawableIds = tile?.DrawableIds ?? []
+                        });
 
-                    map.PushTile(new Tile
+                        map.PushTile(new Tile
+                        {
+                            DrawableIds = tileChange.DrawableIds
+                        }, tileChange.TileX, tileChange.TileY);
+                    }
+                    else if (change is LayerChange)
                     {
-                        DrawableIds = change.DrawableIds
-                    }, change.TileX, change.TileY);
+                        var layerChange = (LayerChange)change;
+                        Undos[Undos.Count - 1].Add(new LayerChange
+                        {
+                            Layer = map.ActiveLayer,
+                        });
+
+                        map.ActiveLayer = layerChange.Layer;
+                    }
                 }
-                TileRedos.RemoveAt(TileRedos.Count - 1);
+                Redos.RemoveAt(Redos.Count - 1);
             }
         }
 
         public static void Clear()
         {
-            TileUndos.Clear();
-            TileRedos.Clear();
+            Undos.Clear();
+            Redos.Clear();
             Tracking = false;
         }
     }

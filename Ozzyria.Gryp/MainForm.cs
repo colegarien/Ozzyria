@@ -306,14 +306,26 @@ namespace Ozzyria.Gryp
 
         private void layerList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ChangeHistory.StartTracking();
+            var currentLayer = _map.ActiveLayer;
             if (layerList?.SelectedIndices?.Count <= 0)
             {
                 _map.ActiveLayer = 0;
-                return;
+            }
+            else
+            {
+                _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
+                btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
             }
 
-            _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
-            btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
+            if (_map.ActiveLayer != currentLayer && currentLayer >= 0)
+            {
+                _map.SelectedEntity = null;
+                _map.SelectedWall = null;
+                ChangeHistory.TrackChange(new LayerChange { Layer = currentLayer });
+            }
+
+            ChangeHistory.FinishTracking();
         }
 
         private void btnNewLayer_Click(object sender, EventArgs e)
@@ -571,11 +583,21 @@ namespace Ozzyria.Gryp
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Undo(_map);
+            // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
+            if(!layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            {
+                layerList.SelectedIndices.Add(_map.ActiveLayer);
+            }
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Redo(_map);
+            // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
+            if (!layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            {
+                layerList.SelectedIndices.Add(_map.ActiveLayer);
+            }
         }
 
         private void mapViewPort_KeyDown(object sender, KeyEventArgs e)

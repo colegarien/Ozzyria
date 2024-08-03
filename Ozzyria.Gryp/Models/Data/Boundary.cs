@@ -7,6 +7,17 @@
         public float WorldWidth { get; set; }
         public float WorldHeight { get; set; }
 
+        public WorldBoundary Clone()
+        {
+            return new WorldBoundary
+            {
+                WorldX = WorldX,
+                WorldY = WorldY,
+                WorldWidth = WorldWidth,
+                WorldHeight = WorldHeight
+            };
+        }
+
         public void MoveCenterTo(float worldX, float worldY)
         {
             WorldX = worldX - (WorldWidth / 2f);
