@@ -17,7 +17,7 @@ namespace Ozzyria.Gryp.Models.Data
         private Layer? _bottomRight;
 
         private Tile[,]? _tileData;
-        private List<WorldBoundary> _walls;
+        private List<Wall> _walls;
         private List<Entity> _entities;
 
         protected bool _hasChanged = false;
@@ -28,7 +28,7 @@ namespace Ozzyria.Gryp.Models.Data
             _parent = parent;
             if(_parent == null)
             {
-                _walls = new List<WorldBoundary>();
+                _walls = new List<Wall>();
                 _entities = new List<Entity>();
             }
 
@@ -99,7 +99,7 @@ namespace Ozzyria.Gryp.Models.Data
             return _boundary.TileWidth > 0 && _boundary.TileHeight > 0;
         }
 
-        public IEnumerable<WorldBoundary> GetWalls()
+        public IEnumerable<Wall> GetWalls()
         {
             if (_parent == null)
             {
@@ -111,49 +111,54 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void AddWall(WorldBoundary wall)
+        public Wall AddWall(Wall wall)
         {
             if(_parent == null)
             {
                 ToggleChanged(true);
+                if(wall.InternalId == "")
+                    wall.InternalId = System.Guid.NewGuid().ToString();
                 _walls.Add(wall);
+
+                return wall;
             }
             else
             {
-                _parent.AddWall(wall);
+                return _parent.AddWall(wall);
             }
         }
 
-        public WorldBoundary? SelectWall(float worldX, float worldY, WorldBoundary? currentlySelectedWall)
+        public Wall? SelectWall(float worldX, float worldY, Wall? currentlySelectedWall)
         {
             if (_parent == null)
             {
-                WorldBoundary? firstWall = null;
-                WorldBoundary? nextWall = null;
-                for (int i = _walls.Count - 1; i >= 0; i--)
+                Wall? firstWall = null;
+                Wall? nextWall = null;
+                bool passedCurrentlySelected = false;
+                foreach (var wall in _walls
+                    .Where(w => w.Boundary.Contains(worldX, worldY))
+                    .OrderBy(w => w.Boundary.WorldY + (w.Boundary.WorldHeight / 2))
+                    .ThenBy(w => w.Boundary.WorldX + (w.Boundary.WorldWidth / 2))
+                    .ThenBy(w => w.InternalId))
                 {
-                    if (_walls[i].Contains(worldX, worldY))
+                    if (firstWall == null)
                     {
-                        if (firstWall == null || (firstWall.WorldY > _walls[i].WorldY || (firstWall.WorldY == _walls[i].WorldY && firstWall.WorldX >= _walls[i].WorldX)))
-                        {
-                            // the lowest Y or the lowest Y and lowest X, (Y takes precendence)
-                            firstWall = _walls[i];
-                        }
+                        // list is ordered by highest to least priority
+                        firstWall = wall;
+                    }
 
-                        if (currentlySelectedWall != null && currentlySelectedWall.Contains(worldX, worldY))
-                        {
-                            // try to determine what would be the most next after the currently selected one
-                            var isAfterCurrent = (currentlySelectedWall.WorldY < _walls[i].WorldY || (currentlySelectedWall.WorldY == _walls[i].WorldY && currentlySelectedWall.WorldX < _walls[i].WorldX));
-                            if (nextWall == null && isAfterCurrent)
-                            {
-                                nextWall = _walls[i];
-                            }
-                            else if (nextWall != null && isAfterCurrent && (nextWall.WorldY > _walls[i].WorldY || (nextWall.WorldY == _walls[i].WorldY && nextWall.WorldX >= _entities[i].WorldX)))
-                            {
-                                // is before the current next;
-                                nextWall = _walls[i];
-                            }
-                        }
+                    if (currentlySelectedWall != null && currentlySelectedWall.InternalId == wall.InternalId)
+                    {
+                        // found the currently selected wall
+                        passedCurrentlySelected = true;
+                        continue;
+                    }
+
+                    if(passedCurrentlySelected)
+                    {
+                        // found the wall immediately after the currently selected one
+                        nextWall = wall;
+                        break;
                     }
                 }
 
@@ -175,22 +180,23 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void RemoveWalls(float worldX, float worldY, float worldWidth, float worldHeight)
+        public void RemoveWall(string internalId)
         {
             if (_parent == null)
             {
-                for(int i = _walls.Count - 1; i >= 0; i--)
+                for (int i = _walls.Count - 1; i >= 0; i--)
                 {
-                    if (_walls[i].WorldX == worldX && _walls[i].WorldY == worldY && _walls[i].WorldWidth == worldWidth && _walls[i].WorldHeight == worldHeight)
+                    if (_walls[i].InternalId == internalId)
                     {
                         ToggleChanged(true);
                         _walls.RemoveAt(i);
+                        break;
                     }
                 }
             }
             else
             {
-                _parent.RemoveWalls(worldX, worldY, worldWidth, worldHeight);
+                _parent.RemoveWall(internalId);
             }
         }
 
@@ -206,16 +212,20 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void AddEntity(Entity entity)
+        public Entity AddEntity(Entity entity)
         {
             if (_parent == null)
             {
                 ToggleChanged(true);
+                if (entity.InternalId == "")
+                    entity.InternalId = System.Guid.NewGuid().ToString();
                 _entities.Add(entity);
+
+                return entity;
             }
             else
             {
-                _parent.AddEntity(entity);
+                return _parent.AddEntity(entity);
             }
         }
 
@@ -225,31 +235,31 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 Entity? firstEntity = null;
                 Entity? nextEntity = null;
-                for (int i = _entities.Count - 1; i >= 0; i--)
+                bool passedCurrentlySelected = false;
+                foreach (var entity in _entities
+                    .Where(e => Math.Sqrt(Math.Pow(e.WorldX - worldX, 2) + Math.Pow(e.WorldY - worldY, 2)) <= 16)
+                    .OrderBy(e => e.WorldY)
+                    .ThenBy(e => e.WorldX)
+                    .ThenBy(e => e.InternalId))
                 {
-                    var distance = Math.Sqrt(Math.Pow(_entities[i].WorldX - worldX, 2) + Math.Pow(_entities[i].WorldY - worldY, 2));
-                    if (distance <= 16)
+                    if (firstEntity == null)
                     {
+                        // list is ordered by highest to least priority
+                        firstEntity = entity;
+                    }
 
-                        if(firstEntity == null || (firstEntity.WorldY > _entities[i].WorldY || (firstEntity.WorldY == _entities[i].WorldY && firstEntity.WorldX >= _entities[i].WorldX)))
-                        {
-                            // the lowest Y or the lowest Y and lowest X, (Y takes precendence)
-                            firstEntity = _entities[i];
-                        }
+                    if (currentlySelectedEntity != null && currentlySelectedEntity.InternalId == entity.InternalId)
+                    {
+                        // found the currently selected wall
+                        passedCurrentlySelected = true;
+                        continue;
+                    }
 
-                        if(currentlySelectedEntity != null && Math.Sqrt(Math.Pow(currentlySelectedEntity.WorldX - worldX, 2) + Math.Pow(currentlySelectedEntity.WorldY - worldY, 2)) <= 16)
-                        {
-                            // try to determine what would be the most next after the currently selected one
-                            var isAfterCurrent = (currentlySelectedEntity.WorldY < _entities[i].WorldY || (currentlySelectedEntity.WorldY == _entities[i].WorldY && currentlySelectedEntity.WorldX < _entities[i].WorldX));
-                            if (nextEntity == null && isAfterCurrent)
-                            {
-                                nextEntity = _entities[i];
-                            } else if(nextEntity != null && isAfterCurrent && (nextEntity.WorldY > _entities[i].WorldY || (nextEntity.WorldY == _entities[i].WorldY && nextEntity.WorldX >= _entities[i].WorldX)))
-                            {
-                                // is before the current next;
-                                nextEntity = _entities[i];
-                            }
-                        }
+                    if (passedCurrentlySelected)
+                    {
+                        // found the wall immediately after the currently selected one
+                        nextEntity = entity;
+                        break;
                     }
                 }
 
@@ -271,22 +281,23 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void RemoveEntities(float worldX, float worldY)
+        public void RemoveEntity(string internalId)
         {
             if (_parent == null)
             {
                 for (int i = _entities.Count - 1; i >= 0; i--)
                 {
-                    if (_entities[i].WorldX == worldX && _entities[i].WorldY == worldY)
+                    if (_entities[i].InternalId == internalId)
                     {
                         ToggleChanged(true);
                         _entities.RemoveAt(i);
+                        break;
                     }
                 }
             }
             else
             {
-                _parent.RemoveEntities(worldX, worldY);
+                _parent.RemoveEntity(internalId);
             }
         }
 
@@ -450,10 +461,10 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 foreach(var wall in _walls)
                 {
-                    var wallX = camera.ViewX + camera.WorldToView(wall.WorldX);
-                    var wallY = camera.ViewY + camera.WorldToView(wall.WorldY);
-                    var wallWidth = camera.WorldToView(wall.WorldWidth);
-                    var wallHeight = camera.WorldToView(wall.WorldHeight);
+                    var wallX = camera.ViewX + camera.WorldToView(wall.Boundary.WorldX);
+                    var wallY = camera.ViewY + camera.WorldToView(wall.Boundary.WorldY);
+                    var wallWidth = camera.WorldToView(wall.Boundary.WorldWidth);
+                    var wallHeight = camera.WorldToView(wall.Boundary.WorldHeight);
                     canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.WallEntityPaint);
                 }
 

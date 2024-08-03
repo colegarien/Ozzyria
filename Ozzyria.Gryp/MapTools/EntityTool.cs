@@ -34,14 +34,14 @@ namespace Ozzyria.Gryp.MapTools
             if (!mouseState.IsLeftDown && isEntitying)
             {
                 isEntitying = false;
-                if ((map.CurrentEntity.PrefabId ?? "") != "")
+                if ((map.CurrentEntityBrush.PrefabId ?? "") != "")
                 {
                     map.AddEntity(new Entity
                     {
-                        PrefabId = map.CurrentEntity.PrefabId,
+                        PrefabId = map.CurrentEntityBrush.PrefabId,
                         WorldX = mouseWorldX,
                         WorldY = mouseWorldY,
-                        Attributes = map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
+                        Attributes = map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
                     });
                 }
             }

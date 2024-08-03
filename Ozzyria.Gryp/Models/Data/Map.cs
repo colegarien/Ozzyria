@@ -18,10 +18,10 @@ namespace Ozzyria.Gryp.Models.Data
 
         public List<string> CurrentBrush { get; set; } = new List<string>();
 
-        public Entity CurrentEntity { get; set; } = new Entity();
+        public Entity CurrentEntityBrush { get; set; } = new Entity();
 
         public Entity? SelectedEntity { get; set; } = null;
-        public WorldBoundary? SelectedWall { get; set; } = null;
+        public Wall? SelectedWall { get; set; } = null;
 
         public bool IsLayerVisible(int layer)
         {
@@ -76,14 +76,16 @@ namespace Ozzyria.Gryp.Models.Data
             return null;
         }
 
-        public void AddWall(WorldBoundary wall)
+        public string AddWall(Wall wall)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 IsDirty = true;
-                Layers[ActiveLayer].AddWall(wall);
-                SelectedWall = wall;
+                SelectedWall = Layers[ActiveLayer].AddWall(wall);
+                return SelectedWall.InternalId;
             }
+
+            return "";
         }
 
         public void SelectWall(float worldX, float worldY)
@@ -103,23 +105,22 @@ namespace Ozzyria.Gryp.Models.Data
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count && SelectedWall != null)
             {
                 IsDirty = true;
-                var worldX = SelectedWall.WorldX;
-                var worldY = SelectedWall.WorldY;
-                var worldWidth = SelectedWall.WorldWidth;
-                var worldHeight = SelectedWall.WorldHeight;
+                var internalId = SelectedEntity?.InternalId ?? "";
                 SelectedWall = null;
-                Layers[ActiveLayer].RemoveWalls(worldX, worldY, worldWidth, worldHeight);
+                Layers[ActiveLayer].RemoveWall(internalId);
             }
         }
 
-        public void AddEntity(Entity entity)
+        public string AddEntity(Entity entity)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 IsDirty = true;
-                Layers[ActiveLayer].AddEntity(entity);
-                SelectedEntity = entity;
+                SelectedEntity = Layers[ActiveLayer].AddEntity(entity);
+                return SelectedEntity.InternalId;
             }
+
+            return "";
         }
 
         public void SelectEntity(float worldX, float worldY)
@@ -139,10 +140,9 @@ namespace Ozzyria.Gryp.Models.Data
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count && SelectedEntity != null)
             {
                 IsDirty = true;
-                var worldX = SelectedEntity.WorldX;
-                var worldY = SelectedEntity.WorldY;
+                var internalId = SelectedEntity?.InternalId ?? "";
                 SelectedEntity = null;
-                Layers[ActiveLayer].RemoveEntities(worldX, worldY);
+                Layers[ActiveLayer].RemoveEntity(internalId);
             }
         }
 
@@ -186,10 +186,10 @@ namespace Ozzyria.Gryp.Models.Data
 
                 areaData.WallData.Walls[layer] = Layers[layer].GetWalls().Select(b => new Content.Models.Area.Rectangle
                 {
-                    X = b.WorldX,
-                    Y = b.WorldY,
-                    Width = b.WorldWidth,
-                    Height = b.WorldHeight,
+                    X = b.Boundary.WorldX,
+                    Y = b.Boundary.WorldY,
+                    Width = b.Boundary.WorldWidth,
+                    Height = b.Boundary.WorldHeight,
                 }).ToArray();
 
                 areaData.PrefabData.Prefabs[layer] = Layers[layer].GetEntities().Select(e => new Content.Models.Area.PrefabEntry
@@ -236,12 +236,14 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 ActiveLayer = layer;
                 foreach (var wall in areaData.WallData?.Walls[layer] ?? []) {
-                    AddWall(new WorldBoundary
-                    {
-                        WorldX = wall.X,
-                        WorldY = wall.Y,
-                        WorldWidth = wall.Width,
-                        WorldHeight = wall.Height,
+                    AddWall(new Wall {
+                        Boundary = new WorldBoundary
+                        {
+                            WorldX = wall.X,
+                            WorldY = wall.Y,
+                            WorldWidth = wall.Width,
+                            WorldHeight = wall.Height,
+                        }
                     });
                 }
             }

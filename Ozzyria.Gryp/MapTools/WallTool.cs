@@ -44,7 +44,7 @@ namespace Ozzyria.Gryp.MapTools
 
         protected override void OnComplete(MouseState mouseState, Camera camera, Map map)
         {
-            map.AddWall(GetWorldArea());
+            map.AddWall(new Wall { Boundary = GetWorldArea() });
         }
     }
 }

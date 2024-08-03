@@ -176,20 +176,20 @@ namespace Ozzyria.Gryp
             toolBelt.HandleMouseUp(e, camera, _map);
             RebuildBrushView(); // TODO this is a hack to handle dropper potentially dropping (might could just do a simple event situation?)
             // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
-            if(_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntity.PrefabId || _map.CurrentEntity.Attributes != _map.SelectedEntity.Attributes))
+            if(_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
             {
                 // select up current entity and selected
-                _map.CurrentEntity.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntity.Attributes = _map.SelectedEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
 
                 // now trigger UI changes
-                cmbPrefab.SelectedItem = _map.CurrentEntity.PrefabId;
+                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
                 foreach(DataGridViewRow row in tableEntityAttributes.Rows)
                 {
                     var rowKey = row.Cells["columnKey"]?.Value?.ToString() ?? "";
-                    if (_map.CurrentEntity.Attributes.ContainsKey(rowKey))
+                    if (_map.CurrentEntityBrush.Attributes.ContainsKey(rowKey))
                     {
-                        var valueKey = row.Cells["columnValue"].Value = _map.CurrentEntity.Attributes[rowKey];
+                        var valueKey = row.Cells["columnValue"].Value = _map.CurrentEntityBrush.Attributes[rowKey];
                     }
                 }
             }
@@ -255,10 +255,10 @@ namespace Ozzyria.Gryp
 
                 if(_map.SelectedWall != null)
                 {
-                    var wallX = camera.ViewX + camera.WorldToView(_map.SelectedWall.WorldX);
-                    var wallY = camera.ViewY + camera.WorldToView(_map.SelectedWall.WorldY);
-                    var wallWidth = camera.WorldToView(_map.SelectedWall.WorldWidth);
-                    var wallHeight = camera.WorldToView(_map.SelectedWall.WorldHeight);
+                    var wallX = camera.ViewX + camera.WorldToView(_map.SelectedWall.Boundary.WorldX);
+                    var wallY = camera.ViewY + camera.WorldToView(_map.SelectedWall.Boundary.WorldY);
+                    var wallWidth = camera.WorldToView(_map.SelectedWall.Boundary.WorldWidth);
+                    var wallHeight = camera.WorldToView(_map.SelectedWall.Boundary.WorldHeight);
                     e.Surface.Canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.TileSelectionPaint);
                 }
 
@@ -539,31 +539,31 @@ namespace Ozzyria.Gryp
         private void cmbPrefab_SelectedIndexChanged(object sender, EventArgs e)
         {
             var newPrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
-            if (_map.CurrentEntity.Attributes == null)
-                _map.CurrentEntity.Attributes = new Dictionary<string, string>();
-            else if (_map.CurrentEntity.PrefabId != newPrefabId)
-                _map.CurrentEntity.Attributes.Clear();
-            _map.CurrentEntity.PrefabId = newPrefabId;
+            if (_map.CurrentEntityBrush.Attributes == null)
+                _map.CurrentEntityBrush.Attributes = new Dictionary<string, string>();
+            else if (_map.CurrentEntityBrush.PrefabId != newPrefabId)
+                _map.CurrentEntityBrush.Attributes.Clear();
+            _map.CurrentEntityBrush.PrefabId = newPrefabId;
 
             tableEntityAttributes.Rows.Clear();
-            switch (_map.CurrentEntity.PrefabId)
+            switch (_map.CurrentEntityBrush.PrefabId)
             {
                 case "slime_spawner":
                     break;
                 case "door":
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_id") ?? "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_x") ?? "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntity.Attributes.GetValueOrDefault("new_area_y") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_id") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_x") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_y") ?? "" });
                     break;
                 case "exp_orb":
-                    tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntity.Attributes.GetValueOrDefault("amount") ?? "" });
+                    tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("amount") ?? "" });
                     break;
             }
 
             if(_map.SelectedEntity != null)
             {
-                _map.SelectedEntity.PrefabId = _map.CurrentEntity.PrefabId;
-                _map.SelectedEntity.Attributes = _map.CurrentEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+                _map.SelectedEntity.PrefabId = _map.CurrentEntityBrush.PrefabId;
+                _map.SelectedEntity.Attributes = _map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
             }
         }
 
@@ -575,7 +575,7 @@ namespace Ozzyria.Gryp
                 var rowKey = changedRow.Cells["columnKey"]?.Value?.ToString() ?? "";
                 var rowValue = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
 
-                _map.CurrentEntity.Attributes[rowKey] = rowValue;
+                _map.CurrentEntityBrush.Attributes[rowKey] = rowValue;
                 if(_map.SelectedEntity != null)
                 {
                     _map.SelectedEntity.Attributes[rowKey] = rowValue;
