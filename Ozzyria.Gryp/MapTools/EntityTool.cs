@@ -28,13 +28,14 @@ namespace Ozzyria.Gryp.MapTools
 
         public override void OnMouseUp(MouseState mouseState, Camera camera, Map map)
         {
+            ChangeHistory.StartTracking();
             var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
             var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
 
             if (!mouseState.IsLeftDown && isEntitying)
             {
                 isEntitying = false;
-                if ((map.CurrentEntityBrush.PrefabId ?? "") != "")
+                if ((map.CurrentEntityBrush?.PrefabId ?? "") != "")
                 {
                     map.AddEntity(new Entity
                     {
@@ -51,6 +52,7 @@ namespace Ozzyria.Gryp.MapTools
                 isSelecting = false;
                 map.SelectEntity(mouseWorldX, mouseWorldY);
             }
+            ChangeHistory.FinishTracking();
         }
     }
 }

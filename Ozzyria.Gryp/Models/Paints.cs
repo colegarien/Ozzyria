@@ -74,6 +74,19 @@ namespace Ozzyria.Gryp.Models
             IsAntialias = false
         };
 
+        public static SKPaint SelectionDotOverlayPaint = new SKPaint
+        {
+            Color = new SKColor(
+                red: (byte)232,
+                green: (byte)197,
+                blue: (byte)71,
+                alpha: (byte)255
+            ),
+            StrokeWidth = 2,
+            IsStroke = false,
+            IsAntialias = true
+        };
+
         public static SKPaint WallSelectionPaint = new SKPaint
         {
             Color = new SKColor(

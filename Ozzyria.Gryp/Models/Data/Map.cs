@@ -91,15 +91,34 @@ namespace Ozzyria.Gryp.Models.Data
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 IsDirty = true;
+                var currentId = SelectedWall?.InternalId ?? "";
                 SelectedWall = Layers[ActiveLayer].AddWall(wall);
+                if (currentId != SelectedWall.InternalId)
+                {
+                    ChangeHistory.TrackChange(new WallSelectionChange{ InternalId = currentId });
+                }
+
                 return SelectedWall.InternalId;
             }
 
             return "";
         }
 
+        public void UnselectWall()
+        {
+            if(SelectedWall != null)
+            {
+                ChangeHistory.TrackChange(new WallSelectionChange
+                {
+                    InternalId = SelectedWall.InternalId
+                });
+                SelectedWall = null;
+            }
+        }
+
         public void SelectWall(float worldX, float worldY)
         {
+            var currentId = SelectedWall?.InternalId ?? "";
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 SelectedWall = Layers[ActiveLayer].SelectWall(worldX, worldY, SelectedWall);
@@ -108,6 +127,14 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 SelectedWall = null;
             }
+
+            if(currentId != (SelectedWall?.InternalId ?? ""))
+            {
+                ChangeHistory.TrackChange(new WallSelectionChange
+                {
+                    InternalId = currentId
+                });
+            }
         }
 
         public void RemoveSelectedWall()
@@ -115,8 +142,8 @@ namespace Ozzyria.Gryp.Models.Data
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count && SelectedWall != null)
             {
                 IsDirty = true;
-                var internalId = SelectedEntity?.InternalId ?? "";
-                SelectedWall = null;
+                var internalId = SelectedWall?.InternalId ?? "";
+                UnselectWall();
                 Layers[ActiveLayer].RemoveWall(internalId);
             }
         }
@@ -136,15 +163,33 @@ namespace Ozzyria.Gryp.Models.Data
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 IsDirty = true;
+                var currentId = SelectedEntity?.InternalId ?? "";
                 SelectedEntity = Layers[ActiveLayer].AddEntity(entity);
+                if(currentId != SelectedEntity.InternalId)
+                {
+                    ChangeHistory.TrackChange(new EntitySelectionChange { InternalId = currentId });
+                }
                 return SelectedEntity.InternalId;
             }
 
             return "";
         }
 
+        public void UnselectEntity()
+        {
+            if (SelectedEntity != null)
+            {
+                ChangeHistory.TrackChange(new EntitySelectionChange
+                {
+                    InternalId = SelectedEntity.InternalId
+                });
+                SelectedEntity = null;
+            }
+        }
+
         public void SelectEntity(float worldX, float worldY)
         {
+            var currentId = SelectedEntity?.InternalId ?? "";
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 SelectedEntity = Layers[ActiveLayer].SelectEntity(worldX, worldY, SelectedEntity);
@@ -152,6 +197,14 @@ namespace Ozzyria.Gryp.Models.Data
             else
             {
                 SelectedEntity = null;
+            }
+
+            if (currentId != (SelectedWall?.InternalId ?? ""))
+            {
+                ChangeHistory.TrackChange(new EntitySelectionChange
+                {
+                    InternalId = currentId
+                });
             }
         }
 
@@ -161,7 +214,7 @@ namespace Ozzyria.Gryp.Models.Data
             {
                 IsDirty = true;
                 var internalId = SelectedEntity?.InternalId ?? "";
-                SelectedEntity = null;
+                UnselectEntity();
                 Layers[ActiveLayer].RemoveEntity(internalId);
             }
         }

@@ -15,6 +15,16 @@ namespace Ozzyria.Gryp.Models
         internal int Layer { get; set; }
     }
 
+    internal struct EntitySelectionChange
+    {
+        internal string InternalId { get; set; }
+    }
+
+    internal struct WallSelectionChange
+    {
+        internal string InternalId { get; set; }
+    }
+
     internal class ChangeHistory
     {
         private static bool Tracking = false;
@@ -90,12 +100,32 @@ namespace Ozzyria.Gryp.Models
                     else if (change is LayerChange)
                     {
                         var layerChange = (LayerChange)change;
-
                         Redos[Redos.Count - 1].Add(new LayerChange
                         {
                             Layer = map.ActiveLayer
                         });
+
                         map.ActiveLayer = layerChange.Layer;
+                    }
+                    else if(change is EntitySelectionChange)
+                    {
+                        var selectionChange = (EntitySelectionChange)change;
+                        Redos[Redos.Count - 1].Add(new EntitySelectionChange
+                        {
+                            InternalId = map.SelectedEntity?.InternalId ?? ""
+                        });
+
+                        map.SelectedEntity = map.GetEntity(selectionChange.InternalId);
+                    }
+                    else if (change is WallSelectionChange)
+                    {
+                        var selectionChange = (WallSelectionChange)change;
+                        Redos[Redos.Count - 1].Add(new WallSelectionChange
+                        {
+                            InternalId = map.SelectedWall?.InternalId ?? ""
+                        });
+
+                        map.SelectedWall = map.GetWall(selectionChange.InternalId);
                     }
                 }
                 Undos.RemoveAt(Undos.Count - 1);
@@ -138,6 +168,26 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         map.ActiveLayer = layerChange.Layer;
+                    }
+                    else if (change is EntitySelectionChange)
+                    {
+                        var selectionChange = (EntitySelectionChange)change;
+                        Undos[Undos.Count - 1].Add(new EntitySelectionChange
+                        {
+                            InternalId = map.SelectedEntity?.InternalId ?? ""
+                        });
+
+                        map.SelectedEntity = map.GetEntity(selectionChange.InternalId);
+                    }
+                    else if (change is WallSelectionChange)
+                    {
+                        var selectionChange = (WallSelectionChange)change;
+                        Undos[Undos.Count - 1].Add(new WallSelectionChange
+                        {
+                            InternalId = map.SelectedWall?.InternalId ?? ""
+                        });
+
+                        map.SelectedWall = map.GetWall(selectionChange.InternalId);
                     }
                 }
                 Redos.RemoveAt(Redos.Count - 1);

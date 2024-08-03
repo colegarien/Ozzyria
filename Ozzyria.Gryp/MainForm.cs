@@ -82,7 +82,6 @@ namespace Ozzyria.Gryp
                 {
                     _map.FromAreaData(areaData);
 
-                    ChangeHistory.Clear();
                     RebuildLayerView();
                     RebuildBrushView();
 
@@ -90,6 +89,7 @@ namespace Ozzyria.Gryp
                     camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
                     mainStatusLabel.Text = "Successfully loaded " + areaId;
 
+                    ChangeHistory.Clear();
                     mapViewPort.Focus();
                 }
                 else if (areaData != null & areaData?.TileData == null)
@@ -148,7 +148,7 @@ namespace Ozzyria.Gryp
             if (layerList.SelectedIndices.Count <= 0 && layerList.Items.Count > 0)
             {
                 // if no items were re-selected and there are items, select the first in the list
-                layerList.SelectedIndices.Add(0);
+                layerList.Items[0].Selected = true;
             }
         }
 
@@ -180,7 +180,7 @@ namespace Ozzyria.Gryp
             {
                 // select up current entity and selected
                 _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
 
                 // now trigger UI changes
                 cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
@@ -204,11 +204,20 @@ namespace Ozzyria.Gryp
         private void onToolChecked_CheckedChanged(object sender, EventArgs e)
         {
             // if is a checked-able tool
-            _map.SelectedEntity = null;
-            _map.SelectedWall = null;
+            var senderTag = ((ToolStripButton)sender).Tag?.ToString() ?? "";
+            ChangeHistory.StartTracking();
+            if (senderTag != "entity")
+            {
+                _map.UnselectEntity();
+            }
+            if (senderTag != "wall")
+            {
+                _map.UnselectWall();
+            }
+            ChangeHistory.FinishTracking();
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
-                toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", true);
+                toolBelt.ToogleTool(senderTag, true);
                 foreach (ToolStripItem item in mainToolbelt.Items)
                 {
                     if (item is ToolStripButton && item != sender)
@@ -270,6 +279,24 @@ namespace Ozzyria.Gryp
                     }
                 }
 
+                if(_map.SelectedEntity != null)
+                {
+                    // TODO would be good to not render these if the entity tool is selected?
+                    var renderX = camera.ViewX + camera.WorldToView(_map.SelectedEntity.WorldX);
+                    var renderY = camera.ViewY + camera.WorldToView(_map.SelectedEntity.WorldY);
+                    var renderRadius = camera.WorldToView(2);
+                    e.Surface.Canvas.DrawCircle(new SKPoint(renderX, renderY), renderRadius, Paints.SelectionDotOverlayPaint);
+                }
+
+                if(_map.SelectedWall != null)
+                {
+                    // TODO would be good to not render these if the wall tool is selected?
+                    var renderX = camera.ViewX + camera.WorldToView(_map.SelectedWall.Boundary.WorldX + (_map.SelectedWall.Boundary.WorldWidth / 2f));
+                    var renderY = camera.ViewY + camera.WorldToView(_map.SelectedWall.Boundary.WorldY + (_map.SelectedWall.Boundary.WorldHeight / 2f));
+                    var renderRadius = camera.WorldToView(2);
+                    e.Surface.Canvas.DrawCircle(new SKPoint(renderX, renderY), renderRadius, Paints.SelectionDotOverlayPaint);
+                }
+
                 toolBelt.RenderOverlay(e.Surface.Canvas, camera, _map);
             }
         }
@@ -306,22 +333,20 @@ namespace Ozzyria.Gryp
 
         private void layerList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ChangeHistory.StartTracking();
             var currentLayer = _map.ActiveLayer;
             if (layerList?.SelectedIndices?.Count <= 0)
             {
-                _map.ActiveLayer = 0;
-            }
-            else
-            {
-                _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
-                btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
+                // ListItemView's signal index changes twice, once for clearing and once for re-selecting when set to MultiSelect=false
+                return;
             }
 
+            ChangeHistory.StartTracking();
+            _map.ActiveLayer = layerList?.SelectedIndices[0] ?? 0;
+            btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
             if (_map.ActiveLayer != currentLayer && currentLayer >= 0)
             {
-                _map.SelectedEntity = null;
-                _map.SelectedWall = null;
+                _map.UnselectEntity();
+                _map.UnselectWall();
                 ChangeHistory.TrackChange(new LayerChange { Layer = currentLayer });
             }
 
@@ -584,9 +609,18 @@ namespace Ozzyria.Gryp
         {
             ChangeHistory.Undo(_map);
             // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
-            if(!layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
             {
-                layerList.SelectedIndices.Add(_map.ActiveLayer);
+                var i = 0;
+                foreach(ListViewItem item in layerList.Items)
+                {
+                    if(i == _map.ActiveLayer)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                    i++;
+                }
             }
         }
 
@@ -594,9 +628,18 @@ namespace Ozzyria.Gryp
         {
             ChangeHistory.Redo(_map);
             // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
-            if (!layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
             {
-                layerList.SelectedIndices.Add(_map.ActiveLayer);
+                var i = 0;
+                foreach(ListViewItem item in layerList.Items)
+                {
+                    if(i == _map.ActiveLayer)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                    i++;
+                }
             }
         }
 

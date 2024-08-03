@@ -76,10 +76,6 @@ namespace Ozzyria.Gryp.MapTools
         
         public override void OnMouseDown(MouseState mouseState, Camera camera, Map map)
         {
-            // TODO check if leftMouseDown-ing in a handle
-            // - if so set Area to shape of selected wall
-            // - if so set trackingAreaSelect to true
-            // - if so skip base.OnMouseDown
             var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
             var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
             if (mouseState.IsLeftDown && map.SelectedWall != null && !isResizing && Handles.Any(h => h.ActivationArea.Contains(mouseWorldX, mouseWorldY)))
@@ -161,11 +157,13 @@ namespace Ozzyria.Gryp.MapTools
 
             if(!mouseState.IsRightDown && isSelecting)
             {
+                ChangeHistory.StartTracking();
                 isSelecting = false;
 
                 var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
                 var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
                 map.SelectWall(mouseWorldX, mouseWorldY);
+                ChangeHistory.FinishTracking();
             }
 
             AttachHandles(mouseState, camera, map);
@@ -176,14 +174,23 @@ namespace Ozzyria.Gryp.MapTools
         {
             if (isResizing)
             {
+                ChangeHistory.StartTracking();
                 isResizing = false;
                 if(map.SelectedWall != null)
                     map.SelectedWall.Boundary = GetWorldArea();
+                ChangeHistory.FinishTracking();
+            }
+            else
+            {
+                ChangeHistory.StartTracking();
+                map.UnselectWall();
+                ChangeHistory.FinishTracking();
             }
         }
 
         protected override void OnComplete(MouseState mouseState, Camera camera, Map map)
         {
+            ChangeHistory.StartTracking();
             if (isResizing)
             {
                 isResizing = false;
@@ -194,23 +201,34 @@ namespace Ozzyria.Gryp.MapTools
             {
                 map.AddWall(new Wall { Boundary = GetWorldArea() });
             }
+            ChangeHistory.FinishTracking();
         }
 
-        private void AttachHandles(MouseState mouseState, Camera camera, Map map)
+
+        public void PlaceHandles(Map map)
         {
-            if (map.SelectedWall != null && !isResizing)
+            if(map.SelectedWall != null)
             {
                 foreach (var handle in Handles)
                 {
                     handle.Attach(isResizing ? Area : map.SelectedWall.Boundary);
                 }
-
-                var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
-                var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
-                SelectedHandle = Handles
-                    .Where(h => h.ActivationArea.Contains(mouseWorldX, mouseWorldY))
-                    .OrderBy(h => Math.Sqrt(Math.Pow(h.ActivationArea.WorldX + (h.ActivationArea.WorldWidth / 2f) - mouseWorldX, 2) + Math.Pow(h.ActivationArea.WorldY + (h.ActivationArea.WorldHeight / 2f) - mouseWorldY, 2)))
-                    .FirstOrDefault();
+            }
+        }
+        private void AttachHandles(MouseState mouseState, Camera camera, Map map)
+        {
+            if (map.SelectedWall != null)
+            {
+                PlaceHandles(map);
+                if (!isResizing)
+                {
+                    var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
+                    var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);
+                    SelectedHandle = Handles
+                        .Where(h => h.ActivationArea.Contains(mouseWorldX, mouseWorldY))
+                        .OrderBy(h => Math.Sqrt(Math.Pow(h.ActivationArea.WorldX + (h.ActivationArea.WorldWidth / 2f) - mouseWorldX, 2) + Math.Pow(h.ActivationArea.WorldY + (h.ActivationArea.WorldHeight / 2f) - mouseWorldY, 2)))
+                        .FirstOrDefault();
+                }
             }
         }
     }

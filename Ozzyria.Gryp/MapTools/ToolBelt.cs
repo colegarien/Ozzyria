@@ -185,6 +185,7 @@ namespace Ozzyria.Gryp.MapTools
                         // not resizing, just draw the wall and resize handles
                         canvas.DrawRect(new SKRect(wallAreaX, wallAreaY, wallAreaX + wallAreaWidth, wallAreaY + wallAreaHeight), Paints.WallSelectionPaint);
 
+                        wallTool.PlaceHandles(map);
                         foreach (var handle in wallTool.Handles)
                         {
                             var paint = handle == wallTool.SelectedHandle
