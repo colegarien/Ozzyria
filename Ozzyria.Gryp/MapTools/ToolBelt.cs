@@ -160,6 +160,61 @@ namespace Ozzyria.Gryp.MapTools
                         canvas.DrawLine(renderStartX, renderStartY, renderEndX, renderEndY, Paints.TileHighlightPaint);
                     }
                 }
+
+                // draw special tool overlays for selection tools
+                if (tool.Value is WallTool && map.SelectedWall != null)
+                {
+                    var wallTool = tool.Value as WallTool;
+
+                    var toolArea = wallTool?.GetWorldArea() ?? new WorldBoundary();
+                    var wallArea = map.SelectedWall.Boundary;
+
+                    var isResizing = wallTool?.isResizing ?? false;
+
+                    var wallAreaX = camera.ViewX + camera.WorldToView(wallArea.WorldX);
+                    var wallAreaY = camera.ViewY + camera.WorldToView(wallArea.WorldY);
+                    var wallAreaWidth = camera.WorldToView(wallArea.WorldWidth);
+                    var wallAreaHeight = camera.WorldToView(wallArea.WorldHeight);
+
+                    var toolAreaX = camera.ViewX + camera.WorldToView(toolArea.WorldX);
+                    var toolAreaY = camera.ViewY + camera.WorldToView(toolArea.WorldY);
+                    var toolAreaWidth = camera.WorldToView(toolArea.WorldWidth);
+                    var toolAreaHeight = camera.WorldToView(toolArea.WorldHeight);
+                    if (wallTool != null && !isResizing)
+                    {
+                        // not resizing, just draw the wall and resize handles
+                        canvas.DrawRect(new SKRect(wallAreaX, wallAreaY, wallAreaX + wallAreaWidth, wallAreaY + wallAreaHeight), Paints.WallSelectionPaint);
+
+                        foreach (var handle in wallTool.Handles)
+                        {
+                            var paint = handle == wallTool.SelectedHandle
+                                ? Paints.ActivationHandleHoverPaint
+                                : Paints.ActivationHandlePaint;
+                            var handleX = camera.ViewX + camera.WorldToView(handle.ActivationArea.WorldX);
+                            var handleY = camera.ViewY + camera.WorldToView(handle.ActivationArea.WorldY);
+                            var handleWidth = camera.WorldToView(handle.ActivationArea.WorldWidth);
+                            var handleHeight = camera.WorldToView(handle.ActivationArea.WorldHeight);
+
+                            canvas.DrawRect(new SKRect(handleX, handleY, handleX + handleWidth, handleY + handleHeight), paint);
+                        }
+                    }
+                    else if(wallTool != null && isResizing)
+                    {
+                        // is resizing, draw the underlying current wall and the resizing overlay
+                        canvas.DrawRect(new SKRect(wallAreaX, wallAreaY, wallAreaX + wallAreaWidth, wallAreaY + wallAreaHeight), Paints.TileHighlightPaint);
+                        canvas.DrawRect(new SKRect(toolAreaX, toolAreaY, toolAreaX + toolAreaWidth, toolAreaY + toolAreaHeight), Paints.WallSelectionPaint);
+                    }
+                }
+                else if (tool.Value is EntityTool && map.SelectedEntity != null)
+                {
+                    var entityX = camera.ViewX + camera.WorldToView(map.SelectedEntity.WorldX);
+                    var entityY = camera.ViewY + camera.WorldToView(map.SelectedEntity.WorldY);
+                    var entityHalfWidth = camera.WorldToView(32) / 2f;
+                    var entityHalfHeight = camera.WorldToView(32) / 2f;
+                    canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, Paints.EntitySelectionPaint);
+                    canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, Paints.EntitySelectionPaint);
+                    canvas.DrawCircle(entityX, entityY, entityHalfWidth, Paints.EntitySelectionPaint);
+                }
             }
         }
     }

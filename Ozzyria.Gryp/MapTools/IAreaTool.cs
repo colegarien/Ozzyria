@@ -7,7 +7,7 @@ namespace Ozzyria.Gryp.MapTools
     internal abstract class IAreaTool : ITool
     {
         private const float CANCEL_THRESHOLD = 4;
-        private WorldBoundary Area = new WorldBoundary
+        protected WorldBoundary Area = new WorldBoundary
         {
             WorldX = 0,
             WorldY = 0,
@@ -79,25 +79,25 @@ namespace Ozzyria.Gryp.MapTools
         {
             if (!mouseState.IsLeftDown && trackingAreaSelect)
             {
+                if (Area.WorldWidth < 0)
+                {
+                    Area.WorldX += Area.WorldWidth;
+                    Area.WorldWidth = Math.Abs(Area.WorldWidth);
+                }
+
+                if (Area.WorldHeight < 0)
+                {
+                    Area.WorldY += Area.WorldHeight;
+                    Area.WorldHeight = Math.Abs(Area.WorldHeight);
+                }
+
                 trackingAreaSelect = false;
-                if (Math.Abs(Area.WorldWidth) < CANCEL_THRESHOLD && Math.Abs(Area.WorldHeight) < CANCEL_THRESHOLD)
+                if (Area.WorldWidth < CANCEL_THRESHOLD && Area.WorldHeight < CANCEL_THRESHOLD)
                 {
                     OnCancel(mouseState, camera, map);
                 }
                 else
                 {
-                    if(Area.WorldWidth < 0)
-                    {
-                        Area.WorldX += Area.WorldWidth;
-                        Area.WorldWidth = Math.Abs(Area.WorldWidth);
-                    }
-
-                    if(Area.WorldHeight < 0)
-                    {
-                        Area.WorldY += Area.WorldHeight;
-                        Area.WorldHeight = Math.Abs(Area.WorldHeight);
-                    }
-
                     OnComplete(mouseState, camera, map);
                 }
 

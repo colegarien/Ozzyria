@@ -76,6 +76,16 @@ namespace Ozzyria.Gryp.Models.Data
             return null;
         }
 
+        public Wall? GetWall(string internalId)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                return Layers[ActiveLayer].GetWall(internalId);
+            }
+
+            return null;
+        }
+
         public string AddWall(Wall wall)
         {
             if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
@@ -109,6 +119,16 @@ namespace Ozzyria.Gryp.Models.Data
                 SelectedWall = null;
                 Layers[ActiveLayer].RemoveWall(internalId);
             }
+        }
+
+        public Entity? GetEntity(string internalId)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                return Layers[ActiveLayer].GetEntity(internalId);
+            }
+
+            return null;
         }
 
         public string AddEntity(Entity entity)

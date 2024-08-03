@@ -253,26 +253,6 @@ namespace Ozzyria.Gryp
                     }
                 }
 
-                if(_map.SelectedWall != null)
-                {
-                    var wallX = camera.ViewX + camera.WorldToView(_map.SelectedWall.Boundary.WorldX);
-                    var wallY = camera.ViewY + camera.WorldToView(_map.SelectedWall.Boundary.WorldY);
-                    var wallWidth = camera.WorldToView(_map.SelectedWall.Boundary.WorldWidth);
-                    var wallHeight = camera.WorldToView(_map.SelectedWall.Boundary.WorldHeight);
-                    e.Surface.Canvas.DrawRect(new SKRect(wallX, wallY, wallX + wallWidth, wallY + wallHeight), Paints.TileSelectionPaint);
-                }
-
-                if(_map.SelectedEntity != null)
-                {
-                    var entityX = camera.ViewX + camera.WorldToView(_map.SelectedEntity.WorldX);
-                    var entityY = camera.ViewY + camera.WorldToView(_map.SelectedEntity.WorldY);
-                    var entityHalfWidth = camera.WorldToView(32) / 2f;
-                    var entityHalfHeight = camera.WorldToView(32) / 2f;
-                    e.Surface.Canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, Paints.TileSelectionPaint);
-                    e.Surface.Canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, Paints.TileSelectionPaint);
-                    e.Surface.Canvas.DrawCircle(entityX, entityY, entityHalfWidth, Paints.TileSelectionPaint);
-                }
-
                 // render overlay grid
                 for (var x = 0; x < _map.Width; x++)
                 {

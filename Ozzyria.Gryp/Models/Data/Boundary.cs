@@ -7,6 +7,12 @@
         public float WorldWidth { get; set; }
         public float WorldHeight { get; set; }
 
+        public void MoveCenterTo(float worldX, float worldY)
+        {
+            WorldX = worldX - (WorldWidth / 2f);
+            WorldY = worldY - (WorldHeight / 2f);
+        }
+
         public bool Contains(float worldX, float worldY)
         {
             return worldX < WorldX + WorldWidth

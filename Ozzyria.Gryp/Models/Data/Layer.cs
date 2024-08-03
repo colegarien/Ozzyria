@@ -111,6 +111,26 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
+        public Wall? GetWall(string internalId)
+        {
+            if(_parent == null)
+            {
+                for(int i = 0; i < _walls.Count; i++)
+                {
+                    if (_walls[i].InternalId == internalId)
+                    {
+                        return _walls[i];
+                    }
+                }
+
+                return null;
+            }
+            else
+            {
+                return _parent.GetWall(internalId);
+            }
+        }
+
         public Wall AddWall(Wall wall)
         {
             if(_parent == null)
@@ -209,6 +229,26 @@ namespace Ozzyria.Gryp.Models.Data
             else
             {
                 return _parent.GetEntities();
+            }
+        }
+
+        public Entity? GetEntity(string internalId)
+        {
+            if (_parent == null)
+            {
+                for (int i = 0; i < _entities.Count; i++)
+                {
+                    if (_entities[i].InternalId == internalId)
+                    {
+                        return _entities[i];
+                    }
+                }
+
+                return null;
+            }
+            else
+            {
+                return _parent.GetEntity(internalId);
             }
         }
 
