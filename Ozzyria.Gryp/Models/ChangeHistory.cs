@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Gryp.Models.Data;
+using System.Windows.Forms;
 
 namespace Ozzyria.Gryp.Models
 {
@@ -23,6 +24,16 @@ namespace Ozzyria.Gryp.Models
     internal struct WallSelectionChange
     {
         internal string InternalId { get; set; }
+    }
+
+    internal struct AddEnityChange
+    {
+        internal string InternalId { get; set; }
+    }
+
+    internal struct RemoveEntityChange
+    {
+        internal Entity Entity { get; set; }
     }
 
     internal class ChangeHistory
@@ -115,7 +126,10 @@ namespace Ozzyria.Gryp.Models
                             InternalId = map.SelectedEntity?.InternalId ?? ""
                         });
 
-                        map.SelectedEntity = map.GetEntity(selectionChange.InternalId);
+                        var selectedEntity = map.GetEntity(selectionChange.InternalId);
+                        if (selectedEntity != null) {
+                            map.SelectedEntity = selectedEntity;
+                        }
                     }
                     else if (change is WallSelectionChange)
                     {
@@ -126,6 +140,33 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         map.SelectedWall = map.GetWall(selectionChange.InternalId);
+                    }
+                    else if(change is AddEnityChange)
+                    {
+                        var entityChange = (AddEnityChange)change;
+                        var entity = map.GetEntity(entityChange.InternalId);
+                        if (entity != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new RemoveEntityChange
+                            {
+                                Entity = entity
+                            });
+
+                            map.RemoveEntity(entityChange.InternalId);
+                        }
+                    }
+                    else if(change is RemoveEntityChange)
+                    {
+                        var entityChange = (RemoveEntityChange)change;
+                        if (entityChange.Entity != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new AddEnityChange
+                            {
+                                InternalId = entityChange.Entity.InternalId
+                            });
+
+                            map.AddEntity(entityChange.Entity);
+                        }
                     }
                 }
                 Undos.RemoveAt(Undos.Count - 1);
@@ -177,7 +218,11 @@ namespace Ozzyria.Gryp.Models
                             InternalId = map.SelectedEntity?.InternalId ?? ""
                         });
 
-                        map.SelectedEntity = map.GetEntity(selectionChange.InternalId);
+                        var selectedEntity = map.GetEntity(selectionChange.InternalId);
+                        if (selectedEntity != null)
+                        {
+                            map.SelectedEntity = selectedEntity;
+                        }
                     }
                     else if (change is WallSelectionChange)
                     {
@@ -189,6 +234,32 @@ namespace Ozzyria.Gryp.Models
 
                         map.SelectedWall = map.GetWall(selectionChange.InternalId);
                     }
+                    else if (change is AddEnityChange)
+                    {
+                        var entityChange = (AddEnityChange)change;
+                        var entity = map.GetEntity(entityChange.InternalId);
+                        if (entity != null) {
+                            Undos[Undos.Count - 1].Add(new RemoveEntityChange
+                            {
+                                Entity = entity
+                            });
+
+                            map.RemoveEntity(entityChange.InternalId);
+                        }
+                    }
+                    else if (change is RemoveEntityChange)
+                    {
+                        var entityChange = (RemoveEntityChange)change;
+                        if (entityChange.Entity != null)
+                        {
+                            Undos[Undos.Count - 1].Add(new AddEnityChange
+                            {
+                                InternalId = entityChange.Entity.InternalId
+                            });
+
+                            map.AddEntity(entityChange.Entity);
+                        }
+                    }
                 }
                 Redos.RemoveAt(Redos.Count - 1);
             }
@@ -199,6 +270,33 @@ namespace Ozzyria.Gryp.Models
             Undos.Clear();
             Redos.Clear();
             Tracking = false;
+        }
+
+        public static string DebugDump()
+        {
+            var dump = "<<REDOS>>\r\n";
+            foreach(var redo in Redos)
+            {
+                dump += "- [";
+                foreach(var change in redo)
+                {
+                    dump += change.GetType().ToString() + ",";
+                }
+                dump += "]\r\n";
+            }
+
+            dump += "\r\n<<UNDOS>>\r\n";
+            foreach (var undo in Undos)
+            {
+                dump += "- [";
+                foreach (var change in undo)
+                {
+                    dump += change.GetType().ToString() + ",";
+                }
+                dump += "]\r\n";
+            }
+
+            return dump;
         }
     }
 }

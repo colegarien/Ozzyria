@@ -259,6 +259,10 @@ namespace Ozzyria.Gryp.Models.Data
                 ToggleChanged(true);
                 if (entity.InternalId == "")
                     entity.InternalId = System.Guid.NewGuid().ToString();
+                ChangeHistory.TrackChange(new AddEnityChange
+                {
+                    InternalId = entity.InternalId
+                });
                 _entities.Add(entity);
 
                 return entity;
@@ -330,6 +334,10 @@ namespace Ozzyria.Gryp.Models.Data
                     if (_entities[i].InternalId == internalId)
                     {
                         ToggleChanged(true);
+                        ChangeHistory.TrackChange(new RemoveEntityChange
+                        {
+                            Entity = _entities[i]
+                        });
                         _entities.RemoveAt(i);
                         break;
                     }

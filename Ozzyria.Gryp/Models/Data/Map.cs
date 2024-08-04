@@ -175,6 +175,17 @@ namespace Ozzyria.Gryp.Models.Data
             return "";
         }
 
+        public void RemoveEntity(string internalId)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                IsDirty = true;
+                if (internalId == (SelectedEntity?.InternalId ?? ""))
+                    UnselectEntity();
+                Layers[ActiveLayer].RemoveEntity(internalId);
+            }
+        }
+
         public void UnselectEntity()
         {
             if (SelectedEntity != null)

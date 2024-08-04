@@ -345,9 +345,9 @@ namespace Ozzyria.Gryp
             btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
             if (_map.ActiveLayer != currentLayer && currentLayer >= 0)
             {
+                ChangeHistory.TrackChange(new LayerChange { Layer = currentLayer });
                 _map.UnselectEntity();
                 _map.UnselectWall();
-                ChangeHistory.TrackChange(new LayerChange { Layer = currentLayer });
             }
 
             ChangeHistory.FinishTracking();
@@ -672,8 +672,15 @@ namespace Ozzyria.Gryp
         {
             if(e.KeyCode == Keys.Delete)
             {
+                ChangeHistory.StartTracking();
                 _map.RemoveSelectedEntity();
                 _map.RemoveSelectedWall();
+                ChangeHistory.FinishTracking();
+            }
+
+            if(e.KeyCode == Keys.Q)
+            {
+                MessageBox.Show(ChangeHistory.DebugDump());
             }
 
             if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
