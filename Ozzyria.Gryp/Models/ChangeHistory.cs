@@ -63,6 +63,8 @@ namespace Ozzyria.Gryp.Models
 
     internal class ChangeHistory
     {
+        private const int HISTORY_LIMIT = 69;
+
         private static bool Tracking = false;
         private static List<List<object>> Undos = new List<List<object>>();
         private static List<List<object>> Redos = new List<List<object>>();
@@ -89,6 +91,8 @@ namespace Ozzyria.Gryp.Models
                 {
                     // We clear redos after a new change is done
                     Redos.Clear();
+                    while(Undos.Count > HISTORY_LIMIT)
+                        Undos.RemoveAt(0);
                 }
             }
         }
@@ -268,6 +272,17 @@ namespace Ozzyria.Gryp.Models
                     }
                 }
                 Undos.RemoveAt(Undos.Count - 1);
+                
+                // clean up redos
+                if (Redos[Redos.Count - 1].Count <= 0)
+                {
+                    Redos.RemoveAt(Undos.Count - 1);
+                }
+                else
+                {
+                    while (Redos.Count > HISTORY_LIMIT)
+                        Redos.RemoveAt(0);
+                }
             }
         }
 
@@ -444,7 +459,7 @@ namespace Ozzyria.Gryp.Models
 
         public static string DebugDump()
         {
-            var dump = "<<REDOS>>\r\n";
+            var dump = "<<REDOS ("+Redos.Count+")>>\r\n";
             foreach(var redo in Redos)
             {
                 dump += "- [";
@@ -455,7 +470,7 @@ namespace Ozzyria.Gryp.Models
                 dump += "]\r\n";
             }
 
-            dump += "\r\n<<UNDOS>>\r\n";
+            dump += "\r\n<<UNDOS ("+Undos.Count+")>>\r\n";
             foreach (var undo in Undos)
             {
                 dump += "- [";
