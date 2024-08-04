@@ -46,6 +46,21 @@ namespace Ozzyria.Gryp.Models
         internal Wall Wall { get; set; }
     }
 
+    internal struct EditEntityChange
+    {
+        internal string InternalId { get; set; }
+        public string PrefabId { get; set; }
+        public float WorldX { get; set; }
+        public float WorldY { get; set; }
+        public Dictionary<string, string> Attributes;
+    }
+
+    internal struct EditWallChange
+    {
+        internal string InternalId { get; set; }
+        public WorldBoundary Boundary { get; set; }
+    }
+
     internal class ChangeHistory
     {
         private static bool Tracking = false;
@@ -128,7 +143,7 @@ namespace Ozzyria.Gryp.Models
 
                         map.ActiveLayer = layerChange.Layer;
                     }
-                    else if(change is EntitySelectionChange)
+                    else if (change is EntitySelectionChange)
                     {
                         var selectionChange = (EntitySelectionChange)change;
                         Redos[Redos.Count - 1].Add(new EntitySelectionChange
@@ -137,7 +152,8 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         var selectedEntity = map.GetEntity(selectionChange.InternalId);
-                        if (selectedEntity != null) {
+                        if (selectedEntity != null)
+                        {
                             map.SelectedEntity = selectedEntity;
                         }
                     }
@@ -151,7 +167,7 @@ namespace Ozzyria.Gryp.Models
 
                         map.SelectedWall = map.GetWall(selectionChange.InternalId);
                     }
-                    else if(change is AddEnityChange)
+                    else if (change is AddEnityChange)
                     {
                         var entityChange = (AddEnityChange)change;
                         var entity = map.GetEntity(entityChange.InternalId);
@@ -165,7 +181,7 @@ namespace Ozzyria.Gryp.Models
                             map.RemoveEntity(entityChange.InternalId);
                         }
                     }
-                    else if(change is RemoveEntityChange)
+                    else if (change is RemoveEntityChange)
                     {
                         var entityChange = (RemoveEntityChange)change;
                         if (entityChange.Entity != null)
@@ -203,6 +219,51 @@ namespace Ozzyria.Gryp.Models
                             });
 
                             map.AddWall(wallChange.Wall);
+                        }
+                    }
+                    else if (change is EditEntityChange)
+                    {
+                        var entityChange = (EditEntityChange)change;
+                        var currentEntity = map.GetEntity(entityChange.InternalId);
+                        if (currentEntity != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new EditEntityChange
+                            {
+                                InternalId = currentEntity.InternalId,
+                                PrefabId = currentEntity.PrefabId,
+                                WorldX = currentEntity.WorldX,
+                                WorldY = currentEntity.WorldY,
+                                Attributes = currentEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                            });
+
+                            currentEntity.PrefabId = entityChange.PrefabId;
+                            currentEntity.WorldX = entityChange.WorldX;
+                            currentEntity.WorldY = entityChange.WorldY;
+                            currentEntity.Attributes = entityChange.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+                        }
+                    }
+                    else if (change is EditWallChange)
+                    {
+                        var wallChange = (EditWallChange)change;
+                        var currentWall = map.GetWall(wallChange.InternalId);
+                        if (currentWall != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new EditWallChange
+                            {
+                                InternalId = currentWall.InternalId,
+                                Boundary = new WorldBoundary
+                                {
+                                    WorldX = currentWall.Boundary.WorldX,
+                                    WorldY = currentWall.Boundary.WorldY,
+                                    WorldWidth = currentWall.Boundary.WorldWidth,
+                                    WorldHeight = currentWall.Boundary.WorldHeight
+                                }
+                            });
+
+                            currentWall.Boundary.WorldX = wallChange.Boundary.WorldX;
+                            currentWall.Boundary.WorldY = wallChange.Boundary.WorldY;
+                            currentWall.Boundary.WorldWidth = wallChange.Boundary.WorldWidth;
+                            currentWall.Boundary.WorldHeight = wallChange.Boundary.WorldHeight;
                         }
                     }
                 }
@@ -322,6 +383,51 @@ namespace Ozzyria.Gryp.Models
                             });
 
                             map.AddWall(wallChange.Wall);
+                        }
+                    }
+                    else if (change is EditEntityChange)
+                    {
+                        var entityChange = (EditEntityChange)change;
+                        var currentEntity = map.GetEntity(entityChange.InternalId);
+                        if (currentEntity != null)
+                        {
+                            Undos[Undos.Count - 1].Add(new EditEntityChange
+                            {
+                                InternalId = currentEntity.InternalId,
+                                PrefabId = currentEntity.PrefabId,
+                                WorldX = currentEntity.WorldX,
+                                WorldY = currentEntity.WorldY,
+                                Attributes = currentEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                            });
+
+                            currentEntity.PrefabId = entityChange.PrefabId;
+                            currentEntity.WorldX = entityChange.WorldX;
+                            currentEntity.WorldY = entityChange.WorldY;
+                            currentEntity.Attributes = entityChange.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+                        }
+                    }
+                    else if (change is EditWallChange)
+                    {
+                        var wallChange = (EditWallChange)change;
+                        var currentWall = map.GetWall(wallChange.InternalId);
+                        if (currentWall != null)
+                        {
+                            Undos[Undos.Count - 1].Add(new EditWallChange
+                            {
+                                InternalId = currentWall.InternalId,
+                                Boundary = new WorldBoundary
+                                {
+                                    WorldX = currentWall.Boundary.WorldX,
+                                    WorldY = currentWall.Boundary.WorldY,
+                                    WorldWidth = currentWall.Boundary.WorldWidth,
+                                    WorldHeight = currentWall.Boundary.WorldHeight
+                                }
+                            });
+
+                            currentWall.Boundary.WorldX = wallChange.Boundary.WorldX;
+                            currentWall.Boundary.WorldY = wallChange.Boundary.WorldY;
+                            currentWall.Boundary.WorldWidth = wallChange.Boundary.WorldWidth;
+                            currentWall.Boundary.WorldHeight = wallChange.Boundary.WorldHeight;
                         }
                     }
                 }

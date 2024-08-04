@@ -184,13 +184,10 @@ namespace Ozzyria.Gryp
 
                 // now trigger UI changes
                 cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
-                foreach(DataGridViewRow row in tableEntityAttributes.Rows)
+                tableEntityAttributes.Rows.Clear();
+                foreach(var kv in _map.CurrentEntityBrush.Attributes)
                 {
-                    var rowKey = row.Cells["columnKey"]?.Value?.ToString() ?? "";
-                    if (_map.CurrentEntityBrush.Attributes.ContainsKey(rowKey))
-                    {
-                        var valueKey = row.Cells["columnValue"].Value = _map.CurrentEntityBrush.Attributes[rowKey];
-                    }
+                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
                 }
             }
         }
@@ -577,10 +574,20 @@ namespace Ozzyria.Gryp
                     break;
             }
 
-            if(_map.SelectedEntity != null)
+            if(_map.SelectedEntity != null && _map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId)
             {
+                ChangeHistory.StartTracking();
+                ChangeHistory.TrackChange(new EditEntityChange
+                {
+                    InternalId = _map.SelectedEntity.InternalId,
+                    PrefabId = _map.SelectedEntity.PrefabId,
+                    WorldX = _map.SelectedEntity.WorldX,
+                    WorldY = _map.SelectedEntity.WorldY,
+                    Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                });
                 _map.SelectedEntity.PrefabId = _map.CurrentEntityBrush.PrefabId;
                 _map.SelectedEntity.Attributes = _map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+                ChangeHistory.FinishTracking();
             }
         }
 
@@ -593,9 +600,19 @@ namespace Ozzyria.Gryp
                 var rowValue = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
 
                 _map.CurrentEntityBrush.Attributes[rowKey] = rowValue;
-                if(_map.SelectedEntity != null)
+                if(_map.SelectedEntity != null && (!_map.SelectedEntity.Attributes.ContainsKey(rowKey) || _map.SelectedEntity.Attributes[rowKey] != rowValue))
                 {
+                    ChangeHistory.StartTracking();
+                    ChangeHistory.TrackChange(new EditEntityChange
+                    {
+                        InternalId = _map.SelectedEntity.InternalId,
+                        PrefabId = _map.SelectedEntity.PrefabId,
+                        WorldX = _map.SelectedEntity.WorldX,
+                        WorldY = _map.SelectedEntity.WorldY,
+                        Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                    });
                     _map.SelectedEntity.Attributes[rowKey] = rowValue;
+                    ChangeHistory.FinishTracking();
                 }
             }
         }
@@ -622,6 +639,21 @@ namespace Ozzyria.Gryp
                     i++;
                 }
             }
+            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
+            if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
+            {
+                // select up current entity and selected
+                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+
+                // now trigger UI changes
+                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
+                tableEntityAttributes.Rows.Clear();
+                foreach (var kv in _map.CurrentEntityBrush.Attributes)
+                {
+                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
+                }
+            }
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -639,6 +671,21 @@ namespace Ozzyria.Gryp
                         break;
                     }
                     i++;
+                }
+            }
+            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
+            if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
+            {
+                // select up current entity and selected
+                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+
+                // now trigger UI changes
+                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
+                tableEntityAttributes.Rows.Clear();
+                foreach (var kv in _map.CurrentEntityBrush.Attributes)
+                {
+                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
                 }
             }
         }

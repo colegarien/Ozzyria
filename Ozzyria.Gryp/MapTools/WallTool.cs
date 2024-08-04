@@ -176,8 +176,21 @@ namespace Ozzyria.Gryp.MapTools
             {
                 ChangeHistory.StartTracking();
                 isResizing = false;
-                if(map.SelectedWall != null)
+                if (map.SelectedWall != null)
+                {
+                    ChangeHistory.TrackChange(new EditWallChange
+                    {
+                        InternalId = map.SelectedWall.InternalId,
+                        Boundary = new WorldBoundary
+                        {
+                            WorldX = map.SelectedWall.Boundary.WorldX,
+                            WorldY = map.SelectedWall.Boundary.WorldY,
+                            WorldWidth = map.SelectedWall.Boundary.WorldWidth,
+                            WorldHeight = map.SelectedWall.Boundary.WorldHeight
+                        }
+                    });
                     map.SelectedWall.Boundary = GetWorldArea();
+                }
                 ChangeHistory.FinishTracking();
             }
             else
@@ -195,7 +208,20 @@ namespace Ozzyria.Gryp.MapTools
             {
                 isResizing = false;
                 if (map.SelectedWall != null)
+                {
+                    ChangeHistory.TrackChange(new EditWallChange
+                    {
+                        InternalId = map.SelectedWall.InternalId,
+                        Boundary = new WorldBoundary
+                        {
+                            WorldX = map.SelectedWall.Boundary.WorldX,
+                            WorldY = map.SelectedWall.Boundary.WorldY,
+                            WorldWidth = map.SelectedWall.Boundary.WorldWidth,
+                            WorldHeight = map.SelectedWall.Boundary.WorldHeight
+                        }
+                    });
                     map.SelectedWall.Boundary = GetWorldArea();
+                }
             }
             else
             {
