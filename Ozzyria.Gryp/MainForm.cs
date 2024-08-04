@@ -678,7 +678,7 @@ namespace Ozzyria.Gryp
                 ChangeHistory.FinishTracking();
             }
 
-            if(e.KeyCode == Keys.Q)
+            if(e.KeyCode == Keys.Oemtilde)
             {
                 MessageBox.Show(ChangeHistory.DebugDump());
             }

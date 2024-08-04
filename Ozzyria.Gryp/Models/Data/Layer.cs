@@ -138,6 +138,10 @@ namespace Ozzyria.Gryp.Models.Data
                 ToggleChanged(true);
                 if(wall.InternalId == "")
                     wall.InternalId = System.Guid.NewGuid().ToString();
+                ChangeHistory.TrackChange(new AddWallChange
+                {
+                    InternalId = wall.InternalId
+                });
                 _walls.Add(wall);
 
                 return wall;
@@ -209,6 +213,10 @@ namespace Ozzyria.Gryp.Models.Data
                     if (_walls[i].InternalId == internalId)
                     {
                         ToggleChanged(true);
+                        ChangeHistory.TrackChange(new RemoveWallChange
+                        {
+                            Wall = _walls[i]
+                        });
                         _walls.RemoveAt(i);
                         break;
                     }

@@ -95,13 +95,24 @@ namespace Ozzyria.Gryp.Models.Data
                 SelectedWall = Layers[ActiveLayer].AddWall(wall);
                 if (currentId != SelectedWall.InternalId)
                 {
-                    ChangeHistory.TrackChange(new WallSelectionChange{ InternalId = currentId });
+                    ChangeHistory.TrackChange(new WallSelectionChange { InternalId = currentId });
                 }
 
                 return SelectedWall.InternalId;
             }
 
             return "";
+        }
+
+        public void RemoveWall(string internalId)
+        {
+            if (ActiveLayer >= 0 && ActiveLayer < Layers.Count)
+            {
+                IsDirty = true;
+                if (internalId == (SelectedWall?.InternalId ?? ""))
+                    UnselectWall();
+                Layers[ActiveLayer].RemoveWall(internalId);
+            }
         }
 
         public void UnselectWall()

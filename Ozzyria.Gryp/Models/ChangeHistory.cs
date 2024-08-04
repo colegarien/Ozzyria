@@ -36,6 +36,16 @@ namespace Ozzyria.Gryp.Models
         internal Entity Entity { get; set; }
     }
 
+    internal struct AddWallChange
+    {
+        internal string InternalId { get; set; }
+    }
+
+    internal struct RemoveWallChange
+    {
+        internal Wall Wall { get; set; }
+    }
+
     internal class ChangeHistory
     {
         private static bool Tracking = false;
@@ -168,6 +178,33 @@ namespace Ozzyria.Gryp.Models
                             map.AddEntity(entityChange.Entity);
                         }
                     }
+                    else if (change is AddWallChange)
+                    {
+                        var wallChange = (AddWallChange)change;
+                        var wall = map.GetWall(wallChange.InternalId);
+                        if (wall != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new RemoveWallChange
+                            {
+                                Wall = wall
+                            });
+
+                            map.RemoveWall(wallChange.InternalId);
+                        }
+                    }
+                    else if (change is RemoveWallChange)
+                    {
+                        var wallChange = (RemoveWallChange)change;
+                        if (wallChange.Wall != null)
+                        {
+                            Redos[Redos.Count - 1].Add(new AddWallChange
+                            {
+                                InternalId = wallChange.Wall.InternalId
+                            });
+
+                            map.AddWall(wallChange.Wall);
+                        }
+                    }
                 }
                 Undos.RemoveAt(Undos.Count - 1);
             }
@@ -258,6 +295,33 @@ namespace Ozzyria.Gryp.Models
                             });
 
                             map.AddEntity(entityChange.Entity);
+                        }
+                    }
+                    else if (change is AddWallChange)
+                    {
+                        var wallChange = (AddWallChange)change;
+                        var wall = map.GetWall(wallChange.InternalId);
+                        if (wall != null)
+                        {
+                            Undos[Undos.Count - 1].Add(new RemoveWallChange
+                            {
+                                Wall = wall
+                            });
+
+                            map.RemoveWall(wallChange.InternalId);
+                        }
+                    }
+                    else if (change is RemoveWallChange)
+                    {
+                        var wallChange = (RemoveWallChange)change;
+                        if (wallChange.Wall != null)
+                        {
+                            Undos[Undos.Count - 1].Add(new AddWallChange
+                            {
+                                InternalId = wallChange.Wall.InternalId
+                            });
+
+                            map.AddWall(wallChange.Wall);
                         }
                     }
                 }
