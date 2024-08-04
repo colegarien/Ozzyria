@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Ozzyria.Game.Animation;
+using Ozzyria.Content;
 using Ozzyria.Game.Components;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 

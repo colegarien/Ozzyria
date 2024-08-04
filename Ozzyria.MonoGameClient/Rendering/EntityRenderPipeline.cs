@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Animation;
+using Ozzyria.Content.Models;
 using Ozzyria.Game.Components;
 using Grecs;
 
@@ -54,7 +54,7 @@ namespace Ozzyria.MonoGameClient.Rendering
             var graphic = graphicsPipeline.GetEntityGraphic(entity.id);
             graphic.Resource = drawable.Resource;
             graphic.Layer = skeleton.Layer;
-            graphic.SubLayer = skeleton.SubLayer;
+            graphic.SubLayer = skeleton.SubLayer + drawable.RenderOffset;
             graphic.SubSubLayer = drawable.Subspace;
             graphic.Destination = new Rectangle(x, y, drawable.Width, drawable.Height);
             graphic.Source = new Rectangle(drawable.Left, drawable.Top, drawable.Width, drawable.Height);

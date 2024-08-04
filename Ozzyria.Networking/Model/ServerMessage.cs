@@ -1,5 +1,5 @@
 ﻿using Grecs;
-using Ozzyria.Game.Persistence;
+using Ozzyria.Game.Serialization;
 using System.Collections.Generic;
 using System.IO;
 
@@ -86,7 +86,7 @@ namespace Ozzyria.Networking.Model
                     writer.Write((int)ServerMessage.EntityUpdate);
                     foreach (var entity in entities)
                     {
-                        WorldPersistence.WriteEntity(writer, entity);
+                        EntitySerializer.WriteEntity(writer, entity);
                     }
                 }
 
@@ -102,7 +102,7 @@ namespace Ozzyria.Networking.Model
                 {
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        WorldPersistence.ReadEntity(context, reader);
+                        EntitySerializer.ReadEntity(context, reader);
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace Ozzyria.Networking.Model
                     writer.Write(false);
                     foreach (var entity in entities)
                     {
-                        WorldPersistence.WriteDetachedEntity(writer, entity);
+                        EntitySerializer.WriteDetachedEntity(writer, entity);
                     }
                 }
 
@@ -223,7 +223,7 @@ namespace Ozzyria.Networking.Model
                     response.Contents = new List<Entity>();
                     while (reader.BaseStream.Position < reader.BaseStream.Length)
                     {
-                        response.Contents.Add(WorldPersistence.ReadDetachedEntity(reader));
+                        response.Contents.Add(EntitySerializer.ReadDetachedEntity(reader));
                     }
                 }
             }

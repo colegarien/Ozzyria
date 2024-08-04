@@ -1,8 +1,5 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
-using Ozzyria.Game.Systems;
-using System.Drawing;
-using System.Numerics;
 
 namespace Ozzyria.Game.Utility
 {
@@ -17,7 +14,7 @@ namespace Ozzyria.Game.Utility
             playerTag.PlayerId = playerId;
 
             var playerLocation = (Components.Location)player.CreateComponent(typeof(Components.Location));
-            playerLocation.Area = "test_a"; // TODO OZ-28 pull this from a storage or some kind?
+            playerLocation.Area = "test_m"; // TODO OZ-28 pull this from a storage or some kind?
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
 

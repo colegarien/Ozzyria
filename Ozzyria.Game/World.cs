@@ -1,9 +1,8 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
-using Ozzyria.Game.Persistence;
+﻿using Grecs;
 using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
+using Ozzyria.Content.Models.Area;
 
 namespace Ozzyria.Game
 {
@@ -27,22 +26,21 @@ namespace Ozzyria.Game
 
     public class World
     {
-        public WorldPersistence WorldLoader = new WorldPersistence();
         public WorldState WorldState = new WorldState();
 
         public World()
         {
-            // load in all area templates
-            foreach (var template in WorldLoader.RetrieveAreaTemplates())
+            // load in all areas
+            foreach (var areaId in AreaData.RetrieveAreaIds())
             {
-                WorldState.Areas[template.Name] = new Area(this, template);
+                WorldState.Areas[areaId] = new Area(this, areaId);
             }
         }
 
         public void PlayerJoin(int playerId)
         {
             // TODO figure out what world to start player in
-            WorldState.PlayerAreaTracker[playerId] = "test_a";
+            WorldState.PlayerAreaTracker[playerId] = "test_m";
             WorldState.PlayerInputBuffer[playerId] = new Input();
             EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId);
         }

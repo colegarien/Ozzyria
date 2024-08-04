@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game.Components;
 using Ozzyria.Game;
 using Grecs;
+using Ozzyria.Content.Models;
 
 namespace Ozzyria.MonoGameClient.Systems
 {
@@ -21,7 +22,10 @@ namespace Ozzyria.MonoGameClient.Systems
                 {
                     var movement = entity.GetComponent<Movement>();
                     _game.Camera.CenterView(movement.X, movement.Y);
-                    _game.Camera.ApplyBounds(0, 0, _game.TileMap.Width * Tile.DIMENSION, _game.TileMap.Height * Tile.DIMENSION);
+                    if (_game.AreaData?.TileData != null)
+                    {
+                        _game.Camera.ApplyBounds(0, 0, _game.AreaData.TileData.Width * Constants.TILE_DIMENSION, _game.AreaData.TileData.Height * Constants.TILE_DIMENSION);
+                    }
 
                     return;
                 }

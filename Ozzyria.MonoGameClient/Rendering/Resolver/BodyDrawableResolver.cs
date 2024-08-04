@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Animation;
+﻿using Ozzyria.Content;
+using Ozzyria.Content.Models;
 using Ozzyria.Game.Components;
 
 namespace Ozzyria.MonoGameClient.Rendering.Resolver

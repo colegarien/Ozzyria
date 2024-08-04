@@ -1,0 +1,1 @@
+{"Prefabs":[[{"PrefabId":"exp_orb","X":368.5,"Y":143,"Attributes":{"amount":"100"}},{"PrefabId":"door","X":548.5,"Y":838,"Attributes":{"new_area_id":"test_m2","new_area_x":"200","new_area_y":"200"}}],[{"PrefabId":"slime_spawner","X":456.34372,"Y":318.2387,"Attributes":null}]]}
