@@ -203,11 +203,11 @@ namespace Ozzyria.Gryp
             // if is a checked-able tool
             var senderTag = ((ToolStripButton)sender).Tag?.ToString() ?? "";
             ChangeHistory.StartTracking();
-            if (senderTag != "entity")
+            if (senderTag != "entity" && senderTag != "move")
             {
                 _map.UnselectEntity();
             }
-            if (senderTag != "wall")
+            if (senderTag != "wall" && senderTag != "move")
             {
                 _map.UnselectWall();
             }
@@ -611,6 +611,9 @@ namespace Ozzyria.Gryp
                         WorldY = _map.SelectedEntity.WorldY,
                         Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
                     });
+                    
+                    if(_map.SelectedEntity.Attributes == null)
+                        _map.SelectedEntity.Attributes = new Dictionary<string, string>();
                     _map.SelectedEntity.Attributes[rowKey] = rowValue;
                     ChangeHistory.FinishTracking();
                 }

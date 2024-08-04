@@ -15,6 +15,7 @@ namespace Ozzyria.Gryp.MapTools
             tools = new Dictionary<string, ITool>
             {
                 { "pan", new PanTool { Enabled = true, } },
+                { "move", new MoveTool() },
                 { "select", new SelectTool() },
                 { "brush", new BrushTool() },
                 { "fill", new FillTool() },
@@ -208,15 +209,76 @@ namespace Ozzyria.Gryp.MapTools
                 }
                 else if (tool.Value is EntityTool && map.SelectedEntity != null)
                 {
-                    var entityX = camera.ViewX + camera.WorldToView(map.SelectedEntity.WorldX);
-                    var entityY = camera.ViewY + camera.WorldToView(map.SelectedEntity.WorldY);
-                    var entityHalfWidth = camera.WorldToView(32) / 2f;
-                    var entityHalfHeight = camera.WorldToView(32) / 2f;
-                    canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, Paints.EntitySelectionPaint);
-                    canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, Paints.EntitySelectionPaint);
-                    canvas.DrawCircle(entityX, entityY, entityHalfWidth, Paints.EntitySelectionPaint);
+                    RenderEntityShape(canvas, camera, map.SelectedEntity.WorldX, map.SelectedEntity.WorldY, Paints.EntitySelectionPaint);
+                }
+                else if(tool.Value is MoveTool)
+                {
+                    var moveTool = tool.Value as MoveTool;
+                    if(moveTool != null)
+                    {
+                        if(map.SelectedEntity != null)
+                        {
+                            RenderEntityShape(canvas, camera, map.SelectedEntity.WorldX, map.SelectedEntity.WorldY, Paints.EntitySelectionPaint);
+                            if (moveTool.isMovingEntity)
+                            {
+                                RenderEntityShape(canvas, camera, map.SelectedEntity.WorldX, map.SelectedEntity.WorldY, Paints.EntityGhostPaint);
+                                RenderLine(canvas, camera, map.SelectedEntity.WorldX, map.SelectedEntity.WorldY, mouseWorldX, mouseWorldY, Paints.EntityGhostPaint);
+                                RenderEntityShape(canvas, camera, mouseWorldX, mouseWorldY, Paints.EntitySelectionPaint);
+                            }
+                        }
+                        
+                        if (map.SelectedWall != null)
+                        {
+                            RenderWorldBoundary(canvas, camera, map.SelectedWall.Boundary, Paints.WallSelectionPaint);
+                            if(moveTool.isMovingWall)
+                            {
+                                var previewBoundary = new WorldBoundary
+                                {
+                                    WorldX = mouseWorldX - (map.SelectedWall.Boundary.WorldWidth / 2f),
+                                    WorldY = mouseWorldY - (map.SelectedWall.Boundary.WorldHeight / 2f),
+                                    WorldWidth = map.SelectedWall.Boundary.WorldWidth,
+                                    WorldHeight = map.SelectedWall.Boundary.WorldHeight,
+                                };
+
+                                RenderWorldBoundary(canvas, camera, map.SelectedWall.Boundary, Paints.WallGhostPaint);
+                                RenderLine(canvas, camera, map.SelectedWall.Boundary.WorldX + (map.SelectedWall.Boundary.WorldWidth / 2f), map.SelectedWall.Boundary.WorldY + (map.SelectedWall.Boundary.WorldHeight / 2f), mouseWorldX, mouseWorldY, Paints.EntityGhostPaint);
+                                RenderWorldBoundary(canvas, camera, previewBoundary, Paints.WallSelectionPaint);
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        private void RenderLine(SKCanvas canvas, Camera camera, float worldX1, float worldY1, float worldX2, float worldY2, SKPaint paint)
+        {
+            var x1 = camera.ViewX + camera.WorldToView(worldX1);
+            var y1 = camera.ViewY + camera.WorldToView(worldY1);
+            var x2 = camera.ViewX + camera.WorldToView(worldX2);
+            var y2 = camera.ViewY + camera.WorldToView(worldY2);
+            canvas.DrawLine(new SKPoint(x1, y1), new SKPoint(x2, y2), paint);
+        }
+
+        private void RenderEntityShape(SKCanvas canvas, Camera camera, float worldX, float worldY, SKPaint paint)
+        {
+            var entityX = camera.ViewX + camera.WorldToView(worldX);
+            var entityY = camera.ViewY + camera.WorldToView(worldY);
+            var entityHalfWidth = camera.WorldToView(32) / 2f;
+            var entityHalfHeight = camera.WorldToView(32) / 2f;
+            canvas.DrawLine(entityX - entityHalfWidth, entityY, entityX + entityHalfWidth, entityY, paint);
+            canvas.DrawLine(entityX, entityY - entityHalfHeight, entityX, entityY + entityHalfHeight, paint);
+            canvas.DrawCircle(entityX, entityY, entityHalfWidth, paint);
+
+        }
+
+        private void RenderWorldBoundary(SKCanvas canvas, Camera camera, WorldBoundary boundary, SKPaint paint)
+        {
+            var boundaryX = camera.ViewX + camera.WorldToView(boundary.WorldX);
+            var boundaryY = camera.ViewY + camera.WorldToView(boundary.WorldY);
+            var boundaryWidth = camera.WorldToView(boundary.WorldWidth);
+            var boundaryHeight = camera.WorldToView(boundary.WorldHeight);
+
+            canvas.DrawRect(new SKRect(boundaryX, boundaryY, boundaryX + boundaryWidth, boundaryY + boundaryHeight), paint);
         }
     }
 }

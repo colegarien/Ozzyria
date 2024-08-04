@@ -100,6 +100,19 @@ namespace Ozzyria.Gryp.Models
             IsAntialias = false
         };
 
+        public static SKPaint WallGhostPaint = new SKPaint
+        {
+            Color = new SKColor(
+                red: (byte)71,
+                green: (byte)184,
+                blue: (byte)232,
+                alpha: (byte)255
+            ),
+            StrokeWidth = 2,
+            IsStroke = true,
+            IsAntialias = false
+        };
+
         public static SKPaint ActivationHandlePaint = new SKPaint
         {
             Color = new SKColor(
@@ -145,6 +158,19 @@ namespace Ozzyria.Gryp.Models
                 red: (byte)124,
                 green: (byte)232,
                 blue: (byte)72,
+                alpha: (byte)255
+            ),
+            StrokeWidth = 2,
+            IsStroke = true,
+            IsAntialias = false
+        };
+
+        public static SKPaint EntityGhostPaint = new SKPaint
+        {
+            Color = new SKColor(
+                red: (byte)71,
+                green: (byte)184,
+                blue: (byte)232,
                 alpha: (byte)255
             ),
             StrokeWidth = 2,
