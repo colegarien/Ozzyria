@@ -39,6 +39,8 @@ namespace Ozzyria.Gryp
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckForUnsavedChanges();
+
             var mapDialog = new NewMapDialog();
             if (mapDialog.ShowDialog() == DialogResult.OK)
             {
@@ -74,6 +76,8 @@ namespace Ozzyria.Gryp
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckForUnsavedChanges();
+
             var mapDialog = new OpenMapDialog();
             if (mapDialog.ShowDialog() == DialogResult.OK)
             {
@@ -499,6 +503,11 @@ namespace Ozzyria.Gryp
         }
 
         private void MainGrypWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CheckForUnsavedChanges();
+        }
+
+        private void CheckForUnsavedChanges()
         {
             if (_map.IsDirty)
             {
