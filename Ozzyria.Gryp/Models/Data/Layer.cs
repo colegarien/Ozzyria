@@ -357,17 +357,30 @@ namespace Ozzyria.Gryp.Models.Data
             }
         }
 
-        public void PushTile(Tile tileData, int tileX, int tileY)
+        public Tile? PushTile(Tile tileData, int tileX, int tileY)
         {
             if (!_boundary.Contains(tileX, tileY))
             {
-                return;
-            } else if (IsSplit())
+                return null;
+            }
+            else if (IsSplit())
             {
-                _bottomLeft?.PushTile(tileData, tileX, tileY);
-                _bottomRight?.PushTile(tileData, tileX, tileY);
-                _topLeft?.PushTile(tileData, tileX, tileY);
-                _topRight?.PushTile(tileData, tileX, tileY);
+                Tile? result = null;
+                result = _bottomLeft?.PushTile(tileData, tileX, tileY);
+                if (result != null)
+                    return result;
+
+                result = _bottomRight?.PushTile(tileData, tileX, tileY);
+                if (result != null)
+                    return result;
+
+                result = _topLeft?.PushTile(tileData, tileX, tileY);
+                if (result != null)
+                    return result;
+
+                result = _topRight?.PushTile(tileData, tileX, tileY);
+                if (result != null)
+                    return result;
             }
             else if (_tileData != null)
             {
@@ -384,8 +397,11 @@ namespace Ozzyria.Gryp.Models.Data
 
                     ToggleChanged(true);
                     _tileData[tileXIndex, tileYIndex] = tileData;
+                    return _tileData[tileXIndex, tileYIndex];
                 }
             }
+
+            return null;
         }
         public void PaintArea(TileBoundary? region, Tile tileData, int originX, int originY)
         {

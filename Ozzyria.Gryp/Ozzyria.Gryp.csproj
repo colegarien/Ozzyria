@@ -11,6 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="auto_tile.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="auto_tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="2.88.8" />
   </ItemGroup>
 

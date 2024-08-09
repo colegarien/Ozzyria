@@ -71,6 +71,7 @@ namespace Ozzyria.Gryp
             btnBrushPreset = new Button();
             toolTabs = new TabControl();
             tabBrush = new TabPage();
+            chkAutoTile = new CheckBox();
             tabEntity = new TabPage();
             tableEntityAttributes = new DataGridView();
             columnKey = new DataGridViewTextBoxColumn();
@@ -393,7 +394,7 @@ namespace Ozzyria.Gryp
             listCurrentBrush.Location = new Point(6, 6);
             listCurrentBrush.MultiSelect = false;
             listCurrentBrush.Name = "listCurrentBrush";
-            listCurrentBrush.Size = new Size(189, 136);
+            listCurrentBrush.Size = new Size(189, 110);
             listCurrentBrush.TabIndex = 14;
             listCurrentBrush.UseCompatibleStateImageBehavior = false;
             listCurrentBrush.DoubleClick += listCurrentBrush_DoubleClick;
@@ -440,6 +441,7 @@ namespace Ozzyria.Gryp
             // 
             // tabBrush
             // 
+            tabBrush.Controls.Add(chkAutoTile);
             tabBrush.Controls.Add(listCurrentBrush);
             tabBrush.Controls.Add(btnBrushPreset);
             tabBrush.Controls.Add(btnRemoveBrush);
@@ -451,6 +453,17 @@ namespace Ozzyria.Gryp
             tabBrush.TabIndex = 0;
             tabBrush.Text = "Brush";
             tabBrush.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoTile
+            // 
+            chkAutoTile.AutoSize = true;
+            chkAutoTile.Location = new Point(6, 122);
+            chkAutoTile.Name = "chkAutoTile";
+            chkAutoTile.Size = new Size(92, 19);
+            chkAutoTile.TabIndex = 18;
+            chkAutoTile.Text = "use auto-tile";
+            chkAutoTile.UseVisualStyleBackColor = true;
+            chkAutoTile.CheckedChanged += chkAutoTile_CheckedChanged;
             // 
             // tabEntity
             // 
@@ -540,6 +553,7 @@ namespace Ozzyria.Gryp
             mainStatusStrip.PerformLayout();
             toolTabs.ResumeLayout(false);
             tabBrush.ResumeLayout(false);
+            tabBrush.PerformLayout();
             tabEntity.ResumeLayout(false);
             tabEntity.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tableEntityAttributes).EndInit();
@@ -594,5 +608,6 @@ namespace Ozzyria.Gryp
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem undoToolStripMenuItem;
         private ToolStripMenuItem redoToolStripMenuItem;
+        private CheckBox chkAutoTile;
     }
 }

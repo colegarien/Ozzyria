@@ -17,6 +17,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         public TileBoundary? SelectedRegion { get; set; } = null;
 
+        public bool AutoTile { get; set; } = false;
         public List<string> CurrentBrush { get; set; } = new List<string>();
 
         public Entity CurrentEntityBrush { get; set; } = new Entity();
@@ -49,7 +50,12 @@ namespace Ozzyria.Gryp.Models.Data
             if (isInSelection && ActiveLayer >= 0 && ActiveLayer < Layers.Count)
             {
                 IsDirty = true;
-                Layers[ActiveLayer].PushTile(tileData, x, y);
+                var updatedTile = Layers[ActiveLayer].PushTile(tileData, x, y);
+                if (updatedTile != null && AutoTile)
+                {
+                    var autoTileConfig = AutoTileConfig.GetInstance();
+                    autoTileConfig.AutoTile(updatedTile, this, x, y);
+                }
             }
         }
 
@@ -256,7 +262,7 @@ namespace Ozzyria.Gryp.Models.Data
                 UpdatedAt = DateTime.Now,
             };
 
-            areaData.TileData = new Content.Models.Area.TileData
+            areaData.TileData = new TileData
             {
                 Width = Width,
                 Height = Height,
@@ -268,7 +274,7 @@ namespace Ozzyria.Gryp.Models.Data
             };
             areaData.PrefabData = new PrefabData
             {
-                Prefabs = new Content.Models.Area.PrefabEntry[Layers.Count][]
+                Prefabs = new PrefabEntry[Layers.Count][]
             };
             for (var layer = 0; layer < Layers.Count; layer++)
             {
@@ -323,7 +329,7 @@ namespace Ozzyria.Gryp.Models.Data
                 {
                     for (var y = 0; y < (areaData.TileData?.Layers[layer][x]?.Length ?? 0); y++)
                     {
-                        PushTile(new Models.Data.Tile
+                        PushTile(new Tile
                         {
                             DrawableIds = areaData.TileData?.Layers[layer][x][y]?.ToList() ?? [],
                         }, x, y);

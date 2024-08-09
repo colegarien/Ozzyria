@@ -563,6 +563,11 @@ namespace Ozzyria.Gryp
             }
         }
 
+        private void chkAutoTile_CheckedChanged(object sender, EventArgs e)
+        {
+            _map.AutoTile = ((CheckBox)sender).Checked;
+        }
+
         void IEventSubscriber<SelectedEntityChangeEvent>.OnNotify(SelectedEntityChangeEvent e)
         {
             if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
