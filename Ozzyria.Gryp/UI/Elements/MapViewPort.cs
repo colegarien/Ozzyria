@@ -2,26 +2,21 @@
 using SkiaSharp.Views.Desktop;
 using SkiaSharp;
 using Ozzyria.Gryp.Models.Data;
-using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models.Event;
+using Ozzyria.Gryp.Models.Form;
 
 namespace Ozzyria.Gryp.UI.Elements
 {
     internal class MapViewPort: SKGLControl
     {
-        internal ToolBelt? _toolBelt;
         internal Map? _map;
         internal Camera _camera = new Camera();
+        internal MouseState _mouseState = new MouseState();
 
         #region Attachment
         public void AttachMap(Map map)
         {
             _map = map;
-        }
-
-        public void AttachToolBelt(ToolBelt toolBelt)
-        {
-            _toolBelt = toolBelt;
         }
         #endregion
 
@@ -42,22 +37,87 @@ namespace Ozzyria.Gryp.UI.Elements
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if(_map != null && _toolBelt != null)
-                _toolBelt.HandleMouseMove(e, _camera, _map);
+
+            _mouseState.PreviousMouseX = _mouseState.MouseX;
+            _mouseState.PreviousMouseY = _mouseState.MouseY;
+
+            _mouseState.MouseX = e.X;
+            _mouseState.MouseY = e.Y;
+
+
+            if (_map != null)
+            {
+                EventBus.Notify(new MouseMoveEvent
+                {
+                    MouseState = _mouseState,
+                    Camera = _camera,
+                    Map = _map,
+                });
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            if (_map != null && _toolBelt != null)
-                _toolBelt.HandleMouseUp(e, _camera, _map);
+
+            if (e.Button == MouseButtons.Left && _mouseState.IsLeftDown)
+            {
+                _mouseState.IsLeftDown = false;
+            }
+            if (e.Button == MouseButtons.Right && _mouseState.IsRightDown)
+            {
+                _mouseState.IsRightDown = false;
+            }
+            if (e.Button == MouseButtons.Middle && _mouseState.IsMiddleDown)
+            {
+                _mouseState.IsMiddleDown = false;
+            }
+
+            if(_map != null)
+            {
+                EventBus.Notify(new MouseUpEvent
+                {
+                    MouseState = _mouseState,
+                    Camera = _camera,
+                    Map = _map,
+                });
+            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            if (_map != null && _toolBelt != null)
-                _toolBelt.HandleMouseDown(e, _camera, _map);
+
+            if (e.Button == MouseButtons.Left)
+            {
+                _mouseState.IsLeftDown = true;
+                _mouseState.LeftDownStartX = e.X;
+                _mouseState.LeftDownStartY = e.Y;
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                _mouseState.IsRightDown = true;
+                _mouseState.RightDownStartX = e.X;
+                _mouseState.RightDownStartY = e.Y;
+            }
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                _mouseState.IsMiddleDown = true;
+                _mouseState.MiddleDownStartX = e.X;
+                _mouseState.MiddleDownStartY = e.Y;
+            }
+
+            if (_map != null)
+            {
+                EventBus.Notify(new MouseDownEvent
+                {
+                    MouseState = _mouseState,
+                    Camera = _camera,
+                    Map = _map,
+                });
+            }
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -70,11 +130,10 @@ namespace Ozzyria.Gryp.UI.Elements
             _camera.ScaleTo(e.X, e.Y, targetScale);
         }
 
-
         protected override void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
         {
             base.OnPaintSurface(e);
-            if (_map == null || _toolBelt == null)
+            if (_map == null)
                 return;
 
             // Draw background Grid
@@ -122,7 +181,6 @@ namespace Ozzyria.Gryp.UI.Elements
 
                 if (_map.SelectedEntity != null)
                 {
-                    // TODO would be good to not render these if the entity tool is selected?
                     var renderX = _camera.ViewX + _camera.WorldToView(_map.SelectedEntity.WorldX);
                     var renderY = _camera.ViewY + _camera.WorldToView(_map.SelectedEntity.WorldY);
                     var renderRadius = _camera.WorldToView(2);
@@ -131,42 +189,19 @@ namespace Ozzyria.Gryp.UI.Elements
 
                 if (_map.SelectedWall != null)
                 {
-                    // TODO would be good to not render these if the wall tool is selected?
                     var renderX = _camera.ViewX + _camera.WorldToView(_map.SelectedWall.Boundary.WorldX + (_map.SelectedWall.Boundary.WorldWidth / 2f));
                     var renderY = _camera.ViewY + _camera.WorldToView(_map.SelectedWall.Boundary.WorldY + (_map.SelectedWall.Boundary.WorldHeight / 2f));
                     var renderRadius = _camera.WorldToView(2);
                     e.Surface.Canvas.DrawCircle(new SKPoint(renderX, renderY), renderRadius, Paints.SelectionDotOverlayPaint);
                 }
 
-                _toolBelt.RenderOverlay(e.Surface.Canvas, _camera, _map);
-            }
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                EventBus.Notify(new SwitchToDropperEvent { });
-            }
-        }
-
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            base.OnKeyUp(e);
-            if (e.KeyCode == Keys.Delete)
-            {
-                ChangeHistory.StartTracking();
-                _map?.RemoveSelectedEntity();
-                _map?.RemoveSelectedWall();
-                ChangeHistory.FinishTracking();
-            }
-
-            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                EventBus.Notify(new UnswitchFromDropperEvent { });
+                EventBus.Notify(new OverlayRenderEvent
+                {
+                    Canvas = e.Surface.Canvas,
+                    Camera = _camera,
+                    Map = _map,
+                    MouseState = _mouseState,
+                });
             }
         }
 

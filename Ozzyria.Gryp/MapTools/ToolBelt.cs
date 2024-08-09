@@ -1,17 +1,17 @@
 ﻿using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
-using Ozzyria.Gryp.Models.Form;
+using Ozzyria.Gryp.Models.Event;
 using SkiaSharp;
 
 namespace Ozzyria.Gryp.MapTools
 {
-    internal class ToolBelt
+    internal class ToolBelt : IEventSubscriber<OverlayRenderEvent>, IEventSubscriber<MouseUpEvent>, IEventSubscriber<MouseDownEvent>, IEventSubscriber<MouseMoveEvent>
     {
-        private MouseState mouseState = new MouseState();
         private Dictionary<string, ITool> tools;
 
         public ToolBelt()
         {
+            EventBus.Subscribe(this);
             tools = new Dictionary<string, ITool>
             {
                 { "pan", new PanTool { Enabled = true, } },
@@ -38,78 +38,41 @@ namespace Ozzyria.Gryp.MapTools
             tools[toolKey].Enabled = isEnabled;
         }
 
-        public void HandleMouseDown(MouseEventArgs e, Camera camera, Map map)
+        public void OnNotify(MouseDownEvent e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                mouseState.IsLeftDown = true;
-                mouseState.LeftDownStartX = e.X;
-                mouseState.LeftDownStartY = e.Y;
-            }
-
-            if (e.Button == MouseButtons.Right)
-            {
-                mouseState.IsRightDown = true;
-                mouseState.RightDownStartX = e.X;
-                mouseState.RightDownStartY = e.Y;
-            }
-
-            if (e.Button == MouseButtons.Middle)
-            {
-                mouseState.IsMiddleDown = true;
-                mouseState.MiddleDownStartX = e.X;
-                mouseState.MiddleDownStartY = e.Y;
-            }
-
             foreach (var tool in tools)
             {
                 if(tool.Value.Enabled)
-                    tool.Value.OnMouseDown(mouseState, camera, map);
+                    tool.Value.OnMouseDown(e.MouseState, e.Camera, e.Map);
             }
         }
 
-        public void HandleMouseMove(MouseEventArgs e, Camera camera, Map map)
+        public void OnNotify(MouseMoveEvent e)
         {
-            mouseState.PreviousMouseX = mouseState.MouseX;
-            mouseState.PreviousMouseY = mouseState.MouseY;
-
-            mouseState.MouseX = e.X;
-            mouseState.MouseY = e.Y;
-
-            foreach(var tool in tools)
-            {
-                if (tool.Value.Enabled)
-                    tool.Value.OnMouseMove(mouseState, camera, map);
-            }
-        }
-
-        public void HandleMouseUp(MouseEventArgs e, Camera camera, Map map)
-        {
-            if (e.Button == MouseButtons.Left && mouseState.IsLeftDown)
-            {
-                mouseState.IsLeftDown = false;
-            }
-
-            if (e.Button == MouseButtons.Right && mouseState.IsRightDown)
-            {
-                mouseState.IsRightDown = false;
-            }
-
-            if (e.Button == MouseButtons.Middle && mouseState.IsMiddleDown)
-            {
-                mouseState.IsMiddleDown = false;
-            }
-
             foreach (var tool in tools)
             {
                 if (tool.Value.Enabled)
-                    tool.Value.OnMouseUp(mouseState, camera, map);
+                    tool.Value.OnMouseMove(e.MouseState, e.Camera, e.Map);
+            }
+        }
+
+        public void OnNotify(MouseUpEvent e)
+        {
+            foreach (var tool in tools)
+            {
+                if (tool.Value.Enabled)
+                    tool.Value.OnMouseUp(e.MouseState, e.Camera, e.Map);
             }
         }
 
 
-        public void RenderOverlay(SKCanvas canvas, Camera camera, Map map)
+        void IEventSubscriber<OverlayRenderEvent>.OnNotify(OverlayRenderEvent e)
         {
+            var canvas = e.Canvas;
+            var camera = e.Camera;
+            var map = e.Map;
+            var mouseState = e.MouseState;
+
             // render mouse hover highlight
             var mouseWorldX = camera.ViewToWorld(mouseState.MouseX - camera.ViewX);
             var mouseWorldY = camera.ViewToWorld(mouseState.MouseY - camera.ViewY);

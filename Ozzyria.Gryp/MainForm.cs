@@ -1,5 +1,4 @@
 using Ozzyria.Content.Models.Area;
-using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
@@ -9,21 +8,18 @@ using System.Reflection;
 
 namespace Ozzyria.Gryp
 {
-    public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>, IEventSubscriber<SwitchToDropperEvent>, IEventSubscriber<UnswitchFromDropperEvent>
+    public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>
     {
         internal Map _map = new Map();
-        internal ToolBelt _toolBelt = new ToolBelt();
 
         internal string _lastSelectedPreset = "";
         internal bool _processingThumbnails = false;
 
-        internal ToolStripButton? _preQuickSwitchTool = null;
-
         public MainGrypWindow()
         {
             InitializeComponent();
+            mainToolbelt.AttachMap(_map);
             mapViewPort.AttachMap(_map);
-            mapViewPort.AttachToolBelt(_toolBelt);
             mapViewPort.ResetCamera();
 
             EventBus.Subscribe(this);
@@ -165,43 +161,8 @@ namespace Ozzyria.Gryp
             mapViewPort.Invalidate();
         }
 
-        private void onToolChecked_CheckedChanged(object sender, EventArgs e)
-        {
-            // if is a checked-able tool
-            var senderTag = ((ToolStripButton)sender).Tag?.ToString() ?? "";
-            ChangeHistory.StartTracking();
-            if (senderTag != "entity" && senderTag != "move")
-            {
-                _map.UnselectEntity();
-            }
-            if (senderTag != "wall" && senderTag != "move")
-            {
-                _map.UnselectWall();
-            }
-            ChangeHistory.FinishTracking();
-            if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
-            {
-                _toolBelt.ToogleTool(senderTag, true);
-                foreach (ToolStripItem item in mainToolbelt.Items)
-                {
-                    if (item is ToolStripButton && item != sender)
-                    {
-                        // Uncheck all other tools in the toolbelt
-                        _toolBelt.ToogleTool(((ToolStripButton)item).Tag?.ToString() ?? "", false);
-                        ((ToolStripButton)item).Checked = false;
-                    }
-                }
-            }
-            else if (sender is ToolStripButton)
-            {
-                _toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", false);
-            }
-        }
-
         private void logicTimer_Tick(object sender, EventArgs e)
         {
-            // TODO pipe commands to/from toolbelt (will likely need to actually process data in a separate Thread)
-
             // Check if thumbnails need refreshed
             if (!_processingThumbnails)
             {
@@ -524,6 +485,32 @@ namespace Ozzyria.Gryp
             ChangeHistory.Redo(_map);
         }
 
+        private void MainGrypWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                e.Handled = true;
+                EventBus.Notify(new SwitchToDropperEvent { });
+            }
+        }
+
+        private void MainGrypWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                ChangeHistory.StartTracking();
+                _map.RemoveSelectedEntity();
+                _map.RemoveSelectedWall();
+                ChangeHistory.FinishTracking();
+            }
+
+            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                e.Handled = true;
+                EventBus.Notify(new UnswitchFromDropperEvent { });
+            }
+        }
+
         void IEventSubscriber<BrushChangeEvent>.OnNotify(BrushChangeEvent e)
         {
             if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
@@ -581,37 +568,6 @@ namespace Ozzyria.Gryp
                     }
                     i++;
                 }
-            }
-        }
-
-        void IEventSubscriber<SwitchToDropperEvent>.OnNotify(SwitchToDropperEvent e)
-        {
-            foreach (ToolStripItem item in mainToolbelt.Items)
-            {
-                if (item is ToolStripButton && ((ToolStripButton)item).Checked)
-                {
-                    if (item == toolDropper)
-                    {
-                        // The dropper tool is already selected, don't need to do anything
-                        return;
-                    }
-                    else
-                    {
-                        // track the currently selected tool so it can be reselected on release
-                        _preQuickSwitchTool = (ToolStripButton)item;
-                    }
-                }
-            }
-            toolDropper.Checked = true;
-        }
-
-        void IEventSubscriber<UnswitchFromDropperEvent>.OnNotify(UnswitchFromDropperEvent e)
-        {
-            toolDropper.Checked = false;
-            if (_preQuickSwitchTool != null)
-            {
-                _preQuickSwitchTool.Checked = true;
-                _preQuickSwitchTool = null;
             }
         }
     }

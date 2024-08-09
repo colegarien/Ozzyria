@@ -41,7 +41,7 @@ namespace Ozzyria.Gryp
             editToolStripMenuItem = new ToolStripMenuItem();
             undoToolStripMenuItem = new ToolStripMenuItem();
             redoToolStripMenuItem = new ToolStripMenuItem();
-            mainToolbelt = new ToolStrip();
+            mainToolbelt = new ToolBeltStrip();
             toolSelect = new PixelToolStripButton();
             toolMove = new PixelToolStripButton();
             toolStripSeparator = new ToolStripSeparator();
@@ -179,7 +179,6 @@ namespace Ozzyria.Gryp
             toolSelect.Size = new Size(33, 36);
             toolSelect.Tag = "select";
             toolSelect.Text = "&Select";
-            toolSelect.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolMove
             // 
@@ -191,7 +190,6 @@ namespace Ozzyria.Gryp
             toolMove.Size = new Size(33, 36);
             toolMove.Tag = "move";
             toolMove.Text = "&Move";
-            toolMove.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolStripSeparator
             // 
@@ -208,7 +206,6 @@ namespace Ozzyria.Gryp
             toolEntity.Size = new Size(33, 36);
             toolEntity.Tag = "entity";
             toolEntity.Text = "&Entity";
-            toolEntity.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolPath
             // 
@@ -220,7 +217,6 @@ namespace Ozzyria.Gryp
             toolPath.Size = new Size(33, 36);
             toolPath.Tag = "path";
             toolPath.Text = "&Path";
-            toolPath.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolWall
             // 
@@ -232,7 +228,6 @@ namespace Ozzyria.Gryp
             toolWall.Size = new Size(33, 36);
             toolWall.Tag = "wall";
             toolWall.Text = "&Wall";
-            toolWall.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolStripSeparator1
             // 
@@ -250,7 +245,6 @@ namespace Ozzyria.Gryp
             toolDropper.Tag = "dropper";
             toolDropper.Text = "&Dropper";
             toolDropper.ToolTipText = "Dropper";
-            toolDropper.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolBrush
             // 
@@ -262,7 +256,6 @@ namespace Ozzyria.Gryp
             toolBrush.Size = new Size(33, 36);
             toolBrush.Tag = "brush";
             toolBrush.Text = "&Brush";
-            toolBrush.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolFill
             // 
@@ -274,7 +267,6 @@ namespace Ozzyria.Gryp
             toolFill.Size = new Size(33, 36);
             toolFill.Tag = "fill";
             toolFill.Text = "&Fill";
-            toolFill.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolRectangle
             // 
@@ -286,7 +278,6 @@ namespace Ozzyria.Gryp
             toolRectangle.Size = new Size(33, 36);
             toolRectangle.Tag = "rectangle";
             toolRectangle.Text = "&Rectangle";
-            toolRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolFilledRectangle
             // 
@@ -298,7 +289,6 @@ namespace Ozzyria.Gryp
             toolFilledRectangle.Size = new Size(33, 36);
             toolFilledRectangle.Tag = "filled_rectangle";
             toolFilledRectangle.Text = "&Filled Rectangle";
-            toolFilledRectangle.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // toolLine
             // 
@@ -310,7 +300,6 @@ namespace Ozzyria.Gryp
             toolLine.Size = new Size(33, 36);
             toolLine.Tag = "line";
             toolLine.Text = "&Line";
-            toolLine.CheckedChanged += onToolChecked_CheckedChanged;
             // 
             // mainStatusStrip
             // 
@@ -535,11 +524,14 @@ namespace Ozzyria.Gryp
             Controls.Add(mainToolbelt);
             Controls.Add(menuStrip);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MainMenuStrip = menuStrip;
             Name = "MainGrypWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Gryp";
             FormClosing += MainGrypWindow_FormClosing;
+            KeyDown += MainGrypWindow_KeyDown;
+            KeyUp += MainGrypWindow_KeyUp;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             mainToolbelt.ResumeLayout(false);
@@ -559,7 +551,7 @@ namespace Ozzyria.Gryp
 
         private MenuStrip menuStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStrip mainToolbelt;
+        private ToolBeltStrip mainToolbelt;
         private ToolStripSeparator toolStripSeparator;
         private ToolStripSeparator toolStripSeparator1;
         private StatusStrip mainStatusStrip;
