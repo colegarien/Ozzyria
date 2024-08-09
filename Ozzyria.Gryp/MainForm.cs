@@ -4,29 +4,29 @@ using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
 using Ozzyria.Gryp.UI.Dialogs;
-using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
 
 namespace Ozzyria.Gryp
 {
-    public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>
+    public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>, IEventSubscriber<SwitchToDropperEvent>, IEventSubscriber<UnswitchFromDropperEvent>
     {
         internal Map _map = new Map();
-
-        internal Camera camera = new Camera();
-        internal ToolBelt toolBelt = new ToolBelt();
+        internal ToolBelt _toolBelt = new ToolBelt();
 
         internal string _lastSelectedPreset = "";
-        internal bool processingThumbnails = false;
+        internal bool _processingThumbnails = false;
 
-        internal ToolStripButton? _preQuickSwitchTool = null; 
+        internal ToolStripButton? _preQuickSwitchTool = null;
 
         public MainGrypWindow()
         {
             InitializeComponent();
+            mapViewPort.AttachMap(_map);
+            mapViewPort.AttachToolBelt(_toolBelt);
+            mapViewPort.ResetCamera();
+
             EventBus.Subscribe(this);
-            camera.SizeCamera(mapViewPort.ClientSize.Width, mapViewPort.ClientSize.Height);
 
             cmbPrefab.Items.AddRange(new string[] {
                 "slime_spawner",
@@ -61,7 +61,7 @@ namespace Ozzyria.Gryp
                 RebuildBrushView();
 
                 // Center Camera onto Map
-                camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
+                mapViewPort.CenterOnWorldCoordinate(_map.Width * 32 / 2f, _map.Height * 32 / 2f);
 
                 mapViewPort.Focus();
 
@@ -93,7 +93,7 @@ namespace Ozzyria.Gryp
                     RebuildBrushView();
 
                     // Center Camera onto Map
-                    camera.MoveToViewCoordinates(-camera.WorldToView(_map.Width * 32 / 2f) + (mapViewPort.ClientSize.Width / 2f), -camera.WorldToView(_map.Height * 32 / 2f) + (mapViewPort.ClientSize.Height / 2f));
+                    mapViewPort.CenterOnWorldCoordinate(_map.Width * 32 / 2f, _map.Height * 32 / 2f);
                     mainStatusLabel.Text = "Successfully loaded " + areaId;
 
                     ChangeHistory.Clear();
@@ -159,30 +159,6 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void mapViewPort_MouseWheel(object sender, MouseEventArgs e)
-        {
-            var scale = (e.Delta > 0)
-                ? 0.1f
-                : -0.1f;
-            var targetScale = camera.Scale * (1 + scale);
-            camera.ScaleTo(e.X, e.Y, targetScale);
-        }
-
-        private void mapViewPort_MouseMove(object sender, MouseEventArgs e)
-        {
-            toolBelt.HandleMouseMove(e, camera, _map);
-        }
-
-        private void mapViewPort_MouseDown(object sender, MouseEventArgs e)
-        {
-            toolBelt.HandleMouseDown(e, camera, _map);
-        }
-
-        private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
-        {
-            toolBelt.HandleMouseUp(e, camera, _map);
-        }
-
         private void reRenderTimer_Tick(object sender, EventArgs e)
         {
             // force a timely rerender
@@ -205,87 +181,20 @@ namespace Ozzyria.Gryp
             ChangeHistory.FinishTracking();
             if (sender is ToolStripButton && ((ToolStripButton)sender).Checked)
             {
-                toolBelt.ToogleTool(senderTag, true);
+                _toolBelt.ToogleTool(senderTag, true);
                 foreach (ToolStripItem item in mainToolbelt.Items)
                 {
                     if (item is ToolStripButton && item != sender)
                     {
                         // Uncheck all other tools in the toolbelt
-                        toolBelt.ToogleTool(((ToolStripButton)item).Tag?.ToString() ?? "", false);
+                        _toolBelt.ToogleTool(((ToolStripButton)item).Tag?.ToString() ?? "", false);
                         ((ToolStripButton)item).Checked = false;
                     }
                 }
             }
             else if (sender is ToolStripButton)
             {
-                toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", false);
-            }
-        }
-
-        private void mapViewPort_PaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
-        {
-            // Draw background Grid
-            var canvasSize = e.Surface.Canvas.DeviceClipBounds.Size;
-            e.Surface.Canvas.Clear(Paints.CanvasColor);
-            for (var x = 0; x <= (canvasSize.Width / 16); x++)
-            {
-                for (var y = 0; y <= (canvasSize.Height / 16); y++)
-                {
-                    e.Surface.Canvas.DrawLine((x * 16), 0, (x * 16), canvasSize.Height, Paints.CanvasGridPaint);
-                    e.Surface.Canvas.DrawLine(0, (y * 16), canvasSize.Width, (y * 16), Paints.CanvasGridPaint);
-                }
-            }
-
-            if (_map.Width > 0 && _map.Height > 0)
-            {
-                // render map backing
-                e.Surface.Canvas.DrawRect(new SKRect(camera.ViewX, camera.ViewY, camera.ViewX + camera.WorldToView(_map.Width * 32), camera.ViewY + camera.WorldToView(_map.Height * 32)), Paints.MapBackingPaint);
-
-                // render layers
-                for (int i = 0; i < _map.Layers.Count; i++)
-                {
-                    if (_map.IsLayerVisible(i))
-                    {
-                        _map.Layers[i].RenderToCanvas(e.Surface.Canvas, camera);
-                    }
-                }
-
-                // render overlay grid
-                for (var x = 0; x < _map.Width; x++)
-                {
-                    for (var y = 0; y < _map.Height; y++)
-                    {
-                        var renderX = camera.ViewX + camera.WorldToView(x * 32);
-                        var renderY = camera.ViewY + camera.WorldToView(y * 32);
-                        var renderRight = renderX + camera.WorldToView(32);
-                        var renderBottom = renderY + camera.WorldToView(32);
-
-                        if (renderRight >= 0 && renderX < camera.ViewWidth && renderBottom >= 0 && renderY < camera.ViewHeight)
-                        {
-                            e.Surface.Canvas.DrawRect(new SKRect(renderX, renderY, renderRight, renderBottom), Paints.MapGridOverlayPaint);
-                        }
-                    }
-                }
-
-                if(_map.SelectedEntity != null)
-                {
-                    // TODO would be good to not render these if the entity tool is selected?
-                    var renderX = camera.ViewX + camera.WorldToView(_map.SelectedEntity.WorldX);
-                    var renderY = camera.ViewY + camera.WorldToView(_map.SelectedEntity.WorldY);
-                    var renderRadius = camera.WorldToView(2);
-                    e.Surface.Canvas.DrawCircle(new SKPoint(renderX, renderY), renderRadius, Paints.SelectionDotOverlayPaint);
-                }
-
-                if(_map.SelectedWall != null)
-                {
-                    // TODO would be good to not render these if the wall tool is selected?
-                    var renderX = camera.ViewX + camera.WorldToView(_map.SelectedWall.Boundary.WorldX + (_map.SelectedWall.Boundary.WorldWidth / 2f));
-                    var renderY = camera.ViewY + camera.WorldToView(_map.SelectedWall.Boundary.WorldY + (_map.SelectedWall.Boundary.WorldHeight / 2f));
-                    var renderRadius = camera.WorldToView(2);
-                    e.Surface.Canvas.DrawCircle(new SKPoint(renderX, renderY), renderRadius, Paints.SelectionDotOverlayPaint);
-                }
-
-                toolBelt.RenderOverlay(e.Surface.Canvas, camera, _map);
+                _toolBelt.ToogleTool(((ToolStripButton)sender).Tag?.ToString() ?? "", false);
             }
         }
 
@@ -294,9 +203,9 @@ namespace Ozzyria.Gryp
             // TODO pipe commands to/from toolbelt (will likely need to actually process data in a separate Thread)
 
             // Check if thumbnails need refreshed
-            if (!processingThumbnails)
+            if (!_processingThumbnails)
             {
-                processingThumbnails = true;
+                _processingThumbnails = true;
                 Task.Run(() =>
                 {
                     bool refreshLayers = false;
@@ -314,7 +223,7 @@ namespace Ozzyria.Gryp
                         layerList.Invalidate();
                     }
 
-                    processingThumbnails = false;
+                    _processingThumbnails = false;
                 });
             }
         }
@@ -551,7 +460,7 @@ namespace Ozzyria.Gryp
                     break;
             }
 
-            if(_map.SelectedEntity != null && _map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId)
+            if (_map.SelectedEntity != null && _map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId)
             {
                 ChangeHistory.StartTracking();
                 ChangeHistory.TrackChange(new EditEntityChange
@@ -579,7 +488,7 @@ namespace Ozzyria.Gryp
                 var rowValue = changedRow.Cells["columnValue"]?.Value?.ToString() ?? "";
 
                 _map.CurrentEntityBrush.Attributes[rowKey] = rowValue;
-                if(_map.SelectedEntity != null && (!_map.SelectedEntity.Attributes.ContainsKey(rowKey) || _map.SelectedEntity.Attributes[rowKey] != rowValue))
+                if (_map.SelectedEntity != null && (!_map.SelectedEntity.Attributes.ContainsKey(rowKey) || _map.SelectedEntity.Attributes[rowKey] != rowValue))
                 {
                     ChangeHistory.StartTracking();
                     ChangeHistory.TrackChange(new EditEntityChange
@@ -613,58 +522,6 @@ namespace Ozzyria.Gryp
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Redo(_map);
-        }
-
-        private void mapViewPort_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                foreach (ToolStripItem item in mainToolbelt.Items)
-                {
-                    if (item is ToolStripButton && ((ToolStripButton)item).Checked)
-                    {
-                        if(item == toolDropper)
-                        {
-                            // The dropper tool is already selected, don't need to do anything
-                            return;
-                        }
-                        else
-                        {
-                            // track the currently selected tool so it can be reselected on release
-                            _preQuickSwitchTool = (ToolStripButton)item;
-                        }
-                    }
-                }
-                toolDropper.Checked = true;
-            }
-        }
-
-        private void mapViewPort_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Delete)
-            {
-                ChangeHistory.StartTracking();
-                _map.RemoveSelectedEntity();
-                _map.RemoveSelectedWall();
-                ChangeHistory.FinishTracking();
-            }
-
-            if(e.KeyCode == Keys.Oemtilde)
-            {
-                MessageBox.Show(ChangeHistory.DebugDump());
-            }
-
-            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                toolDropper.Checked = false;
-                if (_preQuickSwitchTool != null)
-                {
-                    _preQuickSwitchTool.Checked = true;
-                    _preQuickSwitchTool = null;
-                }
-            }
         }
 
         void IEventSubscriber<BrushChangeEvent>.OnNotify(BrushChangeEvent e)
@@ -724,6 +581,37 @@ namespace Ozzyria.Gryp
                     }
                     i++;
                 }
+            }
+        }
+
+        void IEventSubscriber<SwitchToDropperEvent>.OnNotify(SwitchToDropperEvent e)
+        {
+            foreach (ToolStripItem item in mainToolbelt.Items)
+            {
+                if (item is ToolStripButton && ((ToolStripButton)item).Checked)
+                {
+                    if (item == toolDropper)
+                    {
+                        // The dropper tool is already selected, don't need to do anything
+                        return;
+                    }
+                    else
+                    {
+                        // track the currently selected tool so it can be reselected on release
+                        _preQuickSwitchTool = (ToolStripButton)item;
+                    }
+                }
+            }
+            toolDropper.Checked = true;
+        }
+
+        void IEventSubscriber<UnswitchFromDropperEvent>.OnNotify(UnswitchFromDropperEvent e)
+        {
+            toolDropper.Checked = false;
+            if (_preQuickSwitchTool != null)
+            {
+                _preQuickSwitchTool.Checked = true;
+                _preQuickSwitchTool = null;
             }
         }
     }

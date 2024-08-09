@@ -60,7 +60,7 @@ namespace Ozzyria.Gryp
             reRenderTimer = new System.Windows.Forms.Timer(components);
             layerList = new ListView();
             layerImageList = new ImageList(components);
-            mapViewPort = new SkiaSharp.Views.Desktop.SKGLControl();
+            mapViewPort = new MapViewPort();
             logicTimer = new System.Windows.Forms.Timer(components);
             btnNewLayer = new Button();
             btnRemoveLayer = new Button();
@@ -143,7 +143,7 @@ namespace Ozzyria.Gryp
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new Size(180, 22);
+            undoToolStripMenuItem.Size = new Size(144, 22);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -151,7 +151,7 @@ namespace Ozzyria.Gryp
             // 
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new Size(180, 22);
+            redoToolStripMenuItem.Size = new Size(144, 22);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
@@ -362,13 +362,6 @@ namespace Ozzyria.Gryp
             mapViewPort.Size = new Size(623, 444);
             mapViewPort.TabIndex = 8;
             mapViewPort.VSync = false;
-            mapViewPort.PaintSurface += mapViewPort_PaintSurface;
-            mapViewPort.KeyDown += mapViewPort_KeyDown;
-            mapViewPort.KeyUp += mapViewPort_KeyUp;
-            mapViewPort.MouseDown += mapViewPort_MouseDown;
-            mapViewPort.MouseMove += mapViewPort_MouseMove;
-            mapViewPort.MouseUp += mapViewPort_MouseUp;
-            mapViewPort.MouseWheel += mapViewPort_MouseWheel;
             // 
             // logicTimer
             // 
@@ -575,7 +568,7 @@ namespace Ozzyria.Gryp
         private System.Windows.Forms.Timer reRenderTimer;
         private ListView layerList;
         private ImageList layerImageList;
-        private SkiaSharp.Views.Desktop.SKGLControl mapViewPort;
+        private MapViewPort mapViewPort;
         private System.Windows.Forms.Timer logicTimer;
         private Button btnNewLayer;
         private Button btnRemoveLayer;
