@@ -3,6 +3,7 @@ using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
+using Ozzyria.Gryp.UI.Dialogs;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
@@ -561,6 +562,8 @@ namespace Ozzyria.Gryp
                     WorldY = _map.SelectedEntity.WorldY,
                     Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
                 });
+
+                _map.IsDirty = true;
                 _map.SelectedEntity.PrefabId = _map.CurrentEntityBrush.PrefabId;
                 _map.SelectedEntity.Attributes = _map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
                 ChangeHistory.FinishTracking();
@@ -587,8 +590,9 @@ namespace Ozzyria.Gryp
                         WorldY = _map.SelectedEntity.WorldY,
                         Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
                     });
-                    
-                    if(_map.SelectedEntity.Attributes == null)
+
+                    _map.IsDirty = true;
+                    if (_map.SelectedEntity.Attributes == null)
                         _map.SelectedEntity.Attributes = new Dictionary<string, string>();
                     _map.SelectedEntity.Attributes[rowKey] = rowValue;
                     ChangeHistory.FinishTracking();

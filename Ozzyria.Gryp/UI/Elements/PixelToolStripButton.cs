@@ -1,8 +1,8 @@
 ﻿using System.Drawing.Drawing2D;
 
-namespace Ozzyria.Gryp
+namespace Ozzyria.Gryp.UI.Elements
 {
-    internal class PixelToolStripButton: ToolStripButton
+    internal class PixelToolStripButton : ToolStripButton
     {
         protected override void OnPaint(PaintEventArgs pe)
         {

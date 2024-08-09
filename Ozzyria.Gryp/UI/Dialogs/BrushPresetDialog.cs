@@ -1,6 +1,4 @@
-﻿using Ozzyria.Gryp.Models.Data;
-
-namespace Ozzyria.Gryp
+﻿namespace Ozzyria.Gryp.UI.Dialogs
 {
     public partial class BrushPresetDialog : Form
     {

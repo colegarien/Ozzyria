@@ -1,6 +1,6 @@
 ﻿using Ozzyria.Content;
 
-namespace Ozzyria.Gryp
+namespace Ozzyria.Gryp.UI.Dialogs
 {
     public partial class EditTextureDialog : Form
     {

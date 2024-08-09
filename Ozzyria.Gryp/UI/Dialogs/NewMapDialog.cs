@@ -2,7 +2,7 @@
 using Ozzyria.Gryp.Models.Form;
 using System.Text.RegularExpressions;
 
-namespace Ozzyria.Gryp
+namespace Ozzyria.Gryp.UI.Dialogs
 {
     public partial class NewMapDialog : Form
     {

@@ -1,5 +1,5 @@
 ﻿using Ozzyria.Content.Models.Area;
-namespace Ozzyria.Gryp
+namespace Ozzyria.Gryp.UI.Dialogs
 {
     public partial class OpenMapDialog : Form
     {

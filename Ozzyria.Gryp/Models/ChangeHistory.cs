@@ -115,6 +115,7 @@ namespace Ozzyria.Gryp.Models
 
             if (!Tracking)
             {
+                map.IsDirty = true;
                 var changes = Undos[Undos.Count - 1];
 
                 Redos.Add(new List<object>());
@@ -292,7 +293,9 @@ namespace Ozzyria.Gryp.Models
 
             if (!Tracking)
             {
+                map.IsDirty = true;
                 var changes = Redos[Redos.Count - 1];
+
                 Undos.Add(new List<object>());
                 foreach (var change in changes)
                 {

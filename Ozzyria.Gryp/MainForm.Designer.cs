@@ -1,4 +1,6 @@
-﻿namespace Ozzyria.Gryp
+﻿using Ozzyria.Gryp.UI.Elements;
+
+namespace Ozzyria.Gryp
 {
     partial class MainGrypWindow
     {

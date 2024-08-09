@@ -1,4 +1,4 @@
-﻿namespace Ozzyria.Gryp
+﻿namespace Ozzyria.Gryp.UI.Dialogs
 {
     partial class OpenMapDialog
     {

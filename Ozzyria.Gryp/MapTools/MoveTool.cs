@@ -53,6 +53,7 @@ namespace Ozzyria.Gryp.MapTools
                         Attributes = map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
                     });
 
+                    map.IsDirty = true;
                     map.SelectedEntity.WorldX = mouseWorldX;
                     map.SelectedEntity.WorldY = mouseWorldY;
                     ChangeHistory.FinishTracking();
@@ -76,6 +77,7 @@ namespace Ozzyria.Gryp.MapTools
                         }
                     });
 
+                    map.IsDirty = true;
                     map.SelectedWall.Boundary.WorldX = mouseWorldX - (map.SelectedWall.Boundary.WorldWidth / 2f);
                     map.SelectedWall.Boundary.WorldY = mouseWorldY - (map.SelectedWall.Boundary.WorldHeight / 2f);
                     ChangeHistory.FinishTracking();
