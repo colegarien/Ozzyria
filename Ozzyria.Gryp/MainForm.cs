@@ -34,6 +34,7 @@ namespace Ozzyria.Gryp
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, layerList, new object[] { true });
         }
 
+        #region Menu Strip
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CheckForUnsavedChanges();
@@ -126,6 +127,82 @@ namespace Ozzyria.Gryp
             }
         }
 
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeHistory.Undo(_map);
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeHistory.Redo(_map);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void MainGrypWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CheckForUnsavedChanges();
+        }
+
+        private void CheckForUnsavedChanges()
+        {
+            if (_map.IsDirty)
+            {
+                var result = MessageBox.Show(
+                    "You have unsaved changes.\r\nWould you like to save?",
+                    "Unsaved Changes!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2 // default to no in-case user enters real hard
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    _map.ToAreaData().Store(_map.MetaData.AreaId);
+                }
+            }
+        }
+
+        #endregion
+
+        #region MapViewPort routing
+        private void MainGrypWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                e.Handled = true;
+                EventBus.Notify(new SwitchToDropperEvent { });
+            }
+        }
+
+        private void MainGrypWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                ChangeHistory.StartTracking();
+                _map.RemoveSelectedEntity();
+                _map.RemoveSelectedWall();
+                ChangeHistory.FinishTracking();
+            }
+
+            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            {
+                e.Handled = true;
+                EventBus.Notify(new UnswitchFromDropperEvent { });
+            }
+        }
+
+        private void reRenderTimer_Tick(object sender, EventArgs e)
+        {
+            // force a timely rerender
+            mapViewPort.Invalidate();
+        }
+        #endregion
+
+        #region Layer View
         private void RebuildLayerView()
         {
             var selectedIndices = layerList.SelectedIndices.Cast<int>().ToArray();
@@ -153,12 +230,6 @@ namespace Ozzyria.Gryp
                 // if no items were re-selected and there are items, select the first in the list
                 layerList.Items[0].Selected = true;
             }
-        }
-
-        private void reRenderTimer_Tick(object sender, EventArgs e)
-        {
-            // force a timely rerender
-            mapViewPort.Invalidate();
         }
 
         private void logicTimer_Tick(object sender, EventArgs e)
@@ -262,6 +333,25 @@ namespace Ozzyria.Gryp
 
         }
 
+        void IEventSubscriber<ActiveLayerChangedEvent>.OnNotify(ActiveLayerChangedEvent e)
+        {
+            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            {
+                var i = 0;
+                foreach (ListViewItem item in layerList.Items)
+                {
+                    if (i == _map.ActiveLayer)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                    i++;
+                }
+            }
+        }
+        #endregion
+
+        #region Brush View
         private void listCurrentBrush_DoubleClick(object sender, EventArgs e)
         {
             if (_map == null || _map.Width <= 0 || _map.Height <= 0 || _map.ActiveLayer < 0)
@@ -373,30 +463,33 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void MainGrypWindow_FormClosing(object sender, FormClosingEventArgs e)
+        void IEventSubscriber<BrushChangeEvent>.OnNotify(BrushChangeEvent e)
         {
-            CheckForUnsavedChanges();
-        }
-
-        private void CheckForUnsavedChanges()
-        {
-            if (_map.IsDirty)
+            if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
             {
-                var result = MessageBox.Show(
-                    "You have unsaved changes.\r\nWould you like to save?",
-                    "Unsaved Changes!",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2 // default to no in-case user enters real hard
-                );
-
-                if (result == DialogResult.Yes)
+                // check if brush and brush view match
+                bool match = true;
+                for (int i = 0; i < _map.CurrentBrush.Count; i++)
                 {
-                    _map.ToAreaData().Store(_map.MetaData.AreaId);
+                    if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match)
+                {
+                    // don't rebuild if there is no change
+                    return;
                 }
             }
-        }
 
+            RebuildBrushView();
+        }
+        #endregion
+
+        #region Entity View
         private void cmbPrefab_SelectedIndexChanged(object sender, EventArgs e)
         {
             var newPrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
@@ -470,72 +563,6 @@ namespace Ozzyria.Gryp
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ChangeHistory.Undo(_map);
-        }
-
-        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ChangeHistory.Redo(_map);
-        }
-
-        private void MainGrypWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                EventBus.Notify(new SwitchToDropperEvent { });
-            }
-        }
-
-        private void MainGrypWindow_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                ChangeHistory.StartTracking();
-                _map.RemoveSelectedEntity();
-                _map.RemoveSelectedWall();
-                ChangeHistory.FinishTracking();
-            }
-
-            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
-            {
-                e.Handled = true;
-                EventBus.Notify(new UnswitchFromDropperEvent { });
-            }
-        }
-
-        void IEventSubscriber<BrushChangeEvent>.OnNotify(BrushChangeEvent e)
-        {
-            if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
-            {
-                // check if brush and brush view match
-                bool match = true;
-                for (int i = 0; i < _map.CurrentBrush.Count; i++)
-                {
-                    if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
-                    {
-                        match = false;
-                        break;
-                    }
-                }
-
-                if (match)
-                {
-                    // don't rebuild if there is no change
-                    return;
-                }
-            }
-
-            RebuildBrushView();
-        }
-
         void IEventSubscriber<SelectedEntityChangeEvent>.OnNotify(SelectedEntityChangeEvent e)
         {
             if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
@@ -553,22 +580,7 @@ namespace Ozzyria.Gryp
                 }
             }
         }
+        #endregion
 
-        void IEventSubscriber<ActiveLayerChangedEvent>.OnNotify(ActiveLayerChangedEvent e)
-        {
-            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
-            {
-                var i = 0;
-                foreach (ListViewItem item in layerList.Items)
-                {
-                    if (i == _map.ActiveLayer)
-                    {
-                        item.Selected = true;
-                        break;
-                    }
-                    i++;
-                }
-            }
-        }
     }
 }
