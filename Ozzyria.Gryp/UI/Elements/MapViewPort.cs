@@ -42,19 +42,19 @@ namespace Ozzyria.Gryp.UI.Elements
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            _toolBelt.HandleMouseMove(e, _camera, _map);
+            _toolBelt?.HandleMouseMove(e, _camera, _map);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            _toolBelt.HandleMouseUp(e, _camera, _map);
+            _toolBelt?.HandleMouseUp(e, _camera, _map);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            _toolBelt.HandleMouseDown(e, _camera, _map);
+            _toolBelt?.HandleMouseDown(e, _camera, _map);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -71,6 +71,9 @@ namespace Ozzyria.Gryp.UI.Elements
         protected override void OnPaintSurface(SKPaintGLSurfaceEventArgs e)
         {
             base.OnPaintSurface(e);
+            if (_map == null || _toolBelt == null)
+                return;
+
             // Draw background Grid
             var canvasSize = e.Surface.Canvas.DeviceClipBounds.Size;
             e.Surface.Canvas.Clear(Paints.CanvasColor);
@@ -152,8 +155,8 @@ namespace Ozzyria.Gryp.UI.Elements
             if (e.KeyCode == Keys.Delete)
             {
                 ChangeHistory.StartTracking();
-                _map.RemoveSelectedEntity();
-                _map.RemoveSelectedWall();
+                _map?.RemoveSelectedEntity();
+                _map?.RemoveSelectedWall();
                 ChangeHistory.FinishTracking();
             }
 
