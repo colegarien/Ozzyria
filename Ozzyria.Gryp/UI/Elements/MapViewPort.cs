@@ -9,8 +9,8 @@ namespace Ozzyria.Gryp.UI.Elements
 {
     internal class MapViewPort: SKGLControl
     {
-        internal ToolBelt _toolBelt;
-        internal Map _map;
+        internal ToolBelt? _toolBelt;
+        internal Map? _map;
         internal Camera _camera = new Camera();
 
         #region Attachment
@@ -42,19 +42,22 @@ namespace Ozzyria.Gryp.UI.Elements
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            _toolBelt?.HandleMouseMove(e, _camera, _map);
+            if(_map != null && _toolBelt != null)
+                _toolBelt.HandleMouseMove(e, _camera, _map);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            _toolBelt?.HandleMouseUp(e, _camera, _map);
+            if (_map != null && _toolBelt != null)
+                _toolBelt.HandleMouseUp(e, _camera, _map);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            _toolBelt?.HandleMouseDown(e, _camera, _map);
+            if (_map != null && _toolBelt != null)
+                _toolBelt.HandleMouseDown(e, _camera, _map);
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
