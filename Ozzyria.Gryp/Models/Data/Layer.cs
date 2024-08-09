@@ -397,8 +397,8 @@ namespace Ozzyria.Gryp.Models.Data
 
                     ToggleChanged(true);
                     _tileData[tileXIndex, tileYIndex] = tileData;
-                    return _tileData[tileXIndex, tileYIndex];
                 }
+                return _tileData[tileXIndex, tileYIndex];
             }
 
             return null;

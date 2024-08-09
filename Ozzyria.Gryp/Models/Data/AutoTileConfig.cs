@@ -10,7 +10,13 @@ namespace Ozzyria.Gryp.Models.Data
         public string Type { get; set; } = "";
 
         [JsonPropertyName("path_pieces")]
-        public Dictionary<string, string> PathPieces { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> PathPieces { get; set; }
+
+        [JsonPropertyName("transition_pieces")]
+        public Dictionary<string, string> TransitionPieces { get; set; }
+
+        [JsonPropertyName("transition_from")]
+        public List<string> TransitionsFrom { get; set; }
     }
 
     internal class AutoTileConfig
@@ -24,7 +30,6 @@ namespace Ozzyria.Gryp.Models.Data
         [JsonPropertyName("aliases")]
         public Dictionary<string, string> Aliases { get; set; }
 
-
         private static AutoTileConfig _instance = null;
         public static AutoTileConfig GetInstance()
         {
@@ -36,9 +41,9 @@ namespace Ozzyria.Gryp.Models.Data
             return _instance;
         }
 
-        public void AutoTile(Tile tile, Map map, int x, int y,  int depth = 1)
+        public void AutoTile(Tile? tile, Map map, int x, int y,  int depth = 1)
         {
-            if(tile.DrawableIds.Count < 1 || depth > Depth)
+            if(tile == null || tile.DrawableIds.Count < 1 || depth > Depth)
             {
                 // not an auto-tilable tile or auto-tiling too deep
                 return;
@@ -169,7 +174,325 @@ namespace Ozzyria.Gryp.Models.Data
                     AutoTile(eastTile, map, x + 1, y, depth + 1);
                     AutoTile(westTile, map, x - 1, y, depth + 1);
                 }
+            } 
+            else if(configRecord.Type == "transition")
+            {
+                var northTile = map.GetTile(x, y - 1);
+                var southTile = map.GetTile(x, y + 1);
+                var eastTile = map.GetTile(x + 1, y);
+                var westTile = map.GetTile(x - 1, y);
+
+                var northEastTile = map.GetTile(x + 1, y - 1);
+                var northWestTile = map.GetTile(x - 1, y - 1);
+                var southEastTile = map.GetTile(x + 1, y + 1);
+                var southWestTile = map.GetTile(x - 1, y + 1);
+
+                if (configRecord.TransitionsFrom.Count <= 0)
+                {
+                    // nothing to transition from, just adjust surrounding auto-tiles
+                    AutoTile(northTile, map, x, y - 1, depth + 1);
+                    AutoTile(southTile, map, x, y + 1, depth + 1);
+                    AutoTile(eastTile, map, x + 1, y, depth + 1);
+                    AutoTile(westTile, map, x - 1, y, depth + 1);
+                    AutoTile(northEastTile, map, x + 1, y - 1, depth + 1);
+                    AutoTile(northWestTile, map, x - 1, y - 1, depth + 1);
+                    AutoTile(southEastTile, map, x + 1, y + 1, depth + 1);
+                    AutoTile(southWestTile, map, x - 1, y + 1, depth + 1);
+                    return;
+                }
+
+                // normalize drawables ids to "base" autotile
+                tile.DrawableIds.Clear();
+                tile.DrawableIds.Add(autoTileId);
+
+                var northIsTransitionFrom = northTile != null && northTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(northTile.DrawableIds[0]) && Configuration.ContainsKey(northTile.DrawableIds[0]) && Configuration[northTile.DrawableIds[0]].Type == "transition";
+                var southIsTransitionFrom = southTile != null && southTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(southTile.DrawableIds[0]) && Configuration.ContainsKey(southTile.DrawableIds[0]) && Configuration[southTile.DrawableIds[0]].Type == "transition";
+                var eastIsTransitionFrom = eastTile != null && eastTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(eastTile.DrawableIds[0]) && Configuration.ContainsKey(eastTile.DrawableIds[0]) && Configuration[eastTile.DrawableIds[0]].Type == "transition";
+                var westIsTransitionFrom = westTile != null && westTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(westTile.DrawableIds[0]) && Configuration.ContainsKey(westTile.DrawableIds[0]) && Configuration[westTile.DrawableIds[0]].Type == "transition";
+
+                var northEastIsTransitionFrom = northEastTile != null && northEastTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(northEastTile.DrawableIds[0]) && Configuration.ContainsKey(northEastTile.DrawableIds[0]) && Configuration[northEastTile.DrawableIds[0]].Type == "transition";
+                var northWestIsTransitionFrom = northWestTile != null && northWestTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(northWestTile.DrawableIds[0]) && Configuration.ContainsKey(northWestTile.DrawableIds[0]) && Configuration[northWestTile.DrawableIds[0]].Type == "transition";
+                var southEastIsTransitionFrom = southEastTile != null && southEastTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(southEastTile.DrawableIds[0]) && Configuration.ContainsKey(southEastTile.DrawableIds[0]) && Configuration[southEastTile.DrawableIds[0]].Type == "transition";
+                var southWestIsTransitionFrom = southWestTile != null && southWestTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(southWestTile.DrawableIds[0]) && Configuration.ContainsKey(southWestTile.DrawableIds[0]) && Configuration[southWestTile.DrawableIds[0]].Type == "transition";
+
+                ///
+                /// To whom it may concern, this is auto-generate code below because I don't feel like being clever; this basically checks every valid combination of edge + corner and packs the appropriate tile id on
+                ///
+
+                var state = new TransitionState();
+                state.MarkNorth(northIsTransitionFrom);
+                state.MarkSouth(southIsTransitionFrom);
+                state.MarkEast(eastIsTransitionFrom);
+                state.MarkWest(westIsTransitionFrom);
+
+                state.MarkNorthEast(northEastIsTransitionFrom);
+                state.MarkNorthWest(northWestIsTransitionFrom);
+                state.MarkSouthEast(southEastIsTransitionFrom);
+                state.MarkSouthWest(southWestIsTransitionFrom);
+
+                var borderKey = state.GetBorderKey();
+                if(borderKey != "")
+                {
+                    var id = northIsTransitionFrom ? northTile.DrawableIds[0] : (southIsTransitionFrom ? southTile.DrawableIds[0] : (eastIsTransitionFrom ? eastTile.DrawableIds[0] : (westIsTransitionFrom ? westTile.DrawableIds[0] : "")));
+                    tile.DrawableIds.Add(Configuration[id].TransitionPieces[borderKey]);
+                }
+
+                var cornerKey = state.GetCornerKey();
+                if(cornerKey != "")
+                {
+                    var id = northEastIsTransitionFrom ? northEastTile.DrawableIds[0] : (northWestIsTransitionFrom ? northWestTile.DrawableIds[0] : (southEastIsTransitionFrom ? southEastTile.DrawableIds[0] : (southWestIsTransitionFrom ? southWestTile.DrawableIds[0] : "")));
+                    tile.DrawableIds.Add(Configuration[id].TransitionPieces[cornerKey]);
+                }
+
+                ///
+                /// end auto generated section
+                ///
+
+                // for stupidity's sake, just run auto-tile on everything surrounding
+                AutoTile(northTile, map, x, y - 1, depth + 1);
+                AutoTile(southTile, map, x, y + 1, depth + 1);
+                AutoTile(eastTile, map, x + 1, y, depth + 1);
+                AutoTile(westTile, map, x - 1, y, depth + 1);
+                AutoTile(northEastTile, map, x + 1, y - 1, depth + 1);
+                AutoTile(northWestTile, map, x - 1, y - 1, depth + 1);
+                AutoTile(southEastTile, map, x + 1, y + 1, depth + 1);
+                AutoTile(southWestTile, map, x - 1, y + 1, depth + 1);
             }
+        }
+    }
+
+    internal class TransitionState
+    {
+        private bool north = false;
+        private bool south = false;
+        private bool east = false;
+        private bool west = false;
+
+        private bool northEast = false;
+        private bool northWest = false;
+        private bool southEast = false;
+        private bool southWest = false;
+
+        public void MarkNorth(bool north)
+        {
+            this.north = north;
+            if (north)
+            {
+                // borders override corners
+                northEast = false;
+                northWest = false;
+            }
+        }
+
+        public void MarkSouth(bool south)
+        {
+            this.south = south;
+            if (south)
+            {
+                // borders override corners
+                southEast = false;
+                southWest = false;
+            }
+        }
+
+        public void MarkEast(bool east)
+        {
+            this.east = east;
+            if(east)
+            {
+                // borders override corners
+                northEast = false;
+                southEast = false;
+            }
+        }
+
+        public void MarkWest(bool west)
+        {
+            this.west = west;
+            if(west)
+            {
+                // borders override corners
+                northWest = false;
+                southWest = false;
+            }
+        }
+
+        public void MarkNorthEast(bool northEast)
+        {
+            if(!north)
+            {
+                // can't set corners if border set
+                this.northEast = northEast;
+            }
+        }
+
+        public void MarkNorthWest(bool northWest)
+        {
+            if (!north)
+            {
+                // can't set corners if border set
+                this.northWest = northWest;
+            }
+        }
+
+        public void MarkSouthEast(bool southEast)
+        {
+            if (!south)
+            {
+                // can't set corners if border set
+                this.southEast = southEast;
+            }
+        }
+
+        public void MarkSouthWest(bool southWest)
+        {
+            if (!south)
+            {
+                // can't set corners if border set
+                this.southWest = southWest;
+            }
+        }
+
+        public string GetBorderKey()
+        {
+            var westIsConnectable = west;
+            var eastIsConnectable = east;
+            var northIsConnectable = north;
+            var southIsConnectable = south;
+
+            if (westIsConnectable && !eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "w";
+            }
+            else if (!westIsConnectable && eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "e";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "n";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "s";
+            }
+            else if (westIsConnectable && eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "ew";
+            }
+            else if (westIsConnectable && eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "new";
+            }
+            else if (westIsConnectable && eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "sew";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "ns";
+            }
+            else if (westIsConnectable && !eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "nsw";
+            }
+            else if (!westIsConnectable && eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "nse";
+            }
+            else if (westIsConnectable && !eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "nw";
+            }
+            else if (!westIsConnectable && eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "ne";
+            }
+            else if (!westIsConnectable && eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "se";
+            }
+            else if (westIsConnectable && !eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "sw";
+            }
+            else if (westIsConnectable && eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "nsew";
+            }
+
+            return "";
+        }
+
+        public string GetCornerKey()
+        {
+            var westIsConnectable = southWest;
+            var eastIsConnectable = southEast;
+            var northIsConnectable = northWest;
+            var southIsConnectable = northEast;
+
+            if (westIsConnectable && !eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "d";
+            }
+            else if (!westIsConnectable && eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "c";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "a";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "b";
+            }
+            else if (westIsConnectable && eastIsConnectable && !northIsConnectable && !southIsConnectable)
+            {
+                return "cd";
+            }
+            else if (westIsConnectable && eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "acd";
+            }
+            else if (westIsConnectable && eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "bcd";
+            }
+            else if (!westIsConnectable && !eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "ab";
+            }
+            else if (westIsConnectable && !eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "abd";
+            }
+            else if (!westIsConnectable && eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "abc";
+            }
+            else if (westIsConnectable && !eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "ad";
+            }
+            else if (!westIsConnectable && eastIsConnectable && northIsConnectable && !southIsConnectable)
+            {
+                return "ac";
+            }
+            else if (!westIsConnectable && eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "bc";
+            }
+            else if (westIsConnectable && !eastIsConnectable && !northIsConnectable && southIsConnectable)
+            {
+                return "bd";
+            }
+            else if (westIsConnectable && eastIsConnectable && northIsConnectable && southIsConnectable)
+            {
+                return "abcd";
+            }
+
+            return "";
         }
     }
 }

@@ -60,6 +60,88 @@
         "w": "dirtpath_w",
         "e": "dirtpath_e"
       }
+    },
+    "water": {
+      "type": "transition",
+      "transition_pieces": {},
+      "transition_from": [
+        "grass",
+        "stone"
+      ]
+    },
+    "grass": {
+      "type": "transition",
+      "transition_pieces": {
+        "w": "grass_0",
+        "n": "grass_1",
+        "nw": "grass_2",
+        "e": "grass_3",
+        "ew": "grass_4",
+        "ne": "grass_5",
+        "new": "grass_6",
+        "s": "grass_7",
+        "sw": "grass_8",
+        "ns": "grass_9",
+        "nsw": "grass_10",
+        "se": "grass_11",
+        "sew": "grass_12",
+        "nse": "grass_13",
+        "nsew": "grass_14",
+        "a": "grass_15",
+        "b": "grass_16",
+        "ab": "grass_17",
+        "c": "grass_18",
+        "ac": "grass_19",
+        "bc": "grass_20",
+        "abc": "grass_21",
+        "d": "grass_22",
+        "ad": "grass_23",
+        "bd": "grass_24",
+        "abd": "grass_25",
+        "cd": "grass_26",
+        "acd": "grass_27",
+        "bcd": "grass_28",
+        "abcd": "grass_29"
+      },
+      "transition_from": [
+        "stone"
+      ]
+    },
+    "stone": {
+      "type": "transition",
+      "transition_pieces": {
+        "w": "stone_0",
+        "n": "stone_1",
+        "nw": "stone_2",
+        "e": "stone_3",
+        "ew": "stone_4",
+        "ne": "stone_5",
+        "new": "stone_6",
+        "s": "stone_7",
+        "sw": "stone_8",
+        "ns": "stone_9",
+        "nsw": "stone_10",
+        "se": "stone_11",
+        "sew": "stone_12",
+        "nse": "stone_13",
+        "nsew": "stone_14",
+        "a": "stone_15",
+        "b": "stone_16",
+        "ab": "stone_17",
+        "c": "stone_18",
+        "ac": "stone_19",
+        "bc": "stone_20",
+        "abc": "stone_21",
+        "d": "stone_22",
+        "ad": "stone_23",
+        "bd": "stone_24",
+        "abd": "stone_25",
+        "cd": "stone_26",
+        "acd": "stone_27",
+        "bcd": "stone_28",
+        "abcd": "stone_29"
+      },
+      "transition_from": []
     }
   },
   "aliases": {
