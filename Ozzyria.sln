@@ -20,9 +20,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.MonoGameClient", "Ozzyria.MonoGameClient\Ozzyria.MonoGameClient.csproj", "{DF23C054-3A03-4219-A3BB-01E1BB511983}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozzyria.Gryp", "Ozzyria.Gryp\Ozzyria.Gryp.csproj", "{3E15F9C8-723A-4894-B3A4-0B45282AF9B4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2} = {16FD818A-4F71-48D0-B4C2-9C49BE0F8CB2}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

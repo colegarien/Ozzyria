@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Content.Models.Area;
+using Ozzyria.Gryp.Models.Event;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -206,6 +207,7 @@ namespace Ozzyria.Gryp.Models.Data
                     InternalId = SelectedEntity.InternalId
                 });
                 SelectedEntity = null;
+                EventBus.Notify(new SelectedEntityChangeEvent { });
             }
         }
 
@@ -221,12 +223,13 @@ namespace Ozzyria.Gryp.Models.Data
                 SelectedEntity = null;
             }
 
-            if (currentId != (SelectedWall?.InternalId ?? ""))
+            if (currentId != (SelectedEntity?.InternalId ?? ""))
             {
                 ChangeHistory.TrackChange(new EntitySelectionChange
                 {
                     InternalId = currentId
                 });
+                EventBus.Notify(new SelectedEntityChangeEvent { });
             }
         }
 

@@ -2,13 +2,14 @@ using Ozzyria.Content.Models.Area;
 using Ozzyria.Gryp.MapTools;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
+using Ozzyria.Gryp.Models.Event;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
 
 namespace Ozzyria.Gryp
 {
-    public partial class MainGrypWindow : Form
+    public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>
     {
         internal Map _map = new Map();
 
@@ -23,6 +24,7 @@ namespace Ozzyria.Gryp
         public MainGrypWindow()
         {
             InitializeComponent();
+            EventBus.Subscribe(this);
             camera.SizeCamera(mapViewPort.ClientSize.Width, mapViewPort.ClientSize.Height);
 
             cmbPrefab.Items.AddRange(new string[] {
@@ -174,22 +176,6 @@ namespace Ozzyria.Gryp
         private void mapViewPort_MouseUp(object sender, MouseEventArgs e)
         {
             toolBelt.HandleMouseUp(e, camera, _map);
-            RebuildBrushView(); // TODO this is a hack to handle dropper potentially dropping (might could just do a simple event situation?)
-            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
-            if(_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
-            {
-                // select up current entity and selected
-                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
-
-                // now trigger UI changes
-                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
-                tableEntityAttributes.Rows.Clear();
-                foreach(var kv in _map.CurrentEntityBrush.Attributes)
-                {
-                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
-                }
-            }
         }
 
         private void reRenderTimer_Tick(object sender, EventArgs e)
@@ -342,6 +328,7 @@ namespace Ozzyria.Gryp
             btnHideShowLayer.Text = _map.IsLayerVisible(_map.ActiveLayer) ? "Hide" : "Show";
             if (_map.ActiveLayer != currentLayer && currentLayer >= 0)
             {
+                EventBus.Notify(new ActiveLayerChangedEvent { });
                 ChangeHistory.TrackChange(new LayerChange { Layer = currentLayer });
                 _map.UnselectEntity();
                 _map.UnselectWall();
@@ -419,9 +406,9 @@ namespace Ozzyria.Gryp
             if (textureDialog.ShowDialog() == DialogResult.OK && textureDialog.TextureResult != "")
             {
                 _map.CurrentBrush[selectedIndex] = textureDialog.TextureResult;
+                EventBus.Notify(new BrushChangeEvent { });
 
                 mainStatusLabel.Text = "Successfully edited texture";
-                RebuildBrushView();
             }
             else
             {
@@ -437,7 +424,7 @@ namespace Ozzyria.Gryp
             }
 
             _map.CurrentBrush.Add("grass");
-            RebuildBrushView();
+            EventBus.Notify(new BrushChangeEvent { });
         }
 
         private void btnRemoveBrush_Click(object sender, EventArgs e)
@@ -447,42 +434,22 @@ namespace Ozzyria.Gryp
                 return;
             }
 
-            var rebuildBrushView = false;
+            var brushChanged = false;
             foreach (ListViewItem selectItem in listCurrentBrush.SelectedItems.Cast<ListViewItem>().OrderByDescending(e => e.Index))
             {
-                rebuildBrushView = true;
+                brushChanged = true;
                 _map.CurrentBrush.RemoveAt(selectItem.Index);
             }
 
-            if (rebuildBrushView)
+            if (brushChanged)
             {
-                RebuildBrushView();
+                EventBus.Notify(new BrushChangeEvent { });
                 mainStatusLabel.Text = "Brush(s) removed";
             }
         }
 
         private void RebuildBrushView()
         {
-            if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
-            {
-                // TODO this is a hack to skip excessive calls due to us having to call this all the time to hopefully catch window changes due to DropperTool (should remove once add command pattern)
-                bool match = true;
-                for (int i = 0; i < _map.CurrentBrush.Count; i++)
-                {
-                    if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
-                    {
-                        match = false;
-                        break;
-                    }
-                }
-
-                if (match)
-                {
-                    // don't rebuild if there is no change
-                    return;
-                }
-            }
-
             var selectedIndices = listCurrentBrush.SelectedIndices.Cast<int>().ToArray();
             listCurrentBrush.Items.Clear();
             foreach (var id in _map.CurrentBrush)
@@ -521,9 +488,9 @@ namespace Ozzyria.Gryp
                 _lastSelectedPreset = presetDialog.SelectedPreset;
                 _map.CurrentBrush.Clear();
                 _map.CurrentBrush.AddRange(presetDialog.PresetResult);
+                EventBus.Notify(new BrushChangeEvent { });
 
                 mainStatusLabel.Text = "Brush preset selected";
-                RebuildBrushView();
             }
             else
             {
@@ -628,69 +595,11 @@ namespace Ozzyria.Gryp
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Undo(_map);
-            // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
-            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
-            {
-                var i = 0;
-                foreach(ListViewItem item in layerList.Items)
-                {
-                    if(i == _map.ActiveLayer)
-                    {
-                        item.Selected = true;
-                        break;
-                    }
-                    i++;
-                }
-            }
-            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
-            if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
-            {
-                // select up current entity and selected
-                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
-
-                // now trigger UI changes
-                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
-                tableEntityAttributes.Rows.Clear();
-                foreach (var kv in _map.CurrentEntityBrush.Attributes)
-                {
-                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
-                }
-            }
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeHistory.Redo(_map);
-            // TODO Some undoing can change components, need a basic event situation to respond to change to Map I'm thinking.. (so don't gotta hack around here)
-            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
-            {
-                var i = 0;
-                foreach(ListViewItem item in layerList.Items)
-                {
-                    if(i == _map.ActiveLayer)
-                    {
-                        item.Selected = true;
-                        break;
-                    }
-                    i++;
-                }
-            }
-            // TODO this is a hack because there isn't another easy way to trigger an event of "hey an entity got selected just now" currently
-            if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
-            {
-                // select up current entity and selected
-                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
-
-                // now trigger UI changes
-                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
-                tableEntityAttributes.Rows.Clear();
-                foreach (var kv in _map.CurrentEntityBrush.Attributes)
-                {
-                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
-                }
-            }
         }
 
         private void mapViewPort_KeyDown(object sender, KeyEventArgs e)
@@ -704,7 +613,7 @@ namespace Ozzyria.Gryp
                     {
                         if(item == toolDropper)
                         {
-                            // The dropper tool is already selected, don't need todo anything
+                            // The dropper tool is already selected, don't need to do anything
                             return;
                         }
                         else
@@ -733,7 +642,7 @@ namespace Ozzyria.Gryp
                 MessageBox.Show(ChangeHistory.DebugDump());
             }
 
-            if(e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
+            if (e.KeyCode == Keys.LMenu || e.KeyCode == Keys.Alt || e.KeyCode == Keys.Menu)
             {
                 e.Handled = true;
                 toolDropper.Checked = false;
@@ -741,6 +650,66 @@ namespace Ozzyria.Gryp
                 {
                     _preQuickSwitchTool.Checked = true;
                     _preQuickSwitchTool = null;
+                }
+            }
+        }
+
+        void IEventSubscriber<BrushChangeEvent>.OnNotify(BrushChangeEvent e)
+        {
+            if (listCurrentBrush.Items.Count == _map.CurrentBrush.Count && _map.CurrentBrush.Count > 0)
+            {
+                // check if brush and brush view match
+                bool match = true;
+                for (int i = 0; i < _map.CurrentBrush.Count; i++)
+                {
+                    if (_map.CurrentBrush[i] != listCurrentBrush.Items[i].Text)
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match)
+                {
+                    // don't rebuild if there is no change
+                    return;
+                }
+            }
+
+            RebuildBrushView();
+        }
+
+        void IEventSubscriber<SelectedEntityChangeEvent>.OnNotify(SelectedEntityChangeEvent e)
+        {
+            if (_map.SelectedEntity != null && (_map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId || _map.CurrentEntityBrush.Attributes != _map.SelectedEntity.Attributes))
+            {
+                // select up current entity and selected
+                _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+
+                // now trigger UI changes
+                cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
+                tableEntityAttributes.Rows.Clear();
+                foreach (var kv in _map.CurrentEntityBrush.Attributes)
+                {
+                    tableEntityAttributes.Rows.Add(new string[] { kv.Key, kv.Value });
+                }
+            }
+        }
+
+        void IEventSubscriber<ActiveLayerChangedEvent>.OnNotify(ActiveLayerChangedEvent e)
+        {
+            if (layerList.SelectedIndices.Count > 0 && !layerList.SelectedIndices.Contains(_map.ActiveLayer))
+            {
+                var i = 0;
+                foreach (ListViewItem item in layerList.Items)
+                {
+                    if (i == _map.ActiveLayer)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                    i++;
                 }
             }
         }

@@ -1,5 +1,5 @@
 ﻿using Ozzyria.Gryp.Models.Data;
-using System.Windows.Forms;
+using Ozzyria.Gryp.Models.Event;
 
 namespace Ozzyria.Gryp.Models
 {
@@ -146,6 +146,7 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         map.ActiveLayer = layerChange.Layer;
+                        EventBus.Notify(new ActiveLayerChangedEvent { });
                     }
                     else if (change is EntitySelectionChange)
                     {
@@ -158,7 +159,9 @@ namespace Ozzyria.Gryp.Models
                         var selectedEntity = map.GetEntity(selectionChange.InternalId);
                         if (selectedEntity != null)
                         {
+                            // TODO might need to make unselect separate?
                             map.SelectedEntity = selectedEntity;
+                            EventBus.Notify(new SelectedEntityChangeEvent { });
                         }
                     }
                     else if (change is WallSelectionChange)
@@ -322,6 +325,7 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         map.ActiveLayer = layerChange.Layer;
+                        EventBus.Notify(new ActiveLayerChangedEvent { });
                     }
                     else if (change is EntitySelectionChange)
                     {
@@ -335,6 +339,7 @@ namespace Ozzyria.Gryp.Models
                         if (selectedEntity != null)
                         {
                             map.SelectedEntity = selectedEntity;
+                            EventBus.Notify(new SelectedEntityChangeEvent { });
                         }
                     }
                     else if (change is WallSelectionChange)

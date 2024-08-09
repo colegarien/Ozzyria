@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
+using Ozzyria.Gryp.Models.Event;
 using Ozzyria.Gryp.Models.Form;
 
 namespace Ozzyria.Gryp.MapTools
@@ -37,6 +38,7 @@ namespace Ozzyria.Gryp.MapTools
                 {
                     map.CurrentBrush.Clear();
                     map.CurrentBrush.AddRange(tile.DrawableIds);
+                    EventBus.Notify(new BrushChangeEvent { });
                 }
             }
         }
