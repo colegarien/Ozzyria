@@ -28,15 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenMapDialog));
             btnCancel = new Button();
             btnOpen = new Button();
             lblMap = new Label();
             cmbMap = new ComboBox();
+            btnDelete = new Button();
             SuspendLayout();
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(95, 52);
+            btnCancel.Location = new Point(131, 52);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 6;
@@ -71,6 +73,16 @@
             cmbMap.Size = new Size(121, 23);
             cmbMap.TabIndex = 8;
             // 
+            // btnDelete
+            // 
+            btnDelete.Image = (Image)resources.GetObject("btnDelete.Image");
+            btnDelete.Location = new Point(179, 6);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(27, 23);
+            btnDelete.TabIndex = 9;
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
+            // 
             // OpenMapDialog
             // 
             AcceptButton = btnOpen;
@@ -79,8 +91,9 @@
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelButton = btnCancel;
-            ClientSize = new Size(184, 79);
+            ClientSize = new Size(218, 82);
             ControlBox = false;
+            Controls.Add(btnDelete);
             Controls.Add(cmbMap);
             Controls.Add(lblMap);
             Controls.Add(btnCancel);
@@ -104,5 +117,6 @@
         private Button btnOpen;
         private Label lblMap;
         private ComboBox cmbMap;
+        private Button btnDelete;
     }
 }

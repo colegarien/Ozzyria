@@ -33,5 +33,19 @@ namespace Ozzyria.Gryp
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            var selectedId = (string)(cmbMap?.SelectedItem ?? "");
+            if (selectedId != "")
+            {
+                var result = MessageBox.Show("Are you sure you want to remove map "+selectedId+"?", "Destroy Map", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if(result == DialogResult.Yes)
+                {
+                    AreaData.Delete(selectedId);
+                    cmbMap?.Items?.Remove(selectedId);
+                }
+            }
+        }
     }
 }

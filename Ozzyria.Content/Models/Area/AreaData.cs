@@ -20,6 +20,13 @@ namespace Ozzyria.Content.Models.Area
                 .ToArray();
         }
 
+        public static void Delete(string areaId)
+        {
+            if (Exists(areaId)) {
+                Directory.Delete(GetAreaDirectory(areaId), true);
+            }
+        }
+
         public static AreaData Retrieve(string areaId)
         {
             return new AreaData
