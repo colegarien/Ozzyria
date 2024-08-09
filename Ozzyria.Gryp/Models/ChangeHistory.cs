@@ -157,12 +157,8 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         var selectedEntity = map.GetEntity(selectionChange.InternalId);
-                        if (selectedEntity != null)
-                        {
-                            // TODO might need to make unselect separate?
-                            map.SelectedEntity = selectedEntity;
-                            EventBus.Notify(new SelectedEntityChangeEvent { });
-                        }
+                        map.SelectedEntity = selectedEntity;
+                        EventBus.Notify(new SelectedEntityChangeEvent { });
                     }
                     else if (change is WallSelectionChange)
                     {
@@ -336,11 +332,8 @@ namespace Ozzyria.Gryp.Models
                         });
 
                         var selectedEntity = map.GetEntity(selectionChange.InternalId);
-                        if (selectedEntity != null)
-                        {
-                            map.SelectedEntity = selectedEntity;
-                            EventBus.Notify(new SelectedEntityChangeEvent { });
-                        }
+                        map.SelectedEntity = selectedEntity;
+                        EventBus.Notify(new SelectedEntityChangeEvent { });
                     }
                     else if (change is WallSelectionChange)
                     {
