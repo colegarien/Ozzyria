@@ -512,7 +512,7 @@ namespace Ozzyria.Gryp
             if (_map.IsDirty)
             {
                 var result = MessageBox.Show(
-                    "You have unsaved changes.\r\nWould you like to save before exiting?",
+                    "You have unsaved changes.\r\nWould you like to save?",
                     "Unsaved Changes!",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning,
