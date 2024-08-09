@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using static System.Windows.Forms.AxHost;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -8,6 +9,9 @@ namespace Ozzyria.Gryp.Models.Data
     {
         [JsonPropertyName("type")]
         public string Type { get; set; } = "";
+
+        [JsonPropertyName("priority")]
+        public int Priority { get; set; } = 0;
 
         [JsonPropertyName("path_pieces")]
         public Dictionary<string, string> PathPieces { get; set; }
@@ -215,38 +219,34 @@ namespace Ozzyria.Gryp.Models.Data
                 var southEastIsTransitionFrom = southEastTile != null && southEastTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(southEastTile.DrawableIds[0]) && Configuration.ContainsKey(southEastTile.DrawableIds[0]) && Configuration[southEastTile.DrawableIds[0]].Type == "transition";
                 var southWestIsTransitionFrom = southWestTile != null && southWestTile.DrawableIds.Count > 0 && configRecord.TransitionsFrom.Contains(southWestTile.DrawableIds[0]) && Configuration.ContainsKey(southWestTile.DrawableIds[0]) && Configuration[southWestTile.DrawableIds[0]].Type == "transition";
 
-                ///
-                /// To whom it may concern, this is auto-generate code below because I don't feel like being clever; this basically checks every valid combination of edge + corner and packs the appropriate tile id on
-                ///
+                // Pack in variables
+                var package = new TransitionPackage();
+                package.MarkNorth(northTile?.DrawableIds?.FirstOrDefault() ?? "", northIsTransitionFrom);
+                package.MarkSouth(southTile?.DrawableIds?.FirstOrDefault() ?? "", southIsTransitionFrom);
+                package.MarkEast(eastTile?.DrawableIds?.FirstOrDefault() ?? "", eastIsTransitionFrom);
+                package.MarkWest(westTile?.DrawableIds?.FirstOrDefault() ?? "", westIsTransitionFrom);
 
-                var state = new TransitionState();
-                state.MarkNorth(northIsTransitionFrom);
-                state.MarkSouth(southIsTransitionFrom);
-                state.MarkEast(eastIsTransitionFrom);
-                state.MarkWest(westIsTransitionFrom);
+                package.MarkNorthEast(northEastTile?.DrawableIds?.FirstOrDefault() ?? "", northEastIsTransitionFrom);
+                package.MarkNorthWest(northWestTile?.DrawableIds?.FirstOrDefault() ?? "", northWestIsTransitionFrom);
+                package.MarkSouthEast(southEastTile?.DrawableIds?.FirstOrDefault() ?? "", southEastIsTransitionFrom);
+                package.MarkSouthWest(southWestTile?.DrawableIds?.FirstOrDefault() ?? "", southWestIsTransitionFrom);
 
-                state.MarkNorthEast(northEastIsTransitionFrom);
-                state.MarkNorthWest(northWestIsTransitionFrom);
-                state.MarkSouthEast(southEastIsTransitionFrom);
-                state.MarkSouthWest(southWestIsTransitionFrom);
-
-                var borderKey = state.GetBorderKey();
-                if(borderKey != "")
+                foreach (var state in package.GetStates().Where(s => s.AutoTileId != "" && Configuration.ContainsKey(s.AutoTileId)).OrderBy(s => Configuration[s.AutoTileId].Priority))
                 {
-                    var id = northIsTransitionFrom ? northTile.DrawableIds[0] : (southIsTransitionFrom ? southTile.DrawableIds[0] : (eastIsTransitionFrom ? eastTile.DrawableIds[0] : (westIsTransitionFrom ? westTile.DrawableIds[0] : "")));
-                    tile.DrawableIds.Add(Configuration[id].TransitionPieces[borderKey]);
-                }
+                    var stateConfiguration = Configuration[state.AutoTileId];
 
-                var cornerKey = state.GetCornerKey();
-                if(cornerKey != "")
-                {
-                    var id = northEastIsTransitionFrom ? northEastTile.DrawableIds[0] : (northWestIsTransitionFrom ? northWestTile.DrawableIds[0] : (southEastIsTransitionFrom ? southEastTile.DrawableIds[0] : (southWestIsTransitionFrom ? southWestTile.DrawableIds[0] : "")));
-                    tile.DrawableIds.Add(Configuration[id].TransitionPieces[cornerKey]);
-                }
+                    var borderKey = state.GetBorderKey();
+                    if (borderKey != "" && stateConfiguration.TransitionPieces.ContainsKey(borderKey))
+                    {
+                        tile.DrawableIds.Add(stateConfiguration.TransitionPieces[borderKey]);
+                    }
 
-                ///
-                /// end auto generated section
-                ///
+                    var cornerKey = state.GetCornerKey();
+                    if (cornerKey != "" && stateConfiguration.TransitionPieces.ContainsKey(cornerKey))
+                    {
+                        tile.DrawableIds.Add(stateConfiguration.TransitionPieces[cornerKey]);
+                    }
+                }
 
                 // for stupidity's sake, just run auto-tile on everything surrounding
                 AutoTile(northTile, map, x, y - 1, depth + 1);
@@ -261,8 +261,79 @@ namespace Ozzyria.Gryp.Models.Data
         }
     }
 
+    internal class TransitionPackage
+    {
+        private Dictionary<string, TransitionState> states = new Dictionary<string, TransitionState>();
+
+        public IEnumerable<TransitionState> GetStates()
+        {
+            return states.Values;
+        }
+
+        private void CheckAutoTileId(string autoTileId)
+        {
+            if (!states.ContainsKey(autoTileId))
+            {
+                states[autoTileId] = new TransitionState
+                {
+                    AutoTileId = autoTileId
+                };
+            }
+        }
+
+        public void MarkNorth(string autoTileId, bool north)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkNorth(north);
+        }
+
+        public void MarkSouth(string autoTileId, bool south)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkSouth(south);
+        }
+
+        public void MarkEast(string autoTileId, bool east)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkEast(east);
+        }
+
+        public void MarkWest(string autoTileId, bool west)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkWest(west);
+        }
+
+        public void MarkNorthEast(string autoTileId, bool northEast)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkNorthEast(northEast);
+        }
+
+        public void MarkNorthWest(string autoTileId, bool northWest)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkNorthWest(northWest);
+        }
+
+        public void MarkSouthEast(string autoTileId, bool southEast)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkSouthEast(southEast);
+        }
+
+        public void MarkSouthWest(string autoTileId, bool southWest)
+        {
+            CheckAutoTileId(autoTileId);
+            states[autoTileId].MarkSouthWest(southWest);
+        }
+    }
+
     internal class TransitionState
     {
+        public string AutoTileId { get; set; } = "";
+
         private bool north = false;
         private bool south = false;
         private bool east = false;

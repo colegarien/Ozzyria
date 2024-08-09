@@ -63,6 +63,7 @@
     },
     "water": {
       "type": "transition",
+      "priority": 0,
       "transition_pieces": {},
       "transition_from": [
         "grass",
@@ -71,6 +72,7 @@
     },
     "grass": {
       "type": "transition",
+      "priority": 10,
       "transition_pieces": {
         "w": "grass_0",
         "n": "grass_1",
@@ -109,6 +111,7 @@
     },
     "stone": {
       "type": "transition",
+      "priority": 20,
       "transition_pieces": {
         "w": "stone_0",
         "n": "stone_1",
