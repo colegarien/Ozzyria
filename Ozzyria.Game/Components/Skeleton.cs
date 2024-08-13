@@ -66,7 +66,7 @@ namespace Ozzyria.Game.Components
                 if (_type != value)
                 {
                     _type = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace Ozzyria.Game.Components
                 if (_pose != value)
                 {
                     _pose = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace Ozzyria.Game.Components
                 if (_frame != value)
                 {
                     _frame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace Ozzyria.Game.Components
                 if (_layer != value)
                 {
                     _layer = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -115,7 +115,7 @@ namespace Ozzyria.Game.Components
                 if (_subLayer != value)
                 {
                     _subLayer = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace Ozzyria.Game.Components
                 if (_direction != value)
                 {
                     _direction = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace Ozzyria.Game.Components
                 if (_rootX != value)
                 {
                     _rootX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -151,7 +151,7 @@ namespace Ozzyria.Game.Components
                 if (_rootY != value)
                 {
                     _rootY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace Ozzyria.Game.Components
                 if (_renderOffsetY != value)
                 {
                     _renderOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -175,7 +175,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponOffsetX != value)
                 {
                     _weaponOffsetX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -187,7 +187,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponOffsetY != value)
                 {
                     _weaponOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponOffsetAngle != value)
                 {
                     _weaponOffsetAngle = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -211,7 +211,7 @@ namespace Ozzyria.Game.Components
                 if (_armorOffsetX != value)
                 {
                     _armorOffsetX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Ozzyria.Game.Components
                 if (_armorOffsetY != value)
                 {
                     _armorOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -235,7 +235,7 @@ namespace Ozzyria.Game.Components
                 if (_armorOffsetAngle != value)
                 {
                     _armorOffsetAngle = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace Ozzyria.Game.Components
                 if (_maskOffsetX != value)
                 {
                     _maskOffsetX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -259,7 +259,7 @@ namespace Ozzyria.Game.Components
                 if (_maskOffsetY != value)
                 {
                     _maskOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -271,7 +271,7 @@ namespace Ozzyria.Game.Components
                 if (_maskOffsetAngle != value)
                 {
                     _maskOffsetAngle = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -283,7 +283,7 @@ namespace Ozzyria.Game.Components
                 if (_hatOffsetX != value)
                 {
                     _hatOffsetX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -295,7 +295,7 @@ namespace Ozzyria.Game.Components
                 if (_hatOffsetY != value)
                 {
                     _hatOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -307,7 +307,7 @@ namespace Ozzyria.Game.Components
                 if (_hatOffsetAngle != value)
                 {
                     _hatOffsetAngle = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

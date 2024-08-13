@@ -15,7 +15,7 @@ namespace Ozzyria.Game.Components
                 if (_armorId != value)
                 {
                     _armorId = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

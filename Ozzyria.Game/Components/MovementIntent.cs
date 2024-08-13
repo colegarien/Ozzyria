@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Components
                 if (_moveRight != value)
                 {
                     _moveRight = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -28,7 +28,7 @@ namespace Ozzyria.Game.Components
                 if (_moveLeft != value)
                 {
                     _moveLeft = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -40,7 +40,7 @@ namespace Ozzyria.Game.Components
                 if (_moveDown != value)
                 {
                     _moveDown = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace Ozzyria.Game.Components
                 if (_moveUp != value)
                 {
                     _moveUp = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

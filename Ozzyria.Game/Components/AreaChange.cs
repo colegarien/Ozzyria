@@ -18,7 +18,7 @@ namespace Ozzyria.Game.Components
                 if (_newArea != value)
                 {
                     _newArea = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -31,7 +31,7 @@ namespace Ozzyria.Game.Components
                 if (_newX != value)
                 {
                     _newX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace Ozzyria.Game.Components
                 if (_newY != value)
                 {
                     _newY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

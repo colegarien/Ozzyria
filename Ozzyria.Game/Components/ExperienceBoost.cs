@@ -14,7 +14,7 @@ namespace Ozzyria.Game.Components
                 if (_experience != value)
                 {
                     _experience = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -24,7 +24,7 @@ namespace Ozzyria.Game.Components
                 if (_hasBeenAbsorbed != value)
                 {
                     _hasBeenAbsorbed = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

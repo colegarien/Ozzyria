@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Components
                 if (_name != value)
                 {
                     _name = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -35,7 +35,7 @@ namespace Ozzyria.Game.Components
                 if (_icon != value)
                 {
                     _icon = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace Ozzyria.Game.Components
                 if (_slot != value)
                 {
                     _slot = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace Ozzyria.Game.Components
                 if (_itemId != value)
                 {
                     _itemId = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace Ozzyria.Game.Components
                 if (_equipmentSlot != value)
                 {
                     _equipmentSlot = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -88,7 +88,7 @@ namespace Ozzyria.Game.Components
                 if (_isEquipped != value)
                 {
                     _isEquipped = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

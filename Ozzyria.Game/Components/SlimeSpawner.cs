@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Components
                 if (_x != value)
                 {
                     _x = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -26,7 +26,7 @@ namespace Ozzyria.Game.Components
                 if (_y != value)
                 {
                     _y = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

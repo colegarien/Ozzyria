@@ -26,7 +26,7 @@ namespace Ozzyria.Game.Components
                 if (_currentPose != value)
                 {
                     _currentPose = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -38,7 +38,7 @@ namespace Ozzyria.Game.Components
                 if (_type != value)
                 {
                     _type = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace Ozzyria.Game.Components
                 if (_frame != value)
                 {
                     _frame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace Ozzyria.Game.Components
                 if (_numberOfFrames != value)
                 {
                     _numberOfFrames = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Ozzyria.Game.Components
                 if (_frameTimer != value)
                 {
                     _frameTimer = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace Ozzyria.Game.Components
                 if (_timePerFrame != value)
                 {
                     _timePerFrame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

@@ -52,7 +52,7 @@ namespace Ozzyria.Game.Components
                 if (_isDynamic != value)
                 {
                     _isDynamic = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

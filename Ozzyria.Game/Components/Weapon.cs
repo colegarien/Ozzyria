@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponType != value)
                 {
                     _weaponType = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -35,7 +35,7 @@ namespace Ozzyria.Game.Components
                 if (_weaponId != value)
                 {
                     _weaponId = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

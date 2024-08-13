@@ -20,7 +20,7 @@ namespace Ozzyria.Game.Components
                 if (_name != value)
                 {
                     _name = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -33,7 +33,7 @@ namespace Ozzyria.Game.Components
                 if (_capacity != value)
                 {
                     _capacity = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace Ozzyria.Game.Components
             item.Slot = _contents.Count;
 
             _contents.Add(entity);
-            Owner?.TriggerComponentChanged(this);
+            TriggerChange();
             return true;
         }
 
@@ -71,7 +71,7 @@ namespace Ozzyria.Game.Components
                     ((Item)_contents[i].GetComponent(typeof(Item))).Slot = i;
                 }
             }
-            Owner?.TriggerComponentChanged(this);
+            TriggerChange();
             return entity;
         }
 
@@ -82,7 +82,7 @@ namespace Ozzyria.Game.Components
                 if (_contents != value)
                 {
                     _contents = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

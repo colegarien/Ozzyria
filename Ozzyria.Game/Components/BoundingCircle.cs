@@ -12,7 +12,7 @@ namespace Ozzyria.Game.Components
                 if (_radius != value)
                 {
                     _radius = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

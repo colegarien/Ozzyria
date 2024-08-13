@@ -12,7 +12,7 @@ namespace Ozzyria.Game.Components
                 if (_thinkAction != value)
                 {
                     _thinkAction = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

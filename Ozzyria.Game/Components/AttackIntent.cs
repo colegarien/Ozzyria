@@ -20,7 +20,7 @@ namespace Ozzyria.Game.Components
                 if (_frame != value)
                 {
                     _frame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -33,7 +33,7 @@ namespace Ozzyria.Game.Components
                 if (_decayFrame != value)
                 {
                     _decayFrame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace Ozzyria.Game.Components
                 if (_damageFrame != value)
                 {
                     _damageFrame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace Ozzyria.Game.Components
                 if (_frameTimer != value)
                 {
                     _frameTimer = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace Ozzyria.Game.Components
                 if (_timePerFrame != value)
                 {
                     _timePerFrame = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

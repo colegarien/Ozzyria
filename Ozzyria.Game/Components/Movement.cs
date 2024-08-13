@@ -27,7 +27,7 @@ namespace Ozzyria.Game.Components
                 if (_previousX != value)
                 {
                     _previousX = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -37,7 +37,7 @@ namespace Ozzyria.Game.Components
                 if (_previousY != value)
                 {
                     _previousY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -47,7 +47,7 @@ namespace Ozzyria.Game.Components
                 if (_layer != value)
                 {
                     _layer = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace Ozzyria.Game.Components
                 if (_x != value)
                 {
                     _x = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace Ozzyria.Game.Components
                 if (_y != value)
                 {
                     _y = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace Ozzyria.Game.Components
                 if (_collisionOffsetY != value)
                 {
                     _collisionOffsetY = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace Ozzyria.Game.Components
                 if (_speed != value)
                 {
                     _speed = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace Ozzyria.Game.Components
                 if (_moveDirection != value)
                 {
                     _moveDirection = AngleHelper.Clamp(value);
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace Ozzyria.Game.Components
                 if (_lookDirection != value)
                 {
                     _lookDirection = AngleHelper.Clamp(value);
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }

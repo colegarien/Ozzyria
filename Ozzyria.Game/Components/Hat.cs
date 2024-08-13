@@ -15,7 +15,7 @@ namespace Ozzyria.Game.Components
                 if (_hatId != value)
                 {
                     _hatId = value;
-                    Owner?.TriggerComponentChanged(this);
+                    TriggerChange();
                 }
             }
         }
