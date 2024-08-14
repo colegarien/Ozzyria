@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CodeGen\Files\component_defs.json" />
+    <None Remove="CodeGen\Files\prefab_defs.json" />
+    <None Remove="CodeGen\Files\type_defs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="CodeGen\Files\component_defs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CodeGen\Files\prefab_defs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CodeGen\Files\type_defs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grecs" Version="1.0.8" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,72 @@
+{
+  "skeleton_pose": {
+    "name": "SkeletonPose",
+    "type": "enum",
+    "values": [
+      "Idle",
+      "Walk",
+      "Attack"
+    ]
+  },
+  "skeleton_type": {
+    "name": "SkeletonType",
+    "type": "enum",
+    "values": [
+      "Humanoid",
+      "Slime",
+      "Static"
+    ]
+  },
+  "direction": {
+    "name": "Direction",
+    "type": "enum",
+    "values": [
+      "None",
+      "Up",
+      "Down",
+      "Left",
+      "Right"
+    ]
+  },
+  "clip_type": {
+    "name": "ClipType",
+    "type": "enum",
+    "values": [
+      "Decay",
+      "Loop",
+      "Stall"
+    ]
+  },
+  "delay": {
+    "name": "Delay",
+    "type": "class",
+    "fields": {
+      "delayInSeconds": {
+        "name": "DelayInSeconds",
+        "type": "float"
+      },
+      "timer": {
+        "name": "Timer",
+        "type": "float"
+      },
+      "ready": {
+        "name": "Ready",
+        "type": "bool",
+        "exclude_from_serialize": true
+      }
+    },
+    "defaults": {
+      "delayInSeconds": "0.5f",
+      "timer": "0.5f",
+      "ready": "false"
+    }
+  },
+  "weapon_type": {
+    "name": "WeaponType",
+    "type": "enum",
+    "values": [
+      "Empty",
+      "Sword"
+    ]
+  }
+}

@@ -1,0 +1,561 @@
+{
+  "animator": {
+    "name": "Animator",
+    "fields": {
+      "currentPose": {
+        "name": "CurrentPose",
+        "type": "skeleton_pose",
+        "exclude_from_serialize": true
+      },
+      "type": {
+        "name": "Type",
+        "type": "clip_type",
+        "exclude_from_serialize": true
+      },
+      "frame": {
+        "name": "Frame",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "numberOfFrames": {
+        "name": "NumberOfFrames",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "frameTimer": {
+        "name": "FrameTimer",
+        "type": "float",
+        "exclude_from_serialize": true
+      },
+      "timePerFrame": {
+        "name": "TimePerFrame",
+        "type": "float",
+        "exclude_from_serialize": true
+      }
+    },
+    "defaults": {
+      "timerPerFrame": "100f"
+    }
+  },
+  "area_change": {
+    "name": "AreaChange",
+    "fields": {
+      "newArea": {
+        "name": "NewArea",
+        "type": "string"
+      },
+      "newX": {
+        "name": "NewX",
+        "type": "float"
+      },
+      "newY": {
+        "name": "NewY",
+        "type": "float"
+      }
+    },
+    "defaults": {
+      "newArea": "\"\"",
+      "newX": "0f",
+      "newY": "0f"
+    }
+  },
+  "armor": {
+    "name": "Armor",
+    "fields": {
+      "armorId": {
+        "name": "ArmorId",
+        "type": "string"
+      }
+    }
+  },
+  "attack_intent": {
+    "name": "AttackIntent",
+    "is_pooled": true,
+    "fields": {
+      "frame": {
+        "name": "Frame",
+        "type": "int"
+      },
+      "decayFrame": {
+        "name": "DecayFrame",
+        "type": "int"
+      },
+      "damageFrame": {
+        "name": "DamageFrame",
+        "type": "int"
+      },
+      "frameTimer": {
+        "name": "FrameTimer",
+        "type": "float"
+      },
+      "timePerFrame": {
+        "name": "TimePerFrame",
+        "type": "float"
+      }
+    },
+    "defaults": {
+      "frame": "0",
+      "decayFrame": "3",
+      "damageFrame": "1",
+      "frameTimer": "0f",
+      "timePerFrame": "0.100f"
+    }
+  },
+  "bag": {
+    "name": "Bag",
+    "fields": {
+      "name": {
+        "name": "Name",
+        "type": "string"
+      },
+      "capacity": {
+        "name": "Capacity",
+        "type": "int"
+      }
+    },
+    "defaults": {
+      "name": "\"Inventory\"",
+      "capacity": "25"
+    }
+  },
+  "body": {
+    "name": "Body",
+    "fields": {
+      "bodyId": {
+        "name": "BodyId",
+        "type": "string"
+      }
+    }
+  },
+  "dead": {
+    "name": "Dead",
+    "is_pooled": true,
+    "fields": {}
+  },
+  "door": {
+    "name": "Door",
+    "fields": {
+      "newArea": {
+        "name": "NewArea",
+        "type": "string"
+      },
+      "newX": {
+        "name": "NewX",
+        "type": "float"
+      },
+      "newY": {
+        "name": "NewY",
+        "type": "float"
+      }
+    }
+  },
+  "exp_boost": {
+    "name": "ExperienceBoost",
+    "fields": {
+      "experience": {
+        "name": "Experience",
+        "type": "int"
+      },
+      "hasBeenAbsorbed": {
+        "name": "HasBeenAbsorbed",
+        "type": "bool"
+      }
+    },
+    "defaults": {
+      "experience": "10",
+      "hasBeenAbsorbed": "false"
+    }
+  },
+  "exp_orb_thought": {
+    "name": "ExperienceOrbThought",
+    "fields": {}
+  },
+  "hat": {
+    "name": "Hat",
+    "fields": {
+      "hatId": {
+        "name": "HatId",
+        "type": "string"
+      }
+    }
+  },
+  "item": {
+    "name": "Item",
+    "fields": {
+      "name": {
+        "name": "Name",
+        "type": "string"
+      },
+      "icon": {
+        "name": "Icon",
+        "type": "string"
+      },
+      "slot": {
+        "name": "Slot",
+        "type": "int"
+      },
+      "itemId": {
+        "name": "ItemId",
+        "type": "string"
+      },
+      "equipmentSlot": {
+        "name": "EquipmentSlot",
+        "type": "string"
+      },
+      "isEquipped": {
+        "name": "IsEquipped",
+        "type": "bool"
+      }
+    },
+    "defaults": {
+      "name": "\"\"",
+      "icon": "\"\"",
+      "slot": "0",
+      "itemId": "\"\"",
+      "equipmentSlot": "\"\"",
+      "isEquipped": "false"
+    }
+  },
+  "location": {
+    "name": "Location",
+    "fields": {
+      "area": {
+        "name": "Area",
+        "type": "string"
+      }
+    },
+    "defaults": {
+      "area": "\"\""
+    }
+  },
+  "mask": {
+    "name": "Mask",
+    "fields": {
+      "maskId": {
+        "name": "MaskId",
+        "type": "string"
+      }
+    }
+  },
+  "movement": {
+    "name": "Movement",
+    "fields": {
+      "previousX": {
+        "name": "PreviousX",
+        "type": "float"
+      },
+      "previousY": {
+        "name": "PreviousY",
+        "type": "float"
+      },
+      "layer": {
+        "name": "Layer",
+        "type": "int"
+      },
+      "x": {
+        "name": "X",
+        "type": "float"
+      },
+      "y": {
+        "name": "Y",
+        "type": "float"
+      },
+      "collisionOffsetY": {
+        "name": "CollisionOffsetY",
+        "type": "float"
+      },
+      "speed": {
+        "name": "Speed",
+        "type": "float"
+      },
+      "moveDirection": {
+        "name": "MoveDirection",
+        "type": "float"
+      },
+      "lookDirection": {
+        "name": "LookDirection",
+        "type": "float"
+      },
+      "acceleration": {
+        "name": "ACCELERATION",
+        "type": "float"
+      },
+      "maxSpeed": {
+        "name": "MAX_SPEED",
+        "type": "float"
+      },
+      "turnSpeed": {
+        "name": "TURN_SPEED",
+        "type": "float"
+      }
+    },
+    "defaults": {
+      "previousX": "0f",
+      "previousY": "0f",
+      "layer": "1",
+      "x": "0f",
+      "y": "0f",
+      "collisionOffsetY": "0f",
+      "speed": "0f",
+      "moveDirection": "0f",
+      "lookDirection": "0f",
+      "ACCELERATION": "200f",
+      "MAX_SPEED": "100f",
+      "TURN_SPEED": "5f"
+    }
+  },
+  "movement_intent": {
+    "name": "MovementIntent",
+    "is_pooled": true,
+    "fields": {
+      "moveRight": {
+        "name": "MoveRight",
+        "type": "bool"
+      },
+      "moveLeft": {
+        "name": "MoveLeft",
+        "type": "bool"
+      },
+      "moveDown": {
+        "name": "MoveDown",
+        "type": "bool"
+      },
+      "moveUp": {
+        "name": "MoveUp",
+        "type": "bool"
+      }
+    },
+    "defaults": {
+      "moveRight": "false",
+      "moveLeft": "false",
+      "moveDown": "false",
+      "moveUp": "false"
+    }
+  },
+  "player": {
+    "name": "Player",
+    "fields": {
+      "playerId": {
+        "name": "PlayerId",
+        "type": "int"
+      }
+    },
+    "defaults": {
+      "playerId": "-1"
+    }
+  },
+  "player_thought": {
+    "name": "PlayerThought",
+    "fields": {}
+  },
+  "skeleton": {
+    "name": "Skeleton",
+    "fields": {
+      "type": {
+        "name": "Type",
+        "type": "skeleton_type"
+      },
+      "pose": {
+        "name": "Pose",
+        "type": "skeleton_pose"
+      },
+      "frame": {
+        "name": "Frame",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "layer": {
+        "name": "Layer",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "subLayer": {
+        "name": "SubLayer",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "direction": {
+        "name": "Direction",
+        "type": "direction",
+        "exclude_from_serialize": true
+      },
+      "rootX": {
+        "name": "RootX",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "rootY": {
+        "name": "RootY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "renderOffsetY": {
+        "name": "RenderOffsetY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "weaponOffsetX": {
+        "name": "WeaponOffsetX",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "weaponOffsetY": {
+        "name": "WeaponOffsetY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "weaponOffsetAngle": {
+        "name": "WeaponOffsetAngle",
+        "type": "float",
+        "exclude_from_serialize": true
+      },
+      "armorOffsetX": {
+        "name": "ArmorOffsetX",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "armorOffsetY": {
+        "name": "ArmorOffsetY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "armorOffsetAngle": {
+        "name": "ArmorOffsetAngle",
+        "type": "float",
+        "exclude_from_serialize": true
+      },
+      "maskOffsetX": {
+        "name": "MaskOffsetX",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "maskOffsetY": {
+        "name": "MaskOffsetY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "maskOffsetAngle": {
+        "name": "MaskOffsetAngle",
+        "type": "float",
+        "exclude_from_serialize": true
+      },
+      "hatOffsetX": {
+        "name": "HatOffsetX",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "hatOffsetY": {
+        "name": "HatOffsetY",
+        "type": "int",
+        "exclude_from_serialize": true
+      },
+      "hatOffsetAngle": {
+        "name": "HatOffsetAngle",
+        "type": "float",
+        "exclude_from_serialize": true
+      }
+    }
+  },
+  "slime_spawner": {
+    "name": "SlimeSpawner",
+    "fields": {
+      "x": {
+        "name": "X",
+        "type": "float"
+      },
+      "y": {
+        "name": "Y",
+        "type": "float"
+      },
+      "SLIME_LIMIT": {
+        "name": "SLIME_LIMIT",
+        "type": "int"
+      },
+      "thinkDelay": {
+        "name": "ThinkDelay",
+        "type": "delay"
+      }
+    },
+    "defaults": {
+      "x": "500f",
+      "y": "400f",
+      "SLIME_LIMIT": "3",
+      "thinkDelay->delayInSeconds": "5f"
+    }
+  },
+  "slime_thought": {
+    "name": "SlimeThought",
+    "fields": {
+      "thinkDelay": {
+        "name": "ThinkDelay",
+        "type": "delay",
+        "exclude_from_serialize": true
+      },
+      "thinkAction": {
+        "name": "ThinkAction",
+        "type": "int",
+        "exclude_from_serialize": true
+      }
+    },
+    "defaults": {
+      "thinkAction": "0"
+    }
+  },
+  "stats": {
+    "name": "Stats",
+    "fields": {
+      "experience": {
+        "name": "Experience",
+        "type": "int"
+      },
+      "maxExperience": {
+        "name": "MaxExperience",
+        "type": "int"
+      },
+      "health": {
+        "name": "Health",
+        "type": "int"
+      },
+      "maxHealth": {
+        "name": "MaxHealth",
+        "type": "int"
+      }
+    },
+    "defaults": {
+      "experience": "0",
+      "maxExperience": "100",
+      "health": "100",
+      "maxHealth": "100"
+    }
+  },
+  "weapon": {
+    "name": "Weapon",
+    "fields": {
+      "weaponType": {
+        "name": "WeaponType",
+        "type": "weapon_type"
+      },
+      "weaponId": {
+        "name": "WeaponId",
+        "type": "string"
+      },
+      "attackAngle": {
+        "name": "AttackAngle",
+        "type": "float"
+      },
+      "attackRange": {
+        "name": "AttackRange",
+        "type": "float"
+      },
+      "attackDamage": {
+        "name": "AttackDamage",
+        "type": "int"
+      }
+    },
+    "defaults": {
+      "attackAngle": "0.78f",
+      "attackRange": "21f",
+      "attackDamage": "5"
+    }
+  }
+}
