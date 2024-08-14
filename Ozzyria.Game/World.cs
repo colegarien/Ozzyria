@@ -47,7 +47,7 @@ namespace Ozzyria.Game
 
         public void PlayerLeave(int playerId)
         {
-            var playerEntity = WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.GetEntities(new EntityQuery().And(typeof(Components.Player))).FirstOrDefault(e => ((Components.Player)e.GetComponent(typeof(Components.Player))).PlayerId == playerId);
+            var playerEntity = WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.GetEntities(new EntityQuery().And(typeof(Model.Components.Player))).FirstOrDefault(e => ((Model.Components.Player)e.GetComponent(typeof(Model.Components.Player))).PlayerId == playerId);
             if (playerEntity != null)
             {
                 WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.DestroyEntity(playerEntity);

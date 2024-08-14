@@ -1,8 +1,6 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using System.Linq;
-using Movement = Ozzyria.Model.Components.Movement;
-using MovementIntent = Ozzyria.Model.Components.MovementIntent;
 using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems

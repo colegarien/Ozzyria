@@ -19,7 +19,7 @@ namespace Ozzyria.Model.Components
         }
 
         
-        private string _weaponId;
+        private string _weaponId = "";
         public string WeaponId
         {
             get => _weaponId; set

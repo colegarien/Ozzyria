@@ -90,27 +90,40 @@ namespace Grynt.Generators.Fields
 
         private string GenerateDefaults(FieldDefinition field, TypeDefinition type, ValuePacket defaults = null)
         {
-            if (defaults == null || !defaults.HasValueFor(field.Id))
-            {
-                return "";
-            }
+            var hasDefaultValues = defaults != null && defaults.HasValueFor(field.Id);
 
             var code = " = {{VALUE}}";
             switch (type.Type)
             {
                 case TypeDefinition.TYPE_ASSUMED:
-                    // use raw value
-                    return code.Replace("{{VALUE}}", defaults[field.Id]);
+                    if (hasDefaultValues)
+                    {
+                        // use raw value
+                        return code.Replace("{{VALUE}}", defaults[field.Id]);
+                    }
+                    else if(type.Id == "string")
+                    {
+                        // return the empty string to avoid propagating nulls
+                        return code.Replace("{{VALUE}}", "\"\"");
+                    }
+                    else
+                    {
+                        return "";
+                    }
                 case TypeDefinition.TYPE_ENUM:
-                    // qualify value with enum Type
-                    return code.Replace("{{VALUE}}", type.Name + "." + defaults[field.Id]);
+                    if (hasDefaultValues)
+                    {
+                        // qualify value with enum Type
+                        return code.Replace("{{VALUE}}", type.Name + "." + defaults[field.Id]);
+                    }
+                    else
+                    {
+                        return "";
+                    }
                 case TypeDefinition.TYPE_CLASS:
                     // build class intializer syntax
                     var initializers = "";
                     var fieldDefaults = defaults.Extract(field.Id);
-                    if (fieldDefaults.Count <= 0)
-                        break;
-
                     foreach (var subFieldByFieldId in type.ClassFields)
                     {
                         var subField = subFieldByFieldId.Value;

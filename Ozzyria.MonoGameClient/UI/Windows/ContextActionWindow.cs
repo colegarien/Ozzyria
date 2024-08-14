@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Ozzyria.Game.Components;
+using Ozzyria.Model.Components;
 using Grecs;
 using System.Collections.Generic;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
@@ -100,9 +100,9 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     }
                 }
             }
-            else if(subject.HasComponent(typeof(Bag)))
+            else if(subject.HasComponent(typeof(Ozzyria.Game.Components.Bag)))
             {
-                var bag = (Bag)subject.GetComponent(typeof(Bag));
+                var bag = (Ozzyria.Game.Components.Bag)subject.GetComponent(typeof(Ozzyria.Game.Components.Bag));
                 _actions.Add(new ContextAction
                 {
                     Label = "open",

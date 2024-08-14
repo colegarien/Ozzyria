@@ -4,7 +4,7 @@ namespace Ozzyria.Model.Components
 {
     public class SlimeThought : Grecs.Component, ISerializable, IHydrateable
     {
-        private Delay _thinkDelay;
+        private Delay _thinkDelay = new Delay{  };
         public Delay ThinkDelay
         {
             get => _thinkDelay; set

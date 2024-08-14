@@ -1,8 +1,6 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
+﻿using Grecs;
 using System.Linq;
-using Movement = Ozzyria.Model.Components.Movement;
-using Weapon = Ozzyria.Model.Components.Weapon;
+using Ozzyria.Model.Components;
 using Ozzyria.Model.Extensions;
 using Ozzyria.Model.Types;
 
@@ -15,7 +13,7 @@ namespace Ozzyria.Game.Systems
         public AttackSystem()
         {
             attackerQuery = new EntityQuery();
-            attackerQuery.And(typeof(Ozzyria.Model.Components.AttackIntent), typeof(Movement), typeof(Stats));
+            attackerQuery.And(typeof(AttackIntent), typeof(Movement), typeof(Stats));
 
             targetQuery = new EntityQuery();
             targetQuery.And(typeof(Movement), typeof(Stats));
@@ -31,7 +29,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in attackerEntities)
             {
                 var movement = entity.GetComponent<Movement>();
-                var intent = entity.GetComponent<Ozzyria.Model.Components.AttackIntent>();
+                var intent = entity.GetComponent<AttackIntent>();
 
                 intent.FrameTimer += deltaTime;
                 if (intent.FrameTimer >= intent.TimePerFrame)

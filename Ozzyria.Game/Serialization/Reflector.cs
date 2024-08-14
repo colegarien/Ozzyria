@@ -136,6 +136,17 @@ namespace Ozzyria.Game.Serialization
             componentTypes["Ozzyria.Model.Components.Hat"] = typeof(Ozzyria.Model.Components.Hat);
             componentTypes["Ozzyria.Model.Components.Mask"] = typeof(Ozzyria.Model.Components.Mask);
 
+            componentTypes["Ozzyria.Model.Components.Dead"] = typeof(Ozzyria.Model.Components.Dead);
+            componentTypes["Ozzyria.Model.Components.Door"] = typeof(Ozzyria.Model.Components.Door);
+            componentTypes["Ozzyria.Model.Components.ExperienceBoost"] = typeof(Ozzyria.Model.Components.ExperienceBoost);
+            componentTypes["Ozzyria.Model.Components.ExperienceOrbThought"] = typeof(Ozzyria.Model.Components.ExperienceOrbThought);
+            componentTypes["Ozzyria.Model.Components.Item"] = typeof(Ozzyria.Model.Components.Item);
+            componentTypes["Ozzyria.Model.Components.Player"] = typeof(Ozzyria.Model.Components.Player);
+            componentTypes["Ozzyria.Model.Components.PlayerThought"] = typeof(Ozzyria.Model.Components.PlayerThought);
+            componentTypes["Ozzyria.Model.Components.SlimeSpawner"] = typeof(Ozzyria.Model.Components.SlimeSpawner);
+            componentTypes["Ozzyria.Model.Components.SlimeThought"] = typeof(Ozzyria.Model.Components.SlimeThought);
+            componentTypes["Ozzyria.Model.Components.Stats"] = typeof(Ozzyria.Model.Components.Stats);
+
             _isInitialized = true;
         }
 

@@ -4,7 +4,7 @@ namespace Ozzyria.Model.Components
 {
     public class Door : Grecs.Component, ISerializable, IHydrateable
     {
-        private string _newArea;
+        private string _newArea = "";
         public string NewArea
         {
             get => _newArea; set

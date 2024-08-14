@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.Networking.Model;
 using System;
@@ -9,12 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Ozzyria.Model.Types;
-using Movement = Ozzyria.Model.Components.Movement;
-using Skeleton = Ozzyria.Model.Components.Skeleton;
-using Body = Ozzyria.Model.Components.Body;
-using Weapon = Ozzyria.Model.Components.Weapon;
-using Hat = Ozzyria.Model.Components.Hat;
-using Mask = Ozzyria.Model.Components.Mask;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Networking
 {
@@ -159,16 +153,16 @@ namespace Ozzyria.Networking
                                 }
                                 else
                                 {
-                                    var sourceBag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    var sourceBag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
                                     if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < sourceBag.Contents.Count)
                                     {
-                                        Bag bag = sourceBag;
+                                        Game.Components.Bag bag = sourceBag;
                                         var bagId = bagItemRequest.BagEntityId;
                                         var itemSlot = bagItemRequest.ItemSlot;
-                                        var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Game.Components.Player))).FirstOrDefault(e => ((Game.Components.Player)e.GetComponent(typeof(Game.Components.Player))).PlayerId == messageClient);
+                                        var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == messageClient);
                                         if (playerEntity.id != bagId)
                                         {
-                                            var playerBag = (Bag)playerEntity.GetComponent(typeof(Bag));
+                                            var playerBag = (Game.Components.Bag)playerEntity.GetComponent(typeof(Game.Components.Bag));
                                             var tranferredEntity = sourceBag.RemoveItem(itemSlot);
 
                                             if (tranferredEntity != null)
@@ -258,7 +252,7 @@ namespace Ozzyria.Networking
                                 }
                                 else
                                 {
-                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
 
                                     if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
                                     {
@@ -319,7 +313,7 @@ namespace Ozzyria.Networking
                                 }
                                 else
                                 {
-                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
 
                                     if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
                                     {
@@ -360,7 +354,7 @@ namespace Ozzyria.Networking
                                             // Create Bag
                                             var newBagEntity = areaContext.CreateEntity();
 
-                                            var newBag = (Bag)newBagEntity.CreateComponent(typeof(Bag));
+                                            var newBag = (Game.Components.Bag)newBagEntity.CreateComponent(typeof(Game.Components.Bag));
                                             newBag.Name = "Bag";
                                             newBag.Capacity = 4;
                                             newBag.AddItem(droppedEntity);

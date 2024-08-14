@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game;
-using Ozzyria.Game.Components;
+using Ozzyria.Model.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.Content;
 using Ozzyria.Content.Models;
-using Location = Ozzyria.Model.Components.Location;
 
 namespace Ozzyria.MonoGameClient.Systems
 {

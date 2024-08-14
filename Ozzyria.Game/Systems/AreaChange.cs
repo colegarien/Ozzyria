@@ -1,6 +1,5 @@
 ﻿using Grecs;
 using Ozzyria.Model.Components;
-using Location = Ozzyria.Model.Components.Location;
 
 namespace Ozzyria.Game.Systems
 {
@@ -17,7 +16,7 @@ namespace Ozzyria.Game.Systems
         {
             foreach(var entity in entities)
             {
-                var location = (Location)entity.GetComponent(typeof(Location));
+                var location = (Ozzyria.Model.Components.Location)entity.GetComponent(typeof(Ozzyria.Model.Components.Location));
                 var areaChange = (Ozzyria.Model.Components.AreaChange)entity.GetComponent(typeof(Ozzyria.Model.Components.AreaChange));
 
 
@@ -38,9 +37,9 @@ namespace Ozzyria.Game.Systems
                     location.Area = areaChange.NewArea;
 
                     // update player tracking if player
-                    if (entity.HasComponent(typeof(Components.Player)))
+                    if (entity.HasComponent(typeof(Ozzyria.Model.Components.Player)))
                     {
-                        var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player)))?.PlayerId ?? -1;
+                        var playerId = ((Model.Components.Player)entity.GetComponent(typeof(Model.Components.Player)))?.PlayerId ?? -1;
                         _world.WorldState.PlayerAreaTracker[playerId] = areaChange.NewArea;
                         entityLeaveEvent.PlayerId = playerId;
                     }
@@ -71,7 +70,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Location), typeof(Ozzyria.Model.Components.AreaChange));
+            var query = new EntityQuery().And(typeof(Ozzyria.Model.Components.Location), typeof(Ozzyria.Model.Components.AreaChange));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
 

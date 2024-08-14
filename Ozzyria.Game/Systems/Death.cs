@@ -1,7 +1,6 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using Ozzyria.Game.Utility;
-using Movement = Ozzyria.Model.Components.Movement;
 
 namespace Ozzyria.Game.Systems
 {
@@ -18,12 +17,12 @@ namespace Ozzyria.Game.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
 
                 EntityFactory.CreateExperienceOrb(context, movement.X, movement.Y, 10);
-                if (entity.HasComponent(typeof(Components.Player)))
+                if (entity.HasComponent(typeof(Model.Components.Player)))
                 {
                     // TODO OZ-30 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
                     // TODO OZ-30 : probably just remove thought component, change renderable to corpse then make a "respawn" system to handle player respawn at a graveyard
 
-                    var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player))).PlayerId;
+                    var playerId = ((Model.Components.Player)entity.GetComponent(typeof(Model.Components.Player))).PlayerId;
 
                     // reset player
                     context.DestroyEntity(entity);

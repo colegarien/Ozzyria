@@ -1,8 +1,5 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
-using Movement = Ozzyria.Model.Components.Movement;
-using MovementIntent = Ozzyria.Model.Components.MovementIntent;
-using AttackIntent = Ozzyria.Model.Components.AttackIntent;
 using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems
@@ -29,7 +26,7 @@ namespace Ozzyria.Game.Systems
                     continue;
                 }
 
-                var playerId = entity.GetComponent<Components.Player>().PlayerId;
+                var playerId = entity.GetComponent<Model.Components.Player>().PlayerId;
                 var input = _world.WorldState.PlayerInputBuffer.ContainsKey(playerId) ? _world.WorldState.PlayerInputBuffer[playerId] : new Input();
                 var movement = entity.GetComponent<Movement>();
 

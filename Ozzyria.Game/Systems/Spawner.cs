@@ -1,4 +1,5 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
+using Ozzyria.Model.Extensions;
 using Grecs;
 using Ozzyria.Game.Utility;
 using System.Linq;

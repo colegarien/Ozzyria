@@ -1,7 +1,6 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using System;
-using Movement = Ozzyria.Model.Components.Movement;
 
 namespace Ozzyria.Game.Systems
 {
@@ -20,7 +19,7 @@ namespace Ozzyria.Game.Systems
 
             // OZ-22 : make doors work for more than just players, potentiall change to require action to use a door
             playerQuery = new EntityQuery();
-            playerQuery.And(typeof(Components.Player), typeof(Movement));
+            playerQuery.And(typeof(Ozzyria.Model.Components.Player), typeof(Movement));
         }
 
         public override void Execute(float deltaTime, EntityContext context)

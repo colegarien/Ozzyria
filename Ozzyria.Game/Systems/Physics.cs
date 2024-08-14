@@ -1,10 +1,7 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using System.Linq;
 using System.Numerics;
-using Movement = Ozzyria.Model.Components.Movement;
-using Ozzyria.Model.Extensions;
-using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Systems
 {
@@ -16,7 +13,7 @@ namespace Ozzyria.Game.Systems
         {
             query = new EntityQuery();
             query.And(typeof(Movement))
-                .Or(typeof(BoundingBox), typeof(BoundingCircle));
+                .Or(typeof(Ozzyria.Game.Components.BoundingBox), typeof(Ozzyria.Game.Components.BoundingCircle));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -25,7 +22,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var collision = (Collision)(entity.GetComponent(typeof(BoundingBox)) ?? entity.GetComponent(typeof(BoundingCircle)));
+                var collision = (Ozzyria.Game.Components.Collision)(entity.GetComponent(typeof(Ozzyria.Game.Components.BoundingBox)) ?? entity.GetComponent(typeof(Ozzyria.Game.Components.BoundingCircle)));
                 if (collision.IsDynamic)
                 {
                     var possibleCollisions = entities.Where(e => e.id != entity.id && e.GetComponent<Movement>().Layer == movement.Layer);
@@ -33,35 +30,35 @@ namespace Ozzyria.Game.Systems
                     foreach (var collidedEntity in possibleCollisions)
                     {
                         var otherMovement = (Movement)collidedEntity.GetComponent(typeof(Movement));
-                        var otherCollision = (Collision)(collidedEntity.GetComponent(typeof(BoundingBox)) ?? collidedEntity.GetComponent(typeof(BoundingCircle)));
+                        var otherCollision = (Ozzyria.Game.Components.Collision)(collidedEntity.GetComponent(typeof(Ozzyria.Game.Components.BoundingBox)) ?? collidedEntity.GetComponent(typeof(Ozzyria.Game.Components.BoundingCircle)));
 
-                        if (collision is BoundingCircle && otherCollision is BoundingCircle)
+                        if (collision is Ozzyria.Game.Components.BoundingCircle && otherCollision is Ozzyria.Game.Components.BoundingCircle)
                         {
-                            var result = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
+                            var result = Ozzyria.Game.Components.Collision.CircleIntersectsCircle((Ozzyria.Game.Components.BoundingCircle)collision, (Ozzyria.Game.Components.BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
-                        else if (collision is BoundingBox && otherCollision is BoundingBox)
+                        else if (collision is Ozzyria.Game.Components.BoundingBox && otherCollision is Ozzyria.Game.Components.BoundingBox)
                         {
-                            var result = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
+                            var result = Ozzyria.Game.Components.Collision.BoxIntersectsBox((Ozzyria.Game.Components.BoundingBox)collision, (Ozzyria.Game.Components.BoundingBox)otherCollision);
                             if (result.Collided)
                             {
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
-                        else if (collision is BoundingCircle && otherCollision is BoundingBox)
+                        else if (collision is Ozzyria.Game.Components.BoundingCircle && otherCollision is Ozzyria.Game.Components.BoundingBox)
                         {
-                            var result = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
+                            var result = Ozzyria.Game.Components.Collision.CircleIntersectsBox((Ozzyria.Game.Components.BoundingCircle)collision, (Ozzyria.Game.Components.BoundingBox)otherCollision);
                             if (result.Collided)
                             {
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                             }
                         }
-                        else if (collision is BoundingBox && otherCollision is BoundingCircle)
+                        else if (collision is Ozzyria.Game.Components.BoundingBox && otherCollision is Ozzyria.Game.Components.BoundingCircle)
                         {
-                            var result = Collision.BoxIntersectsCircle((BoundingBox)collision, (BoundingCircle)otherCollision);
+                            var result = Ozzyria.Game.Components.Collision.BoxIntersectsCircle((Ozzyria.Game.Components.BoundingBox)collision, (Ozzyria.Game.Components.BoundingCircle)otherCollision);
                             if (result.Collided)
                             {
                                 depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;

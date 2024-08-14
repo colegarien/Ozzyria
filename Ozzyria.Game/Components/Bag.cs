@@ -40,12 +40,12 @@ namespace Ozzyria.Game.Components
 
         public bool AddItem(Entity entity)
         {
-            if(_contents.Count >= _capacity || !entity.HasComponent(typeof(Item)))
+            if(_contents.Count >= _capacity || !entity.HasComponent(typeof(Ozzyria.Model.Components.Item)))
             {
                 return false;
             }
 
-            var item = entity.GetComponent(typeof(Item)) as Item;
+            var item = entity.GetComponent(typeof(Ozzyria.Model.Components.Item)) as Ozzyria.Model.Components.Item;
             item.Slot = _contents.Count;
 
             _contents.Add(entity);
@@ -68,7 +68,7 @@ namespace Ozzyria.Game.Components
                 // adjust slot numbers since items are shifted
                 for(var i = slot; i < _contents.Count; i++)
                 {
-                    ((Item)_contents[i].GetComponent(typeof(Item))).Slot = i;
+                    ((Ozzyria.Model.Components.Item)_contents[i].GetComponent(typeof(Ozzyria.Model.Components.Item))).Slot = i;
                 }
             }
             TriggerChange();

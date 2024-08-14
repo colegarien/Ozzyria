@@ -4,7 +4,7 @@ namespace Ozzyria.Model.Components
 {
     public class Armor : Grecs.Component, ISerializable, IHydrateable
     {
-        private string _armorId;
+        private string _armorId = "";
         public string ArmorId
         {
             get => _armorId; set
