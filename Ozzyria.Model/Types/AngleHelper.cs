@@ -1,7 +1,8 @@
 ﻿using System;
 
-namespace Ozzyria.Game.Utility
+namespace Ozzyria.Model.Types
 {
+    // TODO possibly convert to a new "Angle" type + Extension methods? maybe..
     public class AngleHelper
     {
         public static float PiOverFour = (float)(Math.PI / 4.0);

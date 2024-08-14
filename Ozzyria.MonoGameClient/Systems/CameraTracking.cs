@@ -2,6 +2,9 @@
 using Ozzyria.Game;
 using Grecs;
 using Ozzyria.Content.Models;
+using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.MonoGameClient.Systems
 {

@@ -2,6 +2,10 @@
 using Grecs;
 using Ozzyria.Game.Utility;
 using System.Linq;
+using Movement = Ozzyria.Model.Components.Movement;
+using MovementIntent = Ozzyria.Model.Components.MovementIntent;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Systems
 {

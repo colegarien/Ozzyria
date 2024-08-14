@@ -2,6 +2,7 @@
 using Ozzyria.MonoGameClient.Rendering.EntityRenderer;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.Game.Components;
+using Movement = Ozzyria.Model.Components.Movement;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering
 {

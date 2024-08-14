@@ -1,4 +1,5 @@
 ﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Model.Components;
 using Grecs;
 using System;
 using System.Numerics;

@@ -42,9 +42,15 @@ namespace Ozzyria.Game.Serialization
                 return;
             }
 
-            var props = Reflector.GetSavableProperties(component.GetType());
-
             writer.Write(name);
+
+            if(component is Ozzyria.Model.Types.ISerializable)
+            {
+                ((Ozzyria.Model.Types.ISerializable)component).Write(writer);
+                return;
+            }
+
+            var props = Reflector.GetSavableProperties(component.GetType());
             writer.Write(props.Length);
             foreach (var p in props)
             {
@@ -114,6 +120,12 @@ namespace Ozzyria.Game.Serialization
             {
                 component = entity.CreateComponent(componentType);
                 entity.AddComponent(component);
+            }
+
+            if (component is Ozzyria.Model.Types.ISerializable)
+            {
+                ((Ozzyria.Model.Types.ISerializable)component).Read(reader);
+                return component;
             }
 
             var props = Reflector.GetSavableProperties(component.GetType());

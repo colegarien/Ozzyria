@@ -1,30 +1,9 @@
 ﻿using Ozzyria.Game.Components.Attribute;
+using Ozzyria.Model.Types;
 using Grecs;
 
 namespace Ozzyria.Game.Components
 {
-    public enum SkeletonPose
-    {
-        Idle,
-        Walk,
-        Attack,
-    }
-    public enum SkeletonType
-    {
-        Humanoid,
-        Slime,
-        Static,
-    }
-
-    public enum Direction
-    {
-        None,
-        Up,
-        Down,
-        Left,
-        Right,
-    }
-
     public class Skeleton: Component
     {
         private SkeletonType _type { get; set; }

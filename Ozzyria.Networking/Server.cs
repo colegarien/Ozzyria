@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Ozzyria.Model.Types;
+using Movement = Ozzyria.Model.Components.Movement;
 
 namespace Ozzyria.Networking
 {

@@ -1,4 +1,7 @@
 ﻿using Grecs;
+using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Systems
 {
@@ -44,9 +47,9 @@ namespace Ozzyria.Game.Systems
                     }
 
                     // update movement if has component
-                    if (entity.HasComponent(typeof(Components.Movement)))
+                    if (entity.HasComponent(typeof(Movement)))
                     {
-                        var movement = (Components.Movement)entity.GetComponent(typeof(Components.Movement));
+                        var movement = (Movement)entity.GetComponent(typeof(Movement));
                         movement.X = areaChange.NewX;
                         movement.Y = areaChange.NewY;
                         movement.PreviousX = areaChange.NewX;

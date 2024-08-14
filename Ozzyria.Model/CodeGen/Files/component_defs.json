@@ -299,9 +299,9 @@
       "speed": "0f",
       "moveDirection": "0f",
       "lookDirection": "0f",
-      "ACCELERATION": "200f",
-      "MAX_SPEED": "100f",
-      "TURN_SPEED": "5f"
+      "acceleration": "200f",
+      "maxSpeed": "100f",
+      "turnSpeed": "5f"
     }
   },
   "movement_intent": {

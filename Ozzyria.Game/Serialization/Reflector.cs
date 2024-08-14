@@ -19,9 +19,12 @@ namespace Ozzyria.Game.Serialization
         public static Type  GetTypeForId(string identifier)
         {
             ValidateReflectionCaches();
-            return componentTypes.ContainsKey(identifier)
-                ? componentTypes[identifier]
-                : null;
+            if (componentTypes.ContainsKey(identifier))
+            {
+                return componentTypes[identifier];
+            }
+
+            return null;
         }
 
         public static object? GetPropertyValue(PropertyInfo p, object? instance)
@@ -115,6 +118,10 @@ namespace Ozzyria.Game.Serialization
                     propertySetters[type][property.Name] = exp.Compile();
                 }
             }
+
+
+            componentTypes["Ozzyria.Model.Components.Movement"] = typeof(Ozzyria.Model.Components.Movement);
+            componentTypes["Ozzyria.Model.Components.MovementIntent"] = typeof(Ozzyria.Model.Components.MovementIntent);
 
             _isInitialized = true;
         }

@@ -139,7 +139,7 @@ namespace Ozzyria.Model.Components
         }
 
         
-        private float _acceleration;
+        private float _acceleration = 200f;
         public float ACCELERATION
         {
             get => _acceleration; set
@@ -154,7 +154,7 @@ namespace Ozzyria.Model.Components
         }
 
         
-        private float _maxSpeed;
+        private float _maxSpeed = 100f;
         public float MAX_SPEED
         {
             get => _maxSpeed; set
@@ -169,7 +169,7 @@ namespace Ozzyria.Model.Components
         }
 
         
-        private float _turnSpeed;
+        private float _turnSpeed = 5f;
         public float TURN_SPEED
         {
             get => _turnSpeed; set

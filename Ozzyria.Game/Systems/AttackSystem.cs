@@ -1,7 +1,9 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
-using Ozzyria.Game.Utility;
 using System.Linq;
+using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Systems
 {

@@ -1,14 +1,8 @@
 ﻿using Grecs;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Components
 {
-    public enum ClipType
-    {
-        Decay,
-        Loop,
-        Stall
-    }
-
     public  class Animator : Component
     {
         private SkeletonPose _currentPose;

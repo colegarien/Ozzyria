@@ -1,5 +1,8 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
+using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Utility
 {
@@ -172,7 +175,7 @@ namespace Ozzyria.Game.Utility
             var component = (SlimeSpawner)spawner.CreateComponent(typeof(SlimeSpawner));
             component.X = x;
             component.Y = y;
-            component.ThinkDelay = new Delay { DelayInSeconds = 5f };
+            component.ThinkDelay = new Components.Delay { DelayInSeconds = 5f };
 
             spawner.AddComponent(component);
         }

@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
 using System;
+using Movement = Ozzyria.Model.Components.Movement;
 
 namespace Ozzyria.Game.Systems
 {

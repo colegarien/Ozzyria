@@ -1,14 +1,9 @@
 ﻿using Ozzyria.Game.Components.Attribute;
 using Grecs;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Components
 {
-    public enum WeaponType
-    {
-        Empty,
-        Sword,
-    }
-
     public class Weapon: Component
     {
         private WeaponType _weaponType;

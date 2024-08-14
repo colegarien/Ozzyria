@@ -16,6 +16,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
+using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Extensions;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.MonoGameClient
 {
