@@ -1,6 +1,8 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
+using Body = Ozzyria.Model.Components.Body;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
 {

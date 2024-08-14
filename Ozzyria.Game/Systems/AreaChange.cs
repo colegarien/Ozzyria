@@ -1,5 +1,6 @@
 ﻿using Grecs;
 using Ozzyria.Model.Components;
+using Location = Ozzyria.Model.Components.Location;
 
 namespace Ozzyria.Game.Systems
 {
@@ -16,7 +17,7 @@ namespace Ozzyria.Game.Systems
         {
             foreach(var entity in entities)
             {
-                var location = (Components.Location)entity.GetComponent(typeof(Components.Location));
+                var location = (Location)entity.GetComponent(typeof(Location));
                 var areaChange = (Ozzyria.Model.Components.AreaChange)entity.GetComponent(typeof(Ozzyria.Model.Components.AreaChange));
 
 
@@ -70,7 +71,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Components.Location), typeof(Ozzyria.Model.Components.AreaChange));
+            var query = new EntityQuery().And(typeof(Location), typeof(Ozzyria.Model.Components.AreaChange));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
 

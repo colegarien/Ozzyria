@@ -6,6 +6,7 @@ using Ozzyria.Model.Types;
 using Movement = Ozzyria.Model.Components.Movement;
 using Animator = Ozzyria.Model.Components.Animator;
 using Ozzyria.Model.Extensions;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering
 {

@@ -10,6 +10,11 @@ using System.Net.Sockets;
 using System.Threading;
 using Ozzyria.Model.Types;
 using Movement = Ozzyria.Model.Components.Movement;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
+using Body = Ozzyria.Model.Components.Body;
+using Weapon = Ozzyria.Model.Components.Weapon;
+using Hat = Ozzyria.Model.Components.Hat;
+using Mask = Ozzyria.Model.Components.Mask;
 
 namespace Ozzyria.Networking
 {

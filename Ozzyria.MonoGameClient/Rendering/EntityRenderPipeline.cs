@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ozzyria.Content.Models;
-using Ozzyria.Game.Components;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
 using Grecs;
 
 namespace Ozzyria.MonoGameClient.Rendering

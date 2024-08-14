@@ -3,8 +3,7 @@ using Ozzyria.Game.Components;
 using Grecs;
 using System;
 using Movement = Ozzyria.Model.Components.Movement;
-using Ozzyria.Model.Extensions;
-using Ozzyria.Model.Types;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
 {

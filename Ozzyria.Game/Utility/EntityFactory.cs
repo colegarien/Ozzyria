@@ -3,6 +3,12 @@ using Grecs;
 using Movement = Ozzyria.Model.Components.Movement;
 using Animator = Ozzyria.Model.Components.Animator;
 using Armor = Ozzyria.Model.Components.Armor;
+using Location = Ozzyria.Model.Components.Location;
+using Skeleton = Ozzyria.Model.Components.Skeleton;
+using Body = Ozzyria.Model.Components.Body;
+using Weapon = Ozzyria.Model.Components.Weapon;
+using Hat = Ozzyria.Model.Components.Hat;
+using Mask = Ozzyria.Model.Components.Mask;
 using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Utility
@@ -17,7 +23,7 @@ namespace Ozzyria.Game.Utility
             var playerTag = (Components.Player)player.CreateComponent(typeof(Components.Player));
             playerTag.PlayerId = playerId;
 
-            var playerLocation = (Components.Location)player.CreateComponent(typeof(Components.Location));
+            var playerLocation = (Location)player.CreateComponent(typeof(Location));
             playerLocation.Area = "test_m"; // TODO OZ-28 pull this from a storage or some kind?
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));

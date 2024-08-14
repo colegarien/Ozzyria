@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Game.Serialization
 {
@@ -127,6 +128,13 @@ namespace Ozzyria.Game.Serialization
             componentTypes["Ozzyria.Model.Components.AreaChange"] = typeof(Ozzyria.Model.Components.AreaChange);
             componentTypes["Ozzyria.Model.Components.Armor"] = typeof(Ozzyria.Model.Components.Armor);
             componentTypes["Ozzyria.Model.Components.AttackIntent"] = typeof(Ozzyria.Model.Components.AttackIntent);
+
+            componentTypes["Ozzyria.Model.Components.Location"] = typeof(Ozzyria.Model.Components.Location);
+            componentTypes["Ozzyria.Model.Components.Skeleton"] = typeof(Ozzyria.Model.Components.Skeleton);
+            componentTypes["Ozzyria.Model.Components.Body"] = typeof(Ozzyria.Model.Components.Body);
+            componentTypes["Ozzyria.Model.Components.Weapon"] = typeof(Ozzyria.Model.Components.Weapon);
+            componentTypes["Ozzyria.Model.Components.Hat"] = typeof(Ozzyria.Model.Components.Hat);
+            componentTypes["Ozzyria.Model.Components.Mask"] = typeof(Ozzyria.Model.Components.Mask);
 
             _isInitialized = true;
         }

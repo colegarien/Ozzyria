@@ -2,6 +2,7 @@
 using Grecs;
 using System.Linq;
 using Movement = Ozzyria.Model.Components.Movement;
+using Weapon = Ozzyria.Model.Components.Weapon;
 using Ozzyria.Model.Extensions;
 using Ozzyria.Model.Types;
 
