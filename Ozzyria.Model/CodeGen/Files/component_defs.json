@@ -127,6 +127,18 @@
       }
     }
   },
+  "collision": {
+    "name": "Collision",
+    "fields": {
+      "isDynamic": {
+        "name": "IsDynamic",
+        "type": "bool"
+      }
+    },
+    "defaults": {
+      "isDynamic": "true"
+    }
+  },
   "dead": {
     "name": "Dead",
     "is_pooled": true,
@@ -263,6 +275,10 @@
       "collisionOffsetY": {
         "name": "CollisionOffsetY",
         "type": "float"
+      },
+      "collisionShape": {
+        "name": "CollisionShape",
+        "type": "collision_shape"
       },
       "speed": {
         "name": "Speed",

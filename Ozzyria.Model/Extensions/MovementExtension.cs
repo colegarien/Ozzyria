@@ -137,5 +137,15 @@ namespace Ozzyria.Model.Extensions
             movement.X += movement.Speed * deltaTime * (float)Math.Sin(movement.LookDirection + movement.MoveDirection);
             movement.Y += movement.Speed * deltaTime * (float)Math.Cos(movement.LookDirection + movement.MoveDirection);
         }
+
+        public static CollisionResult CheckCollision(this Movement movement, Movement otherMovement)
+        {
+            if (movement.CollisionShape == null || otherMovement.CollisionShape == null)
+            {
+                return new CollisionResult { Collided = false };
+            }
+
+            return movement.CollisionShape.CheckCollision(movement.X, movement.Y, movement.PreviousX, movement.PreviousY, otherMovement.CollisionShape, otherMovement.X, otherMovement.Y);
+        }
     }
 }

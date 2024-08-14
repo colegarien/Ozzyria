@@ -123,18 +123,21 @@ namespace Grynt.Generators.Fields
                 case TypeDefinition.TYPE_CLASS:
                     // build class intializer syntax
                     var initializers = "";
-                    var fieldDefaults = defaults.Extract(field.Id);
-                    foreach (var subFieldByFieldId in type.ClassFields)
+                    if (hasDefaultValues)
                     {
-                        var subField = subFieldByFieldId.Value;
-                        var subType = _typePackage.GetDefinition(subField.TypeId);
-                        if (subType == null || subField == null || !fieldDefaults.HasValueFor(subField.Id))
-                            continue;
-
-                        var subAssignments = GenerateDefaults(subField, subType, fieldDefaults);
-                        if (subAssignments != "")
+                        var fieldDefaults = defaults.Extract(field.Id);
+                        foreach (var subFieldByFieldId in type.ClassFields)
                         {
-                            initializers += subField.Name + subAssignments + ", ";
+                            var subField = subFieldByFieldId.Value;
+                            var subType = _typePackage.GetDefinition(subField.TypeId);
+                            if (subType == null || subField == null || fieldDefaults == null || !fieldDefaults.HasValueFor(subField.Id))
+                                continue;
+
+                            var subAssignments = GenerateDefaults(subField, subType, fieldDefaults);
+                            if (subAssignments != "")
+                            {
+                                initializers += subField.Name + subAssignments + ", ";
+                            }
                         }
                     }
 

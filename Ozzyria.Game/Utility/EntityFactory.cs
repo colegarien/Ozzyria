@@ -11,7 +11,7 @@ namespace Ozzyria.Game.Utility
         {
             var player = context.CreateEntity();
 
-            var playerTag = (Player)player.CreateComponent(typeof(Player));
+            var playerTag = (Model.Components.Player)player.CreateComponent(typeof(Model.Components.Player));
             playerTag.PlayerId = playerId;
 
             var playerLocation = (Location)player.CreateComponent(typeof(Location));
@@ -25,11 +25,18 @@ namespace Ozzyria.Game.Utility
             movement.CollisionOffsetY = -8;
             movement.PreviousX = 140;
             movement.PreviousY = 140;
+            movement.CollisionShape = new CollisionShape
+            {
+                BoundingCircle = new BoundingCircle
+                {
+                    Radius = 10
+                }
+            };
 
             var stats = (Stats)player.CreateComponent(typeof(Stats));
 
-            var collision = (Game.Components.BoundingCircle)player.CreateComponent(typeof(Game.Components.BoundingCircle));
-            collision.Radius = 10;
+            var collision = (Collision)player.CreateComponent(typeof(Collision));
+            collision.IsDynamic = true;
 
             var bag = (Ozzyria.Game.Components.Bag)player.CreateComponent(typeof(Ozzyria.Game.Components.Bag));
 
@@ -151,13 +158,20 @@ namespace Ozzyria.Game.Utility
             movement.CollisionOffsetY = -8;
             movement.PreviousX = x;
             movement.PreviousY = y;
+            movement.CollisionShape = new CollisionShape
+            {
+                BoundingCircle = new BoundingCircle
+                {
+                    Radius = 10
+                }
+            };
 
             var stats = (Stats)slime.CreateComponent(typeof(Stats));
             stats.Health = 30;
             stats.MaxHealth = 30;
 
-            var collision = (Ozzyria.Game.Components.BoundingCircle)slime.CreateComponent(typeof(Ozzyria.Game.Components.BoundingCircle));
-            collision.Radius = 10;
+            var collision = (Collision)slime.CreateComponent(typeof(Collision));
+            collision.IsDynamic = true;
 
             slime.AddComponent(thought);
             slime.AddComponent(movement);
@@ -239,15 +253,21 @@ namespace Ozzyria.Game.Utility
             movement.Y = centerY;
             movement.PreviousX = centerX;
             movement.PreviousY = centerY;
+            movement.CollisionShape = new CollisionShape
+            {
+                BoundingBox = new BoundingBox
+                {
+                    Width = width,
+                    Height = height
+                }
+            };
 
 
-            var bounds = (Ozzyria.Game.Components.BoundingBox)box.CreateComponent<Ozzyria.Game.Components.BoundingBox>();
-            bounds.IsDynamic = false;
-            bounds.Width = width;
-            bounds.Height = height;
+            var collision = (Collision)box.CreateComponent<Collision>();
+            collision.IsDynamic = false;
 
             box.AddComponent(movement);
-            box.AddComponent(bounds);
+            box.AddComponent(collision);
         }
 
         public static void CreateCircleCollider(EntityContext context, float x, float y, float radius)
@@ -259,14 +279,19 @@ namespace Ozzyria.Game.Utility
             movement.Y = y;
             movement.PreviousX = x;
             movement.PreviousY = y;
+            movement.CollisionShape = new CollisionShape
+            {
+                BoundingCircle = new BoundingCircle
+                {
+                    Radius = radius
+                }
+            };
 
-
-            var bounds = (Ozzyria.Game.Components.BoundingCircle)circle.CreateComponent<Ozzyria.Game.Components.BoundingCircle>();
-            bounds.IsDynamic = false;
-            bounds.Radius = radius;
+            var collision = (Collision)circle.CreateComponent(typeof(Collision));
+            collision.IsDynamic = false;
 
             circle.AddComponent(movement);
-            circle.AddComponent(bounds);
+            circle.AddComponent(collision);
 
         }
 

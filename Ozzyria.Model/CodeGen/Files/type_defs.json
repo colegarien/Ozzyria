@@ -68,5 +68,78 @@
       "Empty",
       "Sword"
     ]
+  },
+  "collision_shape": {
+    "name": "CollisionShape",
+    "type": "class",
+    "fields": {
+      "boundingBox": {
+        "name": "BoundingBox",
+        "type": "bounding_box"
+      },
+      "boundingCircle": {
+        "name": "BoundingCircle",
+        "type": "bounding_circle"
+      }
+    }
+  },
+  "bounding_box": {
+    "name": "BoundingBox",
+    "type": "class",
+    "fields": {
+      "width": {
+        "name": "Width",
+        "type": "int"
+      },
+      "height": {
+        "name": "Height",
+        "type": "int"
+      }
+    },
+    "defaults": {
+      "width": "0",
+      "height": "0"
+    }
+  },
+  "bounding_circle": {
+    "name": "BoundingCircle",
+    "type": "class",
+    "fields": {
+      "radius": {
+        "name": "Radius",
+        "type": "float"
+      }
+    },
+    "defaults": {
+      "radius": "0f"
+    }
+  },
+  "collision_result": {
+    "name": "CollisionResult",
+    "type": "class",
+    "fields": {
+      "collided": {
+        "name": "Collided",
+        "type": "bool"
+      },
+      "depth": {
+        "name": "Depth",
+        "type": "float"
+      },
+      "normalX": {
+        "name": "NormalX",
+        "type": "float"
+      },
+      "normalY": {
+        "name": "NormalY",
+        "type": "float"
+      }
+    },
+    "defaults": {
+      "collided": "false",
+      "depth": "0f",
+      "normalX": "0f",
+      "normalY": "0f"
+    }
   }
 }
