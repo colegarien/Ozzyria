@@ -14,7 +14,7 @@ namespace Ozzyria.Game.Systems
         public AttackSystem()
         {
             attackerQuery = new EntityQuery();
-            attackerQuery.And(typeof(AttackIntent), typeof(Movement), typeof(Stats));
+            attackerQuery.And(typeof(Ozzyria.Model.Components.AttackIntent), typeof(Movement), typeof(Stats));
 
             targetQuery = new EntityQuery();
             targetQuery.And(typeof(Movement), typeof(Stats));
@@ -30,7 +30,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in attackerEntities)
             {
                 var movement = entity.GetComponent<Movement>();
-                var intent = entity.GetComponent<AttackIntent>();
+                var intent = entity.GetComponent<Ozzyria.Model.Components.AttackIntent>();
 
                 intent.FrameTimer += deltaTime;
                 if (intent.FrameTimer >= intent.TimePerFrame)

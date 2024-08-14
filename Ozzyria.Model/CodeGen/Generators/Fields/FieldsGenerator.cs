@@ -70,7 +70,7 @@ namespace Grynt.Generators.Fields
         {
             get => _{{FIELD_ID}}; set
             {
-                if (!_{{FIELD_ID}}.Equals(value))
+                if ({{EQUALITY_CHECK}})
                 {
                     _{{FIELD_ID}} = value;
                     {{FIELD_TRIGGER_PROPAGATION}}
@@ -79,7 +79,8 @@ namespace Grynt.Generators.Fields
             }
         }
 ";
-            return code.Replace("{{TYPE_NAME}}", type.Name)
+            return code.Replace("{{EQUALITY_CHECK}}", type.IsNullable() ? "!_{{FIELD_ID}}?.Equals(value) ?? (value != null)" : "!_{{FIELD_ID}}.Equals(value)")
+                       .Replace("{{TYPE_NAME}}", type.Name)       
                        .Replace("{{FIELD_NAME}}", field.Name)
                        .Replace("{{FIELD_ID}}", field.Id)
                        .Replace("{{DEFAULTS}}", GenerateDefaults(field, type, defaults))

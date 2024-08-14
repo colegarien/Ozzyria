@@ -36,9 +36,9 @@ namespace Ozzyria.Game.Systems
 
 
                     // OZ-22 : make doors components work more like a generic "Trigger" system instead of weird distance calculation
-                    if (!playerEntity.HasComponent(typeof(AreaChange)) && Math.Abs(playerMovement.X - doorMovement.X) <= TRIGGER_THRESHOLD && Math.Abs(playerMovement.Y - doorMovement.Y) <= TRIGGER_THRESHOLD)
+                    if (!playerEntity.HasComponent(typeof(Ozzyria.Model.Components.AreaChange)) && Math.Abs(playerMovement.X - doorMovement.X) <= TRIGGER_THRESHOLD && Math.Abs(playerMovement.Y - doorMovement.Y) <= TRIGGER_THRESHOLD)
                     {
-                        var areaChange = (Components.AreaChange)playerEntity.CreateComponent(typeof(Components.AreaChange));
+                        var areaChange = (Ozzyria.Model.Components.AreaChange)playerEntity.CreateComponent(typeof(Ozzyria.Model.Components.AreaChange));
                         areaChange.NewArea = doorComponent.NewArea;
                         areaChange.NewX = doorComponent.NewX;
                         areaChange.NewY = doorComponent.NewY;

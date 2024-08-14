@@ -120,8 +120,13 @@ namespace Ozzyria.Game.Serialization
             }
 
 
+            // TODO codegen all this noise instead !!
             componentTypes["Ozzyria.Model.Components.Movement"] = typeof(Ozzyria.Model.Components.Movement);
             componentTypes["Ozzyria.Model.Components.MovementIntent"] = typeof(Ozzyria.Model.Components.MovementIntent);
+            componentTypes["Ozzyria.Model.Components.Animator"] = typeof(Ozzyria.Model.Components.Animator);
+            componentTypes["Ozzyria.Model.Components.AreaChange"] = typeof(Ozzyria.Model.Components.AreaChange);
+            componentTypes["Ozzyria.Model.Components.Armor"] = typeof(Ozzyria.Model.Components.Armor);
+            componentTypes["Ozzyria.Model.Components.AttackIntent"] = typeof(Ozzyria.Model.Components.AttackIntent);
 
             _isInitialized = true;
         }

@@ -9,7 +9,7 @@ namespace Ozzyria.Model.Components
         {
             get => _bodyId; set
             {
-                if (!_bodyId.Equals(value))
+                if (!_bodyId?.Equals(value) ?? (value != null))
                 {
                     _bodyId = value;
                     

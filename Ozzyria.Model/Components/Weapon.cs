@@ -24,7 +24,7 @@ namespace Ozzyria.Model.Components
         {
             get => _weaponId; set
             {
-                if (!_weaponId.Equals(value))
+                if (!_weaponId?.Equals(value) ?? (value != null))
                 {
                     _weaponId = value;
                     

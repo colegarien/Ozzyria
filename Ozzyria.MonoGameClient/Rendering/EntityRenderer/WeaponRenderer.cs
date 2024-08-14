@@ -9,12 +9,12 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
     {
         protected override bool CanRender(Entity entity)
         {
-            return entity.HasComponent(typeof(AttackIntent)) && entity.HasComponent(typeof(Weapon));
+            return entity.HasComponent(typeof(Ozzyria.Model.Components.AttackIntent)) && entity.HasComponent(typeof(Weapon));
         }
 
         protected override void DoRender(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton)
         {
-            var intent = (AttackIntent)entity.GetComponent(typeof(AttackIntent));
+            var intent = (Ozzyria.Model.Components.AttackIntent)entity.GetComponent(typeof(Ozzyria.Model.Components.AttackIntent));
 
             var weapon = (Weapon)entity.GetComponent(typeof(Weapon));
             if (weapon.WeaponType != WeaponType.Empty)

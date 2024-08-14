@@ -27,5 +27,10 @@ namespace Grynt.Model.Definitions
 
         [JsonPropertyName("defaults")]
         public ValuePacket ClassDefaults { get; set; }
+
+        public bool IsNullable()
+        {
+            return Id == "string" || Type == TYPE_CLASS;
+        }
     }
 }

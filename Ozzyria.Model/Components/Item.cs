@@ -9,7 +9,7 @@ namespace Ozzyria.Model.Components
         {
             get => _name; set
             {
-                if (!_name.Equals(value))
+                if (!_name?.Equals(value) ?? (value != null))
                 {
                     _name = value;
                     
@@ -24,7 +24,7 @@ namespace Ozzyria.Model.Components
         {
             get => _icon; set
             {
-                if (!_icon.Equals(value))
+                if (!_icon?.Equals(value) ?? (value != null))
                 {
                     _icon = value;
                     
@@ -54,7 +54,7 @@ namespace Ozzyria.Model.Components
         {
             get => _itemId; set
             {
-                if (!_itemId.Equals(value))
+                if (!_itemId?.Equals(value) ?? (value != null))
                 {
                     _itemId = value;
                     
@@ -69,7 +69,7 @@ namespace Ozzyria.Model.Components
         {
             get => _equipmentSlot; set
             {
-                if (!_equipmentSlot.Equals(value))
+                if (!_equipmentSlot?.Equals(value) ?? (value != null))
                 {
                     _equipmentSlot = value;
                     

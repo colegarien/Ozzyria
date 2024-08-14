@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 var intent = (MovementIntent)entity.GetComponent(typeof(MovementIntent));
 
-                var isAttacking = entity.HasComponent(typeof(AttackIntent));
+                var isAttacking = entity.HasComponent(typeof(Ozzyria.Model.Components.AttackIntent));
                 if (!isAttacking && (intent.MoveUp || intent.MoveDown || intent.MoveLeft || intent.MoveRight))
                 {
                     movement.SpeedUp(deltaTime);

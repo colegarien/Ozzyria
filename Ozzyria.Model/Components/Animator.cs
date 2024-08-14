@@ -79,7 +79,7 @@ namespace Ozzyria.Model.Components
         }
 
         
-        private float _timePerFrame;
+        private float _timePerFrame = 100f;
         public float TimePerFrame
         {
             get => _timePerFrame; set

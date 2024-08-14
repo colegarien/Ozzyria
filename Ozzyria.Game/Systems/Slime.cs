@@ -4,6 +4,7 @@ using Ozzyria.Game.Utility;
 using System.Linq;
 using Movement = Ozzyria.Model.Components.Movement;
 using MovementIntent = Ozzyria.Model.Components.MovementIntent;
+using AttackIntent = Ozzyria.Model.Components.AttackIntent;
 using Ozzyria.Model.Extensions;
 using Ozzyria.Model.Types;
 

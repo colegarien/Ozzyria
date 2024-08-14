@@ -1,7 +1,5 @@
 ﻿using Grecs;
-using Movement = Ozzyria.Model.Components.Movement;
-using Ozzyria.Model.Extensions;
-using Ozzyria.Model.Types;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Game.Systems
 {
@@ -19,7 +17,7 @@ namespace Ozzyria.Game.Systems
             foreach(var entity in entities)
             {
                 var location = (Components.Location)entity.GetComponent(typeof(Components.Location));
-                var areaChange = (Components.AreaChange)entity.GetComponent(typeof(Components.AreaChange));
+                var areaChange = (Ozzyria.Model.Components.AreaChange)entity.GetComponent(typeof(Ozzyria.Model.Components.AreaChange));
 
 
                 // TODO OZ-22 consider if we want this or not, its cool for doors to be able to move them around the same area
@@ -72,7 +70,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Components.Location), typeof(Components.AreaChange));
+            var query = new EntityQuery().And(typeof(Components.Location), typeof(Ozzyria.Model.Components.AreaChange));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
 

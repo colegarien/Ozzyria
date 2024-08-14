@@ -9,7 +9,7 @@ namespace Ozzyria.Model.Components
         {
             get => _maskId; set
             {
-                if (!_maskId.Equals(value))
+                if (!_maskId?.Equals(value) ?? (value != null))
                 {
                     _maskId = value;
                     

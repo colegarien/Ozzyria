@@ -9,7 +9,7 @@ namespace Ozzyria.Model.Components
         {
             get => _thinkDelay; set
             {
-                if (!_thinkDelay.Equals(value))
+                if (!_thinkDelay?.Equals(value) ?? (value != null))
                 {
                     _thinkDelay = value;
                     if (value != null) { _thinkDelay.TriggerChange = TriggerChange; }

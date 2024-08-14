@@ -4,6 +4,7 @@ using Ozzyria.Content.Models;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 using Ozzyria.Model.Types;
 using Movement = Ozzyria.Model.Components.Movement;
+using Animator = Ozzyria.Model.Components.Animator;
 using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering

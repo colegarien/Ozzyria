@@ -34,7 +34,7 @@
       }
     },
     "defaults": {
-      "timerPerFrame": "100f"
+      "timePerFrame": "100f"
     }
   },
   "area_change": {

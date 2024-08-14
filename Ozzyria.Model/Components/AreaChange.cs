@@ -9,7 +9,7 @@ namespace Ozzyria.Model.Components
         {
             get => _newArea; set
             {
-                if (!_newArea.Equals(value))
+                if (!_newArea?.Equals(value) ?? (value != null))
                 {
                     _newArea = value;
                     

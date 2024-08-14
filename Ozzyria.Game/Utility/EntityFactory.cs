@@ -1,7 +1,8 @@
 ﻿using Ozzyria.Game.Components;
 using Grecs;
 using Movement = Ozzyria.Model.Components.Movement;
-using Ozzyria.Model.Extensions;
+using Animator = Ozzyria.Model.Components.Animator;
+using Armor = Ozzyria.Model.Components.Armor;
 using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game.Utility

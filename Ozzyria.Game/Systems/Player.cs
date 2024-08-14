@@ -2,6 +2,7 @@
 using Grecs;
 using Movement = Ozzyria.Model.Components.Movement;
 using MovementIntent = Ozzyria.Model.Components.MovementIntent;
+using AttackIntent = Ozzyria.Model.Components.AttackIntent;
 using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems
