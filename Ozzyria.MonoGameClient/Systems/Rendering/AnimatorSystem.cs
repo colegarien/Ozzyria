@@ -1,9 +1,7 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
+﻿using Grecs;
 using Ozzyria.Model.Types;
-using Movement = Ozzyria.Model.Components.Movement;
+using Ozzyria.Model.Components;
 using Ozzyria.Model.Extensions;
-using Ozzyria.Model.Types;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering
 {
@@ -12,7 +10,7 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
         EntityQuery _query;
         public AnimatorSystem()
         {
-            _query = new EntityQuery().And(typeof(Ozzyria.Model.Components.Animator));
+            _query = new EntityQuery().And(typeof(Animator));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -20,7 +18,7 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
             var animators = context.GetEntities(_query);
             foreach (var entity in animators)
             {
-                var animator = (Ozzyria.Model.Components.Animator)entity.GetComponent(typeof(Ozzyria.Model.Components.Animator));
+                var animator = (Animator)entity.GetComponent(typeof(Animator));
                 animator.FrameTimer += deltaTime;
                 if (animator.FrameTimer >= animator.TimePerFrame)
                 {
@@ -46,9 +44,9 @@ namespace Ozzyria.MonoGameClient.Systems.Rendering
                     }
                 }
 
-                if (entity.HasComponent(typeof(Ozzyria.Model.Components.AttackIntent))) {
+                if (entity.HasComponent(typeof(AttackIntent))) {
                     // fall in and out of combat animation
-                    var intent = entity.GetComponent<Ozzyria.Model.Components.AttackIntent>();
+                    var intent = entity.GetComponent<AttackIntent>();
                     if (animator.CurrentPose != SkeletonPose.Attack)
                     {
                         animator.CurrentPose = SkeletonPose.Attack;

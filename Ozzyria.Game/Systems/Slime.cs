@@ -1,10 +1,6 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
+﻿using Grecs;
 using Ozzyria.Game.Utility;
 using System.Linq;
-using Movement = Ozzyria.Model.Components.Movement;
-using MovementIntent = Ozzyria.Model.Components.MovementIntent;
-using AttackIntent = Ozzyria.Model.Components.AttackIntent;
 using Ozzyria.Model.Components;
 using Ozzyria.Model.Extensions;
 using Ozzyria.Model.Types;

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.Content;
-using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.MonoGameClient.Systems;

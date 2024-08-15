@@ -1,12 +1,9 @@
-﻿using Ozzyria.Game.Components;
-using Grecs;
+﻿using Grecs;
 using Ozzyria.Content.Models;
 using Ozzyria.MonoGameClient.Rendering.Resolver;
 using Ozzyria.Model.Types;
-using Movement = Ozzyria.Model.Components.Movement;
-using Animator = Ozzyria.Model.Components.Animator;
 using Ozzyria.Model.Extensions;
-using Skeleton = Ozzyria.Model.Components.Skeleton;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.MonoGameClient.Systems.Rendering
 {

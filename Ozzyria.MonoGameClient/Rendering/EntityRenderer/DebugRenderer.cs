@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Components;
 using Grecs;
 using System;
-using Movement = Ozzyria.Model.Components.Movement;
-using Skeleton = Ozzyria.Model.Components.Skeleton;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
 {

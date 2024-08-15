@@ -1,4 +1,6 @@
 ﻿using Grecs;
+using Ozzyria.Model.Components;
+using Ozzyria.Model.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +10,8 @@ namespace Ozzyria.Game.Serialization
 {
     public class EntitySerializer
     {
-        private static Dictionary<Type, Type> _baseTypeCache = new Dictionary<Type, Type>();
+        private static bool _componentTypesInitialized = false;
+        private static Dictionary<string, Type> _componentTypes = new Dictionary<string, Type>();
 
         public static void WriteEntity(BinaryWriter writer, Entity entity)
         {
@@ -44,27 +47,10 @@ namespace Ozzyria.Game.Serialization
 
             writer.Write(name);
 
-            if(component is Ozzyria.Model.Types.ISerializable)
+            if(component is ISerializable)
             {
-                ((Ozzyria.Model.Types.ISerializable)component).Write(writer);
+                ((ISerializable)component).Write(writer);
                 return;
-            }
-
-            var props = Reflector.GetSavableProperties(component.GetType());
-            writer.Write(props.Length);
-            foreach (var p in props)
-            {
-                writer.Write(p.Name);
-                using (MemoryStream m = new MemoryStream())
-                {
-                    using (var writer2 = new BinaryWriter(m)) {
-                        WriteValueOfType(entity, writer2, GetSerializableBaseType(p.PropertyType), Reflector.GetPropertyValue(p, component));
-                    }
-
-                    var bytes = m.ToArray();
-                    writer.Write(bytes.Length);
-                    writer.Write(bytes.ToArray());
-                }
             }
         }
 
@@ -111,7 +97,7 @@ namespace Ozzyria.Game.Serialization
 
         private static IComponent ReadComponent(Entity entity, BinaryReader reader)
         {
-            var componentType = Reflector.GetTypeForId(reader.ReadString());
+            var componentType = GetTypeForId(reader.ReadString());
             if (componentType == null)
                 return null;
 
@@ -122,82 +108,62 @@ namespace Ozzyria.Game.Serialization
                 entity.AddComponent(component);
             }
 
-            if (component is Ozzyria.Model.Types.ISerializable)
+            if (component is ISerializable)
             {
-                ((Ozzyria.Model.Types.ISerializable)component).Read(reader);
-                return component;
-            }
-
-            var props = Reflector.GetSavableProperties(component.GetType());
-            var numberOfPropsToRead = reader.ReadInt32();
-            for(var i = 0; i < numberOfPropsToRead; i++)
-            {
-                var propertyName = reader.ReadString();
-                var packetSize = reader.ReadInt32();
-                var property = props.FirstOrDefault(p => p.Name == propertyName);
-
-                if (property == null)
-                {
-                    // Skip Over Packet
-                    reader.ReadBytes(packetSize);
-                    continue;
-                }
-
-
-                Reflector.SetPropertyValue(property, component, ReadValueOfType(entity, reader, GetSerializableBaseType(property.PropertyType)));
+                ((ISerializable)component).Read(reader);
             }
 
             return component;
         }
 
-        private static Type GetSerializableBaseType(Type type) // TODO abstract binary read/write possibly once have dependency injection
+
+        private static Type GetTypeForId(string identifier)
         {
-            if (_baseTypeCache.ContainsKey(type))
+            ValidateComponentTypeMappingCache();
+            if (_componentTypes.ContainsKey(identifier))
             {
-                return _baseTypeCache[type];
+                return _componentTypes[identifier];
             }
 
-            var baseType = type;
-            if (type.IsEnum)
-                baseType = typeof(Enum);
-            else if (typeof(IComponent).IsAssignableFrom(type))
-                baseType = typeof(IComponent);
-
-            _baseTypeCache[type] = baseType;
-            return baseType;
+            return null;
         }
 
-        private static void WriteValueOfType(Entity entity, BinaryWriter writer, Type type, object? value) // TODO abstract binary read/write possibly once have dependency injection
+        private static void ValidateComponentTypeMappingCache()
         {
-            supportedWriteTypes[type](entity, writer, value);
+            if (_componentTypesInitialized)
+            {
+                return;
+            }
+
+            // TODO codegen all this noise instead !!
+            _componentTypes["Ozzyria.Model.Components.Movement"] = typeof(Movement);
+            _componentTypes["Ozzyria.Model.Components.MovementIntent"] = typeof(MovementIntent);
+            _componentTypes["Ozzyria.Model.Components.Animator"] = typeof(Animator);
+            _componentTypes["Ozzyria.Model.Components.AreaChange"] = typeof(AreaChange);
+            _componentTypes["Ozzyria.Model.Components.Armor"] = typeof(Armor);
+            _componentTypes["Ozzyria.Model.Components.AttackIntent"] = typeof(AttackIntent);
+
+            _componentTypes["Ozzyria.Model.Components.Location"] = typeof(Location);
+            _componentTypes["Ozzyria.Model.Components.Skeleton"] = typeof(Skeleton);
+            _componentTypes["Ozzyria.Model.Components.Body"] = typeof(Body);
+            _componentTypes["Ozzyria.Model.Components.Weapon"] = typeof(Weapon);
+            _componentTypes["Ozzyria.Model.Components.Hat"] = typeof(Hat);
+            _componentTypes["Ozzyria.Model.Components.Mask"] = typeof(Mask);
+
+            _componentTypes["Ozzyria.Model.Components.Dead"] = typeof(Dead);
+            _componentTypes["Ozzyria.Model.Components.Door"] = typeof(Door);
+            _componentTypes["Ozzyria.Model.Components.ExperienceBoost"] = typeof(ExperienceBoost);
+            _componentTypes["Ozzyria.Model.Components.ExperienceOrbThought"] = typeof(ExperienceOrbThought);
+            _componentTypes["Ozzyria.Model.Components.Item"] = typeof(Item);
+            _componentTypes["Ozzyria.Model.Components.Player"] = typeof(Player);
+            _componentTypes["Ozzyria.Model.Components.PlayerThought"] = typeof(PlayerThought);
+            _componentTypes["Ozzyria.Model.Components.SlimeSpawner"] = typeof(SlimeSpawner);
+            _componentTypes["Ozzyria.Model.Components.SlimeThought"] = typeof(SlimeThought);
+            _componentTypes["Ozzyria.Model.Components.Stats"] = typeof(Stats);
+            _componentTypes["Ozzyria.Model.Components.Collision"] = typeof(Collision);
+            _componentTypes["Ozzyria.Model.Components.Bag"] = typeof(Bag);
+
+            _componentTypesInitialized = true;
         }
-
-        private static object? ReadValueOfType(Entity entity, BinaryReader reader, Type type) // TODO abstract binary read/write possibly once have dependency injection
-        {
-            return supportedReadTypes[type](entity, reader);
-        }
-
-        private static Dictionary<Type, Func<Entity, BinaryReader, object>> supportedReadTypes = new Dictionary<Type, Func<Entity, BinaryReader, object>>
-        {
-            { typeof(uint), (e, br) => br.ReadUInt32() },
-            { typeof(int), (e, br) => br.ReadInt32() },
-            { typeof(bool), (e, br) => br.ReadBoolean() },
-            { typeof(float), (e, br) => br.ReadSingle() },
-            { typeof(string), (e, br) => br.ReadString() },
-            { typeof(Enum), (e, br) => br.ReadInt32() },
-            { typeof(IComponent), (e, br) => ReadComponent(e, br) },
-        };
-
-        private static Dictionary<Type, Action<Entity, BinaryWriter, object?>> supportedWriteTypes = new Dictionary<Type, Action<Entity, BinaryWriter, object?>>
-        {
-            { typeof(uint), (e, bw, value) => bw.Write((uint)value) },
-            { typeof(int), (e, bw, value) => bw.Write((int)value) },
-            { typeof(bool), (e, bw, value) => bw.Write((bool)value) },
-            { typeof(float), (e, bw, value) => bw.Write((float)value) },
-            { typeof(string), (e, bw, value) => bw.Write((string)value) },
-            { typeof(Enum), (e, bw, value) => bw.Write((int)value) },
-            { typeof(IComponent), (e, bw, value) => WriteComponent(e, bw, (IComponent)value) },
-        };
-
     }
 }
