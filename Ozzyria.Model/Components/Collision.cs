@@ -4,7 +4,7 @@ namespace Ozzyria.Model.Components
 {
     public class Collision : Grecs.Component, ISerializable, IHydrateable
     {
-        private bool _isDynamic;
+        private bool _isDynamic = true;
         public bool IsDynamic
         {
             get => _isDynamic; set

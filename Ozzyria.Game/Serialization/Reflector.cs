@@ -147,6 +147,8 @@ namespace Ozzyria.Game.Serialization
             componentTypes["Ozzyria.Model.Components.SlimeThought"] = typeof(Ozzyria.Model.Components.SlimeThought);
             componentTypes["Ozzyria.Model.Components.Stats"] = typeof(Ozzyria.Model.Components.Stats);
             componentTypes["Ozzyria.Model.Components.Collision"] = typeof(Ozzyria.Model.Components.Collision);
+            componentTypes["Ozzyria.Model.Components.Bag"] = typeof(Ozzyria.Model.Components.Bag);
+
 
             _isInitialized = true;
         }

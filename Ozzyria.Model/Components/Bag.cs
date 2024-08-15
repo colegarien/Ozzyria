@@ -4,6 +4,21 @@ namespace Ozzyria.Model.Components
 {
     public class Bag : Grecs.Component, ISerializable, IHydrateable
     {
+        private string _container_id = "";
+        public string ContainerId
+        {
+            get => _container_id; set
+            {
+                if (!_container_id?.Equals(value) ?? (value != null))
+                {
+                    _container_id = value;
+                    
+                    TriggerChange();
+                }
+            }
+        }
+
+        
         private string _name = "Inventory";
         public string Name
         {
@@ -34,12 +49,14 @@ namespace Ozzyria.Model.Components
         }
         public void Write(System.IO.BinaryWriter w)
         {
+            w.Write(ContainerId);
             w.Write(Name);
             w.Write(Capacity);
         }
 
         public void Read(System.IO.BinaryReader r)
         {
+            ContainerId = r.ReadString();
             Name = r.ReadString();
             Capacity = r.ReadInt32();
         }
@@ -50,6 +67,10 @@ namespace Ozzyria.Model.Components
                 return;
             }
 
+            if (values.HasValueFor("container_id"))
+            {
+                ContainerId = values["container_id"].Trim('"');
+            }
             if (values.HasValueFor("name"))
             {
                 Name = values["name"].Trim('"');

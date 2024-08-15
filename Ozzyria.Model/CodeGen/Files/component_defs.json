@@ -104,6 +104,10 @@
   "bag": {
     "name": "Bag",
     "fields": {
+      "container_id": {
+        "name": "ContainerId",
+        "type": "string"
+      },
       "name": {
         "name": "Name",
         "type": "string"
@@ -114,6 +118,7 @@
       }
     },
     "defaults": {
+      "container_id": "\"\"",
       "name": "\"Inventory\"",
       "capacity": "25"
     }
