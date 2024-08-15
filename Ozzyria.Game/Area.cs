@@ -1,11 +1,7 @@
 ﻿using Grecs;
-using Grynt.Model.Definitions;
 using Ozzyria.Content;
 using Ozzyria.Content.Models.Area;
-using Ozzyria.Game.Utility;
-using Ozzyria.Model.Components;
 using Ozzyria.Model.Types;
-using System.Collections.Generic;
 
 namespace Ozzyria.Game
 {

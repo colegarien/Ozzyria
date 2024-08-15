@@ -100,7 +100,6 @@
       "collision->isDynamic": "true",
       "stats->health": "12",
       "stats->maxHealth": "12"
-
     },
     "exposed": [
       "movement->x",

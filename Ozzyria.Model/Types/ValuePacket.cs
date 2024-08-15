@@ -1,11 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Ozzyria.Model.Types
+﻿namespace Ozzyria.Model.Types
 {
     public class ValuePacket : Dictionary<string, string>
     {
         public const string DIG_OPERATOR = "->";
+
+        public ValuePacket Clone()
+        {
+            var cloned = new ValuePacket();
+            foreach(var kv in this)
+            {
+                cloned[kv.Key] = kv.Value;
+            }
+
+            return cloned;
+        }
 
         public ValuePacket Extract(string locator)
         {

@@ -5,6 +5,7 @@ using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
 using Ozzyria.Gryp.UI.Dialogs;
 using Ozzyria.Model.CodeGen.Packages;
+using Ozzyria.Model.Types;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
 
@@ -494,7 +495,7 @@ namespace Ozzyria.Gryp
         {
             var newPrefabId = cmbPrefab?.SelectedItem?.ToString() ?? "";
             if (_map.CurrentEntityBrush.Attributes == null)
-                _map.CurrentEntityBrush.Attributes = new Dictionary<string, string>();
+                _map.CurrentEntityBrush.Attributes = new ValuePacket();
             else if (_map.CurrentEntityBrush.PrefabId != newPrefabId)
                 _map.CurrentEntityBrush.Attributes.Clear();
             _map.CurrentEntityBrush.PrefabId = newPrefabId;
@@ -502,25 +503,10 @@ namespace Ozzyria.Gryp
             tableEntityAttributes.Rows.Clear();
 
             var prefabDefinition = _prefabPackage.GetDefinition(_map.CurrentEntityBrush.PrefabId);
-            
             foreach(var field in prefabDefinition.Exposed)
             {
-                tableEntityAttributes.Rows.Add(new string[] { field, _map.CurrentEntityBrush.Attributes.GetValueOrDefault(field) ?? "" });
+                tableEntityAttributes.Rows.Add(new string[] { field, _map.CurrentEntityBrush.Attributes.HasValueFor(field) ? _map.CurrentEntityBrush.Attributes[field] : "" });
             }
-            
-            //switch (_map.CurrentEntityBrush.PrefabId)
-            //{
-            //    case "slime_spawner":
-            //        break;
-            //    case "door":
-            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_id") ?? "" });
-            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_x") ?? "" });
-            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_y") ?? "" });
-            //        break;
-            //    case "exp_orb":
-            //        tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("amount") ?? "" });
-            //        break;
-            //}
 
             if (_map.SelectedEntity != null && _map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId)
             {
@@ -531,12 +517,12 @@ namespace Ozzyria.Gryp
                     PrefabId = _map.SelectedEntity.PrefabId,
                     WorldX = _map.SelectedEntity.WorldX,
                     WorldY = _map.SelectedEntity.WorldY,
-                    Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                    Attributes = _map.SelectedEntity.Attributes?.Clone() ?? new ValuePacket(),
                 });
 
                 _map.IsDirty = true;
                 _map.SelectedEntity.PrefabId = _map.CurrentEntityBrush.PrefabId;
-                _map.SelectedEntity.Attributes = _map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value);
+                _map.SelectedEntity.Attributes = _map.CurrentEntityBrush.Attributes.Clone();
                 ChangeHistory.FinishTracking();
             }
         }
@@ -559,12 +545,12 @@ namespace Ozzyria.Gryp
                         PrefabId = _map.SelectedEntity.PrefabId,
                         WorldX = _map.SelectedEntity.WorldX,
                         WorldY = _map.SelectedEntity.WorldY,
-                        Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                        Attributes = _map.SelectedEntity.Attributes?.Clone() ?? new ValuePacket(),
                     });
 
                     _map.IsDirty = true;
                     if (_map.SelectedEntity.Attributes == null)
-                        _map.SelectedEntity.Attributes = new Dictionary<string, string>();
+                        _map.SelectedEntity.Attributes = new ValuePacket();
                     _map.SelectedEntity.Attributes[rowKey] = rowValue;
                     ChangeHistory.FinishTracking();
                 }
@@ -582,7 +568,7 @@ namespace Ozzyria.Gryp
             {
                 // select up current entity and selected
                 _map.CurrentEntityBrush.PrefabId = _map.SelectedEntity.PrefabId;
-                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+                _map.CurrentEntityBrush.Attributes = _map.SelectedEntity.Attributes?.Clone() ?? new ValuePacket();
 
                 // now trigger UI changes
                 cmbPrefab.SelectedItem = _map.CurrentEntityBrush.PrefabId;
