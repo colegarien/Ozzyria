@@ -93,7 +93,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Animator";
+            return "animator";
         }
 
         public void Write(System.IO.BinaryWriter w)

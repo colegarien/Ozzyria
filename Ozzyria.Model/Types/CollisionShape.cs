@@ -41,7 +41,7 @@ namespace Ozzyria.Model.Types
             }
         }
         public string GetComponentIdentifier() {
-            return "CollisionShape";
+            return "collision_shape";
         }
 
         public void Write(System.IO.BinaryWriter w)

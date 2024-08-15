@@ -40,7 +40,7 @@ namespace Ozzyria.Model.Types
             }
         }
         public string GetComponentIdentifier() {
-            return "BoundingBox";
+            return "bounding_box";
         }
 
         public void Write(System.IO.BinaryWriter w)

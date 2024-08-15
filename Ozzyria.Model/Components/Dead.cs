@@ -6,7 +6,7 @@ namespace Ozzyria.Model.Components
     {
         
         public string GetComponentIdentifier() {
-            return "Dead";
+            return "dead";
         }
 
         public void Write(System.IO.BinaryWriter w)

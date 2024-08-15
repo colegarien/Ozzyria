@@ -55,7 +55,7 @@ namespace Ozzyria.Model.Types
             }
         }
         public string GetComponentIdentifier() {
-            return "Delay";
+            return "delay";
         }
 
         public void Write(System.IO.BinaryWriter w)

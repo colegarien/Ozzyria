@@ -93,7 +93,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Item";
+            return "item";
         }
 
         public void Write(System.IO.BinaryWriter w)

@@ -12,11 +12,11 @@ namespace Grynt.Generators.Decorators
             _typePackage = typePackage;
         }
 
-        public string Actualize(string code, List<FieldDefinition> fields, ValuePacket defaults = null)
+        public string Actualize(string code, string classId, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             var codeDecoration = @"
         public string GetComponentIdentifier() {
-            return ""{{CLASS_NAME}}"";
+            return ""{{CLASS_ID}}"";
         }
 
         public void Write(System.IO.BinaryWriter w)
@@ -43,6 +43,7 @@ namespace Grynt.Generators.Decorators
             }
 
             return code.Replace(TemplateTag(), codeDecoration.Trim())
+                .Replace("{{CLASS_ID}}", classId)
                 .Replace("{{WRITER}}", writerCode.Trim())
                 .Replace("{{READER}}", readerCode.Trim());
         }

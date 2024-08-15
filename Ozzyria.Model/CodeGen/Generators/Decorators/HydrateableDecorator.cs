@@ -13,7 +13,7 @@ namespace Grynt.Generators.Decorators
             _typePackage = typePackage;
         }
 
-        public string Actualize(string code, List<FieldDefinition> fields, ValuePacket defaults = null)
+        public string Actualize(string code, string classId, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             var codeDecoration = @"
         public void Hydrate(ValuePacket values)

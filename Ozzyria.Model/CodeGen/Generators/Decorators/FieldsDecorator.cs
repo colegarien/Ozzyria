@@ -13,7 +13,7 @@ namespace Grynt.Generators.Decorators
             _fieldGenerator = fieldGenerator;
         }
 
-        public string Actualize(string code, List<FieldDefinition> fields, ValuePacket defaults = null)
+        public string Actualize(string code, string classId, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             return code.Replace(TemplateTag(), _fieldGenerator.GenerateFieldDeclarations(fields, defaults).Trim());
         }

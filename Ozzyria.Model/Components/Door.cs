@@ -48,7 +48,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Door";
+            return "door";
         }
 
         public void Write(System.IO.BinaryWriter w)

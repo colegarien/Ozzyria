@@ -6,7 +6,7 @@ namespace Ozzyria.Model.Components
     {
         
         public string GetComponentIdentifier() {
-            return "PlayerThought";
+            return "player_thought";
         }
 
         public void Write(System.IO.BinaryWriter w)

@@ -1,5 +1,4 @@
 using Grecs;
-using Grecs;
 using Ozzyria.Model.Components;
 using Ozzyria.Model.Types;
 
@@ -7,32 +6,32 @@ namespace Ozzyria.Model.Utility
 {
     public class EntitySerializer
     {
-        private static Dictionary<string, Type> _componentIdentiferToType = new Dictionary<string, Type>
+        public static Dictionary<string, Type> ComponentIdToTypeMap = new Dictionary<string, Type>
         {
-            {"Animator", typeof(Animator)},
-            {"AreaChange", typeof(AreaChange)},
-            {"Armor", typeof(Armor)},
-            {"AttackIntent", typeof(AttackIntent)},
-            {"Bag", typeof(Bag)},
-            {"Body", typeof(Body)},
-            {"Collision", typeof(Collision)},
-            {"Dead", typeof(Dead)},
-            {"Door", typeof(Door)},
-            {"ExperienceBoost", typeof(ExperienceBoost)},
-            {"ExperienceOrbThought", typeof(ExperienceOrbThought)},
-            {"Hat", typeof(Hat)},
-            {"Item", typeof(Item)},
-            {"Location", typeof(Location)},
-            {"Mask", typeof(Mask)},
-            {"Movement", typeof(Movement)},
-            {"MovementIntent", typeof(MovementIntent)},
-            {"Player", typeof(Player)},
-            {"PlayerThought", typeof(PlayerThought)},
-            {"Skeleton", typeof(Skeleton)},
-            {"SlimeSpawner", typeof(SlimeSpawner)},
-            {"SlimeThought", typeof(SlimeThought)},
-            {"Stats", typeof(Stats)},
-            {"Weapon", typeof(Weapon)},
+            {"animator", typeof(Animator)},
+            {"area_change", typeof(AreaChange)},
+            {"armor", typeof(Armor)},
+            {"attack_intent", typeof(AttackIntent)},
+            {"bag", typeof(Bag)},
+            {"body", typeof(Body)},
+            {"collision", typeof(Collision)},
+            {"dead", typeof(Dead)},
+            {"door", typeof(Door)},
+            {"exp_boost", typeof(ExperienceBoost)},
+            {"exp_orb_thought", typeof(ExperienceOrbThought)},
+            {"hat", typeof(Hat)},
+            {"item", typeof(Item)},
+            {"location", typeof(Location)},
+            {"mask", typeof(Mask)},
+            {"movement", typeof(Movement)},
+            {"movement_intent", typeof(MovementIntent)},
+            {"player", typeof(Player)},
+            {"player_thought", typeof(PlayerThought)},
+            {"skeleton", typeof(Skeleton)},
+            {"slime_spawner", typeof(SlimeSpawner)},
+            {"slime_thought", typeof(SlimeThought)},
+            {"stats", typeof(Stats)},
+            {"weapon", typeof(Weapon)},
         };
 
         public static void WriteEntity(BinaryWriter writer, Entity entity)
@@ -113,11 +112,11 @@ namespace Ozzyria.Model.Utility
         private static IComponent ReadComponent(Entity entity, BinaryReader reader)
         {
             var componentIdentifier = reader.ReadString();
-            if (!_componentIdentiferToType.ContainsKey(componentIdentifier)) {
+            if (!ComponentIdToTypeMap.ContainsKey(componentIdentifier)) {
                 return null;
             }
 
-            var componentType = _componentIdentiferToType[componentIdentifier];
+            var componentType = ComponentIdToTypeMap[componentIdentifier];
             var component = entity.GetComponent(componentType);
             if (component == null)
             {

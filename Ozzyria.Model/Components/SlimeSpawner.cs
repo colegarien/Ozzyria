@@ -63,7 +63,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "SlimeSpawner";
+            return "slime_spawner";
         }
 
         public void Write(System.IO.BinaryWriter w)

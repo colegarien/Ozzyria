@@ -198,7 +198,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Movement";
+            return "movement";
         }
 
         public void Write(System.IO.BinaryWriter w)

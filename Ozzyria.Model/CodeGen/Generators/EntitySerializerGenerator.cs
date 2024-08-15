@@ -1,13 +1,13 @@
 ﻿using Grynt.Model.Packages;
 namespace Ozzyria.Model.CodeGen.Generators
 {
-    public class SerializerGenerator
+    public class EntitySerializerGenerator
     {
 
         private string _ns = "";
         private ComponentPackage _componentPackage;
 
-        public SerializerGenerator(string ns, ComponentPackage componentPackage)
+        public EntitySerializerGenerator(string ns, ComponentPackage componentPackage)
         {
             _ns = ns;
             _componentPackage = componentPackage;
@@ -21,7 +21,6 @@ namespace Ozzyria.Model.CodeGen.Generators
         public string Generate()
         {
             var code = @"using Grecs;
-using Grecs;
 using Ozzyria.Model.Components;
 using Ozzyria.Model.Types;
 
@@ -29,7 +28,7 @@ namespace {{NAMESPACE}}Utility
 {
     public class EntitySerializer
     {
-        private static Dictionary<string, Type> _componentIdentiferToType = new Dictionary<string, Type>
+        public static Dictionary<string, Type> ComponentIdToTypeMap = new Dictionary<string, Type>
         {
             {{ID_TO_TYPE_MAPPING}}
         };
@@ -112,11 +111,11 @@ namespace {{NAMESPACE}}Utility
         private static IComponent ReadComponent(Entity entity, BinaryReader reader)
         {
             var componentIdentifier = reader.ReadString();
-            if (!_componentIdentiferToType.ContainsKey(componentIdentifier)) {
+            if (!ComponentIdToTypeMap.ContainsKey(componentIdentifier)) {
                 return null;
             }
 
-            var componentType = _componentIdentiferToType[componentIdentifier];
+            var componentType = ComponentIdToTypeMap[componentIdentifier];
             var component = entity.GetComponent(componentType);
             if (component == null)
             {
@@ -140,7 +139,7 @@ namespace {{NAMESPACE}}Utility
             var idToTypeMappings = "";
             foreach (var component in _componentPackage.Definitions.Values)
             {
-                idToTypeMappings += "{\""+component.Name+"\", typeof("+component.Name+")},\r\n            ";
+                idToTypeMappings += "{\""+component.Id+"\", typeof("+component.Name+")},\r\n            ";
             }
 
             return ApplyNamespace(code)

@@ -48,7 +48,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Bag";
+            return "bag";
         }
 
         public void Write(System.IO.BinaryWriter w)

@@ -20,7 +20,7 @@ namespace Grynt.Generators
             _classDecorators = classDecorators;
         }
 
-        public string Generate(string className, List<FieldDefinition> fields, ValuePacket defaults = null)
+        public string Generate(string className, string classId, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             var code = @"{{NAMESPACE_PREAMBLE}}
 {
@@ -54,17 +54,17 @@ namespace Grynt.Generators
             }
 
             code = ApplyNamespace(code)
+                    .Replace("{{CLASS_NAME}}", className)
                     .Replace("{{INTERFACES}}", interfaces)
                     .Replace("{{INTERFACE_TAGS}}", interfaceTags.Trim());
-            return Decorate(code, fields, defaults)
-                    .Replace("{{CLASS_NAME}}", className);
+            return Decorate(code, classId, fields, defaults);
         }
 
-        private string Decorate(string code, List<FieldDefinition> fields, ValuePacket defaults = null)
+        private string Decorate(string code, string classId, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             foreach (var decorator in _classDecorators)
             {
-                code = decorator.Actualize(code, fields, defaults);
+                code = decorator.Actualize(code, classId, fields, defaults);
             }
             return code;
         }

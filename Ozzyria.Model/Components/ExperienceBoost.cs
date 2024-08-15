@@ -33,7 +33,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "ExperienceBoost";
+            return "exp_boost";
         }
 
         public void Write(System.IO.BinaryWriter w)

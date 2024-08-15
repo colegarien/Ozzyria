@@ -70,7 +70,7 @@ namespace Ozzyria.Model.Types
             }
         }
         public string GetComponentIdentifier() {
-            return "CollisionResult";
+            return "collision_result";
         }
 
         public void Write(System.IO.BinaryWriter w)

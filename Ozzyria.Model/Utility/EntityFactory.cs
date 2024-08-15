@@ -2,6 +2,7 @@
 using Grecs;
 using Ozzyria.Model.Types;
 using Grynt.Model.Definitions;
+using Ozzyria.Model.Utility;
 
 namespace Ozzyria.Game.Utility
 {
@@ -12,11 +13,14 @@ namespace Ozzyria.Game.Utility
             var entity = context.CreateEntity();
             foreach(var componentId in prefab.Components)
             {
-                //var component = entity.CreateComponent(typeof(componentId));
-                //if(component is IHydrateable)
-                //{
-                    //((IHydrateable)component).Hydrate(values);
-                //}
+                if (EntitySerializer.ComponentIdToTypeMap.ContainsKey(componentId))
+                {
+                    var component = entity.CreateComponent(EntitySerializer.ComponentIdToTypeMap[componentId]);
+                    if (component is IHydrateable)
+                    {
+                        ((IHydrateable)component).Hydrate(values);
+                    }
+                }
             }
         }
 

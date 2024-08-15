@@ -78,7 +78,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "AttackIntent";
+            return "attack_intent";
         }
 
         public void Write(System.IO.BinaryWriter w)

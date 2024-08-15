@@ -32,10 +32,10 @@ namespace Grynt.Generators
         {
             if (componentDefinition.IsPooled)
             {
-                return _pooledComponentClassGenerator.Generate(componentDefinition.Name, componentDefinition.Fields.Values.ToList(), componentDefinition.Defaults);
+                return _pooledComponentClassGenerator.Generate(componentDefinition.Name, componentDefinition.Id, componentDefinition.Fields.Values.ToList(), componentDefinition.Defaults);
             }
 
-            return _componentClassGenerator.Generate(componentDefinition.Name, componentDefinition.Fields.Values.ToList(), componentDefinition.Defaults);
+            return _componentClassGenerator.Generate(componentDefinition.Name, componentDefinition.Id, componentDefinition.Fields.Values.ToList(), componentDefinition.Defaults);
         }
 
     }

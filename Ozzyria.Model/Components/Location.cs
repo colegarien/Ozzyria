@@ -18,7 +18,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Location";
+            return "location";
         }
 
         public void Write(System.IO.BinaryWriter w)

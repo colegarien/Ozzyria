@@ -55,7 +55,7 @@ namespace Ozzyria.Grynt
 
             System.Console.WriteLine("---- UTILS ----");
 
-            var serializerGenerator = new SerializerGenerator(targetNamespace, componentPackage);
+            var serializerGenerator = new EntitySerializerGenerator(targetNamespace, componentPackage);
             code = serializerGenerator.Generate();
             System.Console.WriteLine(code);
             File.WriteAllText(Path.Combine(modelRoot, "Utility", "EntitySerializer.cs"), code);

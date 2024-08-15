@@ -33,7 +33,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "SlimeThought";
+            return "slime_thought";
         }
 
         public void Write(System.IO.BinaryWriter w)

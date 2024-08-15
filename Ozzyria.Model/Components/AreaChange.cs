@@ -48,7 +48,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "AreaChange";
+            return "area_change";
         }
 
         public void Write(System.IO.BinaryWriter w)

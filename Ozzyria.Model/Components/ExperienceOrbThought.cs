@@ -6,7 +6,7 @@ namespace Ozzyria.Model.Components
     {
         
         public string GetComponentIdentifier() {
-            return "ExperienceOrbThought";
+            return "exp_orb_thought";
         }
 
         public void Write(System.IO.BinaryWriter w)

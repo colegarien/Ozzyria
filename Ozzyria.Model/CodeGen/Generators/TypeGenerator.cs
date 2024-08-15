@@ -26,7 +26,7 @@ namespace Grynt.Generators
                     code = GenerateEnum(type);
                     break;
                 case TypeDefinition.TYPE_CLASS:
-                    code = _classGenerator.Generate(type.Name, type.ClassFields.Values.ToList(), type.ClassDefaults);
+                    code = _classGenerator.Generate(type.Name, type.Id, type.ClassFields.Values.ToList(), type.ClassDefaults);
                     break;
             }
             return code;

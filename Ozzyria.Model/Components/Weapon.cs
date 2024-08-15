@@ -78,7 +78,7 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "Weapon";
+            return "weapon";
         }
 
         public void Write(System.IO.BinaryWriter w)
