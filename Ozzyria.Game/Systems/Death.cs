@@ -6,8 +6,10 @@ namespace Ozzyria.Game.Systems
 {
     internal class Death : TriggerSystem
     {
-        public Death(EntityContext context) : base(context)
+        protected World _world;
+        public Death(World world, EntityContext context) : base(context)
         {
+            _world = world;
         }
 
         public override void Execute(EntityContext context, Entity[] entities)
@@ -26,7 +28,7 @@ namespace Ozzyria.Game.Systems
 
                     // reset player
                     context.DestroyEntity(entity);
-                    EntityFactory.CreatePlayer(context, playerId);
+                    EntityFactory.CreatePlayer(context, playerId, _world.WorldState.ContainerStorage);
                 }
                 else
                 {

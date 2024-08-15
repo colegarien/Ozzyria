@@ -1,13 +1,14 @@
 ﻿using Ozzyria.Model.Components;
 using Grecs;
 using Ozzyria.Model.Types;
+using Ozzyria.Game.Storage;
 
 namespace Ozzyria.Game.Utility
 {
     public class EntityFactory
     {
 
-        public static void CreatePlayer(EntityContext context, int playerId)
+        public static void CreatePlayer(EntityContext context, int playerId, ContainerStorage containerStorage)
         {
             var player = context.CreateEntity();
 
@@ -38,7 +39,7 @@ namespace Ozzyria.Game.Utility
             var collision = (Collision)player.CreateComponent(typeof(Collision));
             collision.IsDynamic = true;
 
-            var bag = (Ozzyria.Game.Components.Bag)player.CreateComponent(typeof(Ozzyria.Game.Components.Bag));
+            var bag = (Bag)player.CreateComponent(typeof(Bag));
 
             var greenHat = new Entity();
             var hatItem = (Item)greenHat.CreateComponent(typeof(Item));
@@ -48,7 +49,7 @@ namespace Ozzyria.Game.Utility
             hatItem.EquipmentSlot = "hat"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             hatItem.IsEquipped = true;
             greenHat.AddComponent(hatItem);
-            bag.AddItem(greenHat);
+            containerStorage.AddItemToBag(bag, greenHat);
 
             var bikerJacket = new Entity();
             var bikerJacketItem = (Item)bikerJacket.CreateComponent(typeof(Item));
@@ -58,7 +59,7 @@ namespace Ozzyria.Game.Utility
             bikerJacketItem.EquipmentSlot = "armor"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             bikerJacketItem.IsEquipped = true;
             bikerJacket.AddComponent(bikerJacketItem);
-            bag.AddItem(bikerJacket);
+            containerStorage.AddItemToBag(bag, bikerJacket);
 
             var shades = new Entity();
             var shadesItem = (Item)shades.CreateComponent(typeof(Item));
@@ -68,7 +69,7 @@ namespace Ozzyria.Game.Utility
             shadesItem.EquipmentSlot = "mask"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             shadesItem.IsEquipped = true;
             shades.AddComponent(shadesItem);
-            bag.AddItem(shades);
+            containerStorage.AddItemToBag(bag, shades);
 
             var gladius = new Entity();
             var gladiusItem = (Item)gladius.CreateComponent(typeof(Item));
@@ -78,7 +79,7 @@ namespace Ozzyria.Game.Utility
             gladiusItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             gladiusItem.IsEquipped = true;
             gladius.AddComponent(gladiusItem);
-            bag.AddItem(gladius);
+            containerStorage.AddItemToBag(bag, gladius);
 
             // unequipped stuff
             var cowboyHat = new Entity();
@@ -89,7 +90,7 @@ namespace Ozzyria.Game.Utility
             cowboyHatItem.EquipmentSlot = "hat"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             cowboyHatItem.IsEquipped = false;
             cowboyHat.AddComponent(cowboyHatItem);
-            bag.AddItem(cowboyHat);
+            containerStorage.AddItemToBag(bag, cowboyHat);
 
             var cyanArmor = new Entity();
             var cyanArmorItem = (Item)cyanArmor.CreateComponent(typeof(Item));
@@ -99,7 +100,7 @@ namespace Ozzyria.Game.Utility
             cyanArmorItem.EquipmentSlot = "armor"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             cyanArmorItem.IsEquipped = false;
             cyanArmor.AddComponent(cyanArmorItem);
-            bag.AddItem(cyanArmor);
+            containerStorage.AddItemToBag(bag, cyanArmor);
 
             var pinkSword = new Entity();
             var pinkSwordItem = (Item)pinkSword.CreateComponent(typeof(Item));
@@ -109,7 +110,7 @@ namespace Ozzyria.Game.Utility
             pinkSwordItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             pinkSwordItem.IsEquipped = false;
             pinkSword.AddComponent(pinkSwordItem);
-            bag.AddItem(pinkSword);
+            containerStorage.AddItemToBag(bag, pinkSword);
 
             var greySword = new Entity();
             var greySwordItem = (Item)greySword.CreateComponent(typeof(Item));
@@ -119,7 +120,7 @@ namespace Ozzyria.Game.Utility
             greySwordItem.EquipmentSlot = "weapon"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
-            bag.AddItem(greySword);
+            containerStorage.AddItemToBag(bag, greySword);
 
             // Skeleton and Initial Equipment Setup
             player.AddComponent(new Animator{NumberOfFrames = 3});

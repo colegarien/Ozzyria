@@ -100,9 +100,9 @@ namespace Ozzyria.MonoGameClient.UI.Windows
                     }
                 }
             }
-            else if(subject.HasComponent(typeof(Ozzyria.Game.Components.Bag)))
+            else if(subject.HasComponent(typeof(Bag)))
             {
-                var bag = (Ozzyria.Game.Components.Bag)subject.GetComponent(typeof(Ozzyria.Game.Components.Bag));
+                var bag = (Bag)subject.GetComponent(typeof(Bag));
                 _actions.Add(new ContextAction
                 {
                     Label = "open",

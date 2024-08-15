@@ -24,7 +24,7 @@ namespace Ozzyria.Game
                 .Add(new Systems.Physics())
                 .Add(new Systems.Doors())
                 .Add(new Systems.AttackSystem())
-                .Add(new Systems.Death(_context))
+                .Add(new Systems.Death(world, _context))
                 .Add(new Systems.AreaChange(world, _context));
 
             // TODO eventually add a persistence layer where this stuff loads into a DB or something only on first run or refresh

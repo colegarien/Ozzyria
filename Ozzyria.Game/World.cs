@@ -3,6 +3,7 @@ using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using Ozzyria.Content.Models.Area;
+using Ozzyria.Game.Storage;
 
 namespace Ozzyria.Game
 {
@@ -22,6 +23,7 @@ namespace Ozzyria.Game
         public Dictionary<int, string> PlayerAreaTracker = new Dictionary<int, string>();
         public Dictionary<string, Area> Areas = new Dictionary<string, Area>();
         public List<AreaEvent> AreaEvents = new List<AreaEvent>();
+        public ContainerStorage ContainerStorage = new ContainerStorage();
     }
 
     public class World
@@ -42,7 +44,7 @@ namespace Ozzyria.Game
             // TODO figure out what world to start player in
             WorldState.PlayerAreaTracker[playerId] = "test_m";
             WorldState.PlayerInputBuffer[playerId] = new Input();
-            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId);
+            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId, WorldState.ContainerStorage);
         }
 
         public void PlayerLeave(int playerId)

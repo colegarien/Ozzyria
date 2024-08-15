@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
 using Ozzyria.Model.Components;
+using Ozzyria.Game.Storage;
 
 namespace Ozzyria.MonoGameClient
 {
@@ -37,6 +38,7 @@ namespace Ozzyria.MonoGameClient
         internal Camera Camera;
         internal LocalState LocalState;
         internal Ozzyria.Content.Models.Area.AreaData AreaData = null;
+        internal ContainerStorage ContainerStorage = new ContainerStorage();
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;
@@ -258,7 +260,7 @@ namespace Ozzyria.MonoGameClient
             {
                 var clickedBag = _context.GetEntities().FirstOrDefault(e =>
                 {
-                    if (e.id == LocalState.PlayerEntityId || !e.HasComponent(typeof(Movement)) || !e.HasComponent(typeof(Game.Components.Bag)))
+                    if (e.id == LocalState.PlayerEntityId || !e.HasComponent(typeof(Movement)) || !e.HasComponent(typeof(Bag)))
                     {
                         return false;
                     }
