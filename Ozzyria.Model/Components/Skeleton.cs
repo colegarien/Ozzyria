@@ -385,7 +385,7 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("weaponOffsetAngle"))
             {
-                WeaponOffsetAngle = float.Parse(values["weaponOffsetAngle"]);
+                WeaponOffsetAngle = float.Parse(values["weaponOffsetAngle"].Trim('f'));
             }
             if (values.HasValueFor("armorOffsetX"))
             {
@@ -397,7 +397,7 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("armorOffsetAngle"))
             {
-                ArmorOffsetAngle = float.Parse(values["armorOffsetAngle"]);
+                ArmorOffsetAngle = float.Parse(values["armorOffsetAngle"].Trim('f'));
             }
             if (values.HasValueFor("maskOffsetX"))
             {
@@ -409,7 +409,7 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("maskOffsetAngle"))
             {
-                MaskOffsetAngle = float.Parse(values["maskOffsetAngle"]);
+                MaskOffsetAngle = float.Parse(values["maskOffsetAngle"].Trim('f'));
             }
             if (values.HasValueFor("hatOffsetX"))
             {
@@ -421,7 +421,7 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("hatOffsetAngle"))
             {
-                HatOffsetAngle = float.Parse(values["hatOffsetAngle"]);
+                HatOffsetAngle = float.Parse(values["hatOffsetAngle"].Trim('f'));
             }
         }
     }

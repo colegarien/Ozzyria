@@ -1,6 +1,11 @@
 ﻿using Grecs;
+using Grynt.Model.Definitions;
+using Ozzyria.Content;
 using Ozzyria.Content.Models.Area;
 using Ozzyria.Game.Utility;
+using Ozzyria.Model.Components;
+using Ozzyria.Model.Types;
+using System.Collections.Generic;
 
 namespace Ozzyria.Game
 {
@@ -28,29 +33,40 @@ namespace Ozzyria.Game
                 .Add(new Systems.AreaChange(world, _context));
 
             // TODO eventually add a persistence layer where this stuff loads into a DB or something only on first run or refresh
+            var prefabPackage = Packages.GetInstance().PrefabPackage;
+
             var areaData = AreaData.Retrieve(areaId);
-            for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++) {
-                foreach (var wall in areaData.WallData?.Walls[layer])
+            // probably should add some helpers aroudn this so it's less weird
+            var wallPrefabDefinition = prefabPackage.GetDefinition("wall");
+            if (wallPrefabDefinition != null)
+            {
+                for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++)
                 {
-                    EntityFactory.CreateBoxColliderArea(_context, wall.X, wall.Y, wall.X + wall.Width, wall.Y + wall.Height);
+                    foreach (var wall in areaData.WallData?.Walls[layer])
+                    {
+                        var wallX = wall.X + (wall.Width / 2f);
+                        var wallY = wall.Y + (wall.Height / 2f);
+                        Model.Utility.EntityFactory.HydrateDefinition(_context, wallPrefabDefinition, new ValuePacket
+                        {
+                            { "movement->x", wallX.ToString() },
+                            { "movement->y", wallY.ToString() },
+                            { "movement->previousX", wallX.ToString() },
+                            { "movement->previousY", wallY.ToString() },
+                            { "movement->collisionShape->boundingBox->width", ((int)wall.Width).ToString() },
+                            { "movement->collisionShape->boundingBox->height", ((int)wall.Height).ToString() },
+                        });
+                    }
                 }
             }
 
-            for (var layer = 0; layer < (areaData?.PrefabData?.Prefabs?.Length ?? 0); layer ++)
+            for (var layer = 0; layer < (areaData?.PrefabData?.Prefabs?.Length ?? 0); layer++)
             {
                 foreach (var prefab in areaData.PrefabData.Prefabs[layer])
                 {
-                    // TODO stop hard-coding this and make them more dynamic (see MainForm.cs in Gryp for these value mappings)
-                    switch (prefab.PrefabId) {
-                        case "slime_spawner":
-                            EntityFactory.CreateSlimeSpawner(_context, prefab.X, prefab.Y);
-                            break;
-                        case "door":
-                            EntityFactory.CreateDoor(_context, prefab.X, prefab.Y, prefab.Attributes?["new_area_id"] ?? "", float.Parse(prefab.Attributes?["new_area_x"] ?? "0"), float.Parse(prefab.Attributes?["new_area_y"] ?? "0"));
-                            break;
-                        case "exp_orb":
-                            EntityFactory.CreateExperienceOrb(_context, prefab.X, prefab.Y, int.Parse(prefab.Attributes?["amount"] ?? "0"));
-                            break;
+                    var prefabDefinition = prefabPackage.GetDefinition(prefab.PrefabId);
+                    if (prefabDefinition != null)
+                    {
+                        Model.Utility.EntityFactory.HydrateDefinition(_context, prefabDefinition, prefab.Attributes ?? new ValuePacket());
                     }
                 }
             }

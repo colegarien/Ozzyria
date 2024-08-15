@@ -57,6 +57,10 @@ namespace Grynt.Generators.Decorators
                     {
                         hyrdateCode = fieldPrefix + field.Name + " = {{VALUES_PARAM}}[\"{{FIELD_ID}}\"].Trim('\"');";
                     }
+                    else if(type.Id == "float")
+                    {
+                        hyrdateCode = fieldPrefix + field.Name + " = " + type.Id + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"].Trim('f'));";
+                    }
                     else
                     {
                         hyrdateCode = fieldPrefix + field.Name + " = " + type.Id + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"]);";

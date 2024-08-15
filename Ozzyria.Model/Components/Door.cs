@@ -77,11 +77,11 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("newX"))
             {
-                NewX = float.Parse(values["newX"]);
+                NewX = float.Parse(values["newX"].Trim('f'));
             }
             if (values.HasValueFor("newY"))
             {
-                NewY = float.Parse(values["newY"]);
+                NewY = float.Parse(values["newY"].Trim('f'));
             }
         }
     }

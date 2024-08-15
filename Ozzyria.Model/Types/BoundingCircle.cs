@@ -46,7 +46,7 @@ namespace Ozzyria.Model.Types
 
             if (values.HasValueFor("radius"))
             {
-                Radius = float.Parse(values["radius"]);
+                Radius = float.Parse(values["radius"].Trim('f'));
             }
         }
     }

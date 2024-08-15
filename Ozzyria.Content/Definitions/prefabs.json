@@ -15,9 +15,98 @@
     "exposed": [
       "movement->x",
       "movement->y",
+      "movement->previousX",
+      "movement->previousY",
       "door->newArea",
       "door->newX",
       "door->newY"
+    ]
+  },
+  "exp_orb": {
+    "components": [
+      "exp_orb_thought",
+      "exp_boost",
+      "movement",
+      "skeleton",
+      "animator",
+      "body"
+    ],
+    "defaults": {
+      "animator->type": "Stall",
+      "skeleton->type": "Static",
+      "body->bodyId": "\"exp_orb\"",
+      "movement->acceleration": "200f",
+      "movement->maxSpeed": "300f"
+    },
+    "exposed": [
+      "movement->x",
+      "movement->y",
+      "movement->previousX",
+      "movement->previousY",
+      "exp_boost->experience"
+    ]
+  },
+  "wall": {
+    "components": [
+      "movement",
+      "collision"
+    ],
+    "defaults": {
+      "collision->isDynamic": "false"
+    },
+    "exposed": [
+      "movement->x",
+      "movement->y",
+      "movement->previousX",
+      "movement->previousY",
+      "movement->collisionShape->boundingBox->width",
+      "movement->collisionShape->boundingBox->height",
+      "collision->isDynamic"
+    ]
+  },
+  "slime_spawner": {
+    "components": [
+      "slime_spawner"
+    ],
+    "defaults": {
+      "slime_spawner->thinkDelay->delayInSeconds": "5f"
+    },
+    "exposed": [
+      "slime_spawner->x",
+      "slime_spawner->y"
+    ]
+  },
+  "slime": {
+    "components": [
+      "slime_thought",
+      "collision",
+      "movement",
+      "skeleton",
+      "animator",
+      "body",
+      "weapon",
+      "stats"
+    ],
+    "defaults": {
+      "animator->numberOfFrames": "3",
+      "skeleton->type": "Slime",
+      "body->bodyId": "\"Slime\"",
+      "weapon->weaponType": "Empty",
+      "weapon->weaponId": "",
+      "movement->acceleration": "300f",
+      "movement->maxSpeed": "50f",
+      "movement->collisionOffsetY": "-8",
+      "movement->collisionShape->boundingCircle->radius": "10",
+      "collision->isDynamic": "true",
+      "stats->health": "12",
+      "stats->maxHealth": "12"
+
+    },
+    "exposed": [
+      "movement->x",
+      "movement->y",
+      "movement->previousX",
+      "movement->previousY"
     ]
   }
 }

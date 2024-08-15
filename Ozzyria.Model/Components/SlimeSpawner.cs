@@ -92,11 +92,11 @@ namespace Ozzyria.Model.Components
 
             if (values.HasValueFor("x"))
             {
-                X = float.Parse(values["x"]);
+                X = float.Parse(values["x"].Trim('f'));
             }
             if (values.HasValueFor("y"))
             {
-                Y = float.Parse(values["y"]);
+                Y = float.Parse(values["y"].Trim('f'));
             }
             if (values.HasValueFor("SLIME_LIMIT"))
             {
@@ -107,11 +107,11 @@ namespace Ozzyria.Model.Components
                 var  values_thinkDelay = values.Extract("thinkDelay");
                 if (values_thinkDelay.HasValueFor("delayInSeconds"))
             {
-                ThinkDelay.DelayInSeconds = float.Parse(values_thinkDelay["delayInSeconds"]);
+                ThinkDelay.DelayInSeconds = float.Parse(values_thinkDelay["delayInSeconds"].Trim('f'));
             }
                 if (values_thinkDelay.HasValueFor("timer"))
             {
-                ThinkDelay.Timer = float.Parse(values_thinkDelay["timer"]);
+                ThinkDelay.Timer = float.Parse(values_thinkDelay["timer"].Trim('f'));
             }
                 if (values_thinkDelay.HasValueFor("ready"))
             {

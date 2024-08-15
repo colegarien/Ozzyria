@@ -1,1 +1,78 @@
-{"Prefabs":[[],[{"PrefabId":"slime_spawner","X":80.72777,"Y":942.93256,"Attributes":null},{"PrefabId":"exp_orb","X":905.8889,"Y":718.6667,"Attributes":{"amount":"69"}},{"PrefabId":"exp_orb","X":790.3333,"Y":753.11115,"Attributes":{"amount":"69"}},{"PrefabId":"exp_orb","X":692.55554,"Y":836.44446,"Attributes":{"amount":"69"}},{"PrefabId":"exp_orb","X":643.6667,"Y":919.7778,"Attributes":{"amount":"69"}},{"PrefabId":"door","X":857,"Y":884.2222,"Attributes":{"new_area_id":"test_m","new_area_x":"65","new_area_y":"64"}}]]}
+{
+  "Prefabs": [
+    [],
+    [
+      {
+        "PrefabId": "slime_spawner",
+        "X": 80.72777,
+        "Y": 942.93256,
+        "Attributes": {
+          "slime_spawner->x": "80.72777f",
+          "slime_spawner->y": "942.93256f"
+        }
+      },
+      {
+        "PrefabId": "exp_orb",
+        "X": 905.8889,
+        "Y": 718.6667,
+        "Attributes": {
+          "exp_boost->experience": "69",
+          "movement->x": "905.8889f",
+          "movement->y": "718.6667",
+          "movement->previousX": "905.8889f",
+          "movement->previousY": "718.6667"
+        }
+      },
+      {
+        "PrefabId": "exp_orb",
+        "X": 790.3333,
+        "Y": 753.11115,
+        "Attributes": {
+          "exp_boost->experience": "69",
+          "movement->x": "790.3333",
+          "movement->y": "753.11115f",
+          "movement->previousX": "790.3333",
+          "movement->previousY": "753.11115f"
+        }
+      },
+      {
+        "PrefabId": "exp_orb",
+        "X": 692.55554,
+        "Y": 836.44446,
+        "Attributes": {
+          "exp_boost->experience": "69",
+          "movement->x": "692.55554",
+          "movement->y": "836.44446",
+          "movement->previousX": "692.55554",
+          "movement->previousY": "836.44446"
+        }
+      },
+      {
+        "PrefabId": "exp_orb",
+        "X": 643.6667,
+        "Y": 919.7778,
+        "Attributes": {
+          "exp_boost->experience": "69",
+          "movement->x": "643.6667",
+          "movement->y": "919.7778",
+          "movement->previousX": "643.6667",
+          "movement->previousY": "919.7778"
+        }
+      },
+      {
+        "PrefabId": "door",
+        "X": 857,
+        "Y": 884.2222,
+        "Attributes": {
+          "door->newArea": "test_m",
+          "door->newX": "65",
+          "door->newY": "64",
+          "movement->x": "857f",
+          "movement->y": "884.2222f",
+          "movement->previousX": "857f",
+          "movement->previousY": "884.2222f"
+        }
+      }
+    ]
+  ]
+}

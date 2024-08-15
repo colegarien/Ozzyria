@@ -42,4 +42,8 @@
     <Folder Include="Areas\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ozzyria.Model\Ozzyria.Model.csproj" />
+  </ItemGroup>
+
 </Project>

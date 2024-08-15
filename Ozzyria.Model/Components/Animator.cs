@@ -130,11 +130,11 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("frameTimer"))
             {
-                FrameTimer = float.Parse(values["frameTimer"]);
+                FrameTimer = float.Parse(values["frameTimer"].Trim('f'));
             }
             if (values.HasValueFor("timePerFrame"))
             {
-                TimePerFrame = float.Parse(values["timePerFrame"]);
+                TimePerFrame = float.Parse(values["timePerFrame"].Trim('f'));
             }
         }
     }

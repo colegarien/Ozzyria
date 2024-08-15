@@ -78,11 +78,11 @@ namespace Ozzyria.Model.Types
 
             if (values.HasValueFor("delayInSeconds"))
             {
-                DelayInSeconds = float.Parse(values["delayInSeconds"]);
+                DelayInSeconds = float.Parse(values["delayInSeconds"].Trim('f'));
             }
             if (values.HasValueFor("timer"))
             {
-                Timer = float.Parse(values["timer"]);
+                Timer = float.Parse(values["timer"].Trim('f'));
             }
             if (values.HasValueFor("ready"))
             {

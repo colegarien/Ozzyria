@@ -81,7 +81,7 @@ namespace Ozzyria.Model.Types
                 var  values_boundingCircle = values.Extract("boundingCircle");
                 if (values_boundingCircle.HasValueFor("radius"))
             {
-                BoundingCircle.Radius = float.Parse(values_boundingCircle["radius"]);
+                BoundingCircle.Radius = float.Parse(values_boundingCircle["radius"].Trim('f'));
             }
             }
         }

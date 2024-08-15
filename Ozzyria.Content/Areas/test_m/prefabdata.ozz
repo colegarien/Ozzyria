@@ -1,1 +1,43 @@
-{"Prefabs":[[{"PrefabId":"exp_orb","X":368.5,"Y":143,"Attributes":{"amount":"100"}},{"PrefabId":"door","X":548.5,"Y":838,"Attributes":{"new_area_id":"test_m2","new_area_x":"200","new_area_y":"200"}}],[{"PrefabId":"slime_spawner","X":456.34372,"Y":318.2387,"Attributes":null}]]}
+{
+  "Prefabs": [
+    [
+      {
+        "PrefabId": "exp_orb",
+        "X": 368.5,
+        "Y": 143,
+        "Attributes": {
+          "exp_boost->experience": "100",
+          "movement->x": "368.5f",
+          "movement->y": "143",
+          "movement->previousX": "368.5f",
+          "movement->previousY": "143"
+        }
+      },
+      {
+        "PrefabId": "door",
+        "X": 548.5,
+        "Y": 838,
+        "Attributes": {
+          "door->newArea": "test_m2",
+          "door->newX": "200",
+          "door->newY": "200",
+          "movement->x": "548.5f",
+          "movement->y": "838f",
+          "movement->previousX": "548.5f",
+          "movement->previousY": "838f"
+        }
+      }
+    ],
+    [
+      {
+        "PrefabId": "slime_spawner",
+        "X": 456.34372,
+        "Y": 318.2387,
+        "Attributes": {
+          "slime_spawner->x": "456.34372f",
+          "slime_spawner->y": "318.2387"
+        }
+      }
+    ]
+  ]
+}

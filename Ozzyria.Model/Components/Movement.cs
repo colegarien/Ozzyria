@@ -247,11 +247,11 @@ namespace Ozzyria.Model.Components
 
             if (values.HasValueFor("previousX"))
             {
-                PreviousX = float.Parse(values["previousX"]);
+                PreviousX = float.Parse(values["previousX"].Trim('f'));
             }
             if (values.HasValueFor("previousY"))
             {
-                PreviousY = float.Parse(values["previousY"]);
+                PreviousY = float.Parse(values["previousY"].Trim('f'));
             }
             if (values.HasValueFor("layer"))
             {
@@ -259,15 +259,15 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("x"))
             {
-                X = float.Parse(values["x"]);
+                X = float.Parse(values["x"].Trim('f'));
             }
             if (values.HasValueFor("y"))
             {
-                Y = float.Parse(values["y"]);
+                Y = float.Parse(values["y"].Trim('f'));
             }
             if (values.HasValueFor("collisionOffsetY"))
             {
-                CollisionOffsetY = float.Parse(values["collisionOffsetY"]);
+                CollisionOffsetY = float.Parse(values["collisionOffsetY"].Trim('f'));
             }
             if (values.HasValueFor("collisionShape"))
             {
@@ -289,33 +289,33 @@ namespace Ozzyria.Model.Components
                 var  values_collisionShape_boundingCircle = values_collisionShape.Extract("boundingCircle");
                 if (values_collisionShape_boundingCircle.HasValueFor("radius"))
             {
-                CollisionShape.BoundingCircle.Radius = float.Parse(values_collisionShape_boundingCircle["radius"]);
+                CollisionShape.BoundingCircle.Radius = float.Parse(values_collisionShape_boundingCircle["radius"].Trim('f'));
             }
             }
             }
             if (values.HasValueFor("speed"))
             {
-                Speed = float.Parse(values["speed"]);
+                Speed = float.Parse(values["speed"].Trim('f'));
             }
             if (values.HasValueFor("moveDirection"))
             {
-                MoveDirection = float.Parse(values["moveDirection"]);
+                MoveDirection = float.Parse(values["moveDirection"].Trim('f'));
             }
             if (values.HasValueFor("lookDirection"))
             {
-                LookDirection = float.Parse(values["lookDirection"]);
+                LookDirection = float.Parse(values["lookDirection"].Trim('f'));
             }
             if (values.HasValueFor("acceleration"))
             {
-                ACCELERATION = float.Parse(values["acceleration"]);
+                ACCELERATION = float.Parse(values["acceleration"].Trim('f'));
             }
             if (values.HasValueFor("maxSpeed"))
             {
-                MAX_SPEED = float.Parse(values["maxSpeed"]);
+                MAX_SPEED = float.Parse(values["maxSpeed"].Trim('f'));
             }
             if (values.HasValueFor("turnSpeed"))
             {
-                TURN_SPEED = float.Parse(values["turnSpeed"]);
+                TURN_SPEED = float.Parse(values["turnSpeed"].Trim('f'));
             }
         }
     }

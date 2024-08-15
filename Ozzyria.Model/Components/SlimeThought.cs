@@ -57,11 +57,11 @@ namespace Ozzyria.Model.Components
                 var  values_thinkDelay = values.Extract("thinkDelay");
                 if (values_thinkDelay.HasValueFor("delayInSeconds"))
             {
-                ThinkDelay.DelayInSeconds = float.Parse(values_thinkDelay["delayInSeconds"]);
+                ThinkDelay.DelayInSeconds = float.Parse(values_thinkDelay["delayInSeconds"].Trim('f'));
             }
                 if (values_thinkDelay.HasValueFor("timer"))
             {
-                ThinkDelay.Timer = float.Parse(values_thinkDelay["timer"]);
+                ThinkDelay.Timer = float.Parse(values_thinkDelay["timer"].Trim('f'));
             }
                 if (values_thinkDelay.HasValueFor("ready"))
             {

@@ -30,12 +30,12 @@ namespace Ozzyria.Model.Types
         public static ValuePacket Combine(params ValuePacket[] packets)
         {
             var result = new ValuePacket();
-            var allKeys = packets.SelectMany(p => p.Keys).Distinct();
+            var allKeys = packets.Where(p => p != null).SelectMany(p => p.Keys).Distinct();
             foreach (var key in allKeys)
             {
                 foreach (var packet in packets)
                 {
-                    if (packet.ContainsKey(key))
+                    if (packet != null && packet.ContainsKey(key))
                         result[key] = packet[key];
                 }
             }

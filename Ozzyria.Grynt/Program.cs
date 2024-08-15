@@ -5,6 +5,7 @@ using Grynt.Model.Packages;
 using Grynt.Model.Definitions;
 using Ozzyria.Model.CodeGen.Generators;
 using Ozzyria.Content;
+using Ozzyria.Model.CodeGen.Packages;
 
 namespace Ozzyria.Grynt
 {
@@ -21,9 +22,11 @@ namespace Ozzyria.Grynt
             var modelRoot = OzzyriaModelRoot();
             string code = "";
 
-            System.Console.WriteLine("---- TYPES ----");
+            var packages = Packages.GetInstance();
+            var typePackage = packages.TypePackage;
+            var componentPackage = packages.ComponentPackage;
 
-            var typePackage = TypePackage.Load(Path.Combine(Loader.Root(), "Definitions", "types.json"));
+            System.Console.WriteLine("---- TYPES ----");
             var basicFieldGenerator = new FieldsGenerator(typePackage);
             var typeClassGenerator = new ClassGenerator(targetNamespace, "Types", [
                 new FieldsDecorator(basicFieldGenerator),
@@ -43,8 +46,6 @@ namespace Ozzyria.Grynt
 
 
             System.Console.WriteLine("---- COMPONENTS ----");
-
-            var componentPackage = ComponentPackage.Load(Path.Combine(Loader.Root(), "Definitions", "components.json"));
             var componentClassGenerator = new ComponentGenerator(targetNamespace, typePackage);
             foreach (var component in componentPackage.Definitions.Values)
             {
@@ -54,7 +55,6 @@ namespace Ozzyria.Grynt
             }
 
             System.Console.WriteLine("---- UTILS ----");
-
             var serializerGenerator = new EntitySerializerGenerator(targetNamespace, componentPackage);
             code = serializerGenerator.Generate();
             System.Console.WriteLine(code);

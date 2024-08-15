@@ -101,15 +101,15 @@ namespace Ozzyria.Model.Types
             }
             if (values.HasValueFor("depth"))
             {
-                Depth = float.Parse(values["depth"]);
+                Depth = float.Parse(values["depth"].Trim('f'));
             }
             if (values.HasValueFor("normalX"))
             {
-                NormalX = float.Parse(values["normalX"]);
+                NormalX = float.Parse(values["normalX"].Trim('f'));
             }
             if (values.HasValueFor("normalY"))
             {
-                NormalY = float.Parse(values["normalY"]);
+                NormalY = float.Parse(values["normalY"].Trim('f'));
             }
         }
     }

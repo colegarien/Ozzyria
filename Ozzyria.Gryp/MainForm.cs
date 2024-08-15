@@ -1,8 +1,10 @@
+using Ozzyria.Content;
 using Ozzyria.Content.Models.Area;
 using Ozzyria.Gryp.Models;
 using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
 using Ozzyria.Gryp.UI.Dialogs;
+using Ozzyria.Model.CodeGen.Packages;
 using SkiaSharp.Views.Desktop;
 using System.Reflection;
 
@@ -10,6 +12,7 @@ namespace Ozzyria.Gryp
 {
     public partial class MainGrypWindow : Form, IEventSubscriber<BrushChangeEvent>, IEventSubscriber<SelectedEntityChangeEvent>, IEventSubscriber<ActiveLayerChangedEvent>
     {
+        internal PrefabPackage _prefabPackage;
         internal Map _map = new Map();
 
         internal string _lastSelectedPreset = "";
@@ -24,11 +27,8 @@ namespace Ozzyria.Gryp
 
             EventBus.Subscribe(this);
 
-            cmbPrefab.Items.AddRange(new string[] {
-                "slime_spawner",
-                "door",
-                "exp_orb",
-            });
+            _prefabPackage = Packages.GetInstance().PrefabPackage;
+            cmbPrefab.Items.AddRange(_prefabPackage.Definitions.Keys.ToArray());
 
             // hackity hack to override DoubleBuffered without making custom class
             typeof(ListView).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, layerList, new object[] { true });
@@ -500,19 +500,27 @@ namespace Ozzyria.Gryp
             _map.CurrentEntityBrush.PrefabId = newPrefabId;
 
             tableEntityAttributes.Rows.Clear();
-            switch (_map.CurrentEntityBrush.PrefabId)
+
+            var prefabDefinition = _prefabPackage.GetDefinition(_map.CurrentEntityBrush.PrefabId);
+            
+            foreach(var field in prefabDefinition.Exposed)
             {
-                case "slime_spawner":
-                    break;
-                case "door":
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_id") ?? "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_x") ?? "" });
-                    tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_y") ?? "" });
-                    break;
-                case "exp_orb":
-                    tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("amount") ?? "" });
-                    break;
+                tableEntityAttributes.Rows.Add(new string[] { field, _map.CurrentEntityBrush.Attributes.GetValueOrDefault(field) ?? "" });
             }
+            
+            //switch (_map.CurrentEntityBrush.PrefabId)
+            //{
+            //    case "slime_spawner":
+            //        break;
+            //    case "door":
+            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_id", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_id") ?? "" });
+            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_x", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_x") ?? "" });
+            //        tableEntityAttributes.Rows.Add(new string[] { "new_area_y", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("new_area_y") ?? "" });
+            //        break;
+            //    case "exp_orb":
+            //        tableEntityAttributes.Rows.Add(new string[] { "amount", _map.CurrentEntityBrush.Attributes.GetValueOrDefault("amount") ?? "" });
+            //        break;
+            //}
 
             if (_map.SelectedEntity != null && _map.SelectedEntity.PrefabId != _map.CurrentEntityBrush.PrefabId)
             {

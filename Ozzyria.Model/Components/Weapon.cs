@@ -115,11 +115,11 @@ namespace Ozzyria.Model.Components
             }
             if (values.HasValueFor("attackAngle"))
             {
-                AttackAngle = float.Parse(values["attackAngle"]);
+                AttackAngle = float.Parse(values["attackAngle"].Trim('f'));
             }
             if (values.HasValueFor("attackRange"))
             {
-                AttackRange = float.Parse(values["attackRange"]);
+                AttackRange = float.Parse(values["attackRange"].Trim('f'));
             }
             if (values.HasValueFor("attackDamage"))
             {
