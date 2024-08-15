@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <None Remove="Areas\**" />
+    <None Remove="Definitions\components.json" />
+    <None Remove="Definitions\prefabs.json" />
+    <None Remove="Definitions\types.json" />
     <None Remove="Resources\resource_registry.json" />
     <None Remove="Resources\Sprites\entity_set_001.png" />
     <None Remove="Resources\Sprites\outside_tileset_001.png" />
@@ -13,6 +16,15 @@
 
   <ItemGroup>
     <Content Include="Areas\**\*.ozz">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Definitions\components.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Definitions\prefabs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Definitions\types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\resource_registry.json">

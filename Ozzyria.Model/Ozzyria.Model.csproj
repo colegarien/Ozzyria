@@ -7,26 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="CodeGen\Data\component_defs.json" />
-    <None Remove="CodeGen\Data\type_defs.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="CodeGen\Data\component_defs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="CodeGen\Data\type_defs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Grecs" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Prefabs\" />
-    <Folder Include="Utility\" />
   </ItemGroup>
 
 </Project>
