@@ -5,6 +5,10 @@ namespace Ozzyria.Model.Components
     public class Dead : Grecs.PooledComponent<Dead>, ISerializable, IHydrateable
     {
         
+        public string GetComponentIdentifier() {
+            return "Dead";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             

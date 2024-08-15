@@ -317,6 +317,10 @@ namespace Ozzyria.Model.Components
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "Skeleton";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write((int)Type);

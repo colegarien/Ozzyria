@@ -24,6 +24,10 @@ namespace Ozzyria.Model.Types
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "BoundingCircle";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(Radius);

@@ -54,10 +54,10 @@ namespace Grynt.Generators
             }
 
             code = ApplyNamespace(code)
-                    .Replace("{{CLASS_NAME}}", className)
                     .Replace("{{INTERFACES}}", interfaces)
                     .Replace("{{INTERFACE_TAGS}}", interfaceTags.Trim());
-            return Decorate(code, fields, defaults);
+            return Decorate(code, fields, defaults)
+                    .Replace("{{CLASS_NAME}}", className);
         }
 
         private string Decorate(string code, List<FieldDefinition> fields, ValuePacket defaults = null)

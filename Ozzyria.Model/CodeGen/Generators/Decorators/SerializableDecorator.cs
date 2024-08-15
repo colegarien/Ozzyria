@@ -1,8 +1,6 @@
 ﻿using Grynt.Model.Definitions;
 using Grynt.Model.Packages;
 using Ozzyria.Model.Types;
-using Microsoft.VisualBasic.FileIO;
-using System.Collections.Generic;
 
 namespace Grynt.Generators.Decorators
 {
@@ -17,6 +15,10 @@ namespace Grynt.Generators.Decorators
         public string Actualize(string code, List<FieldDefinition> fields, ValuePacket defaults = null)
         {
             var codeDecoration = @"
+        public string GetComponentIdentifier() {
+            return ""{{CLASS_NAME}}"";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             {{WRITER}}

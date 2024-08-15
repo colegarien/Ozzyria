@@ -5,6 +5,10 @@ namespace Ozzyria.Model.Components
     public class PlayerThought : Grecs.Component, ISerializable, IHydrateable
     {
         
+        public string GetComponentIdentifier() {
+            return "PlayerThought";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             

@@ -17,6 +17,10 @@ namespace Ozzyria.Model.Components
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "Armor";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(ArmorId);

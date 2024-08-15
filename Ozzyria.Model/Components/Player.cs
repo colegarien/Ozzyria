@@ -17,6 +17,10 @@ namespace Ozzyria.Model.Components
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "Player";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(PlayerId);

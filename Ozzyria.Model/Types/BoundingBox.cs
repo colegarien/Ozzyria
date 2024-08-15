@@ -39,6 +39,10 @@ namespace Ozzyria.Model.Types
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "BoundingBox";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(Width);

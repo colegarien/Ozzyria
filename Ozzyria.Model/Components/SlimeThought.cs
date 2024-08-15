@@ -32,6 +32,10 @@ namespace Ozzyria.Model.Components
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "SlimeThought";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             

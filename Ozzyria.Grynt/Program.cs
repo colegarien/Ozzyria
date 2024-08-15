@@ -3,6 +3,7 @@ using Grynt.Generators.Fields;
 using Grynt.Generators;
 using Grynt.Model.Packages;
 using Grynt.Model.Definitions;
+using Ozzyria.Model.CodeGen.Generators;
 
 namespace Ozzyria.Grynt
 {
@@ -17,6 +18,7 @@ namespace Ozzyria.Grynt
         {
             var targetNamespace = "Ozzyria.Model";
             var modelRoot = OzzyriaModelRoot();
+            string code = "";
 
             System.Console.WriteLine("---- TYPES ----");
 
@@ -30,7 +32,7 @@ namespace Ozzyria.Grynt
             var typeGenerator = new TypeGenerator(targetNamespace, typePackage, typeClassGenerator);
             foreach (var type in typePackage.Definitions.Values)
             {
-                var code = typeGenerator.Generate(type);
+                code = typeGenerator.Generate(type);
                 System.Console.WriteLine(code);
                 if (type.Type != TypeDefinition.TYPE_ASSUMED)
                 {
@@ -45,10 +47,17 @@ namespace Ozzyria.Grynt
             var componentClassGenerator = new ComponentGenerator(targetNamespace, typePackage);
             foreach (var component in componentPackage.Definitions.Values)
             {
-                var code = componentClassGenerator.Generate(component);
+                code = componentClassGenerator.Generate(component);
                 System.Console.WriteLine(code);
                 File.WriteAllText(Path.Combine(modelRoot, "Components", component.Name + ".cs"), code);
             }
+
+            System.Console.WriteLine("---- UTILS ----");
+
+            var serializerGenerator = new SerializerGenerator(targetNamespace, componentPackage);
+            code = serializerGenerator.Generate();
+            System.Console.WriteLine(code);
+            File.WriteAllText(Path.Combine(modelRoot, "Utility", "EntitySerializer.cs"), code);
         }
     }
 }

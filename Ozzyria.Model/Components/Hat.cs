@@ -17,6 +17,10 @@ namespace Ozzyria.Model.Components
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "Hat";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(HatId);

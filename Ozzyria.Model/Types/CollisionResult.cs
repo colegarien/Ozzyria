@@ -69,6 +69,10 @@ namespace Ozzyria.Model.Types
                 }
             }
         }
+        public string GetComponentIdentifier() {
+            return "CollisionResult";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             w.Write(Collided);

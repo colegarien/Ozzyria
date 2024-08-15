@@ -5,6 +5,10 @@ namespace Ozzyria.Model.Components
     public class ExperienceOrbThought : Grecs.Component, ISerializable, IHydrateable
     {
         
+        public string GetComponentIdentifier() {
+            return "ExperienceOrbThought";
+        }
+
         public void Write(System.IO.BinaryWriter w)
         {
             
