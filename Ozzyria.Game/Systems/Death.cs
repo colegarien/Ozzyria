@@ -28,7 +28,7 @@ namespace Ozzyria.Game.Systems
 
                     // reset player
                     context.DestroyEntity(entity);
-                    EntityFactory.CreatePlayer(context, playerId, _world.WorldState.ContainerStorage);
+                    EntityFactory.CreatePlayer(context, playerId, _world.WorldState.PlayerAreaTracker[playerId], _world.WorldState.ContainerStorage);
                 }
                 else
                 {

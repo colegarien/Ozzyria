@@ -22,7 +22,7 @@ namespace Ozzyria.Grynt
 
             System.Console.WriteLine("---- TYPES ----");
 
-            var typePackage = TypePackage.Load(Path.Combine(modelRoot, "CodeGen", "Files", "type_defs.json"));
+            var typePackage = TypePackage.Load(Path.Combine("Data", "type_defs.json"));
             var basicFieldGenerator = new FieldsGenerator(typePackage);
             var typeClassGenerator = new ClassGenerator(targetNamespace, "Types", [
                 new FieldsDecorator(basicFieldGenerator),
@@ -43,7 +43,7 @@ namespace Ozzyria.Grynt
 
             System.Console.WriteLine("---- COMPONENTS ----");
 
-            var componentPackage = ComponentPackage.Load(Path.Combine(modelRoot, "CodeGen", "Files", "component_defs.json"));
+            var componentPackage = ComponentPackage.Load(Path.Combine("Data", "component_defs.json"));
             var componentClassGenerator = new ComponentGenerator(targetNamespace, typePackage);
             foreach (var component in componentPackage.Definitions.Values)
             {

@@ -42,9 +42,9 @@ namespace Ozzyria.Game
         public void PlayerJoin(int playerId)
         {
             // TODO figure out what world to start player in
-            WorldState.PlayerAreaTracker[playerId] = "test_m";
+            WorldState.PlayerAreaTracker[playerId] = "test_m2";
             WorldState.PlayerInputBuffer[playerId] = new Input();
-            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId, WorldState.ContainerStorage);
+            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId, WorldState.PlayerAreaTracker[playerId], WorldState.ContainerStorage);
         }
 
         public void PlayerLeave(int playerId)

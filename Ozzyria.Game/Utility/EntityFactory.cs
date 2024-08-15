@@ -8,7 +8,7 @@ namespace Ozzyria.Game.Utility
     public class EntityFactory
     {
 
-        public static void CreatePlayer(EntityContext context, int playerId, ContainerStorage containerStorage)
+        public static void CreatePlayer(EntityContext context, int playerId, string areaId, ContainerStorage containerStorage)
         {
             var player = context.CreateEntity();
 
@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Utility
             playerTag.PlayerId = playerId;
 
             var playerLocation = (Location)player.CreateComponent(typeof(Location));
-            playerLocation.Area = "test_m"; // TODO OZ-28 pull this from a storage or some kind?
+            playerLocation.Area = areaId;
 
             var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
 
