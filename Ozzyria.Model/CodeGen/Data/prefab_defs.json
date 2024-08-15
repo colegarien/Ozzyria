@@ -1,0 +1,23 @@
+{
+  "door": {
+    "components": [
+      "door",
+      "movement",
+      "skeleton",
+      "animator",
+      "body"
+    ],
+    "defaults": {
+      "animator->type": "Stall",
+      "skeleton->type": "Static",
+      "body->bodyId": "\"simple_door\""
+    },
+    "exposed": [
+      "movement->x",
+      "movement->y",
+      "door->newArea",
+      "door->newX",
+      "door->newY"
+    ]
+  }
+}

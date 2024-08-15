@@ -8,20 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\component_defs.json" />
-    <None Remove="Data\type_defs.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Data\component_defs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\type_defs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Ozzyria.Model\Ozzyria.Model.csproj" />
   </ItemGroup>
 
