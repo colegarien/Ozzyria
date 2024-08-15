@@ -12,7 +12,7 @@ namespace Ozzyria.Game.Utility
         {
             var player = context.CreateEntity();
 
-            var playerTag = (Model.Components.Player)player.CreateComponent(typeof(Model.Components.Player));
+            var playerTag = (Player)player.CreateComponent(typeof(Player));
             playerTag.PlayerId = playerId;
 
             var playerLocation = (Location)player.CreateComponent(typeof(Location));

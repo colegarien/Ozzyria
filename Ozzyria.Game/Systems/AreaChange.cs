@@ -16,8 +16,8 @@ namespace Ozzyria.Game.Systems
         {
             foreach(var entity in entities)
             {
-                var location = (Ozzyria.Model.Components.Location)entity.GetComponent(typeof(Ozzyria.Model.Components.Location));
-                var areaChange = (Ozzyria.Model.Components.AreaChange)entity.GetComponent(typeof(Ozzyria.Model.Components.AreaChange));
+                var location = (Location)entity.GetComponent(typeof(Location));
+                var areaChange = (Model.Components.AreaChange)entity.GetComponent(typeof(Model.Components.AreaChange));
 
 
                 // TODO OZ-22 consider if we want this or not, its cool for doors to be able to move them around the same area
@@ -37,7 +37,7 @@ namespace Ozzyria.Game.Systems
                     location.Area = areaChange.NewArea;
 
                     // update player tracking if player
-                    if (entity.HasComponent(typeof(Ozzyria.Model.Components.Player)))
+                    if (entity.HasComponent(typeof(Model.Components.Player)))
                     {
                         var playerId = ((Model.Components.Player)entity.GetComponent(typeof(Model.Components.Player)))?.PlayerId ?? -1;
                         _world.WorldState.PlayerAreaTracker[playerId] = areaChange.NewArea;
@@ -70,7 +70,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Ozzyria.Model.Components.Location), typeof(Ozzyria.Model.Components.AreaChange));
+            var query = new EntityQuery().And(typeof(Location), typeof(Model.Components.AreaChange));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
 

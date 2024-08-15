@@ -8,12 +8,12 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
     {
         protected override bool CanRender(Entity entity)
         {
-            return entity.HasComponent(typeof(Ozzyria.Model.Components.Armor));
+            return entity.HasComponent(typeof(Armor));
         }
 
         protected override void DoRender(GraphicsPipeline graphicsPipeline, Entity entity, Skeleton skeleton)
         {
-            var armor = (Ozzyria.Model.Components.Armor)entity.GetComponent(typeof(Ozzyria.Model.Components.Armor));
+            var armor = (Armor)entity.GetComponent(typeof(Armor));
             if (armor.ArmorId == "")
                 return;
 

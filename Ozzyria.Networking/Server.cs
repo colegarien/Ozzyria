@@ -194,7 +194,7 @@ namespace Ozzyria.Networking
                                         // equip gear into appropriate slot
                                         var weapon = (Weapon)playerEntity.GetComponent(typeof(Weapon));
                                         var hat = (Hat)playerEntity.GetComponent(typeof(Hat));
-                                        var armor = (Ozzyria.Model.Components.Armor)playerEntity.GetComponent(typeof(Ozzyria.Model.Components.Armor));
+                                        var armor = (Armor)playerEntity.GetComponent(typeof(Armor));
                                         var mask = (Mask)playerEntity.GetComponent(typeof(Mask));
                                         switch (item.EquipmentSlot)
                                         {
@@ -368,7 +368,7 @@ namespace Ozzyria.Networking
                                             newBagEntity.AddComponent(newBagMovement);
 
                                             newBagEntity.AddComponent(new Skeleton { Type = SkeletonType.Static });
-                                            newBagEntity.AddComponent(new Ozzyria.Model.Components.Animator { Type = ClipType.Stall });
+                                            newBagEntity.AddComponent(new Animator { Type = ClipType.Stall });
                                             newBagEntity.AddComponent(new Body { BodyId = "simple_bag" });
 
                                             areaContext.AttachEntity(newBagEntity);
