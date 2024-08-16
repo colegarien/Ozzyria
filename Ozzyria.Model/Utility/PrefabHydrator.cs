@@ -4,7 +4,7 @@ using Grynt.Model.Definitions;
 
 namespace Ozzyria.Model.Utility
 {
-    public class EntityFactory
+    public class PrefabHydrator
     {
         public static void HydrateDefinition(EntityContext context, PrefabDefinition prefab, ValuePacket values = null)
         {

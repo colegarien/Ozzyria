@@ -59,11 +59,15 @@ namespace Grynt.Generators.Decorators
                     }
                     else if(type.Id == "float")
                     {
-                        hyrdateCode = fieldPrefix + field.Name + " = " + type.Id + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"].Trim('f'));";
+                        hyrdateCode = fieldPrefix + field.Name + " = " + type.Name + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"].Trim('f'));";
+                    }
+                    else if(type.Id == "type")
+                    {
+                        hyrdateCode = fieldPrefix + field.Name + " = Type.GetType({{VALUES_PARAM}}[\"{{FIELD_ID}}\"]) ?? typeof(object);";
                     }
                     else
                     {
-                        hyrdateCode = fieldPrefix + field.Name + " = " + type.Id + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"]);";
+                        hyrdateCode = fieldPrefix + field.Name + " = " + type.Name + ".Parse({{VALUES_PARAM}}[\"{{FIELD_ID}}\"]);";
                     }
                     break;
                 case TypeDefinition.TYPE_ENUM:

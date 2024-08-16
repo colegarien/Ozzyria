@@ -140,5 +140,10 @@ namespace Ozzyria.Game.Utility
             player.AddComponent(bag);
         }
 
+        public static void CreateSlime(EntityContext context, float x, float y, int layer)
+        {
+
+        }
+
     }
 }

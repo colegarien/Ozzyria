@@ -2,16 +2,46 @@ using Ozzyria.Model.Types;
 
 namespace Ozzyria.Model.Components
 {
-    public class SlimeSpawner : Grecs.Component, ISerializable, IHydrateable
+    public class PrefabSpawner : Grecs.Component, ISerializable, IHydrateable
     {
-        private int _SLIME_LIMIT = 3;
-        public int SLIME_LIMIT
+        private string _prefabId = "slime";
+        public string PrefabId
         {
-            get => _SLIME_LIMIT; set
+            get => _prefabId; set
             {
-                if (!_SLIME_LIMIT.Equals(value))
+                if (!_prefabId?.Equals(value) ?? (value != null))
                 {
-                    _SLIME_LIMIT = value;
+                    _prefabId = value;
+                    
+                    TriggerChange();
+                }
+            }
+        }
+
+        
+        private Type _entityTag = typeof(SlimeThought);
+        public Type EntityTag
+        {
+            get => _entityTag; set
+            {
+                if (!_entityTag.Equals(value))
+                {
+                    _entityTag = value;
+                    
+                    TriggerChange();
+                }
+            }
+        }
+
+        
+        private int _entityLimit = 3;
+        public int EntityLimit
+        {
+            get => _entityLimit; set
+            {
+                if (!_entityLimit.Equals(value))
+                {
+                    _entityLimit = value;
                     
                     TriggerChange();
                 }
@@ -33,19 +63,23 @@ namespace Ozzyria.Model.Components
             }
         }
         public string GetComponentIdentifier() {
-            return "slime_spawner";
+            return "prefab_spawner";
         }
 
         public void Write(System.IO.BinaryWriter w)
         {
-            w.Write(SLIME_LIMIT);
+            w.Write(PrefabId);
+            w.Write(EntityTag.ToString());
+            w.Write(EntityLimit);
             w.Write(ThinkDelay.DelayInSeconds);
             w.Write(ThinkDelay.Timer);
         }
 
         public void Read(System.IO.BinaryReader r)
         {
-            SLIME_LIMIT = r.ReadInt32();
+            PrefabId = r.ReadString();
+            EntityTag = Type.GetType(r.ReadString()) ?? typeof(object);
+            EntityLimit = r.ReadInt32();
             ThinkDelay.DelayInSeconds = r.ReadSingle();
             ThinkDelay.Timer = r.ReadSingle();
         }
@@ -56,9 +90,17 @@ namespace Ozzyria.Model.Components
                 return;
             }
 
-            if (values.HasValueFor("SLIME_LIMIT"))
+            if (values.HasValueFor("prefabId"))
             {
-                SLIME_LIMIT = int.Parse(values["SLIME_LIMIT"]);
+                PrefabId = values["prefabId"].Trim('"');
+            }
+            if (values.HasValueFor("entityTag"))
+            {
+                EntityTag = Type.GetType(values["entityTag"]) ?? typeof(object);
+            }
+            if (values.HasValueFor("entityLimit"))
+            {
+                EntityLimit = int.Parse(values["entityLimit"]);
             }
             if (values.HasValueFor("thinkDelay"))
             {

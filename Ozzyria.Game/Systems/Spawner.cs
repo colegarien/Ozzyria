@@ -16,7 +16,7 @@ namespace Ozzyria.Game.Systems
             prefabPackage = Packages.GetInstance().PrefabPackage;
 
             query = new EntityQuery();
-            query.And(typeof(SlimeSpawner));
+            query.And(typeof(PrefabSpawner));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -25,17 +25,16 @@ namespace Ozzyria.Game.Systems
             var entities = context.GetEntities(query);
             foreach (var entity in entities)
             {
-                var spawner = (SlimeSpawner)entity.GetComponent(typeof(SlimeSpawner));
+                var spawner = (PrefabSpawner)entity.GetComponent(typeof(PrefabSpawner));
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
                 spawner.ThinkDelay.Update(deltaTime);
 
                 // OZ-22 : check if spawner is block before spawning things
-                var numberOfSlimes = context.GetEntities(new EntityQuery().And(typeof(SlimeThought))).Count();
-                if (numberOfSlimes < spawner.SLIME_LIMIT && spawner.ThinkDelay.IsReady())
+                var numberOfPrefabs = context.GetEntities(new EntityQuery().And(spawner.EntityTag)).Count();
+                if (numberOfPrefabs < spawner.EntityLimit && spawner.ThinkDelay.IsReady())
                 {
-                    // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
-                    var slimePrefab = prefabPackage.GetDefinition("slime");
-                    Model.Utility.EntityFactory.HydrateDefinitionAtLocation(context, slimePrefab, movement.X, movement.Y, movement.Layer);
+                    var prefab = prefabPackage.GetDefinition(spawner.PrefabId);
+                    Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, prefab, movement.X, movement.Y, movement.Layer);
                 }
             }
         }

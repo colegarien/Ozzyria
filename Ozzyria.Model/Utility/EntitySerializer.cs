@@ -28,7 +28,7 @@ namespace Ozzyria.Model.Utility
             {"player", typeof(Player)},
             {"player_thought", typeof(PlayerThought)},
             {"skeleton", typeof(Skeleton)},
-            {"slime_spawner", typeof(SlimeSpawner)},
+            {"prefab_spawner", typeof(PrefabSpawner)},
             {"slime_thought", typeof(SlimeThought)},
             {"stats", typeof(Stats)},
             {"weapon", typeof(Weapon)},

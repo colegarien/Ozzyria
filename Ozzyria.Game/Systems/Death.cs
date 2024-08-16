@@ -24,7 +24,7 @@ namespace Ozzyria.Game.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
 
                 // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
-                Model.Utility.EntityFactory.HydrateDefinitionAtLocation(context, _prefabPackage.GetDefinition("exp_orb"), movement.X, movement.Y, movement.Layer, new Model.Types.ValuePacket
+                Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, _prefabPackage.GetDefinition("exp_orb"), movement.X, movement.Y, movement.Layer, new Model.Types.ValuePacket
                 {
                     { "exp_boost::experience", "10" },
                 });

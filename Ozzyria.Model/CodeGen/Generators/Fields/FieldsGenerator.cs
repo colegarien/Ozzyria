@@ -98,13 +98,24 @@ namespace Grynt.Generators.Fields
                 case TypeDefinition.TYPE_ASSUMED:
                     if (hasDefaultValues)
                     {
-                        // use raw value
-                        return code.Replace("{{VALUE}}", defaults[field.Id]);
+                        if (type.Id == "type")
+                        {
+                            return code.Replace("{{VALUE}}", "typeof(" + defaults[field.Id] + ")");
+                        }
+                        else
+                        {
+                            // use raw value
+                            return code.Replace("{{VALUE}}", defaults[field.Id]);
+                        }
                     }
                     else if(type.Id == "string")
                     {
                         // return the empty string to avoid propagating nulls
                         return code.Replace("{{VALUE}}", "\"\"");
+                    }
+                    else if(type.Id == "type")
+                    {
+                        return code.Replace("{{VALUE}}", "typeof(object)");
                     }
                     else
                     {

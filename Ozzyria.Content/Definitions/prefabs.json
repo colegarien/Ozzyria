@@ -54,11 +54,11 @@
   },
   "slime_spawner": {
     "components": [
-      "slime_spawner",
+      "prefab_spawner",
       "movement"
     ],
     "defaults": {
-      "slime_spawner::thinkDelay::delayInSeconds": "5f"
+      "prefab_spawner::thinkDelay::delayInSeconds": "5f"
     },
     "exposed": [
     ]

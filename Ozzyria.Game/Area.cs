@@ -42,7 +42,7 @@ namespace Ozzyria.Game
                     {
                         var wallX = wall.X + (wall.Width / 2f);
                         var wallY = wall.Y + (wall.Height / 2f);
-                        Model.Utility.EntityFactory.HydrateDefinitionAtLocation(_context, wallPrefabDefinition, wallX, wallY, layer, new ValuePacket
+                        Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(_context, wallPrefabDefinition, wallX, wallY, layer, new ValuePacket
                         {
                             { "movement::collisionShape::boundingBox::width", ((int)wall.Width).ToString() },
                             { "movement::collisionShape::boundingBox::height", ((int)wall.Height).ToString() },
@@ -58,7 +58,7 @@ namespace Ozzyria.Game
                     var prefabDefinition = prefabPackage.GetDefinition(prefab.PrefabId);
                     if (prefabDefinition != null)
                     {
-                        Model.Utility.EntityFactory.HydrateDefinition(_context, prefabDefinition, prefab.Attributes ?? new ValuePacket());
+                        Model.Utility.PrefabHydrator.HydrateDefinition(_context, prefabDefinition, prefab.Attributes ?? new ValuePacket());
                     }
                 }
             }

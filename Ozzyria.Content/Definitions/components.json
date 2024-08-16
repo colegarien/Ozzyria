@@ -477,11 +477,19 @@
       }
     }
   },
-  "slime_spawner": {
-    "name": "SlimeSpawner",
+  "prefab_spawner": {
+    "name": "PrefabSpawner",
     "fields": {
-      "SLIME_LIMIT": {
-        "name": "SLIME_LIMIT",
+      "prefabId": {
+        "name": "PrefabId",
+        "type": "string"
+      },
+      "entityTag": {
+        "name": "EntityTag",
+        "type": "type"
+      },
+      "entityLimit": {
+        "name": "EntityLimit",
         "type": "int"
       },
       "thinkDelay": {
@@ -490,7 +498,9 @@
       }
     },
     "defaults": {
-      "SLIME_LIMIT": "3",
+      "prefabId": "\"slime\"",
+      "entityTag": "SlimeThought",
+      "entityLimit": "3",
       "thinkDelay::delayInSeconds": "5f"
     }
   },

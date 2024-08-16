@@ -57,8 +57,14 @@ namespace Grynt.Generators.Decorators
             switch (type.Type)
             {
                 case TypeDefinition.TYPE_ASSUMED:
-                    // use raw value
-                    return "w.Write(" + fieldPrefix + field.Name + ");";
+                    if (type.Id == "type")
+                    {
+                        return "w.Write(" + fieldPrefix + field.Name + ".ToString());";
+                    }
+                    else {
+                        // use raw value
+                        return "w.Write(" + fieldPrefix + field.Name + ");";
+                    }
                 case TypeDefinition.TYPE_ENUM:
                     // enums are serialized as Int32's
                     return "w.Write((int)" + fieldPrefix + field.Name + ");";
@@ -113,6 +119,8 @@ namespace Grynt.Generators.Decorators
                         case "string":
                             readType = "String";
                             break;
+                        case "type":
+                            return fieldPrefix + field.Name + " = Type.GetType(r.ReadString()) ?? typeof(object);";
                     }
                     if (readType == "")
                         return "";
