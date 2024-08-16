@@ -26,6 +26,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 var spawner = (SlimeSpawner)entity.GetComponent(typeof(SlimeSpawner));
+                var movement = (Movement)entity.GetComponent(typeof(Movement));
                 spawner.ThinkDelay.Update(deltaTime);
 
                 // OZ-22 : check if spawner is block before spawning things
@@ -36,10 +37,10 @@ namespace Ozzyria.Game.Systems
                     var slimePrefab = prefabPackage.GetDefinition("slime");
                     Model.Utility.EntityFactory.HydrateDefinition(context, slimePrefab, new Model.Types.ValuePacket
                     {
-                        { "movement->x", spawner.X.ToString() },
-                        { "movement->y", spawner.Y.ToString() },
-                        { "movement->previousX", spawner.X.ToString() },
-                        { "movement->previousY", spawner.Y.ToString() }
+                        { "movement::x", movement.X.ToString() },
+                        { "movement::y", movement.Y.ToString() },
+                        { "movement::previousX", movement.X.ToString() },
+                        { "movement::previousY", movement.Y.ToString() }
                     });
                 }
             }

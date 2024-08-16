@@ -25,11 +25,11 @@ namespace Ozzyria.Game.Systems
                 // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
                 Model.Utility.EntityFactory.HydrateDefinition(context, _prefabPackage.GetDefinition("exp_orb"), new Model.Types.ValuePacket
                 {
-                    { "movement->x", movement.X.ToString() },
-                    { "movement->y", movement.Y.ToString() },
-                    { "movement->previousX", movement.X.ToString() },
-                    { "movement->previousY", movement.Y.ToString() },
-                    { "exp_boost->experience", "10" },
+                    { "movement::x", movement.X.ToString() },
+                    { "movement::y", movement.Y.ToString() },
+                    { "movement::previousX", movement.X.ToString() },
+                    { "movement::previousY", movement.Y.ToString() },
+                    { "exp_boost::experience", "10" },
                 });
 
                 if (entity.HasComponent(typeof(Model.Components.Player)))

@@ -4,36 +4,6 @@ namespace Ozzyria.Model.Components
 {
     public class SlimeSpawner : Grecs.Component, ISerializable, IHydrateable
     {
-        private float _x = 500f;
-        public float X
-        {
-            get => _x; set
-            {
-                if (!_x.Equals(value))
-                {
-                    _x = value;
-                    
-                    TriggerChange();
-                }
-            }
-        }
-
-        
-        private float _y = 400f;
-        public float Y
-        {
-            get => _y; set
-            {
-                if (!_y.Equals(value))
-                {
-                    _y = value;
-                    
-                    TriggerChange();
-                }
-            }
-        }
-
-        
         private int _SLIME_LIMIT = 3;
         public int SLIME_LIMIT
         {
@@ -68,8 +38,6 @@ namespace Ozzyria.Model.Components
 
         public void Write(System.IO.BinaryWriter w)
         {
-            w.Write(X);
-            w.Write(Y);
             w.Write(SLIME_LIMIT);
             w.Write(ThinkDelay.DelayInSeconds);
             w.Write(ThinkDelay.Timer);
@@ -77,8 +45,6 @@ namespace Ozzyria.Model.Components
 
         public void Read(System.IO.BinaryReader r)
         {
-            X = r.ReadSingle();
-            Y = r.ReadSingle();
             SLIME_LIMIT = r.ReadInt32();
             ThinkDelay.DelayInSeconds = r.ReadSingle();
             ThinkDelay.Timer = r.ReadSingle();
@@ -90,14 +56,6 @@ namespace Ozzyria.Model.Components
                 return;
             }
 
-            if (values.HasValueFor("x"))
-            {
-                X = float.Parse(values["x"].Trim('f'));
-            }
-            if (values.HasValueFor("y"))
-            {
-                Y = float.Parse(values["y"].Trim('f'));
-            }
             if (values.HasValueFor("SLIME_LIMIT"))
             {
                 SLIME_LIMIT = int.Parse(values["SLIME_LIMIT"]);

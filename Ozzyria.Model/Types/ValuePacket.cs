@@ -2,7 +2,7 @@
 {
     public class ValuePacket : Dictionary<string, string>
     {
-        public const string DIG_OPERATOR = "->";
+        public const string DIG_OPERATOR = "::";
 
         public ValuePacket Clone()
         {

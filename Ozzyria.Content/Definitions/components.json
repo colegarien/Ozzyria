@@ -480,14 +480,6 @@
   "slime_spawner": {
     "name": "SlimeSpawner",
     "fields": {
-      "x": {
-        "name": "X",
-        "type": "float"
-      },
-      "y": {
-        "name": "Y",
-        "type": "float"
-      },
       "SLIME_LIMIT": {
         "name": "SLIME_LIMIT",
         "type": "int"
@@ -498,10 +490,8 @@
       }
     },
     "defaults": {
-      "x": "500f",
-      "y": "400f",
       "SLIME_LIMIT": "3",
-      "thinkDelay->delayInSeconds": "5f"
+      "thinkDelay::delayInSeconds": "5f"
     }
   },
   "slime_thought": {

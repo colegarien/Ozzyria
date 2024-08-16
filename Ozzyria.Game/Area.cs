@@ -44,12 +44,12 @@ namespace Ozzyria.Game
                         var wallY = wall.Y + (wall.Height / 2f);
                         Model.Utility.EntityFactory.HydrateDefinition(_context, wallPrefabDefinition, new ValuePacket
                         {
-                            { "movement->x", wallX.ToString() },
-                            { "movement->y", wallY.ToString() },
-                            { "movement->previousX", wallX.ToString() },
-                            { "movement->previousY", wallY.ToString() },
-                            { "movement->collisionShape->boundingBox->width", ((int)wall.Width).ToString() },
-                            { "movement->collisionShape->boundingBox->height", ((int)wall.Height).ToString() },
+                            { "movement::x", wallX.ToString() },
+                            { "movement::y", wallY.ToString() },
+                            { "movement::previousX", wallX.ToString() },
+                            { "movement::previousY", wallY.ToString() },
+                            { "movement::collisionShape::boundingBox::width", ((int)wall.Width).ToString() },
+                            { "movement::collisionShape::boundingBox::height", ((int)wall.Height).ToString() },
                         });
                     }
                 }
