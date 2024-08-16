@@ -181,7 +181,7 @@ namespace Ozzyria.Gryp
 
         private void MainGrypWindow_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            if (e.KeyCode == Keys.Delete && !(ActiveControl is TextBox))
             {
                 ChangeHistory.StartTracking();
                 _map.RemoveSelectedEntity();
