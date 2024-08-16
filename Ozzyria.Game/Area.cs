@@ -1,6 +1,7 @@
 ﻿using Grecs;
 using Ozzyria.Content;
 using Ozzyria.Content.Models.Area;
+using Ozzyria.Game.Utility;
 using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game
@@ -29,28 +30,18 @@ namespace Ozzyria.Game
                 .Add(new Systems.AreaChange(world, _context));
 
             // TODO eventually add a persistence layer where this stuff loads into a DB or something only on first run or refresh
-            var prefabPackage = Packages.GetInstance().PrefabPackage;
-
             var areaData = AreaData.Retrieve(areaId);
-            // probably should add some helpers aroudn this so it's less weird
-            var wallPrefabDefinition = prefabPackage.GetDefinition("wall");
-            if (wallPrefabDefinition != null)
+            for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++)
             {
-                for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++)
+                foreach (var wall in areaData.WallData?.Walls[layer])
                 {
-                    foreach (var wall in areaData.WallData?.Walls[layer])
-                    {
-                        var wallX = wall.X + (wall.Width / 2f);
-                        var wallY = wall.Y + (wall.Height / 2f);
-                        Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(_context, wallPrefabDefinition, wallX, wallY, layer, new ValuePacket
-                        {
-                            { "movement::collisionShape::boundingBox::width", ((int)wall.Width).ToString() },
-                            { "movement::collisionShape::boundingBox::height", ((int)wall.Height).ToString() },
-                        });
-                    }
+                    var wallX = wall.X + (wall.Width / 2f);
+                    var wallY = wall.Y + (wall.Height / 2f);
+                    EntityFactory.CreateWall(_context, wallX, wallY, layer, (int)wall.Width, (int)wall.Height);
                 }
             }
 
+            var prefabPackage = Packages.GetInstance().PrefabPackage;
             for (var layer = 0; layer < (areaData?.PrefabData?.Prefabs?.Length ?? 0); layer++)
             {
                 foreach (var prefab in areaData.PrefabData.Prefabs[layer])

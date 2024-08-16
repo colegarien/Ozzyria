@@ -90,5 +90,42 @@
     },
     "exposed": [
     ]
+  },
+  "player": {
+    "components": [
+      "player",
+      "location",
+      "player_thought",
+      "movement",
+      "stats",
+      "collision",
+      "animator",
+      "skeleton",
+      "body",
+      "weapon",
+      "hat",
+      "mask",
+      "armor",
+      "bag"
+    ],
+    "defaults": {
+      "movement::x": "140",
+      "movement::y": "140",
+      "movement::previousX": "140",
+      "movement::previousY": "140",
+      "movement::layer": "1",
+      "movement::collisionOffsetY": "-8",
+      "movement::collisionShape::boundingCircle::radius": "10",
+      "collision::isDynamic": "true",
+      "animator::numberOfFrames": "3",
+      "skeleton::type": "Humanoid",
+      "body::bodyId": "\"Human\"",
+      "weapon::weaponType": "Sword",
+      "weapon::weaponId": "\"gladius\"",
+      "hat::hatId": "\"green_hat\"",
+      "mask::maskId": "\"shades\"",
+      "armor::armorId": "\"biker_jacket\""
+    },
+    "exposed": []
   }
 }

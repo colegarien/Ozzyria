@@ -2,6 +2,7 @@
 using Grecs;
 using Ozzyria.Model.Types;
 using Ozzyria.Game.Storage;
+using Ozzyria.Content;
 
 namespace Ozzyria.Game.Utility
 {
@@ -10,36 +11,15 @@ namespace Ozzyria.Game.Utility
 
         public static void CreatePlayer(EntityContext context, int playerId, string areaId, ContainerStorage containerStorage)
         {
-            var player = context.CreateEntity();
-
-            var playerTag = (Player)player.CreateComponent(typeof(Player));
-            playerTag.PlayerId = playerId;
-
-            var playerLocation = (Location)player.CreateComponent(typeof(Location));
-            playerLocation.Area = areaId;
-
-            var thought = (PlayerThought)player.CreateComponent(typeof(PlayerThought));
-
-            var movement = (Movement)player.CreateComponent(typeof(Movement));
-            movement.X = 140;
-            movement.Y = 140;
-            movement.CollisionOffsetY = -8;
-            movement.PreviousX = 140;
-            movement.PreviousY = 140;
-            movement.CollisionShape = new CollisionShape
+            var prefabDefinition = Packages.GetInstance().PrefabPackage.GetDefinition("player");
+            var playerEntity = Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, prefabDefinition, 140, 140, 1, new ValuePacket
             {
-                BoundingCircle = new BoundingCircle
-                {
-                    Radius = 10
-                }
-            };
+                { "player::playerId", playerId.ToString() },
+                { "location::area", areaId },
 
-            var stats = (Stats)player.CreateComponent(typeof(Stats));
+            });
 
-            var collision = (Collision)player.CreateComponent(typeof(Collision));
-            collision.IsDynamic = true;
-
-            var bag = (Bag)player.CreateComponent(typeof(Bag));
+            var bag = (Bag)playerEntity.GetComponent(typeof(Bag));
 
             var greenHat = new Entity();
             var hatItem = (Item)greenHat.CreateComponent(typeof(Item));
@@ -121,28 +101,25 @@ namespace Ozzyria.Game.Utility
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
             containerStorage.AddItemToBag(bag, greySword);
-
-            // Skeleton and Initial Equipment Setup
-            player.AddComponent(new Animator{NumberOfFrames = 3});
-            player.AddComponent(new Skeleton{ Type= SkeletonType.Humanoid });
-            player.AddComponent(new Body { BodyId = "Human" });
-            player.AddComponent(new Weapon { WeaponType = WeaponType.Sword, WeaponId="gladius" });
-            player.AddComponent(new Hat { HatId = "green_hat" });
-            player.AddComponent(new Mask { MaskId = "shades" });
-            player.AddComponent(new Armor { ArmorId = "biker_jacket" });
-
-            player.AddComponent(playerTag);
-            player.AddComponent(playerLocation);
-            player.AddComponent(thought);
-            player.AddComponent(movement);
-            player.AddComponent(stats);
-            player.AddComponent(collision);
-            player.AddComponent(bag);
         }
 
-        public static void CreateSlime(EntityContext context, float x, float y, int layer)
+        public static void CreateWall(EntityContext context, float x, float y, int layer, int width, int height)
         {
+            var prefabDefinition = Packages.GetInstance().PrefabPackage.GetDefinition("wall");
+            Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, prefabDefinition, x, y, layer, new ValuePacket
+            {
+                { "movement::collisionShape::boundingBox::width", width.ToString() },
+                { "movement::collisionShape::boundingBox::height", height.ToString() },
+            });
+        }
 
+        public static void CreateExperienceOrb(EntityContext context, float x, float y, int layer, int value)
+        {
+            var prefabDefinition = Packages.GetInstance().PrefabPackage.GetDefinition("exp_orb");
+            Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, prefabDefinition, x, y, layer, new ValuePacket
+            {
+                { "exp_boost::experience", value.ToString() },
+            });
         }
 
     }

@@ -22,13 +22,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
-
-                // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
-                Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, _prefabPackage.GetDefinition("exp_orb"), movement.X, movement.Y, movement.Layer, new Model.Types.ValuePacket
-                {
-                    { "exp_boost::experience", "10" },
-                });
-
+                EntityFactory.CreateExperienceOrb(context, movement.X, movement.Y, movement.Layer, 10);
                 if (entity.HasComponent(typeof(Model.Components.Player)))
                 {
                     // TODO OZ-30 : create Graveyard component and add a AssignedGraveyard to players, then just revive them there
