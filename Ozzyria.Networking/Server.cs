@@ -1,5 +1,4 @@
 ﻿using Ozzyria.Game;
-using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.Networking.Model;
 using System;
@@ -8,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Ozzyria.Model.Types;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Networking
 {
@@ -119,7 +120,7 @@ namespace Ozzyria.Networking
                                 var bagEntityId = ClientPacketFactory.ParseOpenBagData(messageData);
                                 var areaContext = world.GetLocalContext(messageClient);
                                 var bagEntity = areaContext.GetEntity(bagEntityId);
-                                if(bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                if(bagEntity == null || !bagEntity.HasComponent(typeof(Bag)))
                                 {
                                     // cannot open bag
                                     var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagEntityId);
@@ -128,8 +129,8 @@ namespace Ozzyria.Networking
                                 else
                                 {
                                     // send back bag contents
-                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
-                                    var bagContentsPacket = ServerPacketFactory.BagContents(bagEntityId, bag.Contents.ToArray());
+                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    var bagContentsPacket = ServerPacketFactory.BagContents(bagEntityId, world.WorldState.ContainerStorage.GetBagContents(bag).ToArray());
                                     SendToClient(messageClient, bagContentsPacket);
                                 }
 
@@ -144,7 +145,7 @@ namespace Ozzyria.Networking
 
                                 // TODO OZ-28 add check to make sure that Player has access to the bag!!
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
-                                if (bagEntity == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                if (bagEntity == null || !bagEntity.HasComponent(typeof(Bag)))
                                 {
                                     // cannot open bag
                                     var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
@@ -153,34 +154,34 @@ namespace Ozzyria.Networking
                                 else
                                 {
                                     var sourceBag = (Bag)bagEntity.GetComponent(typeof(Bag));
-                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < sourceBag.Contents.Count)
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < world.WorldState.ContainerStorage.GetBagContents(sourceBag).Count)
                                     {
                                         Bag bag = sourceBag;
                                         var bagId = bagItemRequest.BagEntityId;
                                         var itemSlot = bagItemRequest.ItemSlot;
-                                        var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Game.Components.Player))).FirstOrDefault(e => ((Game.Components.Player)e.GetComponent(typeof(Game.Components.Player))).PlayerId == messageClient);
+                                        var playerEntity = world.WorldState.Areas[world.WorldState.PlayerAreaTracker[messageClient]]._context.GetEntities(new EntityQuery().And(typeof(Player))).FirstOrDefault(e => ((Player)e.GetComponent(typeof(Player))).PlayerId == messageClient);
                                         if (playerEntity.id != bagId)
                                         {
                                             var playerBag = (Bag)playerEntity.GetComponent(typeof(Bag));
-                                            var tranferredEntity = sourceBag.RemoveItem(itemSlot);
-
+                                            
+                                            var tranferredEntity = world.WorldState.ContainerStorage.RemoveItemFromBag(sourceBag, itemSlot);
                                             if (tranferredEntity != null)
                                             {
-                                                playerBag.AddItem(tranferredEntity);
+                                                world.WorldState.ContainerStorage.AddItemToBag(playerBag, tranferredEntity);
 
                                                 bagId = playerEntity.id;
-                                                itemSlot = playerBag.Contents.Count - 1;
+                                                itemSlot = world.WorldState.ContainerStorage.GetBagContents(playerBag).Count - 1;
 
                                                 // equip from players bag now that item is transferred
                                                 bag = playerBag;
                                             }
                                         }
 
-                                        var itemEntity = bag.Contents[itemSlot];
+                                        var itemEntity = world.WorldState.ContainerStorage.GetItemFromBag(bag, itemSlot);
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear currently in equipment slot
-                                        var equippedItems = bag.Contents.Where(i =>
+                                        var equippedItems = world.WorldState.ContainerStorage.GetBagContents(bag).Where(i =>
                                         {
                                             var ii = i.GetComponent(typeof(Item)) as Item;
                                             return ii != null && ii.IsEquipped && ii.EquipmentSlot == item.EquipmentSlot;
@@ -215,12 +216,12 @@ namespace Ozzyria.Networking
                                         item.IsEquipped = true;
 
                                         // send source bag contents back
-                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, sourceBag.Contents.ToArray());
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, world.WorldState.ContainerStorage.GetBagContents(sourceBag).ToArray());
                                         SendToClient(messageClient, bagContentsPacket);
                                         if(bagEntity.id != bagId)
                                         {
                                             // also send player inventory back to client
-                                            bagContentsPacket = ServerPacketFactory.BagContents(bagId, bag.Contents.ToArray());
+                                            bagContentsPacket = ServerPacketFactory.BagContents(bagId, world.WorldState.ContainerStorage.GetBagContents(bag).ToArray());
                                             SendToClient(messageClient, bagContentsPacket);
                                         }
                                     }
@@ -243,7 +244,7 @@ namespace Ozzyria.Networking
 
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
                                 var playerComponent = (Player)bagEntity?.GetComponent(typeof(Player));
-                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Bag)))
                                 {
                                     // cannot open bag
                                     var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
@@ -253,9 +254,9 @@ namespace Ozzyria.Networking
                                 {
                                     var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
 
-                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < world.WorldState.ContainerStorage.GetBagContents(bag).Count)
                                     {
-                                        var itemEntity = bag.Contents[bagItemRequest.ItemSlot];
+                                        var itemEntity = world.WorldState.ContainerStorage.GetItemFromBag(bag, bagItemRequest.ItemSlot);
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear from the appropriate slot
@@ -282,7 +283,7 @@ namespace Ozzyria.Networking
                                         item.IsEquipped = false;
 
                                         // send source bag contents back
-                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, world.WorldState.ContainerStorage.GetBagContents(bag).ToArray());
                                         SendToClient(messageClient, bagContentsPacket);
                                     }
                                     else
@@ -304,7 +305,7 @@ namespace Ozzyria.Networking
 
                                 var bagEntity = areaContext.GetEntity(bagItemRequest.BagEntityId);
                                 var playerComponent = (Player)bagEntity?.GetComponent(typeof(Player));
-                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                if (bagEntity == null || playerComponent == null || !bagEntity.HasComponent(typeof(Bag)))
                                 {
                                     // cannot open bag
                                     var bagContentsPacket = ServerPacketFactory.CannotOpenBagContents(bagItemRequest.BagEntityId);
@@ -314,9 +315,9 @@ namespace Ozzyria.Networking
                                 {
                                     var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
 
-                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < bag.Contents.Count)
+                                    if (bagItemRequest.ItemSlot >= 0 && bagItemRequest.ItemSlot < world.WorldState.ContainerStorage.GetBagContents(bag).Count)
                                     {
-                                        var itemEntity = bag.Contents[bagItemRequest.ItemSlot];
+                                        var itemEntity = world.WorldState.ContainerStorage.GetItemFromBag(bag, bagItemRequest.ItemSlot);
                                         var item = (Item)itemEntity.GetComponent(typeof(Item));
 
                                         // unequip gear from the appropriate slot
@@ -345,7 +346,7 @@ namespace Ozzyria.Networking
                                             item.IsEquipped = false;
                                         }
 
-                                        var droppedEntity = bag.RemoveItem(bagItemRequest.ItemSlot);
+                                        var droppedEntity = world.WorldState.ContainerStorage.RemoveItemFromBag(bag, bagItemRequest.ItemSlot);
                                         if (droppedEntity != null)
                                         {
                                             var bagMovement = (Movement)bagEntity.GetComponent(typeof(Movement));
@@ -356,7 +357,7 @@ namespace Ozzyria.Networking
                                             var newBag = (Bag)newBagEntity.CreateComponent(typeof(Bag));
                                             newBag.Name = "Bag";
                                             newBag.Capacity = 4;
-                                            newBag.AddItem(droppedEntity);
+                                            world.WorldState.ContainerStorage.AddItemToBag(newBag, droppedEntity);
                                             newBagEntity.AddComponent(newBag);
 
                                             var newBagMovement = (Movement)newBagEntity.CreateComponent(typeof(Movement));
@@ -374,7 +375,7 @@ namespace Ozzyria.Networking
                                         }
 
                                         // send source bag contents back
-                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, bag.Contents.ToArray());
+                                        var bagContentsPacket = ServerPacketFactory.BagContents(bagEntity.id, world.WorldState.ContainerStorage.GetBagContents(bag).ToArray());
                                         SendToClient(messageClient, bagContentsPacket);
                                     }
                                     else

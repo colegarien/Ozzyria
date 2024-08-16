@@ -3,6 +3,7 @@ using Ozzyria.Game.Utility;
 using System.Collections.Generic;
 using System.Linq;
 using Ozzyria.Content.Models.Area;
+using Ozzyria.Game.Storage;
 
 namespace Ozzyria.Game
 {
@@ -22,6 +23,7 @@ namespace Ozzyria.Game
         public Dictionary<int, string> PlayerAreaTracker = new Dictionary<int, string>();
         public Dictionary<string, Area> Areas = new Dictionary<string, Area>();
         public List<AreaEvent> AreaEvents = new List<AreaEvent>();
+        public ContainerStorage ContainerStorage = new ContainerStorage();
     }
 
     public class World
@@ -40,14 +42,14 @@ namespace Ozzyria.Game
         public void PlayerJoin(int playerId)
         {
             // TODO figure out what world to start player in
-            WorldState.PlayerAreaTracker[playerId] = "test_m";
+            WorldState.PlayerAreaTracker[playerId] = "test_m2";
             WorldState.PlayerInputBuffer[playerId] = new Input();
-            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId);
+            EntityFactory.CreatePlayer(WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context, playerId, WorldState.PlayerAreaTracker[playerId], WorldState.ContainerStorage);
         }
 
         public void PlayerLeave(int playerId)
         {
-            var playerEntity = WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.GetEntities(new EntityQuery().And(typeof(Components.Player))).FirstOrDefault(e => ((Components.Player)e.GetComponent(typeof(Components.Player))).PlayerId == playerId);
+            var playerEntity = WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.GetEntities(new EntityQuery().And(typeof(Model.Components.Player))).FirstOrDefault(e => ((Model.Components.Player)e.GetComponent(typeof(Model.Components.Player))).PlayerId == playerId);
             if (playerEntity != null)
             {
                 WorldState.Areas[WorldState.PlayerAreaTracker[playerId]]._context.DestroyEntity(playerEntity);

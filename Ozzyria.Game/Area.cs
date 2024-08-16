@@ -1,6 +1,8 @@
 ﻿using Grecs;
+using Ozzyria.Content;
 using Ozzyria.Content.Models.Area;
 using Ozzyria.Game.Utility;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Game
 {
@@ -24,33 +26,30 @@ namespace Ozzyria.Game
                 .Add(new Systems.Physics())
                 .Add(new Systems.Doors())
                 .Add(new Systems.AttackSystem())
-                .Add(new Systems.Death(_context))
+                .Add(new Systems.Death(world, _context))
                 .Add(new Systems.AreaChange(world, _context));
 
             // TODO eventually add a persistence layer where this stuff loads into a DB or something only on first run or refresh
             var areaData = AreaData.Retrieve(areaId);
-            for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++) {
+            for (var layer = 0; layer < (areaData?.WallData?.Walls?.Length ?? 0); layer++)
+            {
                 foreach (var wall in areaData.WallData?.Walls[layer])
                 {
-                    EntityFactory.CreateBoxColliderArea(_context, wall.X, wall.Y, wall.X + wall.Width, wall.Y + wall.Height);
+                    var wallX = wall.X + (wall.Width / 2f);
+                    var wallY = wall.Y + (wall.Height / 2f);
+                    EntityFactory.CreateWall(_context, wallX, wallY, layer, (int)wall.Width, (int)wall.Height);
                 }
             }
 
-            for (var layer = 0; layer < (areaData?.PrefabData?.Prefabs?.Length ?? 0); layer ++)
+            var prefabPackage = Packages.GetInstance().PrefabPackage;
+            for (var layer = 0; layer < (areaData?.PrefabData?.Prefabs?.Length ?? 0); layer++)
             {
                 foreach (var prefab in areaData.PrefabData.Prefabs[layer])
                 {
-                    // TODO stop hard-coding this and make them more dynamic (see MainForm.cs in Gryp for these value mappings)
-                    switch (prefab.PrefabId) {
-                        case "slime_spawner":
-                            EntityFactory.CreateSlimeSpawner(_context, prefab.X, prefab.Y);
-                            break;
-                        case "door":
-                            EntityFactory.CreateDoor(_context, prefab.X, prefab.Y, prefab.Attributes?["new_area_id"] ?? "", float.Parse(prefab.Attributes?["new_area_x"] ?? "0"), float.Parse(prefab.Attributes?["new_area_y"] ?? "0"));
-                            break;
-                        case "exp_orb":
-                            EntityFactory.CreateExperienceOrb(_context, prefab.X, prefab.Y, int.Parse(prefab.Attributes?["amount"] ?? "0"));
-                            break;
+                    var prefabDefinition = prefabPackage.GetDefinition(prefab.PrefabId);
+                    if (prefabDefinition != null)
+                    {
+                        Model.Utility.PrefabHydrator.HydrateDefinition(_context, prefabDefinition, prefab.Attributes ?? new ValuePacket());
                     }
                 }
             }

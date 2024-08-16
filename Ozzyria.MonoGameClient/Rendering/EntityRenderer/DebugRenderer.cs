@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Ozzyria.Game.Components;
 using Grecs;
 using System;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
 {
@@ -32,15 +32,15 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             positionGraphic.Colour = Color.Blue;
 
             var collisionOffsetY = movement.CollisionOffsetY;
-            if (entity.HasComponent(typeof(BoundingCircle)))
+            if (movement.CollisionShape?.BoundingCircle?.Radius > 0)
             {
-                var circle = (BoundingCircle)entity.GetComponent(typeof(BoundingCircle));
+                var radius = movement.CollisionShape.BoundingCircle.Radius;
                 var circleLeftGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
                 circleLeftGraphic.Resource = pixelResource;
                 circleLeftGraphic.Layer = 99;
                 circleLeftGraphic.SubLayer = 0;
                 circleLeftGraphic.SubSubLayer = 0;
-                circleLeftGraphic.Destination = new Rectangle((int)(movement.X-circle.Radius), (int)(movement.Y + collisionOffsetY), 2, 2);
+                circleLeftGraphic.Destination = new Rectangle((int)(movement.X- radius), (int)(movement.Y + collisionOffsetY), 2, 2);
                 circleLeftGraphic.Source = pixelSource;
                 circleLeftGraphic.Origin = pixelOrigin;
                 circleLeftGraphic.Angle = 0;
@@ -51,7 +51,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleRightGraphic.Layer = 99;
                 circleRightGraphic.SubLayer = 0;
                 circleRightGraphic.SubSubLayer = 0;
-                circleRightGraphic.Destination = new Rectangle((int)(movement.X + circle.Radius), (int)(movement.Y + collisionOffsetY), 2, 2);
+                circleRightGraphic.Destination = new Rectangle((int)(movement.X + radius), (int)(movement.Y + collisionOffsetY), 2, 2);
                 circleRightGraphic.Source = pixelSource;
                 circleRightGraphic.Origin = pixelOrigin;
                 circleRightGraphic.Angle = 0;
@@ -62,7 +62,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleTopGraphic.Layer = 99;
                 circleTopGraphic.SubLayer = 0;
                 circleTopGraphic.SubSubLayer = 0;
-                circleTopGraphic.Destination = new Rectangle((int)(movement.X), (int)(movement.Y + collisionOffsetY - circle.Radius), 2, 2);
+                circleTopGraphic.Destination = new Rectangle((int)(movement.X), (int)(movement.Y + collisionOffsetY - radius), 2, 2);
                 circleTopGraphic.Source = pixelSource;
                 circleTopGraphic.Origin = pixelOrigin;
                 circleTopGraphic.Angle = 0;
@@ -73,7 +73,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleBottomGraphic.Layer = 99;
                 circleBottomGraphic.SubLayer = 0;
                 circleBottomGraphic.SubSubLayer = 0;
-                circleBottomGraphic.Destination = new Rectangle((int)(movement.X), (int)(movement.Y + collisionOffsetY + circle.Radius), 2, 2);
+                circleBottomGraphic.Destination = new Rectangle((int)(movement.X), (int)(movement.Y + collisionOffsetY + radius), 2, 2);
                 circleBottomGraphic.Source = pixelSource;
                 circleBottomGraphic.Origin = pixelOrigin;
                 circleBottomGraphic.Angle = 0;
@@ -90,16 +90,22 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 circleCenterGraphic.Angle = 0;
                 circleCenterGraphic.Colour = Color.Orange;
             }
-            else if (entity.HasComponent(typeof(Game.Components.BoundingBox)))
+            
+            if (movement.CollisionShape.BoundingBox?.Width > 0 && movement.CollisionShape.BoundingBox?.Height > 0)
             {
-                var box = entity.GetComponent<Game.Components.BoundingBox>();
-                
+                var boxWidth = movement.CollisionShape.BoundingBox.Width;
+                var boxHeight = movement.CollisionShape.BoundingBox.Height;
+                var boxLeft = movement.X - (boxWidth / 2f);
+                var boxRight = movement.X + (boxWidth / 2f);
+                var boxTop = movement.Y - (boxHeight / 2f);
+                var boxBottom = movement.Y + (boxHeight / 2f);
+
                 var boxLeftGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
                 boxLeftGraphic.Resource = pixelResource;
                 boxLeftGraphic.Layer = 99;
                 boxLeftGraphic.SubLayer = 0;
                 boxLeftGraphic.SubSubLayer = 0;
-                boxLeftGraphic.Destination = new Rectangle((int)box.GetLeft(), (int)box.GetTop(), 2, (int)(box.GetBottom()-box.GetTop()));
+                boxLeftGraphic.Destination = new Rectangle((int)boxLeft, (int)boxTop, 2, (int)(boxHeight));
                 boxLeftGraphic.Source = pixelSource;
                 boxLeftGraphic.Origin = pixelOrigin;
                 boxLeftGraphic.Angle = 0;
@@ -110,7 +116,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 boxRightGraphic.Layer = 99;
                 boxRightGraphic.SubLayer = 0;
                 boxRightGraphic.SubSubLayer = 0;
-                boxRightGraphic.Destination = new Rectangle((int)box.GetRight() - 2, (int)box.GetTop(), 2, (int)(box.GetBottom() - box.GetTop()));
+                boxRightGraphic.Destination = new Rectangle((int)boxRight - 2, (int)boxTop, 2, (int)(boxHeight));
                 boxRightGraphic.Source = pixelSource;
                 boxRightGraphic.Origin = pixelOrigin;
                 boxRightGraphic.Angle = 0;
@@ -121,7 +127,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 boxTopGraphic.Layer = 99;
                 boxTopGraphic.SubLayer = 0;
                 boxTopGraphic.SubSubLayer = 0;
-                boxTopGraphic.Destination = new Rectangle((int)box.GetLeft(), (int)box.GetTop(), (int)(box.GetRight() - box.GetLeft()), 2);
+                boxTopGraphic.Destination = new Rectangle((int)boxLeft, (int)boxTop, (int)(boxWidth), 2);
                 boxTopGraphic.Source = pixelSource;
                 boxTopGraphic.Origin = pixelOrigin;
                 boxTopGraphic.Angle = 0;
@@ -132,7 +138,7 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
                 boxBottomGraphic.Layer = 99;
                 boxBottomGraphic.SubLayer = 0;
                 boxBottomGraphic.SubSubLayer = 0;
-                boxBottomGraphic.Destination = new Rectangle((int)box.GetLeft(), (int)box.GetBottom() - 2, (int)(box.GetRight() - box.GetLeft()), 2);
+                boxBottomGraphic.Destination = new Rectangle((int)boxLeft, (int)boxBottom - 2, (int)(boxWidth), 2);
                 boxBottomGraphic.Source = pixelSource;
                 boxBottomGraphic.Origin = pixelOrigin;
                 boxBottomGraphic.Angle = 0;

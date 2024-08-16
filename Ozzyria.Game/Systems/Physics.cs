@@ -1,7 +1,8 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using System.Linq;
 using System.Numerics;
+using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems
 {
@@ -12,8 +13,7 @@ namespace Ozzyria.Game.Systems
         public Physics()
         {
             query = new EntityQuery();
-            query.And(typeof(Movement))
-                .Or(typeof(BoundingBox), typeof(BoundingCircle));
+            query.And(typeof(Movement), typeof(Collision));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -22,7 +22,7 @@ namespace Ozzyria.Game.Systems
             foreach (var entity in entities)
             {
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
-                var collision = (Collision)(entity.GetComponent(typeof(BoundingBox)) ?? entity.GetComponent(typeof(BoundingCircle)));
+                var collision = (Collision)entity.GetComponent(typeof(Collision));
                 if (collision.IsDynamic)
                 {
                     var possibleCollisions = entities.Where(e => e.id != entity.id && e.GetComponent<Movement>().Layer == movement.Layer);
@@ -30,41 +30,13 @@ namespace Ozzyria.Game.Systems
                     foreach (var collidedEntity in possibleCollisions)
                     {
                         var otherMovement = (Movement)collidedEntity.GetComponent(typeof(Movement));
-                        var otherCollision = (Collision)(collidedEntity.GetComponent(typeof(BoundingBox)) ?? collidedEntity.GetComponent(typeof(BoundingCircle)));
-
-                        if (collision is BoundingCircle && otherCollision is BoundingCircle)
+                        var result = movement.CheckCollision(otherMovement);
+                        if (result.Collided)
                         {
-                            var result = Collision.CircleIntersectsCircle((BoundingCircle)collision, (BoundingCircle)otherCollision);
-                            if (result.Collided)
-                            {
-                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
-                            }
-                        }
-                        else if (collision is BoundingBox && otherCollision is BoundingBox)
-                        {
-                            var result = Collision.BoxIntersectsBox((BoundingBox)collision, (BoundingBox)otherCollision);
-                            if (result.Collided)
-                            {
-                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
-                            }
-                        }
-                        else if (collision is BoundingCircle && otherCollision is BoundingBox)
-                        {
-                            var result = Collision.CircleIntersectsBox((BoundingCircle)collision, (BoundingBox)otherCollision);
-                            if (result.Collided)
-                            {
-                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
-                            }
-                        }
-                        else if (collision is BoundingBox && otherCollision is BoundingCircle)
-                        {
-                            var result = Collision.BoxIntersectsCircle((BoundingBox)collision, (BoundingCircle)otherCollision);
-                            if (result.Collided)
-                            {
-                                depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
-                            }
+                            depthVector += new Vector2(result.NormalX, result.NormalY) * result.Depth;
                         }
                     }
+
                     movement.X += depthVector.X;
                     movement.Y += depthVector.Y;
                 }

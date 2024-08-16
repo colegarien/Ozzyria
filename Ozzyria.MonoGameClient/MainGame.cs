@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ozzyria.Content;
-using Ozzyria.Game.Components;
 using Grecs;
 using Ozzyria.MonoGameClient.Rendering;
 using Ozzyria.MonoGameClient.Systems;
@@ -16,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using static Ozzyria.MonoGameClient.UI.InputTracker;
+using Ozzyria.Model.Components;
+using Ozzyria.Game.Storage;
 
 namespace Ozzyria.MonoGameClient
 {
@@ -36,6 +37,7 @@ namespace Ozzyria.MonoGameClient
         internal Camera Camera;
         internal LocalState LocalState;
         internal Ozzyria.Content.Models.Area.AreaData AreaData = null;
+        internal ContainerStorage ContainerStorage = new ContainerStorage();
 
         // for running a local server
         private const bool IS_SINGLEPLAYER = true;

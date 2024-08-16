@@ -4,6 +4,8 @@ using Ozzyria.Networking.Model;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using Ozzyria.Game.Storage;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Networking
 {
@@ -154,7 +156,7 @@ namespace Ozzyria.Networking
             }
         }
 
-        public void HandleIncomingMessages(EntityContext context)
+        public void HandleIncomingMessages(EntityContext context, ContainerStorage containerStorage)
         {
             if (!connected)
             {
@@ -186,10 +188,10 @@ namespace Ozzyria.Networking
                             if (!response.Failed)
                             {
                                 var bagEntity = context.GetEntity(response.BagEntityId);
-                                if (bagEntity != null && bagEntity.HasComponent(typeof(Game.Components.Bag)))
+                                if (bagEntity != null && bagEntity.HasComponent(typeof(Bag)))
                                 {
-                                    var bag = (Game.Components.Bag)bagEntity.GetComponent(typeof(Game.Components.Bag));
-                                    bag.Contents = response.Contents;
+                                    var bag = (Bag)bagEntity.GetComponent(typeof(Bag));
+                                    containerStorage.ReplaceBagContents(bag, response.Contents);
                                 }
                             }
                             break;

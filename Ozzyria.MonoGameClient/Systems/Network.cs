@@ -16,7 +16,7 @@ namespace Ozzyria.MonoGameClient.Systems
         public override void Execute(float deltaTime, EntityContext context)
         {
             ProcessInput();
-            _game.Client?.HandleIncomingMessages(context);
+            _game.Client?.HandleIncomingMessages(context, _game.ContainerStorage);
         }
 
         private void ProcessInput()

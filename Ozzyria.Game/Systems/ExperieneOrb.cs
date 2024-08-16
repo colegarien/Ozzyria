@@ -1,6 +1,7 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using System.Linq;
+using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems
 {

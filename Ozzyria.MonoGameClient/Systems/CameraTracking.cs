@@ -1,5 +1,4 @@
-﻿using Ozzyria.Game.Components;
-using Ozzyria.Game;
+﻿using Ozzyria.Model.Components;
 using Grecs;
 using Ozzyria.Content.Models;
 

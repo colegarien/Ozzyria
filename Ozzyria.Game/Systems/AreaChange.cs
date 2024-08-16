@@ -1,4 +1,5 @@
 ﻿using Grecs;
+using Ozzyria.Model.Components;
 
 namespace Ozzyria.Game.Systems
 {
@@ -15,8 +16,8 @@ namespace Ozzyria.Game.Systems
         {
             foreach(var entity in entities)
             {
-                var location = (Components.Location)entity.GetComponent(typeof(Components.Location));
-                var areaChange = (Components.AreaChange)entity.GetComponent(typeof(Components.AreaChange));
+                var location = (Location)entity.GetComponent(typeof(Location));
+                var areaChange = (Model.Components.AreaChange)entity.GetComponent(typeof(Model.Components.AreaChange));
 
 
                 // TODO OZ-22 consider if we want this or not, its cool for doors to be able to move them around the same area
@@ -36,17 +37,17 @@ namespace Ozzyria.Game.Systems
                     location.Area = areaChange.NewArea;
 
                     // update player tracking if player
-                    if (entity.HasComponent(typeof(Components.Player)))
+                    if (entity.HasComponent(typeof(Model.Components.Player)))
                     {
-                        var playerId = ((Components.Player)entity.GetComponent(typeof(Components.Player)))?.PlayerId ?? -1;
+                        var playerId = ((Model.Components.Player)entity.GetComponent(typeof(Model.Components.Player)))?.PlayerId ?? -1;
                         _world.WorldState.PlayerAreaTracker[playerId] = areaChange.NewArea;
                         entityLeaveEvent.PlayerId = playerId;
                     }
 
                     // update movement if has component
-                    if (entity.HasComponent(typeof(Components.Movement)))
+                    if (entity.HasComponent(typeof(Movement)))
                     {
-                        var movement = (Components.Movement)entity.GetComponent(typeof(Components.Movement));
+                        var movement = (Movement)entity.GetComponent(typeof(Movement));
                         movement.X = areaChange.NewX;
                         movement.Y = areaChange.NewY;
                         movement.PreviousX = areaChange.NewX;
@@ -69,7 +70,7 @@ namespace Ozzyria.Game.Systems
 
         protected override QueryListener GetListener(EntityContext context)
         {
-            var query = new EntityQuery().And(typeof(Components.Location), typeof(Components.AreaChange));
+            var query = new EntityQuery().And(typeof(Location), typeof(Model.Components.AreaChange));
             var listener = context.CreateListener(query);
             listener.ListenToAdded = true;
 

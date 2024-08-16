@@ -42,7 +42,7 @@ namespace Ozzyria.Gryp.MapTools
                         PrefabId = map.CurrentEntityBrush.PrefabId,
                         WorldX = mouseWorldX,
                         WorldY = mouseWorldY,
-                        Attributes = map.CurrentEntityBrush.Attributes.ToDictionary(kv => kv.Key, kv => kv.Value)
+                        Attributes = map.CurrentEntityBrush.Attributes.Clone()
                     });
                 }
             }

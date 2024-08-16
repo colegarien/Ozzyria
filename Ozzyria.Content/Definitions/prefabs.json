@@ -1,0 +1,131 @@
+{
+  "door": {
+    "components": [
+      "door",
+      "movement",
+      "skeleton",
+      "animator",
+      "body"
+    ],
+    "defaults": {
+      "animator::type": "Stall",
+      "skeleton::type": "Static",
+      "body::bodyId": "\"simple_door\""
+    },
+    "exposed": [
+      "door::newArea",
+      "door::newX",
+      "door::newY"
+    ]
+  },
+  "exp_orb": {
+    "components": [
+      "exp_orb_thought",
+      "exp_boost",
+      "movement",
+      "skeleton",
+      "animator",
+      "body"
+    ],
+    "defaults": {
+      "animator::type": "Stall",
+      "skeleton::type": "Static",
+      "body::bodyId": "\"exp_orb\"",
+      "movement::acceleration": "200f",
+      "movement::maxSpeed": "300f"
+    },
+    "exposed": [
+      "exp_boost::experience"
+    ]
+  },
+  "wall": {
+    "components": [
+      "movement",
+      "collision"
+    ],
+    "defaults": {
+      "collision::isDynamic": "false"
+    },
+    "exposed": [
+      "movement::collisionShape::boundingBox::width",
+      "movement::collisionShape::boundingBox::height",
+      "collision::isDynamic"
+    ]
+  },
+  "slime_spawner": {
+    "components": [
+      "prefab_spawner",
+      "movement"
+    ],
+    "defaults": {
+      "prefab_spawner::thinkDelay::delayInSeconds": "5f"
+    },
+    "exposed": [
+    ]
+  },
+  "slime": {
+    "components": [
+      "slime_thought",
+      "collision",
+      "movement",
+      "skeleton",
+      "animator",
+      "body",
+      "weapon",
+      "stats"
+    ],
+    "defaults": {
+      "animator::numberOfFrames": "3",
+      "skeleton::type": "Slime",
+      "body::bodyId": "\"Slime\"",
+      "weapon::weaponType": "Empty",
+      "weapon::weaponId": "",
+      "movement::acceleration": "300f",
+      "movement::maxSpeed": "50f",
+      "movement::collisionOffsetY": "-8",
+      "movement::collisionShape::boundingCircle::radius": "10",
+      "collision::isDynamic": "true",
+      "stats::health": "12",
+      "stats::maxHealth": "12"
+    },
+    "exposed": [
+    ]
+  },
+  "player": {
+    "components": [
+      "player",
+      "location",
+      "player_thought",
+      "movement",
+      "stats",
+      "collision",
+      "animator",
+      "skeleton",
+      "body",
+      "weapon",
+      "hat",
+      "mask",
+      "armor",
+      "bag"
+    ],
+    "defaults": {
+      "movement::x": "140",
+      "movement::y": "140",
+      "movement::previousX": "140",
+      "movement::previousY": "140",
+      "movement::layer": "1",
+      "movement::collisionOffsetY": "-8",
+      "movement::collisionShape::boundingCircle::radius": "10",
+      "collision::isDynamic": "true",
+      "animator::numberOfFrames": "3",
+      "skeleton::type": "Humanoid",
+      "body::bodyId": "\"Human\"",
+      "weapon::weaponType": "Sword",
+      "weapon::weaponId": "\"gladius\"",
+      "hat::hatId": "\"green_hat\"",
+      "mask::maskId": "\"shades\"",
+      "armor::armorId": "\"biker_jacket\""
+    },
+    "exposed": []
+  }
+}

@@ -50,7 +50,7 @@ namespace Ozzyria.Gryp.MapTools
                         PrefabId = map.SelectedEntity.PrefabId,
                         WorldX = map.SelectedEntity.WorldX,
                         WorldY = map.SelectedEntity.WorldY,
-                        Attributes = map.SelectedEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                        Attributes = map.SelectedEntity.Attributes?.Clone() ?? new Model.Types.ValuePacket(),
                     });
 
                     map.IsDirty = true;

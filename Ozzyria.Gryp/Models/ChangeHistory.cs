@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Gryp.Models.Data;
 using Ozzyria.Gryp.Models.Event;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Gryp.Models
 {
@@ -52,7 +53,7 @@ namespace Ozzyria.Gryp.Models
         public string PrefabId { get; set; }
         public float WorldX { get; set; }
         public float WorldY { get; set; }
-        public Dictionary<string, string> Attributes;
+        public ValuePacket Attributes;
     }
 
     internal struct EditWallChange
@@ -237,13 +238,13 @@ namespace Ozzyria.Gryp.Models
                                 PrefabId = currentEntity.PrefabId,
                                 WorldX = currentEntity.WorldX,
                                 WorldY = currentEntity.WorldY,
-                                Attributes = currentEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                                Attributes = currentEntity.Attributes?.Clone() ?? new ValuePacket(),
                             });
 
                             currentEntity.PrefabId = entityChange.PrefabId;
                             currentEntity.WorldX = entityChange.WorldX;
                             currentEntity.WorldY = entityChange.WorldY;
-                            currentEntity.Attributes = entityChange.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+                            currentEntity.Attributes = entityChange.Attributes?.Clone() ?? new ValuePacket();
                         }
                     }
                     else if (change is EditWallChange)
@@ -413,13 +414,13 @@ namespace Ozzyria.Gryp.Models
                                 PrefabId = currentEntity.PrefabId,
                                 WorldX = currentEntity.WorldX,
                                 WorldY = currentEntity.WorldY,
-                                Attributes = currentEntity.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>(),
+                                Attributes = currentEntity.Attributes?.Clone() ?? new Model.Types.ValuePacket(),
                             });
 
                             currentEntity.PrefabId = entityChange.PrefabId;
                             currentEntity.WorldX = entityChange.WorldX;
                             currentEntity.WorldY = entityChange.WorldY;
-                            currentEntity.Attributes = entityChange.Attributes?.ToDictionary(kv => kv.Key, kv => kv.Value) ?? new Dictionary<string, string>();
+                            currentEntity.Attributes = entityChange.Attributes?.Clone() ?? new Model.Types.ValuePacket();
                         }
                     }
                     else if (change is EditWallChange)

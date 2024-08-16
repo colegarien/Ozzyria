@@ -1,5 +1,5 @@
 ﻿using Grecs;
-using Ozzyria.Game.Serialization;
+using Ozzyria.Model.Utility;
 using System.Collections.Generic;
 using System.IO;
 

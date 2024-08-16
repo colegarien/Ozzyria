@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grecs" Version="1.0.8" />
+    <PackageReference Include="Grecs" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Ozzyria.Content\Ozzyria.Content.csproj" />
+    <ProjectReference Include="..\Ozzyria.Model\Ozzyria.Model.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
-﻿using Ozzyria.Game.Components;
-using Ozzyria.Content;
+﻿using Ozzyria.Content;
 using Ozzyria.Content.Models;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.MonoGameClient.Rendering.Resolver
 {

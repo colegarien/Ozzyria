@@ -1,32 +1,40 @@
-﻿using Ozzyria.Game.Components;
+﻿using Ozzyria.Model.Components;
+using Ozzyria.Model.Extensions;
 using Grecs;
-using Ozzyria.Game.Utility;
 using System.Linq;
+using Ozzyria.Model.CodeGen.Packages;
+using Ozzyria.Content;
 
 namespace Ozzyria.Game.Systems
 {
     internal class Spawner : TickSystem
     {
+        private PrefabPackage prefabPackage;
         protected EntityQuery query;
         public Spawner()
         {
+            prefabPackage = Packages.GetInstance().PrefabPackage;
+
             query = new EntityQuery();
-            query.And(typeof(SlimeSpawner));
+            query.And(typeof(PrefabSpawner));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
         {
+
             var entities = context.GetEntities(query);
             foreach (var entity in entities)
             {
-                var spawner = (SlimeSpawner)entity.GetComponent(typeof(SlimeSpawner));
+                var spawner = (PrefabSpawner)entity.GetComponent(typeof(PrefabSpawner));
+                var movement = (Movement)entity.GetComponent(typeof(Movement));
                 spawner.ThinkDelay.Update(deltaTime);
 
-                var numberOfSlimes = context.GetEntities(new EntityQuery().And(typeof(SlimeThought))).Count();
-                if (numberOfSlimes < spawner.SLIME_LIMIT && spawner.ThinkDelay.IsReady())
+                // OZ-22 : check if spawner is block before spawning things
+                var numberOfPrefabs = context.GetEntities(new EntityQuery().And(spawner.EntityTag)).Count();
+                if (numberOfPrefabs < spawner.EntityLimit && spawner.ThinkDelay.IsReady())
                 {
-                    // OZ-22 : check if spawner is block before spawning things
-                    EntityFactory.CreateSlime(context, spawner.X, spawner.Y);
+                    var prefab = prefabPackage.GetDefinition(spawner.PrefabId);
+                    Model.Utility.PrefabHydrator.HydrateDefinitionAtLocation(context, prefab, movement.X, movement.Y, movement.Layer);
                 }
             }
         }

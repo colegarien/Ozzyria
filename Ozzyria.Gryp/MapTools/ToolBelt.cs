@@ -18,6 +18,7 @@ namespace Ozzyria.Gryp.MapTools
                 { "move", new MoveTool() },
                 { "select", new SelectTool() },
                 { "brush", new BrushTool() },
+                { "path", new PathTool() },
                 { "fill", new FillTool() },
                 { "filled_rectangle", new FilledRectangleTool() },
                 { "rectangle", new RectangleTool() },
