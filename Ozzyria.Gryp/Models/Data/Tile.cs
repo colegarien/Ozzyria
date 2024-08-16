@@ -7,6 +7,13 @@ namespace Ozzyria.Gryp.Models.Data
     {
         public List<string> DrawableIds { get; set; } = new List<string>();
 
+        public Tile Clone()
+        {
+            Tile tile = new Tile();
+            tile.DrawableIds.AddRange(DrawableIds);
+            return tile;
+        }
+
         public bool Equal(Tile other)
         {
             if(DrawableIds.Count <= 0 && other.DrawableIds.Count <= 0) return true;

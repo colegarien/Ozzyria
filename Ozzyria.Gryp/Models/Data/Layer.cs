@@ -434,7 +434,7 @@ namespace Ozzyria.Gryp.Models.Data
                 var fillDown = GetTileData(toFillX, toFillY + 1)?.Equal(toFillTile) ?? false;
                 var fillUp = GetTileData(toFillX, toFillY - 1)?.Equal(toFillTile) ?? false;
 
-                PushTile(tileData, toFillX, toFillY);
+                PushTile(tileData.Clone(), toFillX, toFillY);
                 toFill.RemoveAt(0);
 
                 if (fillRight)
