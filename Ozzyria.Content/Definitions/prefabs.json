@@ -13,10 +13,6 @@
       "body::bodyId": "\"simple_door\""
     },
     "exposed": [
-      "movement::x",
-      "movement::y",
-      "movement::previousX",
-      "movement::previousY",
       "door::newArea",
       "door::newX",
       "door::newY"
@@ -39,10 +35,6 @@
       "movement::maxSpeed": "300f"
     },
     "exposed": [
-      "movement::x",
-      "movement::y",
-      "movement::previousX",
-      "movement::previousY",
       "exp_boost::experience"
     ]
   },
@@ -55,10 +47,6 @@
       "collision::isDynamic": "false"
     },
     "exposed": [
-      "movement::x",
-      "movement::y",
-      "movement::previousX",
-      "movement::previousY",
       "movement::collisionShape::boundingBox::width",
       "movement::collisionShape::boundingBox::height",
       "collision::isDynamic"
@@ -73,10 +61,6 @@
       "slime_spawner::thinkDelay::delayInSeconds": "5f"
     },
     "exposed": [
-      "movement::x",
-      "movement::y",
-      "movement::previousX",
-      "movement::previousY"
     ]
   },
   "slime": {
@@ -105,10 +89,6 @@
       "stats::maxHealth": "12"
     },
     "exposed": [
-      "movement::x",
-      "movement::y",
-      "movement::previousX",
-      "movement::previousY"
     ]
   }
 }

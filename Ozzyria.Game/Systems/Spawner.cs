@@ -35,13 +35,7 @@ namespace Ozzyria.Game.Systems
                 {
                     // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
                     var slimePrefab = prefabPackage.GetDefinition("slime");
-                    Model.Utility.EntityFactory.HydrateDefinition(context, slimePrefab, new Model.Types.ValuePacket
-                    {
-                        { "movement::x", movement.X.ToString() },
-                        { "movement::y", movement.Y.ToString() },
-                        { "movement::previousX", movement.X.ToString() },
-                        { "movement::previousY", movement.Y.ToString() }
-                    });
+                    Model.Utility.EntityFactory.HydrateDefinitionAtLocation(context, slimePrefab, movement.X, movement.Y, movement.Layer);
                 }
             }
         }

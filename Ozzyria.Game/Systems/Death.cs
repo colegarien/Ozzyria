@@ -3,6 +3,7 @@ using Grecs;
 using Ozzyria.Game.Utility;
 using Ozzyria.Model.CodeGen.Packages;
 using Ozzyria.Content;
+using System.Reflection.Emit;
 
 namespace Ozzyria.Game.Systems
 {
@@ -23,12 +24,8 @@ namespace Ozzyria.Game.Systems
                 var movement = (Movement)entity.GetComponent(typeof(Movement));
 
                 // TOOD probably should make some helper utility for doing these on-the-fly hydrations!
-                Model.Utility.EntityFactory.HydrateDefinition(context, _prefabPackage.GetDefinition("exp_orb"), new Model.Types.ValuePacket
+                Model.Utility.EntityFactory.HydrateDefinitionAtLocation(context, _prefabPackage.GetDefinition("exp_orb"), movement.X, movement.Y, movement.Layer, new Model.Types.ValuePacket
                 {
-                    { "movement::x", movement.X.ToString() },
-                    { "movement::y", movement.Y.ToString() },
-                    { "movement::previousX", movement.X.ToString() },
-                    { "movement::previousY", movement.Y.ToString() },
                     { "exp_boost::experience", "10" },
                 });
 

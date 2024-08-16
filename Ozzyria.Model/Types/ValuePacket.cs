@@ -1,4 +1,6 @@
-﻿namespace Ozzyria.Model.Types
+﻿using Ozzyria.Model.Components;
+
+namespace Ozzyria.Model.Types
 {
     public class ValuePacket : Dictionary<string, string>
     {
@@ -33,6 +35,17 @@
         public bool HasValueFor(string locator)
         {
             return this.Any(kv => kv.Key == locator || kv.Key.StartsWith(locator + DIG_OPERATOR));
+        }
+
+        public ValuePacket ExcludeKeys(params string[] keys)
+        {
+            var result = Clone();
+            foreach (var key in keys)
+            {
+                if (result.ContainsKey(key))
+                    result.Remove(key);
+            }
+            return result;
         }
 
         public static ValuePacket Combine(params ValuePacket[] packets)

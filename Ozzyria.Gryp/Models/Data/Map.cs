@@ -1,5 +1,6 @@
 ﻿using Ozzyria.Content.Models.Area;
 using Ozzyria.Gryp.Models.Event;
+using Ozzyria.Model.Types;
 
 namespace Ozzyria.Gryp.Models.Data
 {
@@ -124,7 +125,7 @@ namespace Ozzyria.Gryp.Models.Data
 
         public void UnselectWall()
         {
-            if(SelectedWall != null)
+            if (SelectedWall != null)
             {
                 ChangeHistory.TrackChange(new WallSelectionChange
                 {
@@ -146,7 +147,7 @@ namespace Ozzyria.Gryp.Models.Data
                 SelectedWall = null;
             }
 
-            if(currentId != (SelectedWall?.InternalId ?? ""))
+            if (currentId != (SelectedWall?.InternalId ?? ""))
             {
                 ChangeHistory.TrackChange(new WallSelectionChange
                 {
@@ -183,7 +184,7 @@ namespace Ozzyria.Gryp.Models.Data
                 IsDirty = true;
                 var currentId = SelectedEntity?.InternalId ?? "";
                 SelectedEntity = Layers[ActiveLayer].AddEntity(entity);
-                if(currentId != SelectedEntity.InternalId)
+                if (currentId != SelectedEntity.InternalId)
                 {
                     ChangeHistory.TrackChange(new EntitySelectionChange { InternalId = currentId });
                 }
@@ -296,12 +297,22 @@ namespace Ozzyria.Gryp.Models.Data
                     Height = b.Boundary.WorldHeight,
                 }).ToArray();
 
-                areaData.PrefabData.Prefabs[layer] = Layers[layer].GetEntities().Select(e => new Content.Models.Area.PrefabEntry
+                areaData.PrefabData.Prefabs[layer] = Layers[layer].GetEntities().Select(e =>
                 {
-                    PrefabId = e.PrefabId,
-                    X = e.WorldX,
-                    Y = e.WorldY,
-                    Attributes = e.Attributes,
+                    return new PrefabEntry
+                    {
+                        PrefabId = e.PrefabId,
+                        X = e.WorldX,
+                        Y = e.WorldY,
+                        Attributes = ValuePacket.Combine(e.Attributes, new ValuePacket
+                        {
+                            { "movement::x",         e.WorldX.ToString() },
+                            { "movement::y",         e.WorldY.ToString() },
+                            { "movement::previousX", e.WorldX.ToString() },
+                            { "movement::previousY", e.WorldY.ToString() },
+                            { "movement::layer",     layer.ToString() },
+                        }),
+                    };
                 }).ToArray();
             }
 
@@ -339,8 +350,10 @@ namespace Ozzyria.Gryp.Models.Data
             for (var layer = 0; layer < (areaData.WallData?.Walls?.Length ?? 0); layer++)
             {
                 ActiveLayer = layer;
-                foreach (var wall in areaData.WallData?.Walls[layer] ?? []) {
-                    AddWall(new Wall {
+                foreach (var wall in areaData.WallData?.Walls[layer] ?? [])
+                {
+                    AddWall(new Wall
+                    {
                         Boundary = new WorldBoundary
                         {
                             WorldX = wall.X,
@@ -361,7 +374,7 @@ namespace Ozzyria.Gryp.Models.Data
                         PrefabId = prefab.PrefabId,
                         WorldX = prefab.X,
                         WorldY = prefab.Y,
-                        Attributes = prefab.Attributes,
+                        Attributes = prefab.Attributes.ExcludeKeys("movement::x", "movement::y", "movement::previousX", "movement::previousY", "movement::layer"),
                     });
                 }
             }

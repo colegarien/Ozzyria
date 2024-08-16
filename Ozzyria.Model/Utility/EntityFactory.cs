@@ -6,7 +6,7 @@ namespace Ozzyria.Model.Utility
 {
     public class EntityFactory
     {
-        public static void HydrateDefinition(EntityContext context, PrefabDefinition prefab, ValuePacket values)
+        public static void HydrateDefinition(EntityContext context, PrefabDefinition prefab, ValuePacket values = null)
         {
             var entity = context.CreateEntity();
 
@@ -23,6 +23,20 @@ namespace Ozzyria.Model.Utility
                     entity.AddComponent(component);
                 }
             }
+        }
+
+        public static void HydrateDefinitionAtLocation(EntityContext context, PrefabDefinition prefab, float x, float y, int layer, ValuePacket values = null)
+        {
+            var prefabValues = ValuePacket.Combine(values, new ValuePacket
+            {
+                    { "movement::x", x.ToString() },
+                    { "movement::y", y.ToString() },
+                    { "movement::previousX", x.ToString() },
+                    { "movement::previousY", y.ToString() },
+                    { "movement::layer", layer.ToString() },
+            });
+
+            HydrateDefinition(context, prefab, prefabValues);
         }
     }
 }
