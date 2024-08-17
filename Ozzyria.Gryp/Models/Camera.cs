@@ -1,6 +1,4 @@
-﻿using Ozzyria.Gryp.Models.Data;
-
-namespace Ozzyria.Gryp.Models
+﻿namespace Ozzyria.Gryp.Models
 {
     /// <summary>
     /// WARNING: the world is actually moving, not the camera

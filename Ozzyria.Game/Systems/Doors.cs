@@ -1,6 +1,7 @@
 ﻿using Ozzyria.Model.Components;
 using Grecs;
 using System;
+using Ozzyria.Model.Extensions;
 
 namespace Ozzyria.Game.Systems
 {
@@ -19,7 +20,7 @@ namespace Ozzyria.Game.Systems
 
             // OZ-22 : make doors work for more than just players, potentiall change to require action to use a door
             playerQuery = new EntityQuery();
-            playerQuery.And(typeof(Ozzyria.Model.Components.Player), typeof(Movement));
+            playerQuery.And(typeof(Model.Components.Player), typeof(Movement));
         }
 
         public override void Execute(float deltaTime, EntityContext context)
@@ -34,8 +35,8 @@ namespace Ozzyria.Game.Systems
                     var playerMovement = (Movement)playerEntity.GetComponent(typeof(Movement));
 
 
-                    // OZ-22 : make doors components work more like a generic "Trigger" system instead of weird distance calculation
-                    if (!playerEntity.HasComponent(typeof(Model.Components.AreaChange)) && Math.Abs(playerMovement.X - doorMovement.X) <= TRIGGER_THRESHOLD && Math.Abs(playerMovement.Y - doorMovement.Y) <= TRIGGER_THRESHOLD)
+                    // OZ-22 : make doors components work more like a generic "Trigger" system instead
+                    if (!playerEntity.HasComponent(typeof(Model.Components.AreaChange)) && playerMovement.CheckCollision(doorMovement).Collided)
                     {
                         var areaChange = (Model.Components.AreaChange)playerEntity.CreateComponent(typeof(Model.Components.AreaChange));
                         areaChange.NewArea = doorComponent.NewArea;

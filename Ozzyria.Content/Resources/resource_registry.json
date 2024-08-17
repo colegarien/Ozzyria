@@ -1380,8 +1380,8 @@
     },
     "simple_door": {
       "Resource": 0,
-      "Left": 0,
-      "Top": 96,
+      "Left": 32,
+      "Top": 64,
       "Width": 32,
       "Height": 32,
       "OriginX": 16,

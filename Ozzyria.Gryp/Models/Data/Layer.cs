@@ -1,5 +1,4 @@
-﻿using OpenTK.Audio.OpenAL;
-using SkiaSharp;
+﻿using SkiaSharp;
 
 namespace Ozzyria.Gryp.Models.Data
 {

@@ -8,6 +8,8 @@
       "body"
     ],
     "defaults": {
+      "movement::collisionShape::boundingBox::width": "22",
+      "movement::collisionShape::boundingBox::height": "12",
       "animator::type": "Stall",
       "skeleton::type": "Static",
       "body::bodyId": "\"simple_door\""
