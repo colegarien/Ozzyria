@@ -1,9 +1,8 @@
-﻿using Grynt.Model.Definitions;
-using Grynt.Model.Packages;
+﻿using Ozzyria.Model.CodeGen.Definitions;
+using Ozzyria.Model.CodeGen.DefinitionPackages;
 using Ozzyria.Model.Types;
-using System.Collections.Generic;
 
-namespace Grynt.Generators.Fields
+namespace Ozzyria.Model.CodeGen.Generators.Fields
 {
     public class FieldsGenerator : IFieldGenerator
     {

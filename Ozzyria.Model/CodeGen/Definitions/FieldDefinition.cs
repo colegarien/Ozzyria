@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Grynt.Model.Definitions
+namespace Ozzyria.Model.CodeGen.Definitions
 {
     public class FieldDefinition
     {

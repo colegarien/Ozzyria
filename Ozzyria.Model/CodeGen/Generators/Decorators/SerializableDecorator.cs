@@ -1,8 +1,8 @@
-﻿using Grynt.Model.Definitions;
-using Grynt.Model.Packages;
+﻿using Ozzyria.Model.CodeGen.Definitions;
+using Ozzyria.Model.CodeGen.DefinitionPackages;
 using Ozzyria.Model.Types;
 
-namespace Grynt.Generators.Decorators
+namespace Ozzyria.Model.CodeGen.Generators.Decorators
 {
     public class SerializableDecorator : IClassDecorator
     {

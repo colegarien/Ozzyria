@@ -1,8 +1,8 @@
-﻿using Grynt.Generators.Decorators;
-using Grynt.Generators.Fields;
-using Grynt.Generators;
-using Grynt.Model.Packages;
-using Grynt.Model.Definitions;
+﻿using Ozzyria.Model.CodeGen.Generators.Decorators;
+using Ozzyria.Model.CodeGen.Generators.Fields;
+using Ozzyria.Model.CodeGen.Generators;
+using Ozzyria.Model.CodeGen.DefinitionPackages;
+using Ozzyria.Model.CodeGen.Definitions;
 using Ozzyria.Model.CodeGen.Generators;
 using Ozzyria.Content;
 using Ozzyria.Model.CodeGen.Packages;

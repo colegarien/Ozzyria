@@ -1,4 +1,4 @@
-﻿using Grynt.Model.Packages;
+﻿using Ozzyria.Model.CodeGen.DefinitionPackages;
 namespace Ozzyria.Model.CodeGen.Generators
 {
     public class EntitySerializerGenerator

@@ -1,5 +1,5 @@
-﻿using Grynt.Model.Packages;
-namespace Grynt.Generators.Fields
+﻿using Ozzyria.Model.CodeGen.DefinitionPackages;
+namespace Ozzyria.Model.CodeGen.Generators.Fields
 {
     public class GrecsFieldGenerator : FieldsGenerator
     {

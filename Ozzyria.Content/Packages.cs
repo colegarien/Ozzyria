@@ -1,4 +1,4 @@
-﻿using Grynt.Model.Packages;
+﻿using Ozzyria.Model.CodeGen.DefinitionPackages;
 using Ozzyria.Model.CodeGen.Packages;
 using System.IO;
 

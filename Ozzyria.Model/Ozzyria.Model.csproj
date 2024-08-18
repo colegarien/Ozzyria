@@ -8,10 +8,4 @@
 
   <ItemGroup>
     <PackageReference Include="Grecs" Version="1.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Prefabs\" />
-  </ItemGroup>
-
-</Project>
+  </ItemGroup></Project>

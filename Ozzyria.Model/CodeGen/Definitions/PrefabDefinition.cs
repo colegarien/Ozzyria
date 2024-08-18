@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Ozzyria.Model.Types;
 
-namespace Grynt.Model.Definitions
+namespace Ozzyria.Model.CodeGen.Definitions
 {
     public class PrefabDefinition
     {

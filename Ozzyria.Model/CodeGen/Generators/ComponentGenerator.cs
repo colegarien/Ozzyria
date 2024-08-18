@@ -1,10 +1,9 @@
-﻿using Grynt.Generators.Decorators;
-using Grynt.Generators.Fields;
-using Grynt.Model.Definitions;
-using Grynt.Model.Packages;
-using System.Linq;
+﻿using Ozzyria.Model.CodeGen.Generators.Decorators;
+using Ozzyria.Model.CodeGen.Generators.Fields;
+using Ozzyria.Model.CodeGen.Definitions;
+using Ozzyria.Model.CodeGen.DefinitionPackages;
 
-namespace Grynt.Generators
+namespace Ozzyria.Model.CodeGen.Generators
 {
     public class ComponentGenerator
     {

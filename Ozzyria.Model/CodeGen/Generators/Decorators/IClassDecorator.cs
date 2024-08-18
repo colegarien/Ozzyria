@@ -1,7 +1,7 @@
-﻿using Grynt.Model.Definitions;
+﻿using Ozzyria.Model.CodeGen.Definitions;
 using Ozzyria.Model.Types;
 
-namespace Grynt.Generators.Decorators
+namespace Ozzyria.Model.CodeGen.Generators.Decorators
 {
     public interface IClassDecorator
     {

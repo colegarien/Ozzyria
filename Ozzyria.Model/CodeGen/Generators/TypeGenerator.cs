@@ -1,9 +1,9 @@
-﻿using Grynt.Model.Definitions;
-using Grynt.Model.Packages;
+﻿using Ozzyria.Model.CodeGen.Definitions;
+using Ozzyria.Model.CodeGen.DefinitionPackages;
 using System;
 using System.Linq;
 
-namespace Grynt.Generators
+namespace Ozzyria.Model.CodeGen.Generators
 {
     public class TypeGenerator
     {

@@ -1,6 +1,6 @@
 ﻿using Grecs;
 using Ozzyria.Model.Types;
-using Grynt.Model.Definitions;
+using Ozzyria.Model.CodeGen.Definitions;
 
 namespace Ozzyria.Model.Utility
 {
