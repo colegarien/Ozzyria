@@ -145,7 +145,7 @@ namespace Ozzyria.Model.Extensions
                 return new CollisionResult { Collided = false };
             }
 
-            return movement.CollisionShape.CheckCollision(movement.X, movement.Y, movement.PreviousX, movement.PreviousY, otherMovement.CollisionShape, otherMovement.X, otherMovement.Y);
+            return movement.CollisionShape.CheckCollision(movement.X, movement.Y + movement.CollisionOffsetY, movement.PreviousX, movement.PreviousY + movement.CollisionOffsetY, otherMovement.CollisionShape, otherMovement.X, otherMovement.Y + otherMovement.CollisionOffsetY);
         }
     }
 }
