@@ -39,8 +39,8 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Idle_Up_0": {
       "RootOffsetX": 0,
@@ -69,8 +69,8 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Idle_Left_0": {
       "RootOffsetX": 0,
@@ -79,7 +79,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -90,7 +90,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -101,9 +101,9 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetX": -9,
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Idle_Right_0": {
       "RootOffsetX": 0,
@@ -112,7 +112,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -123,7 +123,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -134,9 +134,9 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetX": 8,
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Walk_Down_0": {
       "RootOffsetX": 0,
@@ -165,8 +165,8 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Walk_Up_0": {
       "RootOffsetX": 0,
@@ -195,8 +195,8 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Walk_Left_0": {
       "RootOffsetX": 0,
@@ -205,7 +205,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -216,7 +216,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -227,9 +227,9 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": -8,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetX": -9,
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Walk_Right_0": {
       "RootOffsetX": 0,
@@ -238,7 +238,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -249,7 +249,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -260,9 +260,9 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
-      "MaskOffsetY": -19,
-      "HatOffsetY": -26
+      "MaskOffsetX": 8,
+      "MaskOffsetY": -18,
+      "HatOffsetY": -25
     },
     "Humanoid_Attack_Up_0": {
       "RootOffsetX": 0,
@@ -331,7 +331,7 @@
       "WeaponOffsetX": -8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.580796,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -342,7 +342,7 @@
       "WeaponOffsetX": -13,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": 3.7001,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -353,7 +353,7 @@
       "WeaponOffsetX": -12,
       "WeaponOffsetY": -11,
       "WeaponOffsetAngle": 2.9059732,
-      "MaskOffsetX": -8,
+      "MaskOffsetX": -9,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -364,7 +364,7 @@
       "WeaponOffsetX": 8,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -1.570796,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -375,7 +375,7 @@
       "WeaponOffsetX": 13,
       "WeaponOffsetY": -18,
       "WeaponOffsetAngle": -0.5323254,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -21,
       "HatOffsetY": -28
     },
@@ -386,7 +386,7 @@
       "WeaponOffsetX": 12,
       "WeaponOffsetY": -11,
       "WeaponOffsetAngle": 0.20944,
-      "MaskOffsetX": 9,
+      "MaskOffsetX": 8,
       "MaskOffsetY": -20,
       "HatOffsetY": -27
     },
@@ -1331,7 +1331,7 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 1,
-      "OriginX": 25,
+      "OriginX": 24,
       "OriginY": 15,
       "AttachmentType": 3
     },
@@ -1353,7 +1353,7 @@
       "Width": 32,
       "Height": 32,
       "Subspace": 5,
-      "OriginX": 8,
+      "OriginX": 7,
       "OriginY": 15,
       "AttachmentType": 3
     },
@@ -1366,6 +1366,94 @@
       "Subspace": 5,
       "OriginX": 16,
       "OriginY": 15,
+      "AttachmentType": 3
+    },
+    "wet_suit_Right": {
+      "Resource": 0,
+      "Left": 896,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 1,
+      "OriginX": 16,
+      "OriginY": 32,
+      "AttachmentType": 2
+    },
+    "wet_suit_Down": {
+      "Resource": 0,
+      "Left": 928,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 1,
+      "OriginX": 16,
+      "OriginY": 32,
+      "AttachmentType": 2
+    },
+    "wet_suit_Left": {
+      "Resource": 0,
+      "Left": 960,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 5,
+      "OriginX": 16,
+      "OriginY": 32,
+      "AttachmentType": 2
+    },
+    "wet_suit_Up": {
+      "Resource": 0,
+      "Left": 992,
+      "Top": 192,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 5,
+      "OriginX": 16,
+      "OriginY": 32,
+      "AttachmentType": 2
+    },
+    "scuba_mask_Right": {
+      "Resource": 0,
+      "Left": 896,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 1,
+      "OriginX": 24,
+      "OriginY": 14,
+      "AttachmentType": 3
+    },
+    "scuba_mask_Down": {
+      "Resource": 0,
+      "Left": 928,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 1,
+      "OriginX": 16,
+      "OriginY": 14,
+      "AttachmentType": 3
+    },
+    "scuba_mask_Left": {
+      "Resource": 0,
+      "Left": 960,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 5,
+      "OriginX": 7,
+      "OriginY": 14,
+      "AttachmentType": 3
+    },
+    "scuba_mask_Up": {
+      "Resource": 0,
+      "Left": 992,
+      "Top": 224,
+      "Width": 32,
+      "Height": 32,
+      "Subspace": 5,
+      "OriginX": 16,
+      "OriginY": 14,
       "AttachmentType": 3
     },
     "exp_orb": {
@@ -2246,6 +2334,20 @@
       "Top": 110,
       "Width": 20,
       "Height": 4
+    },
+    "wet_suit_icon": {
+      "Resource": 0,
+      "Left": 935,
+      "Top": 209,
+      "Width": 18,
+      "Height": 15
+    },
+    "scuba_mask_icon": {
+      "Resource": 0,
+      "Left": 935,
+      "Top": 237,
+      "Width": 18,
+      "Height": 10
     }
   }
 }

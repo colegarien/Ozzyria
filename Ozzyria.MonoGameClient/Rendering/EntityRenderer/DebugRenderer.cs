@@ -172,6 +172,42 @@ namespace Ozzyria.MonoGameClient.Rendering.EntityRenderer
             rootGraphic.Angle = 0;
             rootGraphic.Colour = Color.Green;
 
+            // Draw Hat Offset
+            var hatRootGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
+            hatRootGraphic.Resource = pixelResource;
+            hatRootGraphic.Layer = 99;
+            hatRootGraphic.SubLayer = 0;
+            hatRootGraphic.SubSubLayer = 0;
+            hatRootGraphic.Destination = new Rectangle(skeleton.RootX + skeleton.HatOffsetX, skeleton.RootY + skeleton.HatOffsetY, 2, 2);
+            hatRootGraphic.Source = pixelSource;
+            hatRootGraphic.Origin = pixelOrigin;
+            hatRootGraphic.Angle = 0;
+            hatRootGraphic.Colour = Color.BlueViolet;
+
+            // Draw Mask Offset
+            var maskRootGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
+            maskRootGraphic.Resource = pixelResource;
+            maskRootGraphic.Layer = 99;
+            maskRootGraphic.SubLayer = 0;
+            maskRootGraphic.SubSubLayer = 0;
+            maskRootGraphic.Destination = new Rectangle(skeleton.RootX + skeleton.MaskOffsetX, skeleton.RootY + skeleton.MaskOffsetY, 2, 2);
+            maskRootGraphic.Source = pixelSource;
+            maskRootGraphic.Origin = pixelOrigin;
+            maskRootGraphic.Angle = 0;
+            maskRootGraphic.Colour = Color.Beige;
+
+            // Armor Mask Offset
+            var armorRootGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
+            armorRootGraphic.Resource = pixelResource;
+            armorRootGraphic.Layer = 99;
+            armorRootGraphic.SubLayer = 0;
+            armorRootGraphic.SubSubLayer = 0;
+            armorRootGraphic.Destination = new Rectangle(skeleton.RootX + skeleton.ArmorOffsetX, skeleton.RootY + skeleton.ArmorOffsetY, 2, 2);
+            armorRootGraphic.Source = pixelSource;
+            armorRootGraphic.Origin = pixelOrigin;
+            armorRootGraphic.Angle = 0;
+            armorRootGraphic.Colour = Color.Chartreuse;
+
             // Draw Weapon Offset
             var weaponRootGraphic = graphicsPipeline.GetEntityGraphic(entity.id);
             weaponRootGraphic.Resource = pixelResource;

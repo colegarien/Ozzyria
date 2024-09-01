@@ -101,6 +101,26 @@ namespace Ozzyria.Game.Utility
             greySwordItem.IsEquipped = false;
             greySword.AddComponent(greySwordItem);
             containerStorage.AddItemToBag(bag, greySword);
+
+            var scubaMask = new Entity();
+            var scubaMaskItem = (Item)scubaMask.CreateComponent(typeof(Item));
+            scubaMaskItem.Name = "Scuba Mask";
+            scubaMaskItem.Icon = "scuba_mask_icon";
+            scubaMaskItem.ItemId = "scuba_mask";
+            scubaMaskItem.EquipmentSlot = "mask"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
+            scubaMaskItem.IsEquipped = false;
+            scubaMask.AddComponent(scubaMaskItem);
+            containerStorage.AddItemToBag(bag, scubaMask);
+
+            var wetSuit = new Entity();
+            var wetSuitItem = (Item)wetSuit.CreateComponent(typeof(Item));
+            wetSuitItem.Name = "Wetsuit";
+            wetSuitItem.Icon = "wet_suit_icon";
+            wetSuitItem.ItemId = "wet_suit";
+            wetSuitItem.EquipmentSlot = "armor"; // TODO OZ-55 update equipment system to more easily tie items and equipment together
+            wetSuitItem.IsEquipped = false;
+            wetSuit.AddComponent(wetSuitItem);
+            containerStorage.AddItemToBag(bag, wetSuit);
         }
 
         public static void CreateWall(EntityContext context, float x, float y, int layer, int width, int height)
